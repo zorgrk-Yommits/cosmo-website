@@ -29,15 +29,19 @@ CosmoClawAgent solves all three with a tiered agent swarm architecture backed by
   {
     id: '03',
     title: 'Architecture Overview',
-    content: `The CosmoClawAgent system consists of four specialized agents operating in a coordinated swarm:
+    content: `The CosmoClawAgent system consists of six specialized agents operating in a coordinated swarm:
 
-**ClawBot Alpha [ALPHA-7]** — Tier 1 execution engine. Handles all sub-threshold operations autonomously. Cryptographically scoped to prevent privilege escalation.
+**Intake Agent** — SupraFX RFQ-Listener. Parses incoming RFQ-IDs, classifies trade intent, and routes operations to the correct tier. First contact point for all market signals.
 
-**ClawBot Quorum [QUORUM-3]** — Tier 2 consensus coordinator. Manages 2-of-3 committee votes for medium-risk operations. $COSMO stakers participate as Risk Agents.
+**Analysis Agent** — Mistral AI + Supra Oracle integration. Non-deterministic reasoning layer that evaluates trade quality, risk exposure, and market context. Powers all Tier 2 decisions.
 
-**ClawBot Sentinel [SENTINEL-1]** — Tier 3 human guardian. Pre-packages high-stakes deals, delivers multi-channel alerts, and awaits NFT-holder co-signature.
+**Risk Manager** — Co-signing guardian for Tier 2 trades. $COSMO stakers register as Risk Agents, provide collateral, and earn co-signing rewards. Enforces 2-of-3 cryptographic approval.
 
-**ClawBot Oracle [ORACLE-9]** — Intelligence backbone. Continuously monitors on-chain conditions, feeds context to all agents, and adjusts risk thresholds dynamically.
+**Liquidity Scout** — Cross-chain liquidity discovery via OpenBlocks.ai. Finds optimal execution routes across chains, protocols, and liquidity pools for every operation.
+
+**Gas Monitor** — Deterministic rule-based execution timing. Monitors gas prices, mempool conditions, and block availability to optimize transaction submission across all tiers.
+
+**Negotiation Agent** — Dual-mode closer. Tier 1: fully autonomous for trades under $50. Tier 3: pre-packages complex deals for NFT-holder co-signature via Discord/Telegram (Disco protocol).
 
 All agents communicate via a signed message bus with replay protection. No agent can act outside its defined authorization scope.`,
   },
@@ -47,19 +51,19 @@ All agents communicate via a signed message bus with replay protection. No agent
     subsections: [
       {
         title: 'Tier 1 — Fully Autonomous Execution',
-        content: `Operations classified as low-risk are handled entirely by ClawBot Alpha. The classification engine evaluates: transaction size (< $10,000), target protocol (whitelist), slippage bounds, and current market volatility index.
+        content: `Operations classified as low-risk are handled by the Intake Agent and Gas Monitor. The Intake Agent classifies the RFQ, the Gas Monitor selects the optimal submission window, and the Negotiation Agent signs autonomously for trades under $50.
 
-Alpha signs and broadcasts the transaction on-chain within milliseconds. No human involvement, no committee vote — pure execution velocity for routine operations.`,
+For sub-threshold operations the classification engine evaluates: transaction size (< $10,000), target protocol (whitelist), slippage bounds, and current market volatility index. No human involvement, no committee vote — pure execution velocity for routine operations.`,
       },
       {
         title: 'Tier 2 — Multi-Agent Consensus',
-        content: `Medium-risk operations require 2-of-3 agent committee approval. The proposing agent broadcasts to the Quorum network. Two of the three registered agents must produce valid cryptographic co-signatures within the consensus window (default: 30 seconds).
+        content: `Medium-risk operations require Analysis Agent evaluation followed by Risk Manager co-signing. The Analysis Agent (Mistral AI + Supra Oracle) assesses trade quality and risk exposure. The Risk Manager then broadcasts to registered $COSMO stakers for cryptographic co-signature within the consensus window (default: 30 seconds).
 
 $COSMO stakers who register as Risk Agents receive transaction-level alerts. Co-signing earns a fraction of the operation's protocol fee — creating a passive income stream tied directly to protocol usage.`,
       },
       {
         title: 'Tier 3 — Human Co-Signature',
-        content: `High-stakes operations require final authorization from an NFT-holder. ClawBot Sentinel pre-packages the full execution context: simulation results, risk analysis, expected outcomes, and worst-case scenarios.
+        content: `High-stakes operations are coordinated by the Negotiation Agent operating in Disco mode. The full swarm pre-packages the execution context: simulation results, risk analysis from the Analysis Agent, Liquidity Scout routing data, and worst-case scenarios.
 
 The package is delivered via Discord and Telegram to all registered NFT-holders. The first qualifying holder to review and co-sign authorizes execution. The human approves once; the swarm executes precisely.`,
       },
@@ -100,7 +104,7 @@ The economic flywheel: More protocol usage → more fee burns → reduced supply
     title: 'Roadmap',
     phases: [
       { phase: 'Phase 1', label: 'Q1 2025', title: 'Foundation', items: ['Mainnet deploy (ETH)', 'Tier 1 agent live', '$COSMO token launch', 'Risk Agent staking'] },
-      { phase: 'Phase 2', label: 'Q2 2025', title: 'Consensus', items: ['Tier 2 Quorum agent', '2-of-3 consensus network', 'NFT governance mint', 'Discord/Telegram alerts'] },
+      { phase: 'Phase 2', label: 'Q2 2025', title: 'Consensus', items: ['Analysis Agent + Risk Manager', '2-of-3 consensus network', 'NFT governance mint', 'Discord/Telegram alerts'] },
       { phase: 'Phase 3', label: 'Q3 2025', title: 'Expansion', items: ['Arbitrum deployment', 'Base deployment', 'Cross-chain Tier 3 approvals', 'Oracle agent launch'] },
       { phase: 'Phase 4', label: 'Q4 2025', title: 'Autonomy', items: ['Full agent swarm live', 'Formal verification complete', 'DAO governance launch', '$10M TVL target'] },
     ],
@@ -117,7 +121,7 @@ export default function WhitepaperPage() {
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/25 mb-6">
           <FileText className="w-3 h-3 text-purple-400" />
           <span className="font-mono text-xs text-purple-300 tracking-widest uppercase">
-            Technical Whitepaper — v1.2.0
+            Technical Whitepaper — v2.0.0
           </span>
         </div>
 
@@ -132,17 +136,17 @@ export default function WhitepaperPage() {
             <div className="flex items-center gap-4 mt-4 font-mono text-xs text-slate-600">
               <span>Published: March 2025</span>
               <span className="text-purple-500">|</span>
-              <span>Version 1.2.0</span>
+              <span>Version 2.0.0</span>
               <span className="text-purple-500">|</span>
               <span>23 pages</span>
             </div>
           </div>
 
           <div className="flex flex-col gap-2 shrink-0">
-            <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-mono text-sm font-semibold transition-all">
+            <a href="/COSMO_Whitepaper_v2_0.pdf" download className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-mono text-sm font-semibold transition-all">
               <Download className="w-4 h-4" />
               Download PDF
-            </button>
+            </a>
             <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-purple-500/30 text-purple-300 font-mono text-sm hover:border-purple-400 transition-all">
               <ExternalLink className="w-4 h-4" />
               View on IPFS
@@ -255,11 +259,11 @@ export default function WhitepaperPage() {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link
-              href="/terminal"
+              href="/launch"
               className="flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-mono font-semibold transition-all hover:shadow-[0_0_30px_rgba(139,92,246,0.5)]"
             >
               <Zap className="w-4 h-4" />
-              Open Terminal
+              Launch App
             </Link>
             <Link
               href="/tokenomics"

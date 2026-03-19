@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 
 const navLinks = [
   { href: '/', label: 'Home' },
-  { href: '/terminal', label: 'Terminal' },
+  { href: '/strategies', label: 'Strategies' },
   { href: '/tokenomics', label: 'Tokenomics' },
   { href: '/whitepaper', label: 'Whitepaper' },
 ];
@@ -51,7 +51,7 @@ export default function Navigation() {
         {/* CTA */}
         <div className="hidden md:flex items-center gap-3">
           <Link
-            href="/terminal"
+            href="/launch"
             className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-mono text-sm font-semibold transition-all duration-200 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]"
           >
             Launch App →
@@ -86,7 +86,7 @@ export default function Navigation() {
             </Link>
           ))}
           <Link
-            href="/terminal"
+            href="/launch"
             onClick={() => setMenuOpen(false)}
             className="mt-2 px-4 py-3 rounded-lg bg-purple-600 text-white font-mono text-sm text-center font-semibold"
           >

@@ -1,57 +1,82 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Bot, Brain, Shield, Zap, ArrowRight, Activity, Network, Lock } from 'lucide-react';
 import BentoItem from '@/components/ui/terminal-bento-grid';
 
 const agents = [
   {
-    id: 'ALPHA-7',
-    name: 'ClawBot Alpha',
-    role: 'Execution Agent',
+    id: 'INTAKE-1',
+    name: 'Intake Agent',
+    role: 'RFQ Listener',
     tier: 'Tier 1',
     status: 'ACTIVE',
     icon: Zap,
     accent: 'green',
     description:
-      'Fully autonomous execution engine. Handles routine DeFi operations — swaps, yield rebalancing, and small $COSMO trades — without human intervention. Signs and executes on-chain in real time.',
-    stats: { ops: '12,847', uptime: '99.97%', latency: '142ms' },
+      'SupraFX RFQ-Listener. Parses incoming RFQ-IDs, classifies trade intent, and routes operations to the correct agent tier. First contact point for all market signals entering the swarm.',
+    stats: { ops: '12,847', uptime: '99.97%', latency: '18ms' },
   },
   {
-    id: 'QUORUM-3',
-    name: 'ClawBot Quorum',
-    role: 'Consensus Agent',
+    id: 'ANALYSIS-2',
+    name: 'Analysis Agent',
+    role: 'Intelligence Engine',
     tier: 'Tier 2',
     status: 'ACTIVE',
-    icon: Network,
+    icon: Brain,
     accent: 'cyan',
     description:
-      'Multi-agent consensus coordinator. Orchestrates 2-of-3 internal committee votes for mid-risk operations. $COSMO stakers acting as Risk Agents co-sign and earn protocol rewards.',
+      'Mistral AI + Supra Oracle integration. Non-deterministic reasoning layer that evaluates trade quality, risk exposure, and market context before routing to execution.',
+    stats: { ops: '8,412', uptime: '99.94%', latency: '340ms' },
+  },
+  {
+    id: 'RISK-3',
+    name: 'Risk Manager',
+    role: 'Consensus Guardian',
+    tier: 'Tier 2',
+    status: 'ACTIVE',
+    icon: Shield,
+    accent: 'cyan',
+    description:
+      'Co-signs all Tier 2 trades. $COSMO stakers acting as Risk Agents provide collateral and earn co-signing rewards. Enforces cryptographic 2-of-3 approval for medium-risk operations.',
     stats: { ops: '3,291', uptime: '99.94%', latency: '380ms' },
   },
   {
-    id: 'SENTINEL-1',
-    name: 'ClawBot Sentinel',
-    role: 'Guardian Agent',
-    tier: 'Tier 3',
-    status: 'STANDBY',
-    icon: Shield,
-    accent: 'purple',
-    description:
-      'Human-in-the-loop safeguard for high-stakes decisions. Packages complex deals, alerts NFT-holders via Discord/Telegram, and waits for the final human co-signature before execution.',
-    stats: { ops: '247', uptime: '100%', latency: 'Human' },
-  },
-  {
-    id: 'ORACLE-9',
-    name: 'ClawBot Oracle',
-    role: 'Intelligence Agent',
+    id: 'LIQUIDITY-4',
+    name: 'Liquidity Scout',
+    role: 'Cross-Chain Router',
     tier: 'System',
     status: 'ACTIVE',
-    icon: Brain,
+    icon: Network,
     accent: 'purple',
     description:
-      'On-chain data intelligence layer. Continuously monitors market conditions, risk signals, and protocol health to feed all agents with real-time context for better decision-making.',
-    stats: { ops: '891,234', uptime: '99.99%', latency: '18ms' },
+      'Cross-chain liquidity discovery via OpenBlocks.ai. Finds optimal execution routes across chains, protocols, and liquidity pools to minimize slippage for every trade.',
+    stats: { ops: '24,891', uptime: '99.99%', latency: '52ms' },
+  },
+  {
+    id: 'GAS-5',
+    name: 'Gas Monitor',
+    role: 'Execution Timer',
+    tier: 'Tier 1',
+    status: 'ACTIVE',
+    icon: Activity,
+    accent: 'green',
+    description:
+      'Deterministic rule-based execution timing. Monitors gas prices, mempool conditions, and block availability to optimize transaction submission windows across all tiers.',
+    stats: { ops: '891,234', uptime: '99.99%', latency: '8ms' },
+  },
+  {
+    id: 'NEGO-6',
+    name: 'Negotiation Agent',
+    role: 'Deal Closer',
+    tier: 'Tier 1 / 3',
+    status: 'ACTIVE',
+    icon: Bot,
+    accent: 'purple',
+    description:
+      'Dual-mode execution agent. Tier 1: fully autonomous for trades under $50. Tier 3: pre-packages complex deals for NFT-holder co-signature via Discord/Telegram (Disco protocol).',
+    stats: { ops: '5,447', uptime: '100%', latency: 'Variable' },
   },
 ];
 
@@ -85,50 +110,68 @@ export default function HomePage() {
       <div className="grid-bg" />
 
       {/* Hero */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-16 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/25 mb-8">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="font-mono text-xs text-purple-300 tracking-widest uppercase">
-            System Online — All Agents Active
-          </span>
-        </div>
+      <section className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-16">
+        <div className="flex flex-row items-center gap-8">
 
-        <h1 className="text-5xl md:text-7xl font-mono font-bold tracking-tight mb-6">
-          <span className="text-white">COSMO</span>
-          <span className="neon-text-purple">CLAW</span>
-          <span className="block text-2xl md:text-3xl text-slate-400 font-normal mt-2 tracking-wide">
-            Autonomous DeFi Intelligence
-          </span>
-        </h1>
+          {/* Left: Text block */}
+          <div className="flex-1 pl-4 lg:pl-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/25 mb-8">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="font-mono text-xs text-purple-300 tracking-widest uppercase">
+                System Online — All Agents Active
+              </span>
+            </div>
 
-        <p className="max-w-2xl mx-auto text-slate-400 text-lg leading-relaxed mb-10 font-sans">
-          A multi-tier agent swarm that autonomously executes DeFi operations,
-          coordinates consensus, and escalates to human oversight — only when it matters.
-        </p>
+            <h1 className="text-5xl md:text-7xl font-mono font-bold tracking-tight mb-6 text-left">
+              <span className="text-white">COSMO</span>
+              <span className="neon-text-purple">CLAW</span>
+              <span className="block text-2xl md:text-3xl text-slate-400 font-normal mt-2 tracking-wide">
+                Autonomous DeFi Intelligence
+              </span>
+            </h1>
 
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          <Link
-            href="/terminal"
-            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-mono font-semibold transition-all hover:shadow-[0_0_30px_rgba(139,92,246,0.5)]"
-          >
-            <Activity className="w-4 h-4" />
-            Open Terminal
-          </Link>
-          <Link
-            href="/whitepaper"
-            className="flex items-center gap-2 px-6 py-3 rounded-xl border border-purple-500/30 text-purple-300 hover:border-purple-400 hover:text-purple-200 font-mono transition-all"
-          >
-            Read Whitepaper
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+            <p className="text-slate-400 text-lg leading-relaxed mb-10 font-sans max-w-xl">
+              A multi-tier agent swarm that autonomously executes DeFi operations,
+              coordinates consensus, and escalates to human oversight — only when it matters.
+            </p>
+
+            <div className="flex flex-wrap items-center justify-start gap-4">
+              <Link
+                href="/launch"
+                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-mono font-semibold transition-all hover:shadow-[0_0_30px_rgba(139,92,246,0.5)]"
+              >
+                <Activity className="w-4 h-4" />
+                Launch App
+              </Link>
+              <Link
+                href="/whitepaper"
+                className="flex items-center gap-2 px-6 py-3 rounded-xl border border-purple-500/30 text-purple-300 hover:border-purple-400 hover:text-purple-200 font-mono transition-all"
+              >
+                Read Whitepaper
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Right: Image */}
+          <div className="hidden lg:block flex-shrink-0">
+            <Image
+              src="/images/cosmo3.jpg"
+              alt="COSMO Agent"
+              width={340}
+              height={340}
+              className="animate-float rounded-2xl object-cover drop-shadow-2xl opacity-90"
+            />
+          </div>
+
         </div>
 
         {/* Live stats bar */}
-        <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+        <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl">
           {[
             { label: 'Total Operations', value: '907,619' },
             { label: 'TVL Managed', value: '$4.2M' },
-            { label: 'Agents Online', value: '4 / 4' },
+            { label: 'Agents Online', value: '6 / 6' },
             { label: '$COSMO Staked', value: '18.3M' },
           ].map((stat) => (
             <div
@@ -159,7 +202,7 @@ export default function HomePage() {
           {agents.map((agent, i) => {
             const colors = accentMap[agent.accent as keyof typeof accentMap];
             const Icon = agent.icon;
-            const isWide = i === 2 || i === 3;
+            const isWide = false;
 
             return (
               <BentoItem
@@ -236,10 +279,10 @@ export default function HomePage() {
                   Tokenomics
                 </Link>
                 <Link
-                  href="/terminal"
+                  href="/launch"
                   className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-mono text-sm font-semibold transition-all hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]"
                 >
-                  Launch Terminal
+                  Launch App
                 </Link>
               </div>
             </div>

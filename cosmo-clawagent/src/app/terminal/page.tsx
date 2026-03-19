@@ -1,6 +1,6 @@
 'use client';
 
-import { Zap, Network, Shield, CheckCircle, Clock, AlertTriangle, ChevronRight, Users, Bot, Lock } from 'lucide-react';
+import { Zap, Network, Shield, CheckCircle, ChevronRight, Users, Bot, Lock } from 'lucide-react';
 import BentoItem from '@/components/ui/terminal-bento-grid';
 import Link from 'next/link';
 
@@ -15,7 +15,7 @@ const tiers = [
     badge: 'tier-1-badge',
     riskLevel: 'LOW RISK',
     riskColor: 'text-emerald-400',
-    agent: 'ClawBot Alpha [ALPHA-7]',
+    agent: 'Intake Agent + Gas Monitor',
     description:
       'ClawBot Action Single agent signs and executes. Handles routine swaps, yield rebalancing, and small $COSMO trades. Fully autonomous — zero latency, zero human friction.',
     operations: [
@@ -48,7 +48,7 @@ const tiers = [
     badge: 'tier-2-badge',
     riskLevel: 'MEDIUM RISK',
     riskColor: 'text-cyan-400',
-    agent: 'ClawBot Quorum [QUORUM-3]',
+    agent: 'Analysis Agent + Risk Manager',
     description:
       '2-of-3 internal agent committee vote. $COSMO stakers acting as Risk Agents earn rewards for co-signing. Used for medium-risk operations that require cryptographic multi-party agreement.',
     operations: [
@@ -60,7 +60,7 @@ const tiers = [
     ],
     flow: [
       { step: 'Operation proposed', icon: '📋', color: 'text-slate-400' },
-      { step: 'Quorum broadcast to 3 agents', icon: '📡', color: 'text-cyan-400' },
+      { step: 'Analysis Agent broadcasts to swarm', icon: '📡', color: 'text-cyan-400' },
       { step: '2-of-3 agents co-sign', icon: '✍✍', color: 'text-cyan-400' },
       { step: 'Stakers earn reward', icon: '💰', color: 'text-cyan-400' },
       { step: 'On-chain execution', icon: '⚡', color: 'text-cyan-400' },
@@ -82,7 +82,7 @@ const tiers = [
     badge: 'tier-3-badge',
     riskLevel: 'HIGH RISK',
     riskColor: 'text-purple-400',
-    agent: 'ClawBot Sentinel [SENTINEL-1]',
+    agent: 'Gas Monitor + Negotiation Agent',
     description:
       'Discord/Telegram alert to NFT-holder. Swarm pre-packages the deal, runs all simulations, and presents a ready-to-sign package. Human hits final approval — one click to authorize.',
     operations: [
@@ -308,7 +308,7 @@ export default function TerminalPage() {
             <div className="space-y-2 font-mono text-xs text-slate-400">
               <div className="flex justify-between"><span>Daily ops</span><span className="text-cyan-400">~120</span></div>
               <div className="flex justify-between"><span>Avg latency</span><span className="text-cyan-400">380ms</span></div>
-              <div className="flex justify-between"><span>Quorum</span><span className="text-cyan-400">2-of-3</span></div>
+              <div className="flex justify-between"><span>Consensus</span><span className="text-cyan-400">2-of-3</span></div>
               <div className="flex justify-between"><span>Max tx size</span><span className="text-cyan-400">$500,000</span></div>
             </div>
           </BentoItem>
