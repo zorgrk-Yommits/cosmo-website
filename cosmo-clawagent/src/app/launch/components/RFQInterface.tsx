@@ -2,29 +2,32 @@
 
 /**
  * RFQInterface.tsx
- * 3-step RFQ trading interface for ClawBot.
+ * 3-step + settlement RFQ trading interface for ClawBot.
  *
- * Step 1 — Form:     Pair, amount, direction, deadline, slippage → POST /api/rfq/submit
- * Step 2 — Polling:  Poll GET /api/rfq/:id every 3s until QUOTED (or FAILED/EXPIRED)
- * Step 3 — Quote:    Show quote details + countdown → sign with StarKey EVM → POST /accept
- * Done  — Result:    Show MATCHED / SETTLED state
+ * Step 1 — Form:       Pair, amount, direction, deadline, slippage
+ *                      NFT gate: checks balanceOf(takerAddress) on ClawAgentNFT
+ * Step 2 — Polling:    Poll GET /api/rfq/:id every 3s until QUOTED / terminal
+ * Step 3 — Quote:      Quote details + countdown → personal_sign → POST /accept
+ * Step 4 — Settlement: Live status: MATCHED → EXECUTING → SETTLED / FAILED
  *
- * Signing:
- *   Uses window.starkey.evm (EIP-1193) for EVM address + personal_sign.
- *   Message format: "Accept RFQ {id} quote {quoteAmount} {quoteAsset} for {amount} {baseAsset}"
- *   Backend verifies via ethers.verifyMessage().
+ * Signing: window.starkey.evm (EIP-1193) + personal_sign
+ * NFT Gate: raw eth_call, no ethers dependency in frontend
+ * NFT Contract: 0xebA201EDBe6127AdbD55e4B44Fe39336BB89dd18 on SupraEVM testnet
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   ChevronRight, Loader2, CheckCircle2, XCircle, Clock,
-  ArrowUpDown, Zap, AlertTriangle, RefreshCw,
+  ArrowUpDown, Zap, AlertTriangle, RefreshCw, ExternalLink, Shield,
 } from 'lucide-react';
 
 // ── Config ─────────────────────────────────────────────────────────────────────
-const CLAWBOT_URL =
-  process.env.NEXT_PUBLIC_CLAWBOT_URL ?? 'http://localhost:4000';
-const POLL_INTERVAL_MS = 3_000;
+const CLAWBOT_URL   = process.env.NEXT_PUBLIC_CLAWBOT_URL ?? 'http://localhost:4000';
+const POLL_MS       = 3_000;
+const SUPRA_CHAIN   = '0x' + (523994005626).toString(16); // 0x7a05e9d6a
+const NFT_CONTRACT  = '0xebA201EDBe6127AdbD55e4B44Fe39336BB89dd18';
+const BALANCEOF_SEL = '0x70a08231'; // keccak256("balanceOf(address)")[0:4]
+const MINT_URL      = '/launch#mint'; // update when mint page is live
 
 const SUPPORTED_PAIRS = [
   'ETH/USDC', 'ETH/USDT',
@@ -35,34 +38,41 @@ type Pair = typeof SUPPORTED_PAIRS[number];
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 interface RFQQuote {
-  quotePrice: number;
+  quotePrice:  number;
   quoteAmount: number;
-  spreadBps: number;
-  quotedAt: string;
-  validUntil: string;
+  spreadBps:   number;
+  quotedAt:    string;
+  validUntil:  string;
 }
 
 interface RFQ {
-  id: string;
-  status: string;
-  pair: string;
-  amount: number;
-  direction: 'buy' | 'sell';
-  deadline: number;
-  takerAddress: string;
+  id:             string;
+  status:         string;
+  pair:           string;
+  amount:         number;
+  direction:      'buy' | 'sell';
+  deadline:       number;
+  takerAddress:   string;
   maxSlippageBps: number;
-  expiresAt: number;
-  quote: RFQQuote | null;
+  expiresAt:      number;
+  quote:          RFQQuote | null;
   takerSignature: string | null;
-  matchedAt: number | null;
-  txHash: string | null;
-  errorMsg: string | null;
+  matchedAt:      number | null;
+  txHash:         string | null;
+  errorMsg:       string | null;
 }
 
-type Step = 'form' | 'polling' | 'quoted' | 'accepting' | 'done' | 'error';
+type Step = 'form' | 'polling' | 'quoted' | 'settlement' | 'done' | 'failed';
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
+interface FormFields {
+  pair:           Pair;
+  amount:         number;
+  direction:      'buy' | 'sell';
+  deadline:       number;
+  maxSlippageBps: number;
+}
 
+// ── EVM Provider Helpers ───────────────────────────────────────────────────────
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getEvmProvider = (): any =>
   typeof window !== 'undefined' ? (window as any).starkey?.evm ?? null : null;
@@ -73,28 +83,42 @@ async function getEvmAddress(): Promise<string | null> {
   try {
     const accounts: string[] = await p.request({ method: 'eth_accounts' });
     return accounts?.[0]?.toLowerCase() ?? null;
-  } catch {
-    return null;
-  }
+  } catch { return null; }
 }
 
-/** Encode a string as 0x-prefixed hex for personal_sign */
+async function getChainId(): Promise<string | null> {
+  const p = getEvmProvider();
+  if (!p) return null;
+  try { return await p.request({ method: 'eth_chainId' }); }
+  catch { return null; }
+}
+
+/** Check NFT balance via raw eth_call (no ethers needed) */
+async function fetchNFTBalance(address: string): Promise<number> {
+  const p = getEvmProvider();
+  if (!p) return 0;
+  try {
+    const paddedAddr = address.replace('0x', '').toLowerCase().padStart(64, '0');
+    const data = BALANCEOF_SEL + paddedAddr;
+    const result: string = await p.request({
+      method: 'eth_call',
+      params: [{ to: NFT_CONTRACT, data }, 'latest'],
+    });
+    if (!result || result === '0x' || result === '0x' + '0'.repeat(64)) return 0;
+    return parseInt(result, 16);
+  } catch { return 0; }
+}
+
+/** Hex-encode string for personal_sign */
 function toHex(str: string): string {
-  return (
-    '0x' +
-    Array.from(new TextEncoder().encode(str))
-      .map((b) => b.toString(16).padStart(2, '0'))
-      .join('')
-  );
+  return '0x' + Array.from(new TextEncoder().encode(str))
+    .map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 async function signMessage(message: string, address: string): Promise<string> {
   const p = getEvmProvider();
   if (!p) throw new Error('StarKey EVM provider not found');
-  return p.request({
-    method: 'personal_sign',
-    params: [toHex(message), address],
-  });
+  return p.request({ method: 'personal_sign', params: [toHex(message), address] });
 }
 
 function buildAcceptMessage(rfq: RFQ): string {
@@ -106,64 +130,60 @@ function secondsLeft(expiresAt: number): number {
   return Math.max(0, Math.floor((expiresAt - Date.now()) / 1000));
 }
 
+function shortAddr(addr: string): string {
+  return addr.length > 12 ? `${addr.slice(0, 6)}…${addr.slice(-4)}` : addr;
+}
+
 // ── Status Badge ───────────────────────────────────────────────────────────────
 function StatusBadge({ status }: { status: string }) {
   const cfg: Record<string, { color: string; dot: string }> = {
     PENDING:   { color: 'text-yellow-300 border-yellow-500/40 bg-yellow-500/10', dot: 'bg-yellow-400 animate-pulse' },
-    QUOTED:    { color: 'text-blue-300 border-blue-500/40 bg-blue-500/10',       dot: 'bg-blue-400 animate-pulse' },
-    MATCHED:   { color: 'text-purple-300 border-purple-500/40 bg-purple-500/10', dot: 'bg-purple-400' },
-    EXECUTING: { color: 'text-cyan-300 border-cyan-500/40 bg-cyan-500/10',       dot: 'bg-cyan-400 animate-pulse' },
+    QUOTED:    { color: 'text-blue-300   border-blue-500/40   bg-blue-500/10',   dot: 'bg-blue-400   animate-pulse' },
+    MATCHED:   { color: 'text-purple-300 border-purple-500/40 bg-purple-500/10', dot: 'bg-purple-400 animate-pulse' },
+    EXECUTING: { color: 'text-cyan-300   border-cyan-500/40   bg-cyan-500/10',   dot: 'bg-cyan-400   animate-pulse' },
     SETTLED:   { color: 'text-emerald-300 border-emerald-500/40 bg-emerald-500/10', dot: 'bg-emerald-400' },
-    CANCELLED: { color: 'text-slate-300 border-slate-500/40 bg-slate-500/10',    dot: 'bg-slate-400' },
-    FAILED:    { color: 'text-rose-300 border-rose-500/40 bg-rose-500/10',       dot: 'bg-rose-400' },
+    CANCELLED: { color: 'text-slate-300  border-slate-500/40  bg-slate-500/10',  dot: 'bg-slate-400' },
+    FAILED:    { color: 'text-rose-300   border-rose-500/40   bg-rose-500/10',   dot: 'bg-rose-400' },
     EXPIRED:   { color: 'text-orange-300 border-orange-500/40 bg-orange-500/10', dot: 'bg-orange-400' },
   };
   const { color, dot } = cfg[status] ?? cfg.PENDING;
   return (
     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border font-mono text-xs font-bold tracking-widest ${color}`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${dot}`} />
+      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${dot}`} />
       {status}
     </span>
   );
 }
 
-// ── Stepper Header ─────────────────────────────────────────────────────────────
+// ── Stepper ────────────────────────────────────────────────────────────────────
 function Stepper({ step }: { step: Step }) {
   const steps = [
-    { key: 'form',    label: 'RFQ Form' },
-    { key: 'polling', label: 'Quote' },
-    { key: 'done',    label: 'Settlement' },
-  ] as const;
-
-  const stepIndex = (s: Step) => {
-    if (s === 'form') return 0;
-    if (s === 'polling' || s === 'quoted' || s === 'accepting') return 1;
-    return 2;
-  };
-  const current = stepIndex(step);
+    { label: 'RFQ' },
+    { label: 'Quote' },
+    { label: 'Settlement' },
+  ];
+  const idx = step === 'form' ? 0
+    : step === 'polling' || step === 'quoted' ? 1
+    : 2;
 
   return (
-    <div className="flex items-center gap-0 mb-8">
+    <div className="flex items-center mb-8">
       {steps.map((s, i) => (
-        <div key={s.key} className="flex items-center flex-1 last:flex-none">
-          <div className="flex flex-col items-center gap-1">
-            <div
-              className={`w-7 h-7 rounded-full flex items-center justify-center font-mono text-xs font-bold border transition-all ${
-                i < current
-                  ? 'bg-purple-600 border-purple-500 text-white'
-                  : i === current
-                  ? 'bg-purple-600/20 border-purple-500 text-purple-300'
-                  : 'bg-transparent border-white/10 text-slate-600'
-              }`}
-            >
-              {i < current ? <CheckCircle2 className="w-4 h-4" /> : i + 1}
+        <div key={i} className="flex items-center flex-1 last:flex-none">
+          <div className="flex flex-col items-center gap-1 flex-shrink-0">
+            <div className={`w-7 h-7 rounded-full flex items-center justify-center font-mono text-xs font-bold border transition-all ${
+              i < idx  ? 'bg-purple-600 border-purple-500 text-white' :
+              i === idx ? 'bg-purple-600/20 border-purple-500 text-purple-300' :
+                          'bg-transparent border-white/10 text-slate-600'
+            }`}>
+              {i < idx ? <CheckCircle2 className="w-4 h-4" /> : i + 1}
             </div>
             <span className={`font-mono text-[10px] tracking-wider uppercase whitespace-nowrap ${
-              i === current ? 'text-purple-300' : i < current ? 'text-slate-400' : 'text-slate-700'
+              i === idx ? 'text-purple-300' : i < idx ? 'text-slate-400' : 'text-slate-700'
             }`}>{s.label}</span>
           </div>
           {i < steps.length - 1 && (
-            <div className={`flex-1 h-px mx-2 mb-4 transition-all ${i < current ? 'bg-purple-600' : 'bg-white/10'}`} />
+            <div className={`flex-1 h-px mx-2 mb-4 transition-all ${i < idx ? 'bg-purple-600' : 'bg-white/10'}`} />
           )}
         </div>
       ))}
@@ -171,36 +191,92 @@ function Stepper({ step }: { step: Step }) {
   );
 }
 
-// ── Step 1: Form ───────────────────────────────────────────────────────────────
-interface FormStepProps {
-  evmAddress: string | null;
-  onSubmit: (fields: {
-    pair: Pair; amount: number; direction: 'buy' | 'sell';
-    deadline: number; maxSlippageBps: number;
-  }) => void;
-  loading: boolean;
-  error: string | null;
+// ── NFT Gate Banner ────────────────────────────────────────────────────────────
+function NFTGateBanner({ loading }: { loading: boolean }) {
+  if (loading) {
+    return (
+      <div className="bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 flex items-center gap-2">
+        <Loader2 className="w-4 h-4 text-slate-500 animate-spin flex-shrink-0" />
+        <p className="font-mono text-xs text-slate-500">Checking ClawAgent NFT…</p>
+      </div>
+    );
+  }
+  return (
+    <div className="bg-purple-500/5 border border-purple-500/30 rounded-xl p-4">
+      <div className="flex items-start gap-3">
+        <Shield className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" />
+        <div className="flex-1">
+          <p className="font-mono text-sm text-purple-200 font-semibold mb-1">
+            ClawAgent NFT Required
+          </p>
+          <p className="font-mono text-xs text-slate-400 mb-3">
+            You need a ClawAgentNFT to access RFQ trading. Mint one to get started.
+          </p>
+          <a
+            href={MINT_URL}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-600/30 border border-purple-500/40 text-purple-300 font-mono text-xs font-semibold hover:bg-purple-600/50 transition-all"
+          >
+            <Zap className="w-3.5 h-3.5" />
+            Mint ClawAgent NFT
+            <ExternalLink className="w-3 h-3" />
+          </a>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-function FormStep({ evmAddress, onSubmit, loading, error }: FormStepProps) {
-  const [pair, setPair] = useState<Pair>('ETH/USDC');
-  const [amount, setAmount] = useState('');
-  const [direction, setDirection] = useState<'buy' | 'sell'>('sell');
-  const [deadline, setDeadline] = useState(60);
-  const [maxSlippageBps, setMaxSlippageBps] = useState(50);
-  const [amountErr, setAmountErr] = useState('');
+// ── Network Warning ────────────────────────────────────────────────────────────
+function NetworkWarning() {
+  return (
+    <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-xl px-4 py-3 flex items-start gap-2">
+      <AlertTriangle className="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" />
+      <div>
+        <p className="font-mono text-xs text-yellow-300 font-semibold">Wrong Network</p>
+        <p className="font-mono text-[11px] text-yellow-400/70 mt-0.5">
+          Switch StarKey to SupraEVM Testnet (Chain ID 523994005626)
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ── Step 1: Form ───────────────────────────────────────────────────────────────
+interface FormStepProps {
+  evmAddress:    string | null;
+  nftChecking:   boolean;
+  hasNFT:        boolean | null;
+  wrongNetwork:  boolean;
+  onSubmit:      (fields: FormFields) => void;
+  loading:       boolean;
+  error:         string | null;
+  initialFields: FormFields | null;
+}
+
+function FormStep({
+  evmAddress, nftChecking, hasNFT, wrongNetwork,
+  onSubmit, loading, error, initialFields,
+}: FormStepProps) {
+  const [pair, setPair]               = useState<Pair>(initialFields?.pair ?? 'ETH/USDC');
+  const [amount, setAmount]           = useState(initialFields ? String(initialFields.amount) : '');
+  const [direction, setDirection]     = useState<'buy' | 'sell'>(initialFields?.direction ?? 'sell');
+  const [deadline, setDeadline]       = useState(initialFields?.deadline ?? 60);
+  const [maxSlippageBps, setSlippage] = useState(initialFields?.maxSlippageBps ?? 50);
+  const [amountErr, setAmountErr]     = useState('');
+
+  const [base] = pair.split('/');
 
   const handleSubmit = () => {
     const n = parseFloat(amount);
     if (!amount || isNaN(n) || n <= 0 || n > 1_000_000) {
-      setAmountErr('Enter a valid amount (0 < amount ≤ 1,000,000)');
+      setAmountErr('Enter a valid amount (0 < x ≤ 1,000,000)');
       return;
     }
     setAmountErr('');
     onSubmit({ pair, amount: n, direction, deadline, maxSlippageBps });
   };
 
-  const [base] = pair.split('/');
+  const canSubmit = !!evmAddress && hasNFT === true && !wrongNetwork && !loading;
 
   return (
     <div className="space-y-5">
@@ -211,17 +287,13 @@ function FormStep({ evmAddress, onSubmit, loading, error }: FormStepProps) {
         </label>
         <div className="grid grid-cols-3 gap-2">
           {SUPPORTED_PAIRS.map((p) => (
-            <button
-              key={p}
-              onClick={() => setPair(p)}
+            <button key={p} onClick={() => setPair(p)}
               className={`px-3 py-2 rounded-lg font-mono text-xs font-semibold border transition-all ${
                 pair === p
                   ? 'bg-purple-600/20 border-purple-500 text-purple-300'
                   : 'bg-transparent border-white/10 text-slate-500 hover:border-white/20 hover:text-slate-300'
               }`}
-            >
-              {p}
-            </button>
+            >{p}</button>
           ))}
         </div>
       </div>
@@ -233,10 +305,8 @@ function FormStep({ evmAddress, onSubmit, loading, error }: FormStepProps) {
         </label>
         <div className="grid grid-cols-2 gap-2">
           {(['sell', 'buy'] as const).map((d) => (
-            <button
-              key={d}
-              onClick={() => setDirection(d)}
-              className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-mono text-sm font-bold border transition-all ${
+            <button key={d} onClick={() => setDirection(d)}
+              className={`flex items-center justify-center gap-2 py-2.5 rounded-lg font-mono text-sm font-bold border transition-all ${
                 direction === d
                   ? d === 'sell'
                     ? 'bg-rose-500/20 border-rose-500 text-rose-300'
@@ -257,30 +327,20 @@ function FormStep({ evmAddress, onSubmit, loading, error }: FormStepProps) {
           Amount ({base})
         </label>
         <input
-          type="number"
-          value={amount}
+          type="number" value={amount} placeholder="0.00" min="0" step="any"
           onChange={(e) => { setAmount(e.target.value); setAmountErr(''); }}
-          placeholder="0.00"
-          min="0"
-          step="any"
           className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 font-mono text-white text-sm placeholder-slate-600 focus:outline-none focus:border-purple-500/60 focus:bg-purple-500/5 transition-all"
         />
-        {amountErr && (
-          <p className="mt-1.5 font-mono text-xs text-rose-400">{amountErr}</p>
-        )}
+        {amountErr && <p className="mt-1.5 font-mono text-xs text-rose-400">{amountErr}</p>}
       </div>
 
       {/* Deadline */}
       <div>
         <div className="flex justify-between items-center mb-2">
-          <label className="font-mono text-[10px] uppercase tracking-widest text-slate-500">
-            Deadline
-          </label>
+          <label className="font-mono text-[10px] uppercase tracking-widest text-slate-500">Deadline</label>
           <span className="font-mono text-xs text-purple-300">{deadline}s</span>
         </div>
-        <input
-          type="range" min={10} max={300} step={10}
-          value={deadline}
+        <input type="range" min={10} max={300} step={10} value={deadline}
           onChange={(e) => setDeadline(Number(e.target.value))}
           className="w-full h-1.5 rounded-full appearance-none bg-white/10 accent-purple-500 cursor-pointer"
         />
@@ -293,15 +353,11 @@ function FormStep({ evmAddress, onSubmit, loading, error }: FormStepProps) {
       {/* Max Slippage */}
       <div>
         <div className="flex justify-between items-center mb-2">
-          <label className="font-mono text-[10px] uppercase tracking-widest text-slate-500">
-            Max Slippage
-          </label>
+          <label className="font-mono text-[10px] uppercase tracking-widest text-slate-500">Max Slippage</label>
           <span className="font-mono text-xs text-purple-300">{maxSlippageBps} bps ({(maxSlippageBps / 100).toFixed(2)}%)</span>
         </div>
-        <input
-          type="range" min={10} max={500} step={10}
-          value={maxSlippageBps}
-          onChange={(e) => setMaxSlippageBps(Number(e.target.value))}
+        <input type="range" min={10} max={500} step={10} value={maxSlippageBps}
+          onChange={(e) => setSlippage(Number(e.target.value))}
           className="w-full h-1.5 rounded-full appearance-none bg-white/10 accent-purple-500 cursor-pointer"
         />
         <div className="flex justify-between mt-1">
@@ -310,18 +366,32 @@ function FormStep({ evmAddress, onSubmit, loading, error }: FormStepProps) {
         </div>
       </div>
 
-      {/* EVM Address */}
-      {evmAddress ? (
-        <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3">
-          <div className="font-mono text-[10px] uppercase tracking-widest text-slate-600 mb-1">Taker (EVM)</div>
-          <div className="font-mono text-xs text-slate-400 break-all">{evmAddress}</div>
-        </div>
-      ) : (
+      {/* Status row: EVM address + NFT gate + network */}
+      {wrongNetwork && <NetworkWarning />}
+
+      {!wrongNetwork && !evmAddress && (
         <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-xl px-4 py-3 flex items-start gap-2">
           <AlertTriangle className="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" />
           <p className="font-mono text-xs text-yellow-300">
-            StarKey EVM provider not found. Make sure StarKey is connected to SupraEVM network.
+            StarKey EVM provider not found — connect to SupraEVM.
           </p>
+        </div>
+      )}
+
+      {!wrongNetwork && evmAddress && (hasNFT === false || nftChecking) && (
+        <NFTGateBanner loading={nftChecking} />
+      )}
+
+      {!wrongNetwork && evmAddress && hasNFT === true && (
+        <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3 flex items-center justify-between">
+          <div>
+            <div className="font-mono text-[10px] uppercase tracking-widest text-slate-600 mb-0.5">Taker (EVM)</div>
+            <div className="font-mono text-xs text-slate-400">{shortAddr(evmAddress)}</div>
+          </div>
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30">
+            <Shield className="w-3 h-3 text-emerald-400" />
+            <span className="font-mono text-[10px] text-emerald-300 font-bold">NFT ✓</span>
+          </div>
         </div>
       )}
 
@@ -331,16 +401,13 @@ function FormStep({ evmAddress, onSubmit, loading, error }: FormStepProps) {
         </div>
       )}
 
-      <button
-        onClick={handleSubmit}
-        disabled={loading || !evmAddress}
+      <button onClick={handleSubmit} disabled={!canSubmit}
         className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-mono text-sm font-bold transition-all hover:shadow-[0_0_24px_rgba(139,92,246,0.4)]"
       >
-        {loading ? (
-          <><Loader2 className="w-4 h-4 animate-spin" />Submitting…</>
-        ) : (
-          <><Zap className="w-4 h-4" />Submit RFQ<ChevronRight className="w-4 h-4" /></>
-        )}
+        {loading
+          ? <><Loader2 className="w-4 h-4 animate-spin" />Submitting…</>
+          : <><Zap className="w-4 h-4" />Submit RFQ<ChevronRight className="w-4 h-4" /></>
+        }
       </button>
     </div>
   );
@@ -355,26 +422,18 @@ function PollingStep({ rfq }: { rfq: RFQ }) {
         <p className="font-mono text-sm text-slate-400">Fetching quote from market…</p>
         <p className="font-mono text-xs text-slate-600 mt-1">Polling every 3 seconds</p>
       </div>
-
       <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 space-y-3">
-        <div className="flex justify-between items-center">
-          <span className="font-mono text-[10px] uppercase tracking-widest text-slate-600">RFQ ID</span>
-          <span className="font-mono text-xs text-slate-400 truncate ml-4">{rfq.id.slice(0, 18)}…</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="font-mono text-[10px] uppercase tracking-widest text-slate-600">Pair</span>
-          <span className="font-mono text-xs text-white">{rfq.pair}</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="font-mono text-[10px] uppercase tracking-widest text-slate-600">Amount</span>
-          <span className="font-mono text-xs text-white">{rfq.amount} {rfq.pair.split('/')[0]}</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="font-mono text-[10px] uppercase tracking-widest text-slate-600">Direction</span>
-          <span className={`font-mono text-xs font-bold ${rfq.direction === 'sell' ? 'text-rose-300' : 'text-emerald-300'}`}>
-            {rfq.direction.toUpperCase()}
-          </span>
-        </div>
+        {([
+          ['RFQ ID',    rfq.id.slice(0, 18) + '…'],
+          ['Pair',      rfq.pair],
+          ['Amount',    `${rfq.amount} ${rfq.pair.split('/')[0]}`],
+          ['Direction', rfq.direction.toUpperCase()],
+        ] as const).map(([k, v]) => (
+          <div key={k} className="flex justify-between items-center">
+            <span className="font-mono text-[10px] uppercase tracking-widest text-slate-600">{k}</span>
+            <span className={`font-mono text-xs ${k === 'Direction' ? (rfq.direction === 'sell' ? 'text-rose-300 font-bold' : 'text-emerald-300 font-bold') : 'text-white'}`}>{v}</span>
+          </div>
+        ))}
         <div className="flex justify-between items-center pt-1 border-t border-white/[0.06]">
           <span className="font-mono text-[10px] uppercase tracking-widest text-slate-600">Status</span>
           <StatusBadge status={rfq.status} />
@@ -386,10 +445,10 @@ function PollingStep({ rfq }: { rfq: RFQ }) {
 
 // ── Step 3: Quote ──────────────────────────────────────────────────────────────
 interface QuoteStepProps {
-  rfq: RFQ;
+  rfq:     RFQ;
   onAccept: () => void;
   loading: boolean;
-  error: string | null;
+  error:   string | null;
 }
 
 function QuoteStep({ rfq, onAccept, loading, error }: QuoteStepProps) {
@@ -406,7 +465,7 @@ function QuoteStep({ rfq, onAccept, loading, error }: QuoteStepProps) {
 
   return (
     <div className="space-y-5">
-      {/* Summary row */}
+      {/* Hero quote */}
       <div className="bg-purple-500/5 border border-purple-500/20 rounded-xl p-4">
         <div className="font-mono text-[10px] uppercase tracking-widest text-purple-400 mb-3">Quote Received</div>
         <div className="flex items-baseline justify-between">
@@ -417,37 +476,37 @@ function QuoteStep({ rfq, onAccept, loading, error }: QuoteStepProps) {
             <span className="font-mono text-sm text-slate-400 ml-2">{quote}</span>
           </div>
           <div className="text-right">
-            <div className="font-mono text-xs text-slate-500">for</div>
+            <div className="font-mono text-[10px] text-slate-500">for</div>
             <div className="font-mono text-sm text-white font-semibold">{rfq.amount} {base}</div>
           </div>
         </div>
       </div>
 
-      {/* Details grid */}
+      {/* Details */}
       <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 space-y-3">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between">
           <span className="font-mono text-[10px] uppercase tracking-widest text-slate-600">Mid Price</span>
           <span className="font-mono text-xs text-white">${q.quotePrice.toLocaleString('en-US', { maximumFractionDigits: 4 })}</span>
         </div>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between">
           <span className="font-mono text-[10px] uppercase tracking-widest text-slate-600">Spread</span>
           <span className="font-mono text-xs text-yellow-300">{q.spreadBps} bps ({(q.spreadBps / 100).toFixed(2)}%)</span>
         </div>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between">
           <span className="font-mono text-[10px] uppercase tracking-widest text-slate-600">Max Slippage</span>
           <span className={`font-mono text-xs ${q.spreadBps <= rfq.maxSlippageBps ? 'text-emerald-300' : 'text-rose-300'}`}>
-            {rfq.maxSlippageBps} bps
+            {rfq.maxSlippageBps} bps {q.spreadBps > rfq.maxSlippageBps ? '⚠ exceeded' : '✓'}
           </span>
         </div>
         <div className="flex justify-between items-center pt-1 border-t border-white/[0.06]">
           <span className="font-mono text-[10px] uppercase tracking-widest text-slate-600">Expires In</span>
-          <span className={`font-mono text-sm font-bold flex items-center gap-1 ${secs < 15 ? 'text-rose-400' : secs < 30 ? 'text-yellow-300' : 'text-emerald-300'}`}>
+          <span className={`font-mono text-sm font-bold flex items-center gap-1.5 ${secs < 15 ? 'text-rose-400' : secs < 30 ? 'text-yellow-300' : 'text-emerald-300'}`}>
             <Clock className="w-3.5 h-3.5" />{secs}s
           </span>
         </div>
       </div>
 
-      {/* Signed message preview */}
+      {/* Message to sign */}
       <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl px-4 py-3">
         <div className="font-mono text-[10px] uppercase tracking-widest text-slate-600 mb-1.5">Message to Sign</div>
         <div className="font-mono text-[11px] text-slate-400 break-all leading-relaxed">
@@ -461,171 +520,275 @@ function QuoteStep({ rfq, onAccept, loading, error }: QuoteStepProps) {
         </div>
       )}
 
-      <button
-        onClick={onAccept}
-        disabled={loading || expired}
+      <button onClick={onAccept} disabled={loading || expired}
         className={`w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-mono text-sm font-bold transition-all ${
           expired
             ? 'bg-rose-600/20 border border-rose-500/30 text-rose-400 cursor-not-allowed'
             : 'bg-emerald-600 hover:bg-emerald-500 text-white hover:shadow-[0_0_24px_rgba(16,185,129,0.4)] disabled:opacity-50 disabled:cursor-not-allowed'
         }`}
       >
-        {expired ? (
-          <><XCircle className="w-4 h-4" />Quote Expired</>
-        ) : loading ? (
-          <><Loader2 className="w-4 h-4 animate-spin" />Signing…</>
-        ) : (
-          <><CheckCircle2 className="w-4 h-4" />Accept Quote &amp; Sign<ChevronRight className="w-4 h-4" /></>
-        )}
+        {expired        ? <><XCircle className="w-4 h-4" />Quote Expired</> :
+         loading        ? <><Loader2 className="w-4 h-4 animate-spin" />Signing…</> :
+         <><CheckCircle2 className="w-4 h-4" />Accept Quote &amp; Sign<ChevronRight className="w-4 h-4" /></>}
       </button>
     </div>
   );
 }
 
-// ── Done State ─────────────────────────────────────────────────────────────────
-function DoneStep({ rfq, onReset }: { rfq: RFQ; onReset: () => void }) {
-  const isSettled = rfq.status === 'SETTLED';
-  const isFailed = rfq.status === 'FAILED' || rfq.status === 'EXPIRED' || rfq.status === 'CANCELLED';
+// ── Step 4: Settlement ─────────────────────────────────────────────────────────
+interface SettlementStepProps {
+  rfq:      RFQ;
+  onReset:  () => void;
+  onRetry:  () => void;
+}
+
+function SettlementStep({ rfq, onReset, onRetry }: SettlementStepProps) {
   const [base, quote] = rfq.pair.split('/');
+  const status = rfq.status;
 
-  return (
-    <div className="space-y-5 text-center">
-      <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto ${
-        isSettled ? 'bg-emerald-500/10' : isFailed ? 'bg-rose-500/10' : 'bg-purple-500/10'
-      }`}>
-        {isSettled ? (
-          <CheckCircle2 className="w-8 h-8 text-emerald-400" />
-        ) : isFailed ? (
-          <XCircle className="w-8 h-8 text-rose-400" />
-        ) : (
-          <Loader2 className="w-8 h-8 text-purple-400 animate-spin" />
-        )}
-      </div>
+  const isSettled  = status === 'SETTLED';
+  const isFailed   = status === 'FAILED' || status === 'EXPIRED' || status === 'CANCELLED';
+  const isPending  = !isSettled && !isFailed; // MATCHED or EXECUTING
 
-      <div>
-        <div className="mb-2"><StatusBadge status={rfq.status} /></div>
-        <h3 className="font-mono text-lg font-bold text-white mb-1">
-          {isSettled ? 'Trade Complete' : isFailed ? 'Trade Failed' : 'Settlement in Progress'}
-        </h3>
-        <p className="font-mono text-xs text-slate-400">
-          {rfq.amount} {base} {rfq.direction.toUpperCase()} → {rfq.quote?.quoteAmount.toLocaleString('en-US', { maximumFractionDigits: 6 })} {quote}
-        </p>
-      </div>
+  const tradeSummary = `${rfq.amount} ${base} ${rfq.direction.toUpperCase()} → ${
+    rfq.quote?.quoteAmount.toLocaleString('en-US', { maximumFractionDigits: 6 }) ?? '?'
+  } ${quote}`;
 
-      {rfq.txHash && rfq.txHash !== 'stub-settled' && (
-        <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3 text-left">
-          <div className="font-mono text-[10px] uppercase tracking-widest text-slate-600 mb-1">TX Hash (indexing)</div>
-          <div className="font-mono text-xs text-slate-400 break-all">{rfq.txHash}</div>
-          <p className="font-mono text-[10px] text-slate-700 mt-1">
-            Note: SupraEVM returns indexing hash — not final on-chain hash
-          </p>
+  // ── EXECUTING / MATCHED ──────────────────────────────────────────────────────
+  if (isPending) {
+    return (
+      <div className="space-y-5">
+        <div className="text-center py-2">
+          <div className="relative w-16 h-16 mx-auto mb-4">
+            <div className="absolute inset-0 rounded-full border-2 border-cyan-500/20" />
+            <div className="absolute inset-0 rounded-full border-t-2 border-cyan-400 animate-spin" />
+            <div className="absolute inset-2 rounded-full bg-cyan-500/10 flex items-center justify-center">
+              <Zap className="w-5 h-5 text-cyan-400" />
+            </div>
+          </div>
+          <StatusBadge status={status} />
+          <h3 className="font-mono text-base font-bold text-white mt-3 mb-1">
+            {status === 'MATCHED' ? 'Order Matched' : 'On-chain TX in progress…'}
+          </h3>
+          <p className="font-mono text-xs text-slate-500">{tradeSummary}</p>
         </div>
-      )}
+
+        <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 space-y-2">
+          {status === 'MATCHED' && (
+            <p className="font-mono text-xs text-slate-400">
+              Taker signature verified. Waiting for maker to initiate on-chain settlement…
+            </p>
+          )}
+          {status === 'EXECUTING' && (
+            <>
+              <p className="font-mono text-xs text-slate-400">
+                Transaction submitted to SupraEVM. Confirming via nonce check (15s window)…
+              </p>
+              {rfq.txHash && rfq.txHash !== 'stub-pending' && (
+                <div className="pt-2 border-t border-white/[0.06]">
+                  <div className="font-mono text-[10px] uppercase tracking-widest text-slate-600 mb-1">Indexing Hash</div>
+                  <div className="font-mono text-[11px] text-slate-500 break-all">{rfq.txHash}</div>
+                  <p className="font-mono text-[10px] text-slate-700 mt-1">
+                    SupraEVM returns an indexing hash — not the final on-chain TX hash
+                  </p>
+                </div>
+              )}
+            </>
+          )}
+          <div className="flex items-center gap-2 pt-1">
+            <Loader2 className="w-3.5 h-3.5 text-slate-600 animate-spin" />
+            <span className="font-mono text-[10px] text-slate-600">Polling every 3s…</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── SETTLED ──────────────────────────────────────────────────────────────────
+  if (isSettled) {
+    return (
+      <div className="space-y-5">
+        <div className="text-center py-2">
+          <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-4">
+            <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+          </div>
+          <StatusBadge status="SETTLED" />
+          <h3 className="font-mono text-lg font-bold text-emerald-300 mt-3 mb-1">Trade Complete</h3>
+          <p className="font-mono text-xs text-slate-400">{tradeSummary}</p>
+        </div>
+
+        {rfq.txHash && rfq.txHash !== 'stub-settled' && (
+          <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl px-4 py-3">
+            <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-600 mb-1">TX Hash (Indexing)</div>
+            <div className="font-mono text-xs text-emerald-300/80 break-all">{rfq.txHash}</div>
+            <p className="font-mono text-[10px] text-slate-600 mt-1">
+              SupraEVM indexing hash — final hash available once chain confirms
+            </p>
+          </div>
+        )}
+
+        <button onClick={onReset}
+          className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-mono text-sm font-bold transition-all hover:shadow-[0_0_24px_rgba(139,92,246,0.4)]"
+        >
+          <RefreshCw className="w-4 h-4" />
+          New RFQ
+        </button>
+      </div>
+    );
+  }
+
+  // ── FAILED / EXPIRED / CANCELLED ─────────────────────────────────────────────
+  return (
+    <div className="space-y-5">
+      <div className="text-center py-2">
+        <div className="w-16 h-16 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mx-auto mb-4">
+          <XCircle className="w-8 h-8 text-rose-400" />
+        </div>
+        <StatusBadge status={status} />
+        <h3 className="font-mono text-lg font-bold text-rose-300 mt-3 mb-1">
+          {status === 'EXPIRED' ? 'Quote Expired' :
+           status === 'CANCELLED' ? 'Order Cancelled' : 'Trade Failed'}
+        </h3>
+        <p className="font-mono text-xs text-slate-400">{tradeSummary}</p>
+      </div>
 
       {rfq.errorMsg && (
-        <div className="bg-rose-500/10 border border-rose-500/30 rounded-xl px-4 py-3 text-left">
+        <div className="bg-rose-500/10 border border-rose-500/30 rounded-xl px-4 py-3">
+          <div className="font-mono text-[10px] uppercase tracking-widest text-rose-600 mb-1">Error Reason</div>
           <p className="font-mono text-xs text-rose-300">{rfq.errorMsg}</p>
         </div>
       )}
 
-      <button
-        onClick={onReset}
-        className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/10 text-slate-400 hover:text-white hover:border-white/20 font-mono text-sm transition-all"
-      >
-        <RefreshCw className="w-4 h-4" />
-        New RFQ
-      </button>
+      <div className="grid grid-cols-2 gap-3">
+        <button onClick={onRetry}
+          className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-mono text-sm font-bold transition-all"
+        >
+          <RefreshCw className="w-4 h-4" />
+          Try Again
+        </button>
+        <button onClick={onReset}
+          className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-white/10 text-slate-400 hover:text-white hover:border-white/20 font-mono text-sm transition-all"
+        >
+          New RFQ
+        </button>
+      </div>
     </div>
   );
 }
 
 // ── Main Component ─────────────────────────────────────────────────────────────
 export default function RFQInterface() {
-  const [step, setStep] = useState<Step>('form');
+  const [step, setStep]             = useState<Step>('form');
   const [evmAddress, setEvmAddress] = useState<string | null>(null);
-  const [rfq, setRfq] = useState<RFQ | null>(null);
+  const [wrongNetwork, setWrongNet] = useState(false);
+  const [nftChecking, setNftCheck]  = useState(false);
+  const [hasNFT, setHasNFT]         = useState<boolean | null>(null);  // null = unchecked
+  const [rfq, setRfq]               = useState<RFQ | null>(null);
+  const [lastFields, setLastFields] = useState<FormFields | null>(null);
+
   const [submitLoading, setSubmitLoading] = useState(false);
   const [acceptLoading, setAcceptLoading] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
-  const [acceptError, setAcceptError] = useState<string | null>(null);
+  const [formError, setFormError]         = useState<string | null>(null);
+  const [acceptError, setAcceptError]     = useState<string | null>(null);
 
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // ── Resolve EVM address on mount and on provider events ─────────────────────
+  // ── Resolve EVM address + chain + NFT on mount ───────────────────────────────
   useEffect(() => {
-    getEvmAddress().then(setEvmAddress);
+    async function init() {
+      const addr = await getEvmAddress();
+      setEvmAddress(addr);
+
+      const chainId = await getChainId();
+      setWrongNet(!!chainId && chainId.toLowerCase() !== SUPRA_CHAIN.toLowerCase());
+
+      if (addr) {
+        setNftCheck(true);
+        const bal = await fetchNFTBalance(addr);
+        setHasNFT(bal > 0);
+        setNftCheck(false);
+      }
+    }
+    init();
 
     const p = getEvmProvider();
     if (!p) return;
 
-    const onAccountsChanged = (accounts: string[]) => {
-      setEvmAddress(accounts[0]?.toLowerCase() ?? null);
+    const onAccountsChanged = async (accounts: string[]) => {
+      const addr = accounts[0]?.toLowerCase() ?? null;
+      setEvmAddress(addr);
+      if (addr) {
+        setNftCheck(true);
+        const bal = await fetchNFTBalance(addr);
+        setHasNFT(bal > 0);
+        setNftCheck(false);
+      } else {
+        setHasNFT(null);
+      }
     };
+
+    const onChainChanged = (chainId: string) => {
+      setWrongNet(chainId.toLowerCase() !== SUPRA_CHAIN.toLowerCase());
+    };
+
     p.on?.('accountsChanged', onAccountsChanged);
-    return () => p.removeListener?.('accountsChanged', onAccountsChanged);
+    p.on?.('chainChanged',    onChainChanged);
+    return () => {
+      p.removeListener?.('accountsChanged', onAccountsChanged);
+      p.removeListener?.('chainChanged',    onChainChanged);
+    };
   }, []);
 
-  // ── Polling ──────────────────────────────────────────────────────────────────
+  // ── Poll helpers ─────────────────────────────────────────────────────────────
   const stopPoll = useCallback(() => {
     if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
   }, []);
 
-  const startPoll = useCallback((id: string) => {
+  useEffect(() => () => stopPoll(), [stopPoll]);
+
+  const startPoll = useCallback((id: string, onQuoted: (r: RFQ) => void) => {
     stopPoll();
     pollRef.current = setInterval(async () => {
       try {
-        const res = await fetch(`${CLAWBOT_URL}/api/rfq/${id}`);
+        const res  = await fetch(`${CLAWBOT_URL}/api/rfq/${id}`);
         const data = await res.json();
         if (!data.ok) return;
-        const updated: RFQ = data.rfq;
-        setRfq(updated);
-
-        if (updated.status === 'QUOTED') {
-          stopPoll();
-          setStep('quoted');
-        } else if (['FAILED', 'EXPIRED', 'CANCELLED'].includes(updated.status)) {
-          stopPoll();
-          setStep('done');
-        } else if (['MATCHED', 'EXECUTING', 'SETTLED'].includes(updated.status)) {
-          stopPoll();
-          setStep('done');
+        const r: RFQ = data.rfq;
+        setRfq(r);
+        if (r.status === 'QUOTED') { stopPoll(); onQuoted(r); }
+        else if (['FAILED', 'EXPIRED', 'CANCELLED'].includes(r.status)) {
+          stopPoll(); setStep('failed');
         }
-      } catch {
-        // network error — keep polling
-      }
-    }, POLL_INTERVAL_MS);
+      } catch { /* keep polling */ }
+    }, POLL_MS);
   }, [stopPoll]);
 
-  useEffect(() => () => stopPoll(), [stopPoll]);
-
-  // ── Poll for settlement after accepting ──────────────────────────────────────
   const startSettlementPoll = useCallback((id: string) => {
     stopPoll();
     pollRef.current = setInterval(async () => {
       try {
-        const res = await fetch(`${CLAWBOT_URL}/api/rfq/${id}`);
+        const res  = await fetch(`${CLAWBOT_URL}/api/rfq/${id}`);
         const data = await res.json();
         if (!data.ok) return;
-        const updated: RFQ = data.rfq;
-        setRfq(updated);
-        if (['SETTLED', 'FAILED', 'CANCELLED', 'EXPIRED'].includes(updated.status)) {
-          stopPoll();
-          setStep('done');
+        const r: RFQ = data.rfq;
+        setRfq(r);
+        if (r.status === 'SETTLED') { stopPoll(); setStep('done'); }
+        else if (['FAILED', 'EXPIRED', 'CANCELLED'].includes(r.status)) {
+          stopPoll(); setStep('done'); // DoneStep checks status for FAILED display
         }
+        // MATCHED / EXECUTING: keep polling, DoneStep re-renders automatically
       } catch { /* keep polling */ }
-    }, POLL_INTERVAL_MS);
+    }, POLL_MS);
   }, [stopPoll]);
 
-  // ── Submit RFQ ───────────────────────────────────────────────────────────────
-  const handleSubmit = async (fields: {
-    pair: Pair; amount: number; direction: 'buy' | 'sell';
-    deadline: number; maxSlippageBps: number;
-  }) => {
+  // ── Submit ───────────────────────────────────────────────────────────────────
+  const handleSubmit = async (fields: FormFields) => {
     if (!evmAddress) { setFormError('EVM address not available'); return; }
+    setLastFields(fields);
     setSubmitLoading(true);
     setFormError(null);
     try {
-      const res = await fetch(`${CLAWBOT_URL}/api/rfq/submit`, {
+      const res  = await fetch(`${CLAWBOT_URL}/api/rfq/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...fields, takerAddress: evmAddress }),
@@ -634,15 +797,15 @@ export default function RFQInterface() {
       if (!data.ok) { setFormError(data.error ?? 'Submit failed'); return; }
       setRfq(data.rfq);
       setStep('polling');
-      startPoll(data.rfq.id);
+      startPoll(data.rfq.id, () => setStep('quoted'));
     } catch (e) {
-      setFormError(e instanceof Error ? e.message : 'Network error');
+      setFormError(e instanceof Error ? e.message : 'Network error — is ClawBot running?');
     } finally {
       setSubmitLoading(false);
     }
   };
 
-  // ── Accept Quote ─────────────────────────────────────────────────────────────
+  // ── Accept ───────────────────────────────────────────────────────────────────
   const handleAccept = async () => {
     if (!rfq || !evmAddress) return;
     setAcceptLoading(true);
@@ -651,7 +814,7 @@ export default function RFQInterface() {
       const message = buildAcceptMessage(rfq);
       const takerSignature = await signMessage(message, evmAddress);
 
-      const res = await fetch(`${CLAWBOT_URL}/api/rfq/${rfq.id}/accept`, {
+      const res  = await fetch(`${CLAWBOT_URL}/api/rfq/${rfq.id}/accept`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ takerSignature }),
@@ -659,24 +822,45 @@ export default function RFQInterface() {
       const data = await res.json();
 
       if (!data.ok) {
-        setAcceptError(data.error ?? 'Accept failed');
+        // Classify error for better UX
+        if (data.error?.includes('expired')) {
+          setAcceptError('Quote expired — please submit a new RFQ');
+        } else if (data.error?.includes('Signature')) {
+          setAcceptError('Signature mismatch — make sure you sign with the connected wallet');
+        } else {
+          setAcceptError(data.error ?? 'Accept failed');
+        }
         return;
       }
 
       setRfq(data.rfq);
-      setStep('accepting');
-      // Transition to done once settlement resolves
+      setStep('settlement');
       startSettlementPoll(data.rfq.id);
-      setStep('done');
     } catch (e) {
-      setAcceptError(e instanceof Error ? e.message : 'Signing failed');
+      // Distinguish user rejection from other errors
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((e as any)?.code === 4001) {
+        setAcceptError('Signature rejected — you cancelled the signing request');
+      } else {
+        setAcceptError(e instanceof Error ? e.message : 'Signing failed');
+      }
     } finally {
       setAcceptLoading(false);
     }
   };
 
-  // ── Reset ────────────────────────────────────────────────────────────────────
+  // ── Reset / Retry ─────────────────────────────────────────────────────────────
   const handleReset = () => {
+    stopPoll();
+    setRfq(null);
+    setFormError(null);
+    setAcceptError(null);
+    setLastFields(null);
+    setStep('form');
+  };
+
+  // Retry: go back to form but keep last fields pre-filled
+  const handleRetry = () => {
     stopPoll();
     setRfq(null);
     setFormError(null);
@@ -694,29 +878,28 @@ export default function RFQInterface() {
           ClawBot — RFQ Trading
         </span>
         {rfq && (
-          <span className="ml-auto">
-            <StatusBadge status={rfq.status} />
-          </span>
+          <span className="ml-auto"><StatusBadge status={rfq.status} /></span>
         )}
       </div>
 
       <Stepper step={step} />
 
-      {/* Step content */}
       {step === 'form' && (
         <FormStep
           evmAddress={evmAddress}
+          nftChecking={nftChecking}
+          hasNFT={hasNFT}
+          wrongNetwork={wrongNetwork}
           onSubmit={handleSubmit}
           loading={submitLoading}
           error={formError}
+          initialFields={lastFields}
         />
       )}
 
-      {(step === 'polling') && rfq && (
-        <PollingStep rfq={rfq} />
-      )}
+      {step === 'polling' && rfq && <PollingStep rfq={rfq} />}
 
-      {(step === 'quoted') && rfq && (
+      {step === 'quoted' && rfq && (
         <QuoteStep
           rfq={rfq}
           onAccept={handleAccept}
@@ -725,18 +908,12 @@ export default function RFQInterface() {
         />
       )}
 
-      {(step === 'done' || step === 'accepting') && rfq && (
-        <DoneStep rfq={rfq} onReset={handleReset} />
+      {(step === 'settlement' || step === 'done') && rfq && (
+        <SettlementStep rfq={rfq} onReset={handleReset} onRetry={handleRetry} />
       )}
 
-      {step === 'error' && (
-        <div className="text-center py-8">
-          <XCircle className="w-10 h-10 text-rose-400 mx-auto mb-3" />
-          <p className="font-mono text-sm text-rose-300 mb-4">{formError ?? acceptError ?? 'Unknown error'}</p>
-          <button onClick={handleReset} className="font-mono text-xs text-slate-400 hover:text-white underline">
-            Start over
-          </button>
-        </div>
+      {step === 'failed' && rfq && (
+        <SettlementStep rfq={rfq} onReset={handleReset} onRetry={handleRetry} />
       )}
     </div>
   );
