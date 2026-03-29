@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Lock, Zap } from 'lucide-react';
+import { Lock, Zap, CheckCircle, RefreshCw } from 'lucide-react';
 import Image from 'next/image';
 import { useWallet } from '@context/WalletContext';
 
@@ -55,10 +55,12 @@ const strategies: StrategyCard[] = [
 
 export default function StrategiesPage() {
   const router = useRouter();
-  const { address, connected } = useWallet();
+  const { address, connected, isNFTHolder, nftCount, nftCheckLoading, notFound } = useWallet();
 
   const shortAddress = (addr: string) =>
     addr.length > 12 ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : addr;
+
+  const canActivate = connected && isNFTHolder;
 
   return (
     <div className="terminal-container terminal-theme-scope">
@@ -113,6 +115,22 @@ export default function StrategiesPage() {
                 <span className="text-slate-400">Wallet not connected</span>
               )}
             </div>
+
+            {/* NFT holder badge */}
+            {connected && !nftCheckLoading && isNFTHolder && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 font-mono text-[0.65rem] text-emerald-300 font-bold tracking-widest uppercase">
+                <CheckCircle className="w-3 h-3" />
+                COSMO Holder ✓{nftCount > 1 ? ` ×${nftCount}` : ''}
+              </span>
+            )}
+
+            {/* NFT check loading */}
+            {connected && nftCheckLoading && (
+              <span className="inline-flex items-center gap-1.5 font-mono text-xs text-slate-500">
+                <RefreshCw className="w-3 h-3 animate-spin" />
+                Checking NFT…
+              </span>
+            )}
           </div>
 
           {!connected && (
@@ -126,6 +144,30 @@ export default function StrategiesPage() {
         </div>
       </section>
 
+      {/* NFT Gate Overlay — connected but not a holder */}
+      {connected && !nftCheckLoading && !isNFTHolder && (
+        <section className="relative z-10 max-w-7xl mx-auto px-6 pb-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-5 rounded-2xl border border-rose-500/30 bg-rose-500/5 px-6 py-5">
+            <div>
+              <p className="font-mono text-sm font-bold text-rose-400 mb-1">
+                COSMO NFT required to activate strategies
+              </p>
+              <p className="font-sans text-xs text-slate-400">
+                You need at least one COSMO ClawAgent NFT in this wallet to unlock the Strategy Hub.
+              </p>
+            </div>
+            <a
+              href="https://www.tradeport.xyz"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-shrink-0 px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-mono text-sm font-semibold transition-all hover:shadow-[0_0_20px_rgba(244,63,94,0.4)]"
+            >
+              Mint on TradePort →
+            </a>
+          </div>
+        </section>
+      )}
+
       {/* Strategy Cards */}
       <section className="relative z-10 max-w-7xl mx-auto px-6 pb-16">
         <div className="grid md:grid-cols-3 gap-5">
@@ -133,11 +175,11 @@ export default function StrategiesPage() {
             <div
               key={strategy.title}
               className={`bento-item relative flex flex-col transition-all duration-300 ${
-                !connected ? 'opacity-70' : ''
+                !canActivate ? 'opacity-70' : ''
               }`}
             >
-              {/* Lock overlay — not connected */}
-              {!connected && (
+              {/* Lock overlay — not activated */}
+              {!canActivate && (
                 <div className="absolute top-4 right-4 z-10">
                   <div className="w-7 h-7 rounded-lg bg-slate-800/80 border border-white/10 flex items-center justify-center">
                     <Lock className="w-3.5 h-3.5 text-slate-400" />
@@ -178,14 +220,14 @@ export default function StrategiesPage() {
 
               {/* Activate button */}
               <button
-                disabled={!connected}
+                disabled={!canActivate}
                 className={`w-full py-2.5 rounded-xl font-mono text-sm font-semibold transition-all duration-200 ${
-                  connected
+                  canActivate
                     ? 'bg-purple-600 hover:bg-purple-500 text-white hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]'
                     : 'bg-white/[0.04] text-slate-600 cursor-not-allowed border border-white/[0.06]'
                 }`}
               >
-                {connected ? 'Activate' : 'Locked'}
+                {canActivate ? 'Activate' : 'Locked'}
               </button>
             </div>
           ))}

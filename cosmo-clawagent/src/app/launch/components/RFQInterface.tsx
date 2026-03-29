@@ -74,7 +74,23 @@ interface FormFields {
   maxSlippageBps: number;
 }
 
-// ── EVM Provider Helpers ───────────────────────────────────────────────────────
+// ── Provider Status ────────────────────────────────────────────────────────────
+// Three distinct wallet states:
+//   no-starkey  — window.starkey is absent (extension not installed)
+//   supra-only  — window.starkey.supra exists but .evm does not
+//                 (user is on Supra Native network, not SupraEVM)
+//   ready       — window.starkey.evm exists and is usable
+type ProviderStatus = 'no-starkey' | 'supra-only' | 'ready';
+
+function getProviderStatus(): ProviderStatus {
+  if (typeof window === 'undefined') return 'no-starkey';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sk = (window as any).starkey;
+  if (!sk) return 'no-starkey';
+  if (!sk.evm) return 'supra-only';
+  return 'ready';
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getEvmProvider = (): any =>
   typeof window !== 'undefined' ? (window as any).starkey?.evm ?? null : null;
@@ -93,6 +109,23 @@ async function getChainId(): Promise<string | null> {
   if (!p) return null;
   try { return await p.request({ method: 'eth_chainId' }); }
   catch { return null; }
+}
+
+/** Ask StarKey to switch to SupraEVM testnet. Returns error string or null. */
+async function switchToSupraEVM(): Promise<string | null> {
+  const p = getEvmProvider();
+  if (!p) return 'EVM provider not available';
+  try {
+    await p.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: SUPRA_CHAIN }],
+    });
+    return null;
+  } catch (e) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ((e as any)?.code === 4001) return 'Switch rejected';
+    return e instanceof Error ? e.message : 'Switch failed';
+  }
 }
 
 /** Check NFT balance via raw eth_call (no ethers needed) */
@@ -228,16 +261,81 @@ function NFTGateBanner({ loading }: { loading: boolean }) {
   );
 }
 
-// ── Network Warning ────────────────────────────────────────────────────────────
-function NetworkWarning() {
+// ── Wallet State Banners ───────────────────────────────────────────────────────
+
+/** window.starkey not found — extension not installed */
+function NoStarkeyBanner() {
+  return (
+    <div className="bg-slate-500/5 border border-slate-500/20 rounded-xl p-4 flex items-start gap-3">
+      <AlertTriangle className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />
+      <div>
+        <p className="font-mono text-sm text-slate-200 font-semibold mb-1">
+          StarKey Wallet Not Found
+        </p>
+        <p className="font-mono text-xs text-slate-400 mb-3">
+          Install StarKey Wallet to access RFQ trading.
+        </p>
+        <a
+          href="https://starkey.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-600/30 border border-slate-500/40 text-slate-300 font-mono text-xs font-semibold hover:bg-slate-600/50 transition-all"
+        >
+          <ExternalLink className="w-3.5 h-3.5" />
+          Install StarKey
+        </a>
+      </div>
+    </div>
+  );
+}
+
+/** window.starkey.supra exists but .evm does not — user on Supra Native */
+function SupraOnlyBanner({ onSwitch, switching }: { onSwitch: () => void; switching: boolean }) {
+  return (
+    <div className="bg-yellow-500/5 border border-yellow-500/25 rounded-xl p-4 flex items-start gap-3">
+      <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+      <div className="flex-1">
+        <p className="font-mono text-sm text-yellow-200 font-semibold mb-1">
+          Switch to SupraEVM Network
+        </p>
+        <p className="font-mono text-xs text-slate-400 mb-3">
+          You&apos;re connected to Supra Native. RFQ trading requires the SupraEVM network in StarKey.
+        </p>
+        <button
+          onClick={onSwitch}
+          disabled={switching}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-500/20 border border-yellow-500/40 text-yellow-300 font-mono text-xs font-semibold hover:bg-yellow-500/30 disabled:opacity-50 transition-all"
+        >
+          {switching
+            ? <><Loader2 className="w-3.5 h-3.5 animate-spin" />Switching…</>
+            : <><Zap className="w-3.5 h-3.5" />Switch Network</>
+          }
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/** EVM provider available but on wrong chain ID */
+function WrongChainBanner({ onSwitch, switching }: { onSwitch: () => void; switching: boolean }) {
   return (
     <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-xl px-4 py-3 flex items-start gap-2">
       <AlertTriangle className="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" />
-      <div>
-        <p className="font-mono text-xs text-yellow-300 font-semibold">Wrong Network</p>
-        <p className="font-mono text-[11px] text-yellow-400/70 mt-0.5">
-          Switch StarKey to SupraEVM Testnet (Chain ID 523994005626)
+      <div className="flex-1">
+        <p className="font-mono text-xs text-yellow-300 font-semibold">Wrong Chain</p>
+        <p className="font-mono text-[11px] text-yellow-400/70 mt-0.5 mb-2">
+          SupraEVM Testnet required (Chain ID 523994005626)
         </p>
+        <button
+          onClick={onSwitch}
+          disabled={switching}
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-yellow-500/20 border border-yellow-500/40 text-yellow-300 font-mono text-[11px] font-semibold hover:bg-yellow-500/30 disabled:opacity-50 transition-all"
+        >
+          {switching
+            ? <><Loader2 className="w-3 h-3 animate-spin" />Switching…</>
+            : <><Zap className="w-3 h-3" />Switch Chain</>
+          }
+        </button>
       </div>
     </div>
   );
@@ -245,18 +343,22 @@ function NetworkWarning() {
 
 // ── Step 1: Form ───────────────────────────────────────────────────────────────
 interface FormStepProps {
-  evmAddress:    string | null;
-  nftChecking:   boolean;
-  hasNFT:        boolean | null;
-  wrongNetwork:  boolean;
-  onSubmit:      (fields: FormFields) => void;
-  loading:       boolean;
-  error:         string | null;
-  initialFields: FormFields | null;
+  evmAddress:      string | null;
+  providerStatus:  ProviderStatus;
+  nftChecking:     boolean;
+  hasNFT:          boolean | null;
+  wrongChain:      boolean;
+  switching:       boolean;
+  onSwitch:        () => void;
+  onSubmit:        (fields: FormFields) => void;
+  loading:         boolean;
+  error:           string | null;
+  initialFields:   FormFields | null;
 }
 
 function FormStep({
-  evmAddress, nftChecking, hasNFT, wrongNetwork,
+  evmAddress, providerStatus, nftChecking, hasNFT,
+  wrongChain, switching, onSwitch,
   onSubmit, loading, error, initialFields,
 }: FormStepProps) {
   const [pair, setPair]               = useState<Pair>(initialFields?.pair ?? 'ETH/USDC');
@@ -278,7 +380,7 @@ function FormStep({
     onSubmit({ pair, amount: n, direction, deadline, maxSlippageBps });
   };
 
-  const canSubmit = !!evmAddress && hasNFT === true && !wrongNetwork && !loading;
+  const canSubmit = providerStatus === 'ready' && !!evmAddress && hasNFT === true && !wrongChain && !loading;
 
   return (
     <div className="space-y-5">
@@ -368,23 +470,29 @@ function FormStep({
         </div>
       </div>
 
-      {/* Status row: EVM address + NFT gate + network */}
-      {wrongNetwork && <NetworkWarning />}
+      {/* Status row: provider check → network check → NFT gate → address */}
+      {providerStatus === 'no-starkey' && <NoStarkeyBanner />}
 
-      {!wrongNetwork && !evmAddress && (
-        <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-xl px-4 py-3 flex items-start gap-2">
-          <AlertTriangle className="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" />
-          <p className="font-mono text-xs text-yellow-300">
-            StarKey EVM provider not found — connect to SupraEVM.
-          </p>
+      {providerStatus === 'supra-only' && (
+        <SupraOnlyBanner onSwitch={onSwitch} switching={switching} />
+      )}
+
+      {providerStatus === 'ready' && wrongChain && (
+        <WrongChainBanner onSwitch={onSwitch} switching={switching} />
+      )}
+
+      {providerStatus === 'ready' && !wrongChain && !evmAddress && (
+        <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-xl px-4 py-3 flex items-center gap-2">
+          <Loader2 className="w-4 h-4 text-yellow-500 animate-spin flex-shrink-0" />
+          <p className="font-mono text-xs text-yellow-300">Connecting to SupraEVM…</p>
         </div>
       )}
 
-      {!wrongNetwork && evmAddress && (hasNFT === false || nftChecking) && (
+      {providerStatus === 'ready' && !wrongChain && evmAddress && (hasNFT === false || nftChecking) && (
         <NFTGateBanner loading={nftChecking} />
       )}
 
-      {!wrongNetwork && evmAddress && hasNFT === true && (
+      {providerStatus === 'ready' && !wrongChain && evmAddress && hasNFT === true && (
         <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3 flex items-center justify-between">
           <div>
             <div className="font-mono text-[10px] uppercase tracking-widest text-slate-600 mb-0.5">Taker (EVM)</div>
@@ -680,10 +788,12 @@ function SettlementStep({ rfq, onReset, onRetry }: SettlementStepProps) {
 
 // ── Main Component ─────────────────────────────────────────────────────────────
 export default function RFQInterface() {
-  const [step, setStep]             = useState<Step>('form');
-  const [evmAddress, setEvmAddress] = useState<string | null>(null);
-  const [wrongNetwork, setWrongNet] = useState(false);
-  const [nftChecking, setNftCheck]  = useState(false);
+  const [step, setStep]               = useState<Step>('form');
+  const [evmAddress, setEvmAddress]   = useState<string | null>(null);
+  const [providerStatus, setProviderStatus] = useState<ProviderStatus>('no-starkey');
+  const [wrongChain, setWrongChain]   = useState(false);
+  const [switching, setSwitching]     = useState(false);
+  const [nftChecking, setNftCheck]    = useState(false);
   const [hasNFT, setHasNFT]         = useState<boolean | null>(null);  // null = unchecked
   const [rfq, setRfq]               = useState<RFQ | null>(null);
   const [lastFields, setLastFields] = useState<FormFields | null>(null);
@@ -698,11 +808,13 @@ export default function RFQInterface() {
   // ── Resolve EVM address + chain + NFT on mount ───────────────────────────────
   useEffect(() => {
     async function init() {
+      setProviderStatus(getProviderStatus());
+
       const addr = await getEvmAddress();
       setEvmAddress(addr);
 
       const chainId = await getChainId();
-      setWrongNet(!!chainId && chainId.toLowerCase() !== SUPRA_CHAIN.toLowerCase());
+      setWrongChain(!!chainId && chainId.toLowerCase() !== SUPRA_CHAIN.toLowerCase());
 
       if (addr) {
         setNftCheck(true);
@@ -717,6 +829,7 @@ export default function RFQInterface() {
     if (!p) return;
 
     const onAccountsChanged = async (accounts: string[]) => {
+      setProviderStatus(getProviderStatus());
       const addr = accounts[0]?.toLowerCase() ?? null;
       setEvmAddress(addr);
       if (addr) {
@@ -730,7 +843,8 @@ export default function RFQInterface() {
     };
 
     const onChainChanged = (chainId: string) => {
-      setWrongNet(chainId.toLowerCase() !== SUPRA_CHAIN.toLowerCase());
+      setProviderStatus(getProviderStatus());
+      setWrongChain(chainId.toLowerCase() !== SUPRA_CHAIN.toLowerCase());
     };
 
     p.on?.('accountsChanged', onAccountsChanged);
@@ -851,6 +965,18 @@ export default function RFQInterface() {
     }
   };
 
+  // ── Switch Network ───────────────────────────────────────────────────────────
+  const handleSwitch = async () => {
+    setSwitching(true);
+    const err = await switchToSupraEVM();
+    setSwitching(false);
+    if (!err) {
+      setProviderStatus(getProviderStatus());
+      const chainId = await getChainId();
+      setWrongChain(!!chainId && chainId.toLowerCase() !== SUPRA_CHAIN.toLowerCase());
+    }
+  };
+
   // ── Reset / Retry ─────────────────────────────────────────────────────────────
   const handleReset = () => {
     stopPoll();
@@ -891,7 +1017,10 @@ export default function RFQInterface() {
           evmAddress={evmAddress}
           nftChecking={nftChecking}
           hasNFT={hasNFT}
-          wrongNetwork={wrongNetwork}
+          providerStatus={providerStatus}
+          wrongChain={wrongChain}
+          switching={switching}
+          onSwitch={handleSwitch}
           onSubmit={handleSubmit}
           loading={submitLoading}
           error={formError}
