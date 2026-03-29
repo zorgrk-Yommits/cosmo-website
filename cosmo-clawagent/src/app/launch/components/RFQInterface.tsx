@@ -22,7 +22,9 @@ import {
 } from 'lucide-react';
 
 // ── Config ─────────────────────────────────────────────────────────────────────
-const CLAWBOT_URL   = process.env.NEXT_PUBLIC_CLAWBOT_URL ?? 'http://localhost:4000';
+// Empty string → relative URLs (/api/rfq/...) → works via Nginx proxy on production.
+// Set NEXT_PUBLIC_CLAWBOT_URL=http://localhost:4000 for local dev without Nginx.
+const CLAWBOT_URL   = process.env.NEXT_PUBLIC_CLAWBOT_URL ?? '';
 const POLL_MS       = 3_000;
 const SUPRA_CHAIN   = '0x' + (523994005626).toString(16); // 0x7a05e9d6a
 const NFT_CONTRACT  = '0xebA201EDBe6127AdbD55e4B44Fe39336BB89dd18';
