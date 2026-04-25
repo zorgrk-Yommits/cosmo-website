@@ -29,7 +29,7 @@ export default function LaunchPage() {
           <span className="blinking-cursor" />
         </h1>
         <p className="text-slate-400 font-sans text-lg max-w-xl mx-auto">
-          Connect your StarKey Wallet to activate ClawBot strategies and access the agent swarm.
+          Connect your StarKey Wallet to activate CosmoClaw strategies and access the agent swarm.
         </p>
       </section>
 

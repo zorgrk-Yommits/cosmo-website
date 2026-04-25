@@ -20,10 +20,10 @@ const strategies: StrategyCard[] = [
     badge: 'TIER 1',
     tag: 'SupraFX',
     subtitle: 'Autonomous · <$50 USDC',
-    desc: 'ClawBot autonomously responds to incoming SupraFX RFQs as Taker. Immediate on-chain execution within the 60-second settlement window.',
+    desc: 'CosmoClaw autonomously responds to incoming SupraFX RFQs as Taker. Immediate on-chain execution within the 60-second settlement window.',
     stats: [
       { label: 'Settlement', value: '+1 Rep/Trade' },
-      { label: 'Co-Signer', value: 'ClawBot' },
+      { label: 'Co-Signer', value: 'CosmoClaw' },
       { label: 'Notional', value: '<$50' },
     ],
   },
@@ -32,7 +32,7 @@ const strategies: StrategyCard[] = [
     badge: 'TIER 1',
     tag: 'SupraFX',
     subtitle: 'Vault Liquidity · Passive Yield',
-    desc: 'ClawBot provides liquidity as Maker in SupraFX Vaults. $COSMO as collateral — passive yield on idle collateral during settlement standby.',
+    desc: 'CosmoClaw provides liquidity as Maker in SupraFX Vaults. $COSMO as collateral — passive yield on idle collateral during settlement standby.',
     stats: [
       { label: 'Yield', value: 'Passive' },
       { label: 'Collateral', value: '$COSMO' },
@@ -44,10 +44,10 @@ const strategies: StrategyCard[] = [
     badge: 'TIER 1',
     tag: 'SupraFX',
     subtitle: 'Taker + Maker · Balanced',
-    desc: 'Dynamically combines Taker execution and Maker liquidity. ClawBot switches between both roles based on market conditions for maximum capital efficiency.',
+    desc: 'Dynamically combines Taker execution and Maker liquidity. CosmoClaw switches between both roles based on market conditions for maximum capital efficiency.',
     stats: [
       { label: 'Mode', value: 'Dynamic' },
-      { label: 'Co-Signer', value: 'ClawBot' },
+      { label: 'Co-Signer', value: 'CosmoClaw' },
       { label: 'Risk', value: 'Medium' },
     ],
   },
@@ -73,7 +73,7 @@ export default function StrategiesPage() {
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/25 mb-6">
               <Zap className="w-3 h-3 text-purple-400" />
               <span className="font-mono text-xs text-purple-300 tracking-widest uppercase">
-                ClawBot Strategy Hub
+                CosmoClaw Strategy Hub
               </span>
             </div>
             <h1 className="text-4xl md:text-6xl font-mono font-bold text-white mb-4">
@@ -81,7 +81,7 @@ export default function StrategiesPage() {
               <span className="blinking-cursor" />
             </h1>
             <p className="text-slate-400 font-sans text-lg max-w-2xl">
-              Select a strategy and let ClawBot handle execution autonomously within your authorized scope.
+              Select a strategy and let CosmoClaw handle execution autonomously within your authorized scope.
             </p>
           </div>
           <div className="hidden lg:block flex-shrink-0">

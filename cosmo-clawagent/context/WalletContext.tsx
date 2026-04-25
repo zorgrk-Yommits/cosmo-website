@@ -4,7 +4,8 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { checkCosmoNFTHolder } from '@/lib/nftGate';
 
 interface WalletContextType {
-  address: string | null;
+  address: string | null;       // Supra native Move-address (66-char) — NFT gate
+  evmAddress: string | null;    // EVM 0x-address (40-char) — RFQ taker signer
   connected: boolean;
   notFound: boolean;
   isNFTHolder: boolean;
@@ -17,6 +18,7 @@ interface WalletContextType {
 
 const WalletContext = createContext<WalletContextType>({
   address: null,
+  evmAddress: null,
   connected: false,
   notFound: false,
   isNFTHolder: false,
@@ -41,6 +43,10 @@ const getProvider = (): any => {
   return provider;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const getEvmProvider = (): any =>
+  typeof window !== 'undefined' ? (window as any).starkey?.evm ?? null : null;
+
 /** Extract a single lowercase native Supra address from whatever the provider returns. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function extractAddress(raw: any): string | null {
@@ -61,6 +67,7 @@ function extractAddress(raw: any): string | null {
 
 export function WalletProvider({ children }: { children: ReactNode }) {
   const [address, setAddress] = useState<string | null>(null);
+  const [evmAddress, setEvmAddress] = useState<string | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [isNFTHolder, setIsNFTHolder] = useState(false);
   const [nftCount, setNftCount] = useState(0);
@@ -106,6 +113,19 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       } else {
         console.warn('[WalletContext] could not extract address from provider');
       }
+
+      // Request EVM address in parallel — non-blocking if EVM provider absent
+      const evmP = getEvmProvider();
+      if (evmP) {
+        try {
+          const accs: string[] = await evmP.request({ method: 'eth_requestAccounts' });
+          setEvmAddress(accs?.[0]?.toLowerCase() ?? null);
+          console.log('[WalletContext] EVM address:', accs?.[0]?.toLowerCase());
+        } catch (evmErr: unknown) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          if ((evmErr as any)?.code !== 4001) console.warn('[WalletContext] EVM connect error:', evmErr);
+        }
+      }
     } catch (err: unknown) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if ((err as any)?.code !== 4001) console.error('[WalletContext] connect error:', err);
@@ -118,6 +138,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       try { await provider.disconnect(); } catch { /* ignore */ }
     }
     setAddress(null);
+    setEvmAddress(null);
     setIsNFTHolder(false);
     setNftCount(0);
     setNftCheckFailed(false);
@@ -125,41 +146,60 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const tryReconnect = async () => {
+      // ── Supra native reconnect ──────────────────────────────────────────────
       const provider = getProvider();
-      if (!provider) return;
-      try {
-        // Try to get existing session without prompting user
-        const raw = await provider.account?.();
-        console.log('[WalletContext] tryReconnect account():', JSON.stringify(raw));
-        const addr = extractAddress(raw);
-        if (addr) {
-          console.log('[WalletContext] auto-reconnected:', addr);
-          setAddress(addr);
-          await runNFTCheck(addr);
+      if (provider) {
+        try {
+          // Try to get existing session without prompting user
+          const raw = await provider.account?.();
+          console.log('[WalletContext] tryReconnect account():', JSON.stringify(raw));
+          const addr = extractAddress(raw);
+          if (addr) {
+            console.log('[WalletContext] auto-reconnected:', addr);
+            setAddress(addr);
+            await runNFTCheck(addr);
+          }
+        } catch (e) {
+          console.log('[WalletContext] tryReconnect: not previously connected', e);
         }
-      } catch (e) {
-        console.log('[WalletContext] tryReconnect: not previously connected', e);
-      }
 
-      provider.on?.('accountChanged', (accounts: string[]) => {
-        console.log('[WalletContext] accountChanged event:', accounts);
-        const addr = extractAddress(accounts);
-        if (addr) {
-          setAddress(addr);
-          runNFTCheck(addr);
-        } else {
+        provider.on?.('accountChanged', (accounts: string[]) => {
+          console.log('[WalletContext] accountChanged event:', accounts);
+          const addr = extractAddress(accounts);
+          if (addr) {
+            setAddress(addr);
+            runNFTCheck(addr);
+          } else {
+            setAddress(null);
+            setIsNFTHolder(false);
+            setNftCount(0);
+          }
+        });
+
+        provider.on?.('disconnect', () => {
+          console.log('[WalletContext] disconnect event');
           setAddress(null);
           setIsNFTHolder(false);
           setNftCount(0);
-        }
-      });
+        });
+      }
 
-      provider.on?.('disconnect', () => {
-        console.log('[WalletContext] disconnect event');
-        setAddress(null);
-        setIsNFTHolder(false);
-        setNftCount(0);
-      });
+      // ── EVM reconnect (silent — no prompt) ─────────────────────────────────
+      const evmP = getEvmProvider();
+      if (evmP) {
+        try {
+          const accs: string[] = await evmP.request({ method: 'eth_accounts' });
+          setEvmAddress(accs?.[0]?.toLowerCase() ?? null);
+          console.log('[WalletContext] EVM auto-reconnected:', accs?.[0]?.toLowerCase());
+        } catch (e) {
+          console.log('[WalletContext] EVM tryReconnect failed:', e);
+        }
+
+        evmP.on?.('accountsChanged', (accs: string[]) => {
+          console.log('[WalletContext] EVM accountsChanged:', accs);
+          setEvmAddress(accs?.[0]?.toLowerCase() ?? null);
+        });
+      }
     };
 
     const timer = setTimeout(tryReconnect, 500);
@@ -171,6 +211,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     <WalletContext.Provider
       value={{
         address,
+        evmAddress,
         connected: !!address,
         notFound,
         isNFTHolder,

@@ -2,7 +2,7 @@
 
 /**
  * RFQInterface.tsx
- * 3-step + settlement RFQ trading interface for ClawBot.
+ * 3-step + settlement RFQ trading interface for CosmoClaw.
  *
  * Step 1 — Form:       Pair, amount, direction, deadline, slippage
  *                      NFT gate: checks balanceOf(takerAddress) on ClawAgentNFT
@@ -20,6 +20,7 @@ import {
   ChevronRight, Loader2, CheckCircle2, XCircle, Clock,
   ArrowUpDown, Zap, AlertTriangle, RefreshCw, ExternalLink, Shield,
 } from 'lucide-react';
+import { useWallet } from '@context/WalletContext';
 
 // ── Config ─────────────────────────────────────────────────────────────────────
 // Empty string → relative URLs (/api/rfq/...) → works via Nginx proxy on production.
@@ -58,10 +59,12 @@ interface RFQ {
   maxSlippageBps: number;
   expiresAt:      number;
   quote:          RFQQuote | null;
-  takerSignature: string | null;
-  matchedAt:      number | null;
-  txHash:         string | null;
-  errorMsg:       string | null;
+  takerSignature:   string | null;
+  matchedAt:        number | null;
+  txHash:           string | null;
+  onChainRequestId: string | null;
+  onChainQuoteId:   string | null;
+  errorMsg:         string | null;
 }
 
 type Step = 'form' | 'polling' | 'quoted' | 'settlement' | 'done' | 'failed';
@@ -728,12 +731,30 @@ function SettlementStep({ rfq, onReset, onRetry }: SettlementStepProps) {
         </div>
 
         {rfq.txHash && rfq.txHash !== 'stub-settled' && (
-          <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl px-4 py-3">
-            <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-600 mb-1">TX Hash (Indexing)</div>
-            <div className="font-mono text-xs text-emerald-300/80 break-all">{rfq.txHash}</div>
-            <p className="font-mono text-[10px] text-slate-600 mt-1">
-              SupraEVM indexing hash — final hash available once chain confirms
-            </p>
+          <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl px-4 py-3 space-y-2.5">
+            <div>
+              <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-600 mb-1">TX Hash (Indexing)</div>
+              <div className="font-mono text-xs text-emerald-300/80 break-all">{rfq.txHash}</div>
+              <p className="font-mono text-[10px] text-slate-600 mt-1">
+                SupraEVM indexing hash — final hash available once chain confirms
+              </p>
+            </div>
+            {(rfq.onChainRequestId || rfq.onChainQuoteId) && (
+              <div className="pt-2 border-t border-emerald-500/10 grid grid-cols-2 gap-3">
+                {rfq.onChainRequestId && (
+                  <div>
+                    <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-600 mb-1">On-Chain Request ID</div>
+                    <div className="font-mono text-xs text-emerald-300/80">{rfq.onChainRequestId}</div>
+                  </div>
+                )}
+                {rfq.onChainQuoteId && (
+                  <div>
+                    <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-600 mb-1">On-Chain Quote ID</div>
+                    <div className="font-mono text-xs text-emerald-300/80">{rfq.onChainQuoteId}</div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
 
@@ -788,8 +809,10 @@ function SettlementStep({ rfq, onReset, onRetry }: SettlementStepProps) {
 
 // ── Main Component ─────────────────────────────────────────────────────────────
 export default function RFQInterface() {
+  // evmAddress comes from WalletContext — WalletContext owns EVM account state
+  const { evmAddress } = useWallet();
+
   const [step, setStep]               = useState<Step>('form');
-  const [evmAddress, setEvmAddress]   = useState<string | null>(null);
   const [providerStatus, setProviderStatus] = useState<ProviderStatus>('no-starkey');
   const [wrongChain, setWrongChain]   = useState(false);
   const [switching, setSwitching]     = useState(false);
@@ -805,55 +828,38 @@ export default function RFQInterface() {
 
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // ── Resolve EVM address + chain + NFT on mount ───────────────────────────────
+  // ── Resolve provider status + chain on mount ─────────────────────────────────
   useEffect(() => {
     async function init() {
       setProviderStatus(getProviderStatus());
-
-      const addr = await getEvmAddress();
-      setEvmAddress(addr);
-
       const chainId = await getChainId();
       setWrongChain(!!chainId && chainId.toLowerCase() !== SUPRA_CHAIN.toLowerCase());
-
-      if (addr) {
-        setNftCheck(true);
-        const bal = await fetchNFTBalance(addr);
-        setHasNFT(bal > 0);
-        setNftCheck(false);
-      }
     }
     init();
 
     const p = getEvmProvider();
     if (!p) return;
 
-    const onAccountsChanged = async (accounts: string[]) => {
-      setProviderStatus(getProviderStatus());
-      const addr = accounts[0]?.toLowerCase() ?? null;
-      setEvmAddress(addr);
-      if (addr) {
-        setNftCheck(true);
-        const bal = await fetchNFTBalance(addr);
-        setHasNFT(bal > 0);
-        setNftCheck(false);
-      } else {
-        setHasNFT(null);
-      }
-    };
-
     const onChainChanged = (chainId: string) => {
       setProviderStatus(getProviderStatus());
       setWrongChain(chainId.toLowerCase() !== SUPRA_CHAIN.toLowerCase());
     };
 
-    p.on?.('accountsChanged', onAccountsChanged);
-    p.on?.('chainChanged',    onChainChanged);
+    p.on?.('chainChanged', onChainChanged);
     return () => {
-      p.removeListener?.('accountsChanged', onAccountsChanged);
-      p.removeListener?.('chainChanged',    onChainChanged);
+      p.removeListener?.('chainChanged', onChainChanged);
     };
   }, []);
+
+  // ── NFT check whenever evmAddress changes (driven by WalletContext) ───────────
+  useEffect(() => {
+    if (!evmAddress) { setHasNFT(null); return; }
+    setNftCheck(true);
+    fetchNFTBalance(evmAddress).then((bal) => {
+      setHasNFT(bal > 0);
+      setNftCheck(false);
+    });
+  }, [evmAddress]);
 
   // ── Poll helpers ─────────────────────────────────────────────────────────────
   const stopPoll = useCallback(() => {
@@ -915,7 +921,7 @@ export default function RFQInterface() {
       setStep('polling');
       startPoll(data.rfq.id, () => setStep('quoted'));
     } catch (e) {
-      setFormError(e instanceof Error ? e.message : 'Network error — is ClawBot running?');
+      setFormError(e instanceof Error ? e.message : 'Network error — is CosmoClaw running?');
     } finally {
       setSubmitLoading(false);
     }
@@ -1003,7 +1009,7 @@ export default function RFQInterface() {
       <div className="flex items-center gap-2 mb-6">
         <Zap className="w-4 h-4 text-purple-400" />
         <span className="font-mono text-xs text-purple-300 tracking-widest uppercase">
-          ClawBot — RFQ Trading
+          CosmoClaw — RFQ Trading
         </span>
         {rfq && (
           <span className="ml-auto"><StatusBadge status={rfq.status} /></span>

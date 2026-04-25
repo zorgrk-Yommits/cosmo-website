@@ -17,7 +17,7 @@ const tiers = [
     riskColor: 'text-emerald-400',
     agent: 'Intake Agent + Gas Monitor',
     description:
-      'ClawBot Action Single agent signs and executes. Handles routine swaps, yield rebalancing, and small $COSMO trades. Fully autonomous — zero latency, zero human friction.',
+      'CosmoClaw Action Single agent signs and executes. Handles routine swaps, yield rebalancing, and small $COSMO trades. Fully autonomous — zero latency, zero human friction.',
     operations: [
       'Token swaps under $10,000 threshold',
       'Yield rebalancing across approved protocols',
@@ -339,12 +339,14 @@ export default function TerminalPage() {
                 </p>
               </div>
               <div className="flex items-center gap-3 shrink-0">
-                <Link
-                  href="/tokenomics"
+                <a
+                  href="https://www.tadfi.online/community-tokens/COSMO"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="px-5 py-2.5 rounded-xl border border-purple-500/30 text-purple-300 font-mono text-sm hover:border-purple-400 transition-all"
                 >
                   View Tokenomics
-                </Link>
+                </a>
                 <Link
                   href="/"
                   className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-mono text-sm font-semibold transition-all"
