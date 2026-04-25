@@ -6,10 +6,12 @@ import { Zap, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
-const navLinks = [
+const TOKENOMICS_URL = 'https://www.tadfi.online/community-tokens/COSMO';
+
+const navLinks: { href: string; label: string; external?: boolean }[] = [
   { href: '/', label: 'Home' },
   { href: '/strategies', label: 'Strategies' },
-  { href: '/tokenomics', label: 'Tokenomics' },
+  { href: TOKENOMICS_URL, label: 'Tokenomics', external: true },
   { href: '/whitepaper', label: 'Whitepaper' },
 ];
 
@@ -32,20 +34,29 @@ export default function Navigation() {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-1">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                'px-4 py-2 rounded-lg font-mono text-sm transition-all duration-200',
-                pathname === link.href
-                  ? 'bg-purple-500/15 text-purple-300 border border-purple-500/30'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const className = cn(
+              'px-4 py-2 rounded-lg font-mono text-sm transition-all duration-200',
+              pathname === link.href
+                ? 'bg-purple-500/15 text-purple-300 border border-purple-500/30'
+                : 'text-slate-400 hover:text-white hover:bg-white/5'
+            );
+            return link.external ? (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={className}
+              >
+                {link.label}
+              </a>
+            ) : (
+              <Link key={link.href} href={link.href} className={className}>
+                {link.label}
+              </Link>
+            );
+          })}
         </div>
 
         {/* CTA */}
@@ -70,21 +81,35 @@ export default function Navigation() {
       {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden border-t border-purple-500/20 bg-[#030712]/95 px-6 py-4 flex flex-col gap-2">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setMenuOpen(false)}
-              className={cn(
-                'px-4 py-3 rounded-lg font-mono text-sm transition-all',
-                pathname === link.href
-                  ? 'bg-purple-500/15 text-purple-300'
-                  : 'text-slate-400 hover:text-white'
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const className = cn(
+              'px-4 py-3 rounded-lg font-mono text-sm transition-all',
+              pathname === link.href
+                ? 'bg-purple-500/15 text-purple-300'
+                : 'text-slate-400 hover:text-white'
+            );
+            return link.external ? (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMenuOpen(false)}
+                className={className}
+              >
+                {link.label}
+              </a>
+            ) : (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className={className}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
           <Link
             href="/launch"
             onClick={() => setMenuOpen(false)}

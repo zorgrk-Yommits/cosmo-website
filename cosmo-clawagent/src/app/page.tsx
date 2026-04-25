@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Bot, Brain, Shield, Zap, ArrowRight, Activity, Network, Lock } from 'lucide-react';
+import { Bot, Brain, Shield, Zap, ArrowRight, Activity, Network } from 'lucide-react';
 import BentoItem from '@/components/ui/terminal-bento-grid';
 
 const agents = [
@@ -115,11 +115,13 @@ export default function HomePage() {
 
           {/* Left: Text block */}
           <div className="flex-1 pl-4 lg:pl-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/25 mb-8">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="font-mono text-xs text-purple-300 tracking-widest uppercase">
-                System Online — All Agents Active
-              </span>
+            <div className="flex flex-wrap items-center gap-2 mb-8">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/25">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="font-mono text-xs text-purple-300 tracking-widest uppercase">
+                  System Online — All Agents Active
+                </span>
+              </div>
             </div>
 
             <h1 className="text-5xl md:text-7xl font-mono font-bold tracking-tight mb-6 text-left">
@@ -272,12 +274,14 @@ export default function HomePage() {
                 </p>
               </div>
               <div className="flex items-center gap-3 shrink-0">
-                <Link
-                  href="/tokenomics"
+                <a
+                  href="https://www.tadfi.online/community-tokens/COSMO"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="px-5 py-2.5 rounded-xl border border-purple-500/30 text-purple-300 font-mono text-sm hover:border-purple-400 transition-all"
                 >
                   Tokenomics
-                </Link>
+                </a>
                 <Link
                   href="/launch"
                   className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-mono text-sm font-semibold transition-all hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]"
@@ -287,44 +291,6 @@ export default function HomePage() {
               </div>
             </div>
           </BentoItem>
-        </div>
-      </section>
-
-      {/* Feature Row */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 pb-24">
-        <div className="grid md:grid-cols-3 gap-6">
-          {[
-            {
-              icon: Bot,
-              title: 'Fully Autonomous Execution',
-              desc: 'AI agents handle routine DeFi operations end-to-end — no human needed for standard swaps and rebalancing.',
-              color: 'text-emerald-400',
-            },
-            {
-              icon: Lock,
-              title: 'Cryptographic Consensus',
-              desc: '2-of-3 agent committee for medium-risk ops. Stakers co-sign and earn $COSMO rewards for every approved transaction.',
-              color: 'text-cyan-400',
-            },
-            {
-              icon: Shield,
-              title: 'Human Safeguard Layer',
-              desc: 'High-value decisions always require NFT-holder approval via Discord/Telegram. The swarm prepares — you confirm.',
-              color: 'text-purple-400',
-            },
-          ].map((f) => {
-            const Icon = f.icon;
-            return (
-              <div
-                key={f.title}
-                className="bg-white/[0.02] border border-white/[0.08] rounded-2xl p-6 hover:border-white/[0.15] transition-all"
-              >
-                <Icon className={`w-8 h-8 ${f.color} mb-4`} />
-                <h3 className="font-mono text-base font-bold text-white mb-2">{f.title}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed font-sans">{f.desc}</p>
-              </div>
-            );
-          })}
         </div>
       </section>
 
