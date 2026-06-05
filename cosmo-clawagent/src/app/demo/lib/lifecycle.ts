@@ -176,6 +176,45 @@ export function groupQuants(raw: number): string {
   return raw.toLocaleString('en-US');
 }
 
+// ── Human-readable token amounts ($COSMO, 6 decimals) ───────────────────────
+// The display token is $COSMO with 6 decimals: a raw amount is divided by 10^6.
+export const TOKEN_DECIMALS = 6;
+const TOKEN_DIVISOR = 1_000_000; // 10^6
+export const TOKEN_SYMBOL = '$COSMO';
+
+// Exact raw -> token string. NO float division of the whole value (that yields
+// "498.4999..."): split into integer/remainder, pad+trim the fractional part.
+// Self-check (must hold exactly):
+//   formatToken(500_000_000) === "500"
+//   formatToken(498_500_000) === "498.5"
+//   formatToken(496_000_000) === "496"
+export function formatToken(raw: number): string {
+  const frac = raw % TOKEN_DIVISOR; // integer remainder, exact for safe integers
+  const whole = (raw - frac) / TOKEN_DIVISOR; // integer quotient, no float floor
+  const fracStr = String(frac).padStart(TOKEN_DECIMALS, '0').replace(/0+$/, '');
+  const wholeStr = whole.toLocaleString('en-US');
+  return fracStr ? `${wholeStr}.${fracStr}` : wholeStr;
+}
+
+// Token amount with the $COSMO symbol, e.g. "498.5 $COSMO".
+export function formatTokenWithSymbol(raw: number): string {
+  return `${formatToken(raw)} ${TOKEN_SYMBOL}`;
+}
+
+// Event-data keys that carry a raw token amount (-> eligible for token annotation
+// in the data panel). Deliberately excludes timestamps, ids, counts, addresses.
+export const AMOUNT_FIELDS = new Set<string>([
+  'amount_in',
+  'amount_out',
+  'promised_amount_out',
+  'min_amount_out',
+  'amount',
+  'max_amount_per_day',
+  'daily_cap',
+  'daily_used_after',
+  'request_fee_quants',
+]);
+
 // ── Snapshot metadata + SupraScan ───────────────────────────────────────────
 
 export const META = {

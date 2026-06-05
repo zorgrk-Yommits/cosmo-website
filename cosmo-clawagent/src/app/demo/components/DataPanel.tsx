@@ -7,6 +7,9 @@ import {
   META,
   supraScanTxUrl,
   truncateHex,
+  AMOUNT_FIELDS,
+  formatToken,
+  TOKEN_SYMBOL,
   type LifecycleStep,
 } from '../lib/lifecycle';
 
@@ -61,6 +64,11 @@ export default function DataPanel({ step }: DataPanelProps) {
                         <dt className="font-mono text-[11px] text-slate-500">{k}</dt>
                         <dd className="font-mono text-[11px] tabular-nums text-slate-300 text-right break-all">
                           {formatValue(v)}
+                          {AMOUNT_FIELDS.has(k) && /^\d+$/.test(String(v)) && (
+                            <span className="ml-1 text-slate-500">
+                              ({formatToken(Number(v))} {TOKEN_SYMBOL})
+                            </span>
+                          )}
                         </dd>
                       </div>
                     ))}
