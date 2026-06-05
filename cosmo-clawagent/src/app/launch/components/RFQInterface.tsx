@@ -2,7 +2,7 @@
 
 /**
  * RFQInterface.tsx
- * 3-step + settlement RFQ trading interface for CosmoClaw.
+ * 3-step + settlement RFQ trading interface for COSMO.
  *
  * Step 1 — Form:       Pair, amount, direction, deadline, slippage
  *                      NFT gate: checks balanceOf(takerAddress) on ClawAgentNFT
@@ -921,7 +921,7 @@ export default function RFQInterface() {
       setStep('polling');
       startPoll(data.rfq.id, () => setStep('quoted'));
     } catch (e) {
-      setFormError(e instanceof Error ? e.message : 'Network error — is CosmoClaw running?');
+      setFormError(e instanceof Error ? e.message : 'Network error — is COSMO running?');
     } finally {
       setSubmitLoading(false);
     }
@@ -1009,7 +1009,7 @@ export default function RFQInterface() {
       <div className="flex items-center gap-2 mb-6">
         <Zap className="w-4 h-4 text-purple-400" />
         <span className="font-mono text-xs text-purple-300 tracking-widest uppercase">
-          CosmoClaw — RFQ Trading
+          COSMO — RFQ Trading
         </span>
         {rfq && (
           <span className="ml-auto"><StatusBadge status={rfq.status} /></span>

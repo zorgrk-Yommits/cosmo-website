@@ -8,11 +8,9 @@ import { cn } from '@/lib/utils';
 
 const TOKENOMICS_URL = 'https://www.tadfi.online/community-tokens/COSMO';
 
-const navLinks: { href: string; label: string; external?: boolean }[] = [
+const navLinks: { href: string; label: string; external?: boolean; download?: boolean }[] = [
   { href: '/', label: 'Home' },
-  { href: '/strategies', label: 'Strategies' },
   { href: TOKENOMICS_URL, label: 'Tokenomics', external: true },
-  { href: '/whitepaper', label: 'Whitepaper' },
 ];
 
 export default function Navigation() {
@@ -28,7 +26,7 @@ export default function Navigation() {
             <Zap className="w-4 h-4 text-purple-400" />
           </div>
           <span className="font-mono font-bold text-white tracking-wide">
-            COSMO<span className="text-purple-400">CLAW</span>
+            <span className="text-purple-400">COSMO</span>
           </span>
         </Link>
 
@@ -45,8 +43,9 @@ export default function Navigation() {
               <a
                 key={link.href}
                 href={link.href}
-                target="_blank"
+                target={link.download ? undefined : '_blank'}
                 rel="noopener noreferrer"
+                download={link.download}
                 className={className}
               >
                 {link.label}
@@ -92,8 +91,9 @@ export default function Navigation() {
               <a
                 key={link.href}
                 href={link.href}
-                target="_blank"
+                target={link.download ? undefined : '_blank'}
                 rel="noopener noreferrer"
+                download={link.download}
                 onClick={() => setMenuOpen(false)}
                 className={className}
               >

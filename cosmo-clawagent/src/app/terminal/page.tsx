@@ -17,7 +17,7 @@ const tiers = [
     riskColor: 'text-emerald-400',
     agent: 'Intake Agent + Gas Monitor',
     description:
-      'CosmoClaw Action Single agent signs and executes. Handles routine swaps, yield rebalancing, and small $COSMO trades. Fully autonomous — zero latency, zero human friction.',
+      'COSMO Action Single agent signs and executes. Handles routine swaps, yield rebalancing, and small $COSMO trades. Fully autonomous — zero latency, zero human friction.',
     operations: [
       'Token swaps under $10,000 threshold',
       'Yield rebalancing across approved protocols',
@@ -361,7 +361,7 @@ export default function TerminalPage() {
 
       <footer className="relative z-10 border-t border-white/[0.06] py-8 text-center">
         <p className="font-mono text-xs text-slate-600">
-          © 2025 CosmoClawAgent — Autonomous DeFi Intelligence{' '}
+          © 2026 COSMO — Autonomous DeFi Intelligence{' '}
           <span className="text-purple-500">|</span> $COSMO
         </p>
       </footer>

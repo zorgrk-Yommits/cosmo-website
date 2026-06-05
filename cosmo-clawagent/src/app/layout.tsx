@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CosmoClawAgent — Autonomous DeFi Intelligence",
+  title: "COSMO — Autonomous DeFi Intelligence",
   description:
-    "The first multi-tier autonomous agent system for DeFi. Swaps, rebalancing, and $COSMO governance — all powered by AI.",
+    "EOM denkt. COSMO handelt. $COSMO bindet beides. The on-chain settlement layer for the EOM Swarm — eight agents, one execution layer on Supra L1.",
 };
 
 export default function RootLayout({

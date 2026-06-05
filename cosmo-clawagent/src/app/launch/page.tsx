@@ -2,7 +2,6 @@
 
 import { Zap, Wallet, LogOut, ExternalLink } from 'lucide-react';
 import { useWallet } from '@context/WalletContext';
-import Link from 'next/link';
 import RFQInterface from './components/RFQInterface';
 
 const shortAddress = (addr: string) =>
@@ -29,7 +28,7 @@ export default function LaunchPage() {
           <span className="blinking-cursor" />
         </h1>
         <p className="text-slate-400 font-sans text-lg max-w-xl mx-auto">
-          Connect your StarKey Wallet to activate CosmoClaw strategies and access the agent swarm.
+          Connect your StarKey Wallet to activate COSMO strategies and access the agent swarm.
         </p>
       </section>
 
@@ -69,13 +68,6 @@ export default function LaunchPage() {
                   <div className="font-mono text-sm text-emerald-300">{shortAddress(address!)}</div>
                 </div>
                 <div className="flex gap-2 flex-shrink-0">
-                  <Link
-                    href="/strategies"
-                    className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 font-mono text-xs font-semibold transition-all"
-                  >
-                    <Zap className="w-3.5 h-3.5" />
-                    Strats
-                  </Link>
                   <button
                     onClick={disconnect}
                     className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-white/10 text-slate-500 hover:text-white hover:border-white/20 font-mono text-xs transition-all"
@@ -124,7 +116,7 @@ export default function LaunchPage() {
 
       <footer className="relative z-10 border-t border-white/[0.06] py-8 text-center">
         <p className="font-mono text-xs text-slate-600">
-          © 2025 CosmoClawAgent — Autonomous DeFi Intelligence{' '}
+          © 2026 COSMO — Autonomous DeFi Intelligence{' '}
           <span className="text-purple-500">|</span> $COSMO
         </p>
       </footer>
