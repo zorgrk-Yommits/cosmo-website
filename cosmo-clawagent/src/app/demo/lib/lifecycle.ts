@@ -66,6 +66,18 @@ export interface LifecycleStep {
 
 const snap = snapshot as unknown as Snapshot;
 
+// The five entry labels that make up the live RFQ loop. Classification keys
+// on the move entry label, NOT on status: a fresh-deploy snapshot runs the
+// one-time setup txs with status "Success" too, so status cannot distinguish
+// setup from core. Strings are byte-exact from the snapshot "label" fields.
+const CORE_LABELS = new Set([
+  'create_request',
+  'submit_quote',
+  'fund_quote',
+  'accept_quote',
+  'execute_settlement',
+]);
+
 // Human-readable titles per move entry label.
 const TITLES: Record<string, string> = {
   publish: 'Publish package',
@@ -81,13 +93,14 @@ const TITLES: Record<string, string> = {
   create_request: 'Create request',
   sign_quote_offchain: 'Sign quote (off-chain)',
   submit_quote: 'Submit quote',
+  fund_quote: 'Fund quote',
   accept_quote: 'Accept quote',
   execute_settlement: 'Execute settlement',
 };
 
 function classify(s: RawStep): StepKind {
   if (s.status === 'off-chain') return 'offchain';
-  if (s.status === 'Success' && s.tx_hash.startsWith('0x')) return 'onchain';
+  if (CORE_LABELS.has(s.label)) return 'onchain';
   return 'setup';
 }
 
