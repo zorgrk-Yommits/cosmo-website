@@ -1,10 +1,11 @@
 // RFQ lifecycle model — derived from a static Supra-native testnet snapshot.
 // PURE data visualisation: no RPC, no wallet, no EVM. The snapshot is the only source.
 //
-// Source: step-9-events-2026-06-02.json (run 2026-06-02, chain_id 6 = Supra native).
-// We do NOT use the 06-01 run (its amount_out is 0 — economically meaningless OUT-side).
+// Source: d13-happy-events-2026-06-08.json (run 2026-06-08, chain_id 6 = Supra native).
+// Flow-proof snapshot from an ephemeral testnet deployer — tx hashes are not
+// persistent, so they prove the flow but must never be rendered as live links.
 
-import snapshot from '@/data/step-9-events-2026-06-02.json';
+import snapshot from '@/data/d13-happy-events-2026-06-08.json';
 
 // ── Raw snapshot shapes ──────────────────────────────────────────────────────
 
@@ -36,6 +37,8 @@ export interface Snapshot {
   quote_id: string;
   cap_id: string;
   tier_values: Record<string, unknown>;
+  ephemeral?: boolean;
+  ephemeral_reason?: string;
   steps: RawStep[];
 }
 
@@ -230,6 +233,14 @@ export const AMOUNT_FIELDS = new Set<string>([
 
 // ── Snapshot metadata + SupraScan ───────────────────────────────────────────
 
+// Format an ISO run_date ("2026-06-08") as "08 Jun 2026" for display labels.
+function formatRunDate(iso: string): string {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const [y, m, d] = iso.split('-');
+  const mon = months[Number(m) - 1] ?? m;
+  return `${d} ${mon} ${y}`;
+}
+
 export const META = {
   runDate: snap.run_date,
   chainId: snap.chain_id, // 6 = Supra native (NOT the EVM chain)
@@ -239,10 +250,16 @@ export const META = {
   requestId: snap.request_id,
   quoteId: snap.quote_id,
   capId: snap.cap_id,
-  // Honest liveness window: the snapshot was captured 02 Jun 2026 and the testnet
-  // state remains queryable for ~12 days. We never claim live data.
-  capturedLabel: 'snapshot captured 02 Jun 2026',
-  livenessLabel: 'Live on Supra Testnet until ~14 Jun 2026',
+  // Provenance flag from the snapshot: an ephemeral deployer's tx hashes are not
+  // persistent, so the UI must not render them as live explorer links.
+  ephemeral: snap.ephemeral ?? false,
+  ephemeralReason: snap.ephemeral_reason ?? null,
+  // capturedLabel derived from run_date — no hardcoded date.
+  capturedLabel: `snapshot captured ${formatRunDate(snap.run_date)}`,
+  // Honest liveness per snapshot kind: ephemeral snapshots make NO live claim.
+  livenessLabel: (snap.ephemeral ?? false)
+    ? 'captured snapshot — not a live deployment'
+    : 'Live on Supra Testnet',
 };
 
 // SupraScan link — ONLY meaningful for steps that carry a real tx_hash.
