@@ -14,7 +14,8 @@ interface SettlementStageProps {
 // This is the only large motion sequence on the page. Honors reduced-motion.
 export default function SettlementStage({ armed }: SettlementStageProps) {
   const reduce = useReducedMotion();
-  const { amountIn, amountOut, minAmountOut, spreadBps, spreadPct } = ECONOMICS;
+  const { amountIn, amountOut, minAmountOut, spreadBps, spreadPct, settlementGas, escrowAfterSettle } =
+    ECONOMICS;
 
   // When reduced motion is requested, snap straight to the settled state.
   const animate = armed && !reduce;
@@ -108,6 +109,30 @@ export default function SettlementStage({ armed }: SettlementStageProps) {
             accent="emerald"
           />
         </motion.div>
+
+        {/* Settlement guarantees: gas + escrow-empty invariant. Static values backfilled
+            from the capture run (see lifecycle.ts / JSON _provenance) — the escrow figure is a
+            capture-asserted on-chain check, NOT a live readout. */}
+        {(settlementGas !== null || escrowAfterSettle !== null) && (
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {settlementGas !== null && (
+              <Metric
+                label="Settlement gas"
+                value={settlementGas.toLocaleString('en-US')}
+                sub="total_charge_gas_units @ gup 100000"
+                accent="slate"
+              />
+            )}
+            {escrowAfterSettle !== null && (
+              <Metric
+                label="Escrow after settle"
+                value="empty"
+                sub={`capture-asserted · ${escrowAfterSettle.tokenIn} / ${escrowAfterSettle.tokenOut}`}
+                accent="emerald"
+              />
+            )}
+          </div>
+        )}
 
         <p className="mt-4 font-mono text-[11px] leading-relaxed text-slate-500">
           Both legs are recorded in one settlement transaction. 30 bps is not a stored field — it is

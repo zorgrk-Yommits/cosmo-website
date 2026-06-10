@@ -29,6 +29,12 @@
   },
   "ephemeral": true,
   "ephemeral_reason": "fresh ephemeral deployer, testnet tx hashes not persistent -- flow-proof only, never use as live links",
+  "_provenance": {
+    "note": "step 12b fields total_charge_gas_units + escrow_after_settle were BACKFILLED as static data from the cosmo-contracts-move repo; they were NOT part of the originally captured JSON. Separate repo, no submodule, no coupling.",
+    "source_repo": "cosmo-contracts-move @ 0b3a913 (sketches/phase-2-consolidation)",
+    "gas": "docs/smoke/d13-happy-events-2026-06-08.md:12 + scripts/d13-happy-capture.sh:72; live-verified against settle tx 0x68bcfea1527ba246763bd7980dd9ec932e685e65705384bfe0795f3fafdfb9a0 (total_charge_gas_units=1089)",
+    "escrow_after_settle": "scripts/d13-happy-capture.sh:655-661 (assert_eq escrow tIN/tOUT == 0) + md 'failed asserts: 0' -- capture-asserted on-chain invariant, not a live readout"
+  },
   "steps": [
     {
       "step": "1",
@@ -357,6 +363,8 @@
       "vm_status": "Executed successfully",
       "block_height": 98943231,
       "timestamp": "2026-06-08T16:41:27.212079+00:00",
+      "total_charge_gas_units": 1089,
+      "escrow_after_settle": { "token_in": 0, "token_out": 0 },
       "events": [
         {
           "type": "0x4cb0424398ac6ba7736842a769452de7644cac2a31a0034eaa7e9f139a245b5b::rfq_engine::SettlementRecorded",

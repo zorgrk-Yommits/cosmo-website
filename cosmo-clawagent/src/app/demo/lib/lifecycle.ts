@@ -24,6 +24,14 @@ export interface RawStep {
   block_height: number | null;
   timestamp: string | null; // ISO 8601
   events: RawEvent[];
+  // Backfilled static fields on the settlement step only (see "_provenance" in the
+  // JSON). These were NOT in the originally captured snapshot; they are copied as
+  // static data from the cosmo-contracts-move repo @ 0b3a913 (separate repo, no
+  // submodule): total_charge_gas_units from docs/smoke/d13-happy-events-2026-06-08.md:12
+  // + live settle tx 0x68bcfea…; escrow_after_settle from scripts/d13-happy-capture.sh:655-661
+  // (capture-asserted on-chain invariant, "failed asserts: 0").
+  total_charge_gas_units?: number;
+  escrow_after_settle?: { token_in: number; token_out: number };
 }
 
 export interface Snapshot {
@@ -153,6 +161,9 @@ export interface Economics {
   minAmountOut: number; // raw quants, the request floor
   spreadBps: number; // basis points, computed client-side
   spreadPct: number; // percent, computed client-side
+  // Backfilled from the contracts repo (see RawStep note). Settlement guarantees:
+  settlementGas: number | null; // execute_settlement total_charge_gas_units (@ gup 100000)
+  escrowAfterSettle: { tokenIn: number; tokenOut: number } | null; // capture-asserted post-settle invariant
 }
 
 function readMinAmountOut(): number {
@@ -164,17 +175,33 @@ function readMinAmountOut(): number {
 
 // 30 bps is NOT a stored field — it is derived: (in - out) / in.
 // (500_000_000 - 498_500_000) / 500_000_000 = 0.003 = 0.30% = 30 bps.
+// Settlement guarantees backfilled onto the execute_settlement step (see RawStep note).
+function readSettlementGuarantees(): {
+  settlementGas: number | null;
+  escrowAfterSettle: { tokenIn: number; tokenOut: number } | null;
+} {
+  const s = snap.steps.find((st) => st.label === 'execute_settlement');
+  const settlementGas = typeof s?.total_charge_gas_units === 'number' ? s.total_charge_gas_units : null;
+  const escrowAfterSettle = s?.escrow_after_settle
+    ? { tokenIn: s.escrow_after_settle.token_in, tokenOut: s.escrow_after_settle.token_out }
+    : null;
+  return { settlementGas, escrowAfterSettle };
+}
+
 export const ECONOMICS: Economics = (() => {
   const amountIn = snap.amount_in;
   const amountOut = snap.amount_out;
   const minAmountOut = readMinAmountOut();
   const ratio = amountIn > 0 ? (amountIn - amountOut) / amountIn : 0;
+  const { settlementGas, escrowAfterSettle } = readSettlementGuarantees();
   return {
     amountIn,
     amountOut,
     minAmountOut,
     spreadBps: Math.round(ratio * 10000),
     spreadPct: ratio * 100,
+    settlementGas,
+    escrowAfterSettle,
   };
 })();
 
