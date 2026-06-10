@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/navigation";
-import Providers from "@/components/providers";
+// Providers (WalletProvider) intentionally NOT wrapped for the demo-only build:
+// it transitively imports nftGate.ts, which inlines NEXT_PUBLIC_TRADEPORT_* into
+// the shared client bundle. Home + /demo do not consume the wallet. Re-wrap to
+// reactivate /launch. See D2a.
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -30,10 +33,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#030712] text-slate-100`}
       >
-        <Providers>
-          <Navigation />
-          <main className="pt-16">{children}</main>
-        </Providers>
+        <Navigation />
+        <main className="pt-16">{children}</main>
       </body>
     </html>
   );

@@ -171,11 +171,11 @@ export default function HomePage() {
 
             <div className="flex flex-wrap items-center justify-start gap-4">
               <Link
-                href="/launch"
+                href="/demo"
                 className="flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-mono font-semibold transition-all hover:shadow-[0_0_30px_rgba(139,92,246,0.5)]"
               >
                 <Activity className="w-4 h-4" />
-                Launch App
+                View Demo
               </Link>
               <a
                 href="/COSMO_Whitepaper_v3.1_DRAFT.pdf"
@@ -300,10 +300,10 @@ export default function HomePage() {
                   Tokenomics
                 </a>
                 <Link
-                  href="/launch"
+                  href="/demo"
                   className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-mono text-sm font-semibold transition-all hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]"
                 >
-                  Launch App
+                  View Demo
                 </Link>
               </div>
             </div>
