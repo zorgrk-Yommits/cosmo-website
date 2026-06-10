@@ -219,11 +219,26 @@ export function groupQuants(raw: number): string {
   return raw.toLocaleString('en-US');
 }
 
-// ── Human-readable token amounts ($COSMO, 6 decimals) ───────────────────────
-// The display token is $COSMO with 6 decimals: a raw amount is divided by 10^6.
+// ── Human-readable token amounts (mock FAs, 6 decimals) ─────────────────────
+// All assets in the snapshot are 6-decimal fungible assets: a raw amount is
+// divided by 10^6. (tIN / tOUT swap legs + the $COSMO operator bond.)
 export const TOKEN_DECIMALS = 6;
 const TOKEN_DIVISOR = 1_000_000; // 10^6
-export const TOKEN_SYMBOL = '$COSMO';
+
+// Per-asset symbols. The settled pair is tIN -> tOUT: two DISTINCT fungible
+// assets — the contract enforces token_in != token_out (rfq_engine E_SAME_TOKEN),
+// so a $COSMO -> $COSMO trade is impossible on-chain. The operator bond is a
+// separate asset, $COSMO (tCOSMO). Symbols are the capture's asset symbols
+// (d13-happy-capture.sh SYM_TIN/SYM_TOUT + the tCOSMO bond); the snapshot carries
+// no symbol field, so they live here as named constants.
+export const TOKEN_IN_SYMBOL = 'tIN'; // taker spends this leg
+export const TOKEN_OUT_SYMBOL = 'tOUT'; // taker receives this leg
+export const BOND_SYMBOL = '$COSMO'; // operator bond (tCOSMO) — NOT a swap leg
+
+// Swap-leg FA addresses, read straight from the snapshot so a future capture
+// auto-renders the correct ones — no hardcoded address strings in the UI.
+export const TOKEN_IN_ADDR = snap.contract_addresses.token_in_fa ?? '';
+export const TOKEN_OUT_ADDR = snap.contract_addresses.token_out_fa ?? '';
 
 // Exact raw -> token string. NO float division of the whole value (that yields
 // "498.4999..."): split into integer/remainder, pad+trim the fractional part.
@@ -239,11 +254,6 @@ export function formatToken(raw: number): string {
   return fracStr ? `${wholeStr}.${fracStr}` : wholeStr;
 }
 
-// Token amount with the $COSMO symbol, e.g. "498.5 $COSMO".
-export function formatTokenWithSymbol(raw: number): string {
-  return `${formatToken(raw)} ${TOKEN_SYMBOL}`;
-}
-
 // Event-data keys that carry a raw token amount (-> eligible for token annotation
 // in the data panel). Deliberately excludes timestamps, ids, counts, addresses.
 export const AMOUNT_FIELDS = new Set<string>([
@@ -257,6 +267,32 @@ export const AMOUNT_FIELDS = new Set<string>([
   'daily_used_after',
   'request_fee_quants',
 ]);
+
+// Which asset symbol denominates an amount field, given the event it appears in.
+// Ground truth from the capture run: the taker spends tIN and receives tOUT; the
+// operator bond is $COSMO (tCOSMO). The key "amount" is reused across two events
+// (BondDeposited = $COSMO bond, CapabilityUsed = tIN spend), so the event name is
+// required to disambiguate. request_fee_quants is denominated in SUPRA quants (a
+// different asset + decimal scale) -> no swap-token annotation (null).
+const TOKEN_IN_AMOUNT_FIELDS = new Set<string>([
+  'amount_in',
+  'max_amount_per_day',
+  'daily_cap',
+  'daily_used_after',
+]);
+const TOKEN_OUT_AMOUNT_FIELDS = new Set<string>([
+  'amount_out',
+  'promised_amount_out',
+  'min_amount_out',
+]);
+
+export function amountSymbol(eventName: string, field: string): string | null {
+  if (field === 'request_fee_quants') return null; // SUPRA quants, not a swap leg
+  if (field === 'amount') return eventName === 'BondDeposited' ? BOND_SYMBOL : TOKEN_IN_SYMBOL;
+  if (TOKEN_OUT_AMOUNT_FIELDS.has(field)) return TOKEN_OUT_SYMBOL;
+  if (TOKEN_IN_AMOUNT_FIELDS.has(field)) return TOKEN_IN_SYMBOL;
+  return null;
+}
 
 // ── Snapshot metadata + SupraScan ───────────────────────────────────────────
 

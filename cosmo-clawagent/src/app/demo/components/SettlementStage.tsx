@@ -2,7 +2,15 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-import { ECONOMICS, formatToken, formatTokenWithSymbol, TOKEN_SYMBOL } from '../lib/lifecycle';
+import {
+  ECONOMICS,
+  formatToken,
+  truncateHex,
+  TOKEN_IN_SYMBOL,
+  TOKEN_OUT_SYMBOL,
+  TOKEN_IN_ADDR,
+  TOKEN_OUT_ADDR,
+} from '../lib/lifecycle';
 
 interface SettlementStageProps {
   // armed = the settlement step is the active step; triggers the one big moment.
@@ -53,9 +61,9 @@ export default function SettlementStage({ armed }: SettlementStageProps) {
             </div>
             <div className="mt-1 font-mono text-2xl font-bold tabular-nums text-purple-100">
               {formatToken(amountIn)}{' '}
-              <span className="text-sm font-normal text-purple-300/70">{TOKEN_SYMBOL}</span>
+              <span className="text-sm font-normal text-purple-300/70">{TOKEN_IN_SYMBOL}</span>
             </div>
-            <div className="font-mono text-[11px] text-slate-500">token_in · 0x70c1</div>
+            <div className="font-mono text-[11px] text-slate-500">token_in · {truncateHex(TOKEN_IN_ADDR)}</div>
           </motion.div>
 
           {/* simultaneity marker */}
@@ -87,9 +95,9 @@ export default function SettlementStage({ armed }: SettlementStageProps) {
             </div>
             <div className="mt-1 font-mono text-2xl font-bold tabular-nums text-cyan-100">
               {formatToken(amountOut)}{' '}
-              <span className="text-sm font-normal text-cyan-300/70">{TOKEN_SYMBOL}</span>
+              <span className="text-sm font-normal text-cyan-300/70">{TOKEN_OUT_SYMBOL}</span>
             </div>
-            <div className="font-mono text-[11px] text-slate-500">token_out · 0x70c2</div>
+            <div className="font-mono text-[11px] text-slate-500">token_out · {truncateHex(TOKEN_OUT_ADDR)}</div>
           </motion.div>
         </div>
 
@@ -101,11 +109,11 @@ export default function SettlementStage({ armed }: SettlementStageProps) {
           className="mt-5 grid grid-cols-3 gap-3"
         >
           <Metric label="Spread (computed)" value={`${spreadBps} bps`} sub={`${spreadPct.toFixed(2)}%`} accent="emerald" />
-          <Metric label="Min out (floor)" value={formatTokenWithSymbol(minAmountOut)} sub="from RequestCreated" accent="slate" />
+          <Metric label="Min out (floor)" value={`${formatToken(minAmountOut)} ${TOKEN_OUT_SYMBOL}`} sub="from RequestCreated" accent="slate" />
           <Metric
             label="Delivered ≥ floor"
             value={amountOut >= minAmountOut ? 'yes' : 'no'}
-            sub={`${formatToken(amountOut)} ≥ ${formatToken(minAmountOut)} ${TOKEN_SYMBOL}`}
+            sub={`${formatToken(amountOut)} ≥ ${formatToken(minAmountOut)} ${TOKEN_OUT_SYMBOL}`}
             accent="emerald"
           />
         </motion.div>
