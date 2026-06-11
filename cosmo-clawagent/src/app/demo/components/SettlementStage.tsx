@@ -22,8 +22,16 @@ interface SettlementStageProps {
 // This is the only large motion sequence on the page. Honors reduced-motion.
 export default function SettlementStage({ armed }: SettlementStageProps) {
   const reduce = useReducedMotion();
-  const { amountIn, amountOut, minAmountOut, spreadBps, spreadPct, settlementGas, escrowAfterSettle } =
-    ECONOMICS;
+  const {
+    amountIn,
+    amountOut,
+    minAmountOut,
+    spreadBps,
+    spreadPct,
+    settlementGas,
+    escrowAfterSettle,
+    settlementEventName,
+  } = ECONOMICS;
 
   // When reduced motion is requested, snap straight to the settled state.
   const animate = armed && !reduce;
@@ -44,7 +52,7 @@ export default function SettlementStage({ armed }: SettlementStageProps) {
           <span className="font-mono text-xs uppercase tracking-[0.2em] text-emerald-300/80">
             Atomic settlement
           </span>
-          <span className="font-mono text-[11px] text-slate-500">SettlementRecorded</span>
+          <span className="font-mono text-[11px] text-slate-500">{settlementEventName}</span>
         </div>
 
         {/* the two crossing legs */}

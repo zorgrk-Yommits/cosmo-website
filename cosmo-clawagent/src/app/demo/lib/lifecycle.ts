@@ -1,11 +1,13 @@
 // RFQ lifecycle model — derived from a static Supra-native testnet snapshot.
 // PURE data visualisation: no RPC, no wallet, no EVM. The snapshot is the only source.
 //
-// Source: d13-happy-events-2026-06-08.json (run 2026-06-08, chain_id 6 = Supra native).
+// Source: d13-happy-events-2026-06-11.json (run 2026-06-11, chain_id 6 = Supra native).
+// Captured on Event-Schema v2 (rfq_engine emits SettlementExecuted; the event is
+// self-contained: request_id, both token legs, amounts, and decimals).
 // Flow-proof snapshot from an ephemeral testnet deployer — tx hashes are not
 // persistent, so they prove the flow but must never be rendered as live links.
 
-import snapshot from '@/data/d13-happy-events-2026-06-08.json';
+import snapshot from '@/data/d13-happy-events-2026-06-11.json';
 
 // ── Raw snapshot shapes ──────────────────────────────────────────────────────
 
@@ -164,6 +166,10 @@ export interface Economics {
   // Backfilled from the contracts repo (see RawStep note). Settlement guarantees:
   settlementGas: number | null; // execute_settlement total_charge_gas_units (@ gup 100000)
   escrowAfterSettle: { tokenIn: number; tokenOut: number } | null; // capture-asserted post-settle invariant
+  // The rfq_engine settlement event name as emitted by the captured snapshot.
+  // Event-Schema v2 renamed SettlementRecorded -> SettlementExecuted; historical
+  // snapshots keep the old name, so this is read from the data, never hard-coded.
+  settlementEventName: string;
 }
 
 function readMinAmountOut(): number {
@@ -179,13 +185,18 @@ function readMinAmountOut(): number {
 function readSettlementGuarantees(): {
   settlementGas: number | null;
   escrowAfterSettle: { tokenIn: number; tokenOut: number } | null;
+  settlementEventName: string;
 } {
   const s = snap.steps.find((st) => st.label === 'execute_settlement');
   const settlementGas = typeof s?.total_charge_gas_units === 'number' ? s.total_charge_gas_units : null;
   const escrowAfterSettle = s?.escrow_after_settle
     ? { tokenIn: s.escrow_after_settle.token_in, tokenOut: s.escrow_after_settle.token_out }
     : null;
-  return { settlementGas, escrowAfterSettle };
+  // Derive the settlement event name from the data (SettlementExecuted on v2,
+  // SettlementRecorded on pre-v2 snapshots). Fall back to the v2 name.
+  const settleEvt = s?.events.find((e) => /::Settlement(Executed|Recorded)$/.test(e.type));
+  const settlementEventName = settleEvt ? shortEventName(settleEvt.type) : 'SettlementExecuted';
+  return { settlementGas, escrowAfterSettle, settlementEventName };
 }
 
 export const ECONOMICS: Economics = (() => {
@@ -193,7 +204,7 @@ export const ECONOMICS: Economics = (() => {
   const amountOut = snap.amount_out;
   const minAmountOut = readMinAmountOut();
   const ratio = amountIn > 0 ? (amountIn - amountOut) / amountIn : 0;
-  const { settlementGas, escrowAfterSettle } = readSettlementGuarantees();
+  const { settlementGas, escrowAfterSettle, settlementEventName } = readSettlementGuarantees();
   return {
     amountIn,
     amountOut,
@@ -202,6 +213,7 @@ export const ECONOMICS: Economics = (() => {
     spreadPct: ratio * 100,
     settlementGas,
     escrowAfterSettle,
+    settlementEventName,
   };
 })();
 
