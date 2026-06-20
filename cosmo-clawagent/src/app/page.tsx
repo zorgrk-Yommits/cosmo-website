@@ -27,7 +27,7 @@ const agents = [
     icon: Crown,
     accent: 'purple',
     description:
-      'Master of EOM. Holds 24-hour veto power over all protocol actions. Root of trust for the entire agent hierarchy.',
+      'Designed as the master of EOM: will hold 24-hour veto power over all protocol actions, the root of trust for the entire agent hierarchy.',
   },
   {
     id: 'GOV-2',
@@ -38,7 +38,7 @@ const agents = [
     icon: ScrollText,
     accent: 'purple',
     description:
-      'Executes on-chain governance proposals once approved. Translates council decisions into protocol state changes.',
+      'Will execute on-chain governance proposals once approved, translating council decisions into protocol state changes.',
   },
   {
     id: 'ORACLE-3',
@@ -49,7 +49,7 @@ const agents = [
     icon: Radar,
     accent: 'cyan',
     description:
-      'Validates price feeds from Supra DORA oracles. Foundation of the execution loop — without reliable data, no downstream agent can reason correctly.',
+      'Designed to validate price feeds from Supra DORA oracles — the foundation of the execution loop; without reliable data, no downstream agent can reason correctly.',
   },
   {
     id: 'ARBITER-4',
@@ -60,7 +60,7 @@ const agents = [
     icon: Search,
     accent: 'cyan',
     description:
-      'Scans Atmos pools and external chain prices for raw spreads. Pure sensing, no judgement. Signals flow to the Strategist for evaluation.',
+      'Will scan Atmos pools and external chain prices for raw spreads — pure sensing, no judgement; signals routed to the Strategist for evaluation.',
   },
   {
     id: 'STRAT-5',
@@ -71,7 +71,7 @@ const agents = [
     icon: Brain,
     accent: 'cyan',
     description:
-      'Evaluates every opportunity: does this spread cover costs, inventory, and risk appetite? Produces actionable signals — or discards noise. Triggers COSMO directly on confirmation.',
+      'Designed to evaluate every opportunity — does the spread cover costs, inventory, and risk appetite? — producing actionable signals or discarding noise, and triggering COSMO on confirmation.',
   },
   {
     id: 'LIQ-6',
@@ -82,7 +82,7 @@ const agents = [
     icon: Wallet,
     accent: 'green',
     description:
-      'Manages maker-side vault inventory across chains. Ensures COSMO always has the capital to accept inbound RFQs and execute outbound opportunities.',
+      'Will manage maker-side vault inventory across chains, ensuring COSMO always has the capital to accept inbound RFQs and execute outbound opportunities.',
   },
   {
     id: 'KEEPER-7',
@@ -93,7 +93,7 @@ const agents = [
     icon: Database,
     accent: 'cyan',
     description:
-      'Archives every settlement outcome as a labelled training example. Closes the loop by feeding the Learning Layer — compounding execution quality with every trade.',
+      'Will archive each settlement outcome as a labelled training example, closing the loop by feeding the Learning Layer — compounding execution quality with every trade.',
   },
   {
     id: 'COSMO-8',
@@ -105,7 +105,7 @@ const agents = [
     accent: 'purple',
     featured: true,
     description:
-      'The eighth agent. The only one that acts on-chain. Receives confirmed signals from the Strategist and executes RFQ settlement via audited Move modules on Supra L1.',
+      'The eighth agent and the only one that acts on-chain. Live on Supra Mainnet: receives a confirmed quote and settles the RFQ atomically through audited Move modules.',
   },
 ];
 
@@ -148,7 +148,7 @@ export default function HomePage() {
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/25">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="font-mono text-xs text-purple-300 tracking-widest uppercase">
-                  System Online — EOM Swarm Active
+                  COSMO live on Supra Mainnet
                 </span>
               </div>
             </div>
@@ -161,21 +161,22 @@ export default function HomePage() {
             </h1>
 
             <p className="text-slate-200 text-xl leading-relaxed mb-6 font-mono max-w-xl">
-              EOM denkt. COSMO handelt. <span className="neon-text-purple">$COSMO</span> bindet beides.
+              EOM will think. COSMO acts. <span className="neon-text-purple">$COSMO</span> binds both.
             </p>
 
             <p className="text-slate-400 text-lg leading-relaxed mb-10 font-sans max-w-xl">
-              Eight agents in the EOM Swarm. Seven think — one acts.
-              COSMO is the on-chain settlement layer for the SupraOS agent economy.
+              An eight-agent swarm is the plan: seven agents to reason, one to settle on-chain.
+              The thinking side is the roadmap. The settlement layer — COSMO — is live on Supra
+              Mainnet today.
             </p>
 
             <div className="flex flex-wrap items-center justify-start gap-4">
               <Link
-                href="/demo"
+                href="/demo/"
                 className="flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-mono font-semibold transition-all hover:shadow-[0_0_30px_rgba(139,92,246,0.5)]"
               >
                 <Activity className="w-4 h-4" />
-                View Demo
+                See the proof — live Mainnet round-trip
               </Link>
               <a
                 href="/COSMO_Whitepaper_v3.1_DRAFT.pdf"
@@ -204,10 +205,10 @@ export default function HomePage() {
         {/* Live stats bar */}
         <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl">
           {[
-            { label: 'Total Operations', value: '907,619' },
-            { label: 'TVL Managed', value: '$4.2M' },
-            { label: 'EOM Agents', value: '8 / 8' },
-            { label: '$COSMO Staked', value: '18.3M' },
+            { label: 'Supra Mainnet', value: 'Live' },
+            { label: 'Move modules deployed', value: '5' },
+            { label: 'Agents — architecture', value: '8' },
+            { label: 'round-trip settled', value: '1' },
           ].map((stat) => (
             <div
               key={stat.label}
@@ -231,8 +232,11 @@ export default function HomePage() {
           <h2 className="font-mono text-3xl font-bold text-white mb-2">
             {'>'} The EOM Swarm
           </h2>
-          <p className="text-slate-400 font-mono text-sm">
-            Eight agents. One execution layer. Seven think. One acts.
+          <p className="text-slate-400 font-mono text-sm max-w-3xl mx-auto leading-relaxed">
+            The EOM Swarm — by design. Eight agents, one execution layer, expressed in SupraOS Bot
+            Builder syntax: WHEN, GET, THINK, FLOW, ACT, TRANSACT. Only one of them runs today:
+            COSMO, the TRANSACT layer, live on Supra Mainnet. The seven thinking agents are the
+            roadmap — the architecture COSMO is built to plug into.
             <span className="blinking-cursor" />
           </p>
         </div>
@@ -269,11 +273,28 @@ export default function HomePage() {
                     {agent.type}
                   </span>
                   <span className="font-mono text-xs text-slate-500">{agent.role}</span>
+                  {featured ? (
+                    <span className="ml-auto inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Live
+                    </span>
+                  ) : (
+                    <span className="ml-auto font-mono text-[10px] uppercase tracking-wider text-slate-600">planned</span>
+                  )}
                 </div>
 
                 <p className="text-slate-400 text-sm leading-relaxed font-sans">
                   {agent.description}
                 </p>
+
+                {featured && (
+                  <Link
+                    href="/demo/"
+                    className="mt-3 inline-flex items-center gap-1 font-mono text-xs text-emerald-300 hover:text-emerald-200 transition-colors"
+                  >
+                    See the live round-trip
+                    <ArrowRight className="w-3 h-3" />
+                  </Link>
+                )}
               </BentoItem>
             );
           })}
@@ -300,15 +321,112 @@ export default function HomePage() {
                   Tokenomics
                 </a>
                 <Link
-                  href="/demo"
+                  href="/demo/"
                   className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-mono text-sm font-semibold transition-all hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]"
                 >
-                  View Demo
+                  Walk through the round-trip →
                 </Link>
               </div>
             </div>
           </BentoItem>
         </div>
+      </section>
+
+      {/* The Operator License — Agent NFT */}
+      <section className="relative z-10 max-w-7xl mx-auto px-6 pb-24">
+        <div className="mb-10 text-center">
+          <h2 className="font-mono text-3xl font-bold text-white mb-2">
+            {'>'} The Operator License
+          </h2>
+          <p className="text-slate-400 font-mono text-sm max-w-3xl mx-auto leading-relaxed">
+            COSMO settles for no one by default. Every quote is bound to a ClawAgent NFT — an
+            on-chain operator license. Not a collectible: today it decides, on-chain, who may settle
+            and how large a trade may be.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Enforced today */}
+          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/[0.04] p-6">
+            <div className="flex items-center gap-2 mb-5">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="font-mono text-xs uppercase tracking-[0.2em] text-emerald-300/80">
+                Enforced on Supra Mainnet today
+              </span>
+            </div>
+            <ul className="space-y-4">
+              <li>
+                <div className="font-mono text-sm font-bold text-white">Operator identity</div>
+                <p className="text-slate-400 text-sm font-sans leading-relaxed">
+                  Only the agent&apos;s designated operator can have its quote accepted. A quote whose
+                  operator does not match the license is rejected on-chain.
+                </p>
+              </li>
+              <li>
+                <div className="font-mono text-sm font-bold text-white">Active &amp; pausable</div>
+                <p className="text-slate-400 text-sm font-sans leading-relaxed">
+                  An inactive or guardian-paused agent can neither quote nor settle. The check runs
+                  again at acceptance, so a pause mid-flight stops the trade.
+                </p>
+              </li>
+              <li>
+                <div className="font-mono text-sm font-bold text-white">Trade-size cap</div>
+                <p className="text-slate-400 text-sm font-sans leading-relaxed">
+                  Every trade is checked against the agent&apos;s notional ceiling before it can be
+                  accepted — over-cap quotes abort.
+                </p>
+              </li>
+            </ul>
+            <Link
+              href="/demo/"
+              className="mt-5 inline-flex items-center gap-1 font-mono text-xs text-emerald-300 hover:text-emerald-200 transition-colors"
+            >
+              All three gates fired and passed in the live round-trip
+              <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+
+          {/* By design — roadmap */}
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
+            <div className="flex items-center gap-2 mb-5">
+              <span className="font-mono text-xs uppercase tracking-[0.2em] text-slate-500">
+                By design — roadmap
+              </span>
+              <span className="ml-auto font-mono text-[10px] uppercase tracking-wider text-slate-600">planned</span>
+            </div>
+            <ul className="space-y-4">
+              <li>
+                <div className="font-mono text-sm font-bold text-slate-300">History &amp; reputation</div>
+                <p className="text-slate-500 text-sm font-sans leading-relaxed">
+                  The license is built to accumulate a settled-trade count, missed-deadline tracking
+                  and a reputation score. The fields live on-chain; wiring them into settlement is the
+                  next step — today the trade record lives in the transaction events, not yet on the
+                  license.
+                </p>
+              </li>
+              <li>
+                <div className="font-mono text-sm font-bold text-slate-300">Stake &amp; slashing</div>
+                <p className="text-slate-500 text-sm font-sans leading-relaxed">
+                  Tiered notional limits and slashable stake are designed into the license; tier
+                  magnitudes are still illustrative and staking is Phase-2 scope.
+                </p>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <p className="mt-6 text-center font-mono text-[11px] text-slate-600">
+          Agent #0 ·{' '}
+          <a
+            href="https://suprascan.io/account/0xabd7c1df1767a626c213ffb6942c4d39158f7c2f75dbd5669b25dd6e9bd06084?network=mainnet"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-slate-500 hover:text-slate-300 transition-colors"
+          >
+            0xabd7c1df…6084
+          </a>{' '}
+          · live on Supra Mainnet
+        </p>
       </section>
 
       {/* Footer */}

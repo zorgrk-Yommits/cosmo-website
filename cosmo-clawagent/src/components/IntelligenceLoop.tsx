@@ -277,7 +277,7 @@ export default function IntelligenceLoop() {
         {[
           { value: '8',     label: 'Agents | EOM Swarm' },
           { value: '1',     label: 'Settlement Layer | COSMO' },
-          { value: '5',     label: 'Chains | Cross-Chain via SupraFX' },
+          { value: '5',     label: 'Chains — planned via SupraFX' },
           { value: '21/30', label: 'Council | $COSMO-staked' },
           { value: '60s',   label: 'Window | Settlement Deadline' },
           { value: '∞',     label: 'Loop | Karpathy Feedback' },
