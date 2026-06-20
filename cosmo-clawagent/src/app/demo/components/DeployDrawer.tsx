@@ -17,6 +17,9 @@ interface DeployDrawerProps {
 // shows only the core RFQ loop. These steps are "skipped" in the snapshot
 // (the contracts were already live) — shown here for completeness, not as the story.
 export default function DeployDrawer({ steps, open, activeId, onToggle, onSelect }: DeployDrawerProps) {
+  // The Mainnet round-trip capture carries no setup steps -> hide the drawer entirely
+  // rather than showing an empty "0 steps" shell.
+  if (steps.length === 0) return null;
   return (
     <div className="rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur">
       <button
@@ -30,7 +33,7 @@ export default function DeployDrawer({ steps, open, activeId, onToggle, onSelect
         />
         <Layers className="h-4 w-4 text-slate-500" />
         <span className="font-mono text-xs uppercase tracking-wider text-slate-400">
-          Deploy-Phase (einmalig)
+          Deploy phase (one-time)
         </span>
         <span className="font-mono text-[10px] text-slate-600">
           {steps.length} steps · already live

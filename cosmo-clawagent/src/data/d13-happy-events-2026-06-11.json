@@ -1,0 +1,394 @@
+{
+  "run_date": "2026-06-11",
+  "chain_id": 6,
+  "rpc": "https://rpc-testnet.supra.com",
+  "contract_addresses": {
+    "package": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4",
+    "rfq_engine": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4::rfq_engine",
+    "maker_vault": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4::maker_vault",
+    "trading_capability": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4::trading_capability",
+    "clawagent_v3": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4::clawagent_v3",
+    "testnet_mock_fa": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4::testnet_mock_fa",
+    "cosmo_fa_metadata": "0xbf58fba0a25276fed66dd4e470c232af9e27968cde1d9f9e7ed6e0a44889202f",
+    "escrow": "0x7c66f3e649e9c8c0c7ee0d25d8f1cdcf40db415fa433a893ba4a768827c97680",
+    "token_in_fa": "0x88f35ede285633897fb7093660da58fa4ebc2c0c8e8551ab219c5e5021317b83",
+    "token_out_fa": "0xc8049b69178afd329e2a4836bbac6a7f34c9df88eb44360112b0fc288fa27ef0",
+    "agent_nft": "0xcc71fe142f8bd476c28f4417909c4c26093084bed418da5f62ce68d2ba8dbeca",
+    "maker_operator": "0x4e94f8bed00a91ddcd33fe576f5f7025db44900d16440333d2b1f9bff3cc5653"
+  },
+  "amount_in": 500000000,
+  "amount_out": 498500000,
+  "request_id": "0",
+  "quote_id": "0",
+  "cap_id": "0",
+  "tier_values": {
+    "MAX_NOTIONAL_T1": 1000000000,
+    "MAX_NOTIONAL_T2": 10000000000,
+    "MAX_NOTIONAL_T3": 100000000000,
+    "note": "ILLUSTRATIVE TESTNET VALUES; Mainnet tiers gated by D-07.3 (Q1)"
+  },
+  "ephemeral": true,
+  "ephemeral_reason": "fresh ephemeral deployer, testnet tx hashes not persistent -- flow-proof only, never use as live links",
+  "steps": [
+    {
+      "step": "1",
+      "label": "publish",
+      "sender": "deployer",
+      "tx_hash": "0x6a00a3437e63d0d76cb2fdcc86fad7fb5471c40aa7ad008f2c6554719d212085",
+      "status": "Success",
+      "vm_status": "Executed successfully",
+      "block_height": 100087247,
+      "timestamp": "2026-06-11T18:54:18.432711+00:00",
+      "events": []
+    },
+    {
+      "step": "2",
+      "label": "init_collection",
+      "sender": "deployer",
+      "tx_hash": "0x200739982cd6723fc5deec5c4966eff8ad6edbc6ca507a3a506237f449c6ac1b",
+      "status": "Success",
+      "vm_status": "Executed successfully",
+      "block_height": 100087259,
+      "timestamp": "2026-06-11T18:54:21.183598+00:00",
+      "events": []
+    },
+    {
+      "step": "3",
+      "label": "init_guardians",
+      "sender": "deployer",
+      "tx_hash": "0xa1d596e4ee5d195abbdd50e10de9ad0c85c1e7ed9bf11ce35b4f0f8a51a42748",
+      "status": "Success",
+      "vm_status": "Executed successfully",
+      "block_height": 100087270,
+      "timestamp": "2026-06-11T18:54:23.620921+00:00",
+      "events": []
+    },
+    {
+      "step": "4",
+      "label": "mint_agent",
+      "sender": "deployer",
+      "tx_hash": "0xbacb5a457b1e8e38dcd663619f3357a277b705572e4433715e53dd6c31c66d66",
+      "status": "Success",
+      "vm_status": "Executed successfully",
+      "block_height": 100087291,
+      "timestamp": "2026-06-11T18:54:28.893083+00:00",
+      "events": []
+    },
+    {
+      "step": "5",
+      "label": "set_server_quote_pubkey",
+      "sender": "deployer",
+      "tx_hash": "0x23fc2298db5613176a40b180179753fb945bf853717b68d6fc6cb9961786d453",
+      "status": "Success",
+      "vm_status": "Executed successfully",
+      "block_height": 100087277,
+      "timestamp": "2026-06-11T18:54:25.945558+00:00",
+      "events": []
+    },
+    {
+      "step": "6a",
+      "label": "init_mock_fa",
+      "sender": "deployer",
+      "tx_hash": "0x77286e594fbbdd19a44d4c741f0a3bf2c6efbf5a7661dd6705eec194f1a107d6",
+      "status": "Success",
+      "vm_status": "Executed successfully",
+      "block_height": 100087303,
+      "timestamp": "2026-06-11T18:54:32.141722+00:00",
+      "events": []
+    },
+    {
+      "step": "6b",
+      "label": "init_named_tIN",
+      "sender": "deployer",
+      "tx_hash": "0x9a2cbd18f50d4b0f602986c3622cc5c40ad0c805c62abe5471baeeb7cdbdd872",
+      "status": "Success",
+      "vm_status": "Executed successfully",
+      "block_height": 100087317,
+      "timestamp": "2026-06-11T18:54:35.634763+00:00",
+      "events": []
+    },
+    {
+      "step": "6c",
+      "label": "init_named_tOUT",
+      "sender": "deployer",
+      "tx_hash": "0xa98d768454a138250495b5b8164fde5c57baa10b5c96c543f4f4d58cdfc7cf1c",
+      "status": "Success",
+      "vm_status": "Executed successfully",
+      "block_height": 100087329,
+      "timestamp": "2026-06-11T18:54:38.014059+00:00",
+      "events": []
+    },
+    {
+      "step": "6d",
+      "label": "set_cosmo_metadata",
+      "sender": "deployer",
+      "tx_hash": "0x1930574a83acf790e6ac8b1a5be0d8efd0f67b18f70feaf5c053f959fe476242",
+      "status": "Success",
+      "vm_status": "Executed successfully",
+      "block_height": 100087346,
+      "timestamp": "2026-06-11T18:54:41.911662+00:00",
+      "events": []
+    },
+    {
+      "step": "7a",
+      "label": "mint_to_maker",
+      "sender": "deployer",
+      "tx_hash": "0x729c2201728076d78699963aea158b67c274c38ddbbb01b53292bcbcc7ff19b7",
+      "status": "Success",
+      "vm_status": "Executed successfully",
+      "block_height": 100087356,
+      "timestamp": "2026-06-11T18:54:44.299734+00:00",
+      "events": []
+    },
+    {
+      "step": "7b",
+      "label": "mint_to_taker",
+      "sender": "deployer",
+      "tx_hash": "0x57a2e6c1a743373db9703a45a6d427e72fcb2be02a3453f490060fd61e77b7e0",
+      "status": "Success",
+      "vm_status": "Executed successfully",
+      "block_height": 100087370,
+      "timestamp": "2026-06-11T18:54:47.190950+00:00",
+      "events": []
+    },
+    {
+      "step": "7c",
+      "label": "mint_cosmo_maker",
+      "sender": "deployer",
+      "tx_hash": "0x9a920b85d213862cb9f9491e6dbbe0295186b2f7dbc2f312be663350552a771c",
+      "status": "Success",
+      "vm_status": "Executed successfully",
+      "block_height": 100087382,
+      "timestamp": "2026-06-11T18:54:49.582779+00:00",
+      "events": []
+    },
+    {
+      "step": "7d",
+      "label": "deposit_operator_bond",
+      "sender": "maker",
+      "tx_hash": "0x1e17d933f1fac0344b8141e2f06df4a47eeab1cc1ee9d4a6ea1b6140af4a18fd",
+      "status": "Success",
+      "vm_status": "Executed successfully",
+      "block_height": 100087392,
+      "timestamp": "2026-06-11T18:54:51.967665+00:00",
+      "events": [
+        {
+          "type": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4::maker_vault::BondDeposited",
+          "data": {
+            "amount": "10000000000",
+            "new_total": "10000000000",
+            "operator": "0x4e94f8bed00a91ddcd33fe576f5f7025db44900d16440333d2b1f9bff3cc5653",
+            "timestamp": "1781204091"
+          }
+        }
+      ]
+    },
+    {
+      "step": "8",
+      "label": "create_capability",
+      "sender": "deployer",
+      "tx_hash": "0x2b51be6acbe3babc8fb811b30d634e0ad120f04b2247e9bf82c677e73acf6601",
+      "status": "Success",
+      "vm_status": "Executed successfully",
+      "block_height": 100087404,
+      "timestamp": "2026-06-11T18:54:54.594451+00:00",
+      "events": [
+        {
+          "type": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4::trading_capability::CapabilityCreated",
+          "data": {
+            "agent": "0x4e94f8bed00a91ddcd33fe576f5f7025db44900d16440333d2b1f9bff3cc5653",
+            "agent_pubkey_hash": "0x4e94f8bed00a91ddcd33fe576f5f7025db44900d16440333d2b1f9bff3cc5653",
+            "cap_id": "0",
+            "expires_at": "1781290494",
+            "max_amount_per_day": "2500000000",
+            "notification_endpoint": {
+              "vec": []
+            },
+            "owner": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4",
+            "timestamp": "1781204094",
+            "whitelisted_tokens": [
+              "0x88f35ede285633897fb7093660da58fa4ebc2c0c8e8551ab219c5e5021317b83"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "step": "9",
+      "label": "create_request",
+      "sender": "deployer",
+      "tx_hash": "0xd706446fcd133fc0793d639815527a3e3ec11cb72a34c9fa3c104347de1a2a7e",
+      "status": "Success",
+      "vm_status": "Executed successfully",
+      "block_height": 100087422,
+      "timestamp": "2026-06-11T18:54:58.736192+00:00",
+      "events": [
+        {
+          "type": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4::rfq_engine::RequestCreated",
+          "data": {
+            "agent_nft_addr": "0xcc71fe142f8bd476c28f4417909c4c26093084bed418da5f62ce68d2ba8dbeca",
+            "amount_in": "500000000",
+            "expires_at": "1781204398",
+            "min_amount_out": "496000000",
+            "request_fee_quants": "0",
+            "request_id": "0",
+            "requester": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4",
+            "timestamp": "1781204098",
+            "token_in": "0x88f35ede285633897fb7093660da58fa4ebc2c0c8e8551ab219c5e5021317b83",
+            "token_out": "0xc8049b69178afd329e2a4836bbac6a7f34c9df88eb44360112b0fc288fa27ef0"
+          }
+        }
+      ]
+    },
+    {
+      "step": "10",
+      "label": "sign_quote_offchain",
+      "sender": "maker",
+      "tx_hash": "(off-chain)",
+      "status": "off-chain",
+      "vm_status": null,
+      "block_height": null,
+      "timestamp": null,
+      "events": []
+    },
+    {
+      "step": "11",
+      "label": "submit_quote",
+      "sender": "maker",
+      "tx_hash": "0xf5668bc0d33568f5d985e49cb69df6ec3c35bb3f1ec96dbe76b316e044cf6c80",
+      "status": "Success",
+      "vm_status": "Executed successfully",
+      "block_height": 100087431,
+      "timestamp": "2026-06-11T18:55:01.309525+00:00",
+      "events": [
+        {
+          "type": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4::rfq_engine::QuoteSubmitted",
+          "data": {
+            "amount_out": "498500000",
+            "maker_operator": "0x4e94f8bed00a91ddcd33fe576f5f7025db44900d16440333d2b1f9bff3cc5653",
+            "maker_pubkey_hash": "0x4398bf86146fcbd17451c191f38077d08f8d043ec1f5f545b6366c744df00bb7",
+            "request_id": "0",
+            "settlement_deadline_secs": "1781204400",
+            "signature_blob": "0x6960c229a70d6b40f89aac35b9573fecef2d199a543282746a10c5ec236b1af3d16606e317b504c205868bd8bec119e9e9cd488a5843a17e36c6b34c20dc5e0b",
+            "signed_at_secs": "1781204100",
+            "timestamp": "1781204101"
+          }
+        }
+      ]
+    },
+    {
+      "step": "11b",
+      "label": "fund_quote",
+      "sender": "maker",
+      "tx_hash": "0x2de3b1185d481957ec1349160174b3ae24744971860fbe486e31850c3a1533ee",
+      "status": "Success",
+      "vm_status": "Executed successfully",
+      "block_height": 100087442,
+      "timestamp": "2026-06-11T18:55:04.153633+00:00",
+      "events": [
+        {
+          "type": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4::rfq_engine::QuoteFunded",
+          "data": {
+            "escrow_addr": "0x7c66f3e649e9c8c0c7ee0d25d8f1cdcf40db415fa433a893ba4a768827c97680",
+            "maker_operator": "0x4e94f8bed00a91ddcd33fe576f5f7025db44900d16440333d2b1f9bff3cc5653",
+            "promised_amount_out": "498500000",
+            "request_id": "0",
+            "timestamp": "1781204104",
+            "token_out": "0xc8049b69178afd329e2a4836bbac6a7f34c9df88eb44360112b0fc288fa27ef0"
+          }
+        }
+      ]
+    },
+    {
+      "step": "12a",
+      "label": "accept_quote",
+      "sender": "deployer",
+      "tx_hash": "0x613a1da05f783635acccda24997db44cc94fb488dbbd3d236177a831ee248a76",
+      "status": "Success",
+      "vm_status": "Executed successfully",
+      "block_height": 100087453,
+      "timestamp": "2026-06-11T18:55:06.748570+00:00",
+      "events": [
+        {
+          "type": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4::trading_capability::CapabilityUsed",
+          "data": {
+            "agent": "0x4e94f8bed00a91ddcd33fe576f5f7025db44900d16440333d2b1f9bff3cc5653",
+            "agent_pubkey_hash": "0x4e94f8bed00a91ddcd33fe576f5f7025db44900d16440333d2b1f9bff3cc5653",
+            "amount": "500000000",
+            "cap_id": "0",
+            "daily_cap": "2500000000",
+            "daily_used_after": "500000000",
+            "expires_at": "1781290494",
+            "notification_endpoint": {
+              "vec": []
+            },
+            "owner": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4",
+            "timestamp": "1781204106",
+            "token": "0x88f35ede285633897fb7093660da58fa4ebc2c0c8e8551ab219c5e5021317b83"
+          }
+        },
+        {
+          "type": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4::rfq_engine::QuoteAccepted",
+          "data": {
+            "agent_nft_addr": "0xcc71fe142f8bd476c28f4417909c4c26093084bed418da5f62ce68d2ba8dbeca",
+            "amount_in": "500000000",
+            "automation_task_registered": false,
+            "cap_id": "0",
+            "locked_stakers_count": "0",
+            "maker_operator": "0x4e94f8bed00a91ddcd33fe576f5f7025db44900d16440333d2b1f9bff3cc5653",
+            "promised_amount_out": "498500000",
+            "quote_id": "0",
+            "request_id": "0",
+            "settlement_deadline_secs": "1781204400",
+            "taker": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4",
+            "timestamp": "1781204106",
+            "token_in": "0x88f35ede285633897fb7093660da58fa4ebc2c0c8e8551ab219c5e5021317b83",
+            "token_out": "0xc8049b69178afd329e2a4836bbac6a7f34c9df88eb44360112b0fc288fa27ef0"
+          }
+        }
+      ]
+    },
+    {
+      "step": "12b",
+      "label": "execute_settlement",
+      "sender": "deployer",
+      "tx_hash": "0xd9991f4945472ab7ed724c62cf0d08fa46d8385fc284d7715e001b2f6100f770",
+      "status": "Success",
+      "vm_status": "Executed successfully",
+      "block_height": 100087463,
+      "timestamp": "2026-06-11T18:55:09.397013+00:00",
+      "events": [
+        {
+          "type": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4::rfq_engine::SettlementExecuted",
+          "data": {
+            "amount_in": "500000000",
+            "amount_out": "498500000",
+            "caller": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4",
+            "maker_operator": "0x4e94f8bed00a91ddcd33fe576f5f7025db44900d16440333d2b1f9bff3cc5653",
+            "quote_id": "0",
+            "request_id": "0",
+            "settled_at": "1781204109",
+            "settlement_deadline_secs": "1781204400",
+            "taker": "0x4e0be7c453dfb013c973ae6be5cf7e67be62877b75c8239573b89cb287caedf4",
+            "timestamp": "1781204109",
+            "token_in": "0x88f35ede285633897fb7093660da58fa4ebc2c0c8e8551ab219c5e5021317b83",
+            "token_in_decimals": 6,
+            "token_out": "0xc8049b69178afd329e2a4836bbac6a7f34c9df88eb44360112b0fc288fa27ef0",
+            "token_out_decimals": 6
+          }
+        }
+      ],
+      "total_charge_gas_units": 1089,
+      "escrow_after_settle": {
+        "token_in": 0,
+        "token_out": 0
+      }
+    }
+  ],
+  "_provenance": {
+    "note": "step 12b fields total_charge_gas_units + escrow_after_settle were BACKFILLED as static data from the cosmo-contracts-move repo; they were NOT part of the originally captured JSON. Separate repo, no submodule, no coupling.",
+    "source_repo": "cosmo-contracts-move @ 041b5ed (sketches/event-schema-v2; Event-Schema v2: SettlementExecuted)",
+    "gas": "docs/smoke/d13-g3-storage-calibration-v2-2026-06-11.md + scripts/d13-happy-capture.sh:72; live-verified against settle tx 0xd9991f4945472ab7ed724c62cf0d08fa46d8385fc284d7715e001b2f6100f770 (total_charge_gas_units=1089)",
+    "escrow_after_settle": "scripts/d13-happy-capture.sh:655; live-asserted escrow empty (tIN=0, tOUT=0) post-settle"
+  }
+}

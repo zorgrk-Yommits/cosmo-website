@@ -7,6 +7,9 @@ import {
   META,
   supraScanTxUrl,
   truncateHex,
+  AMOUNT_FIELDS,
+  amountSymbol,
+  formatToken,
   type LifecycleStep,
 } from '../lib/lifecycle';
 
@@ -61,6 +64,13 @@ export default function DataPanel({ step }: DataPanelProps) {
                         <dt className="font-mono text-[11px] text-slate-500">{k}</dt>
                         <dd className="font-mono text-[11px] tabular-nums text-slate-300 text-right break-all">
                           {formatValue(v)}
+                          {AMOUNT_FIELDS.has(k) &&
+                            /^\d+$/.test(String(v)) &&
+                            amountSymbol(ev.name, k) && (
+                              <span className="ml-1 text-slate-500">
+                                ({formatToken(Number(v))} {amountSymbol(ev.name, k)})
+                              </span>
+                            )}
                         </dd>
                       </div>
                     ))}
@@ -68,17 +78,28 @@ export default function DataPanel({ step }: DataPanelProps) {
                 </div>
               ))}
 
-              {/* SupraScan — honest snapshot label, no live claim */}
+              {/* SupraScan link for persistent (non-ephemeral) captures — the Mainnet
+                  round-trip hashes are live. Ephemeral hashes would render as plain text. */}
               <div className="flex flex-wrap items-center gap-3 pt-1">
-                <a
-                  href={supraScanTxUrl(step.txHash)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-lg border border-purple-500/40 px-3 py-2 font-mono text-xs text-purple-200 transition-colors hover:border-purple-400 hover:text-purple-100"
-                >
-                  View on SupraScan
-                  <ExternalLink className="h-3.5 w-3.5" />
-                </a>
+                {META.ephemeral ? (
+                  <span
+                    title={META.ephemeralReason ?? undefined}
+                    className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 font-mono text-xs text-slate-400"
+                  >
+                    {truncateHex(step.txHash, 10, 8)}
+                    <span className="text-slate-500">· ephemeral — not a live link</span>
+                  </span>
+                ) : (
+                  <a
+                    href={supraScanTxUrl(step.txHash)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-lg border border-purple-500/40 px-3 py-2 font-mono text-xs text-purple-200 transition-colors hover:border-purple-400 hover:text-purple-100"
+                  >
+                    View on SupraScan
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                )}
                 <span className="font-mono text-[10px] leading-tight text-slate-500">
                   {META.livenessLabel} — {META.capturedLabel}
                 </span>

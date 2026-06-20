@@ -8,11 +8,10 @@ import { cn } from '@/lib/utils';
 
 const TOKENOMICS_URL = 'https://www.tadfi.online/community-tokens/COSMO';
 
-const navLinks: { href: string; label: string; external?: boolean }[] = [
+const navLinks: { href: string; label: string; external?: boolean; download?: boolean }[] = [
   { href: '/', label: 'Home' },
-  { href: '/strategies', label: 'Strategies' },
+  { href: '/demo', label: 'Demo' },
   { href: TOKENOMICS_URL, label: 'Tokenomics', external: true },
-  { href: '/whitepaper', label: 'Whitepaper' },
 ];
 
 export default function Navigation() {
@@ -28,7 +27,7 @@ export default function Navigation() {
             <Zap className="w-4 h-4 text-purple-400" />
           </div>
           <span className="font-mono font-bold text-white tracking-wide">
-            COSMO<span className="text-purple-400">CLAW</span>
+            <span className="text-purple-400">COSMO</span>
           </span>
         </Link>
 
@@ -45,8 +44,9 @@ export default function Navigation() {
               <a
                 key={link.href}
                 href={link.href}
-                target="_blank"
+                target={link.download ? undefined : '_blank'}
                 rel="noopener noreferrer"
+                download={link.download}
                 className={className}
               >
                 {link.label}
@@ -59,15 +59,7 @@ export default function Navigation() {
           })}
         </div>
 
-        {/* CTA */}
-        <div className="hidden md:flex items-center gap-3">
-          <Link
-            href="/launch"
-            className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-mono text-sm font-semibold transition-all duration-200 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]"
-          >
-            Launch App →
-          </Link>
-        </div>
+        {/* CTA removed for demo-only build (/launch not part of first release). */}
 
         {/* Mobile Toggle */}
         <button
@@ -92,8 +84,9 @@ export default function Navigation() {
               <a
                 key={link.href}
                 href={link.href}
-                target="_blank"
+                target={link.download ? undefined : '_blank'}
                 rel="noopener noreferrer"
+                download={link.download}
                 onClick={() => setMenuOpen(false)}
                 className={className}
               >
@@ -110,13 +103,7 @@ export default function Navigation() {
               </Link>
             );
           })}
-          <Link
-            href="/launch"
-            onClick={() => setMenuOpen(false)}
-            className="mt-2 px-4 py-3 rounded-lg bg-purple-600 text-white font-mono text-sm text-center font-semibold"
-          >
-            Launch App →
-          </Link>
+          {/* Launch App CTA removed for demo-only build (/launch not in first release). */}
         </div>
       )}
     </nav>
