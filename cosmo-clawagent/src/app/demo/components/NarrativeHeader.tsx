@@ -26,8 +26,8 @@ export default function NarrativeHeader() {
         transition={{ duration: 0.55, delay: 0.05 }}
         className="font-mono text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]"
       >
-        <span className="neon-text-purple">One swap.</span>{' '}
-        <span className="text-slate-100">Both sides, or neither.</span>
+        <span className="neon-text-purple">One settlement.</span>{' '}
+        <span className="text-slate-100">Both legs, or neither.</span>
       </motion.h1>
 
       <motion.div
@@ -47,8 +47,9 @@ export default function NarrativeHeader() {
           no moment where one side is exposed.
         </p>
         <p className="text-slate-400">
-          That is the point — <span className="text-slate-200">no trust required</span>. Below is a
-          real one, replayed step by step from a Supra testnet snapshot.
+          That is the mechanism — <span className="text-slate-200">atomic settlement, enforced on-chain</span>. Below is a
+          real one, replayed step by step from a Supra Mainnet round-trip. Here both roles were run by
+          the founder — this proves the settlement mechanism, not market activity.
         </p>
       </motion.div>
     </header>

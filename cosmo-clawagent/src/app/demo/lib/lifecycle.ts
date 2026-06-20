@@ -1,15 +1,56 @@
-// RFQ lifecycle model — derived from a static Supra-native testnet snapshot.
-// PURE data visualisation: no RPC, no wallet, no EVM. The snapshot is the only source.
+// RFQ lifecycle model — derived from a static Supra MAINNET round-trip capture.
+// PURE data visualisation: no RPC, no wallet, no EVM. The capture is the only source.
 //
-// Source: d13-happy-events-2026-06-11.json (run 2026-06-11, chain_id 6 = Supra native).
-// Captured on Event-Schema v2 (rfq_engine emits SettlementExecuted; the event is
-// self-contained: request_id, both token legs, amounts, and decimals).
-// Flow-proof snapshot from an ephemeral testnet deployer — tx hashes are not
-// persistent, so they prove the flow but must never be rendered as live links.
+// Source: mainnet-e2e-roundtrip-capture.json (run 2026-06-20, chain_id 8 = Supra
+// Mainnet, request_id 1, quote_id 0). Founder-only E2E, pair tINTEST -> wCOSMO.
+// Produced by quote-server/src/roundtrip/capture.ts (buildCapture), audited
+// capture<->chain green (Phase D). Unlike the old ephemeral testnet snapshot, these
+// tx hashes are PERSISTENT Mainnet hashes -> rendered as live SupraScan links.
+//
+// The capture is "lean" (5 on-chain legs + structured per-leg fields). This module
+// adapts it into the established Snapshot/RawStep shape so every consumer
+// (RfqReplay, LifecycleRail, DeployDrawer, SettlementStage, DataPanel) is unchanged.
 
-import snapshot from '@/data/d13-happy-events-2026-06-11.json';
+import capture from '@/data/mainnet-e2e-roundtrip-capture.json';
 
-// ── Raw snapshot shapes ──────────────────────────────────────────────────────
+// ── Enriched capture shapes (source) ─────────────────────────────────────────
+
+interface CaptureToken { address: string; symbol: string; decimals: number; name: string }
+interface CaptureFlow { from: string; to: string; amount: string; token: string }
+interface CaptureLeg {
+  name: string;
+  hash: string;
+  block: number;
+  ts: number; // unix seconds
+  from: string | null;
+  status: string;
+  request_id: string | null;
+  quote_id: string | null;
+  amount_in: string | null;
+  amount_out: string | null;
+  min_amount_out: string | null;
+  token_in: string | null;
+  token_out: string | null;
+  flows: CaptureFlow[];
+}
+interface Capture {
+  run_ts: string;
+  chain_id: number;
+  rpc_url: string;
+  explorer_tx_base: string;
+  reqId: string;
+  quoteId: string;
+  maker: string;
+  taker: string;
+  agent_nft: string;
+  quote_pubkey: string;
+  quote_pubkey_is_dev: boolean;
+  pair: { token_in: CaptureToken; token_out: CaptureToken };
+  legs: CaptureLeg[];
+  hashes: Record<string, string>;
+}
+
+// ── Raw snapshot shapes (target — consumers read these) ──────────────────────
 
 export interface RawEvent {
   type: string;
@@ -26,12 +67,6 @@ export interface RawStep {
   block_height: number | null;
   timestamp: string | null; // ISO 8601
   events: RawEvent[];
-  // Backfilled static fields on the settlement step only (see "_provenance" in the
-  // JSON). These were NOT in the originally captured snapshot; they are copied as
-  // static data from the cosmo-contracts-move repo @ 0b3a913 (separate repo, no
-  // submodule): total_charge_gas_units from docs/smoke/d13-happy-events-2026-06-08.md:12
-  // + live settle tx 0x68bcfea…; escrow_after_settle from scripts/d13-happy-capture.sh:655-661
-  // (capture-asserted on-chain invariant, "failed asserts: 0").
   total_charge_gas_units?: number;
   escrow_after_settle?: { token_in: number; token_out: number };
 }
@@ -52,37 +87,130 @@ export interface Snapshot {
   steps: RawStep[];
 }
 
+// ── Capture -> Snapshot adapter ──────────────────────────────────────────────
+
+const cap = capture as unknown as Capture;
+
+// Fully-qualified event type so shortEventName() yields the bare domain name.
+const evType = (name: string): string => `${cap.maker}::rfq_engine::${name}`;
+const isoFromUnix = (sec: number): string => new Date(sec * 1000).toISOString();
+
+// The domain event each leg surfaces, with the amount fields DataPanel annotates.
+// Synthesized from the leg's structured fields (the lean capture carries no raw
+// events array). Field names match AMOUNT_FIELDS / amountSymbol exactly.
+function legEvent(leg: CaptureLeg): RawEvent {
+  const d: Record<string, unknown> = { request_id: leg.request_id };
+  switch (leg.name) {
+    case 'create_request':
+      return { type: evType('RequestCreated'), data: {
+        ...d, amount_in: leg.amount_in, min_amount_out: leg.min_amount_out,
+        token_in: leg.token_in, token_out: leg.token_out } };
+    case 'submit_quote':
+      return { type: evType('QuoteSubmitted'), data: {
+        ...d, promised_amount_out: leg.amount_out } };
+    case 'fund_quote':
+      return { type: evType('QuoteFunded'), data: {
+        ...d, promised_amount_out: leg.amount_out, token_out: leg.token_out,
+        escrow: leg.flows[0]?.to ?? null } };
+    case 'accept_quote':
+      return { type: evType('QuoteAccepted'), data: {
+        ...d, quote_id: leg.quote_id, amount_in: leg.amount_in,
+        promised_amount_out: leg.amount_out, token_in: leg.token_in, token_out: leg.token_out } };
+    case 'execute_settlement':
+      return { type: evType('SettlementExecuted'), data: {
+        ...d, quote_id: leg.quote_id, amount_in: leg.amount_in, amount_out: leg.amount_out,
+        token_in: leg.token_in, token_out: leg.token_out } };
+    default:
+      return { type: evType('Event'), data: d };
+  }
+}
+
+function adaptCaptureToSnapshot(c: Capture): Snapshot {
+  const settle = c.legs.find((l) => l.name === 'execute_settlement');
+  const create = c.legs.find((l) => l.name === 'create_request');
+
+  // One RawStep per on-chain leg, plus a synthesized OFF-CHAIN sign step inserted
+  // between create_request and submit_quote (the quote is signed off-chain by design;
+  // the capture has no tx for it, but the rail expects the node).
+  const steps: RawStep[] = [];
+  for (const leg of c.legs) {
+    steps.push({
+      step: leg.name,
+      label: leg.name,
+      sender: leg.from ?? '',
+      tx_hash: leg.hash,
+      status: 'Success',
+      vm_status: 'Executed successfully',
+      block_height: leg.block,
+      timestamp: isoFromUnix(leg.ts),
+      events: [legEvent(leg)],
+      ...(leg.name === 'execute_settlement'
+        // escrow is fully drained to both sides on settle (provable from the
+        // settlement flows) -> capture-asserted "empty". gas not captured -> omitted.
+        ? { escrow_after_settle: { token_in: 0, token_out: 0 } }
+        : {}),
+    });
+    if (leg.name === 'create_request') {
+      steps.push({
+        step: 'sign_quote_offchain',
+        label: 'sign_quote_offchain',
+        sender: c.maker,
+        tx_hash: 'off-chain',
+        status: 'off-chain',
+        vm_status: null,
+        block_height: null,
+        timestamp: isoFromUnix(leg.ts),
+        events: [], // no synthetic event -> StepNode shows the "off-chain by design" fallback
+      });
+    }
+  }
+
+  // Short display ids (1..N) for the rail nodes; `label` stays the logic key
+  // (classify/title/isSettlement all key on label, never on step id).
+  steps.forEach((s, i) => { s.step = String(i + 1); });
+
+  return {
+    run_date: c.run_ts.slice(0, 10),
+    chain_id: c.chain_id,
+    rpc: c.rpc_url,
+    contract_addresses: {
+      package: c.maker,
+      token_in_fa: c.pair.token_in.address,
+      token_out_fa: c.pair.token_out.address,
+    },
+    amount_in: Number(settle?.amount_in ?? 0),
+    amount_out: Number(settle?.amount_out ?? 0),
+    request_id: c.reqId,
+    quote_id: c.quoteId,
+    cap_id: '0',
+    tier_values: {},
+    ephemeral: false, // persistent Mainnet hashes -> live explorer links
+    steps,
+  };
+}
+
 // ── Classified model ─────────────────────────────────────────────────────────
 
-// Three visually distinct kinds, exactly as the snapshot encodes them:
-//   on-chain         -> status Success + real tx_hash (the core RFQ loop)
-//   off-chain        -> status "off-chain" (the quote-server signature, by design)
-//   setup            -> status "skipped" (one-time deploy/mint/init, already live)
 export type StepKind = 'onchain' | 'offchain' | 'setup';
 
 export interface LifecycleStep {
-  id: string; // the snapshot "step" field, e.g. "12a"
-  label: string; // raw move entry label, e.g. "execute_settlement"
-  title: string; // human title for the UI
+  id: string;
+  label: string;
+  title: string;
   kind: StepKind;
   sender: string;
-  txHash: string | null; // only present for on-chain steps
+  txHash: string | null;
   vmStatus: string | null;
   blockHeight: number | null;
   timestamp: string | null;
-  // Primary event name surfaced on the rail node (CapabilityCreated, ...).
   eventName: string | null;
   events: { name: string; data: Record<string, unknown> }[];
-  // The settlement step is the visual climax of the replay.
   isSettlement: boolean;
 }
 
-const snap = snapshot as unknown as Snapshot;
+const snap: Snapshot = adaptCaptureToSnapshot(cap);
 
-// The five entry labels that make up the live RFQ loop. Classification keys
-// on the move entry label, NOT on status: a fresh-deploy snapshot runs the
-// one-time setup txs with status "Success" too, so status cannot distinguish
-// setup from core. Strings are byte-exact from the snapshot "label" fields.
+// The five entry labels that make up the live RFQ loop.
 const CORE_LABELS = new Set([
   'create_request',
   'submit_quote',
@@ -91,7 +219,6 @@ const CORE_LABELS = new Set([
   'execute_settlement',
 ]);
 
-// Human-readable titles per move entry label.
 const TITLES: Record<string, string> = {
   publish: 'Publish package',
   init_collection: 'Init NFT collection',
@@ -117,8 +244,6 @@ function classify(s: RawStep): StepKind {
   return 'setup';
 }
 
-// Short event name from a fully-qualified move type:
-// "0x..::rfq_engine::SettlementRecorded" -> "SettlementRecorded"
 function shortEventName(type: string): string {
   const parts = type.split('::');
   return parts[parts.length - 1] || type;
@@ -142,33 +267,22 @@ function toLifecycleStep(s: RawStep): LifecycleStep {
   };
 }
 
-// Steps already arrive in lifecycle order via the "step" field ("1".."12b").
-// We preserve that order verbatim — no client-side reordering needed.
 export const ALL_STEPS: LifecycleStep[] = snap.steps.map(toLifecycleStep);
-
-// The default view: everything that is NOT one-time setup, i.e. the core RFQ loop
-// (capability -> request -> off-chain sign -> quote -> accept -> settle).
 export const CORE_STEPS: LifecycleStep[] = ALL_STEPS.filter((s) => s.kind !== 'setup');
-
-// The collapsed one-time deploy phase, hidden by default.
 export const SETUP_STEPS: LifecycleStep[] = ALL_STEPS.filter((s) => s.kind === 'setup');
 
-// ── Economics (Supra native quants — 8 decimals) ────────────────────────────
+// ── Economics ────────────────────────────────────────────────────────────────
 
 export const QUANT_DECIMALS = 8;
 
 export interface Economics {
-  amountIn: number; // raw quants
-  amountOut: number; // raw quants
-  minAmountOut: number; // raw quants, the request floor
-  spreadBps: number; // basis points, computed client-side
-  spreadPct: number; // percent, computed client-side
-  // Backfilled from the contracts repo (see RawStep note). Settlement guarantees:
-  settlementGas: number | null; // execute_settlement total_charge_gas_units (@ gup 100000)
-  escrowAfterSettle: { tokenIn: number; tokenOut: number } | null; // capture-asserted post-settle invariant
-  // The rfq_engine settlement event name as emitted by the captured snapshot.
-  // Event-Schema v2 renamed SettlementRecorded -> SettlementExecuted; historical
-  // snapshots keep the old name, so this is read from the data, never hard-coded.
+  amountIn: number;
+  amountOut: number;
+  minAmountOut: number;
+  spreadBps: number;
+  spreadPct: number;
+  settlementGas: number | null;
+  escrowAfterSettle: { tokenIn: number; tokenOut: number } | null;
   settlementEventName: string;
 }
 
@@ -179,9 +293,6 @@ function readMinAmountOut(): number {
   return raw ? Number(raw) : 0;
 }
 
-// 30 bps is NOT a stored field — it is derived: (in - out) / in.
-// (500_000_000 - 498_500_000) / 500_000_000 = 0.003 = 0.30% = 30 bps.
-// Settlement guarantees backfilled onto the execute_settlement step (see RawStep note).
 function readSettlementGuarantees(): {
   settlementGas: number | null;
   escrowAfterSettle: { tokenIn: number; tokenOut: number } | null;
@@ -192,8 +303,6 @@ function readSettlementGuarantees(): {
   const escrowAfterSettle = s?.escrow_after_settle
     ? { tokenIn: s.escrow_after_settle.token_in, tokenOut: s.escrow_after_settle.token_out }
     : null;
-  // Derive the settlement event name from the data (SettlementExecuted on v2,
-  // SettlementRecorded on pre-v2 snapshots). Fall back to the v2 name.
   const settleEvt = s?.events.find((e) => /::Settlement(Executed|Recorded)$/.test(e.type));
   const settlementEventName = settleEvt ? shortEventName(settleEvt.type) : 'SettlementExecuted';
   return { settlementGas, escrowAfterSettle, settlementEventName };
@@ -217,7 +326,6 @@ export const ECONOMICS: Economics = (() => {
   };
 })();
 
-// Format raw quants into a human token amount (8 decimals), trimming trailing zeros.
 export function formatQuants(raw: number): string {
   const whole = Math.floor(raw / 10 ** QUANT_DECIMALS);
   const frac = raw % 10 ** QUANT_DECIMALS;
@@ -226,48 +334,36 @@ export function formatQuants(raw: number): string {
   return fracStr ? `${wholeStr}.${fracStr}` : wholeStr;
 }
 
-// Grouped-digit raw quant string, e.g. 500_000_000 -> "500,000,000".
 export function groupQuants(raw: number): string {
   return raw.toLocaleString('en-US');
 }
 
-// ── Human-readable token amounts (mock FAs, 6 decimals) ─────────────────────
-// All assets in the snapshot are 6-decimal fungible assets: a raw amount is
-// divided by 10^6. (tIN / tOUT swap legs + the $COSMO operator bond.)
-export const TOKEN_DECIMALS = 6;
-const TOKEN_DIVISOR = 1_000_000; // 10^6
+// ── Human-readable token amounts ─────────────────────────────────────────────
+// Decimals + symbols come straight from the capture's on-chain token metadata
+// (pair.token_in/out), so a future capture with different assets renders correctly
+// with no code change. tINTEST and wCOSMO are both 6-decimal here.
+export const TOKEN_DECIMALS = cap.pair.token_out.decimals;
+const TOKEN_DIVISOR = 10 ** TOKEN_DECIMALS;
 
-// Per-asset symbols. The settled pair is tIN -> tOUT: two DISTINCT fungible
-// assets — the contract enforces token_in != token_out (rfq_engine E_SAME_TOKEN),
-// so a $COSMO -> $COSMO trade is impossible on-chain. The operator bond is a
-// separate asset, $COSMO (tCOSMO). Symbols are the capture's asset symbols
-// (d13-happy-capture.sh SYM_TIN/SYM_TOUT + the tCOSMO bond); the snapshot carries
-// no symbol field, so they live here as named constants.
-export const TOKEN_IN_SYMBOL = 'tIN'; // taker spends this leg
-export const TOKEN_OUT_SYMBOL = 'tOUT'; // taker receives this leg
-export const BOND_SYMBOL = '$COSMO'; // operator bond (tCOSMO) — NOT a swap leg
+// The settled pair is token_in -> token_out: two DISTINCT fungible assets
+// (rfq_engine enforces token_in != token_out). Symbols are the capture's on-chain
+// metadata. BOND_SYMBOL is retained for the data-panel annotation API; this capture
+// carries no bond event, so it is unused here.
+export const TOKEN_IN_SYMBOL = cap.pair.token_in.symbol; // taker spends
+export const TOKEN_OUT_SYMBOL = cap.pair.token_out.symbol; // taker receives
+export const BOND_SYMBOL = '$COSMO';
 
-// Swap-leg FA addresses, read straight from the snapshot so a future capture
-// auto-renders the correct ones — no hardcoded address strings in the UI.
 export const TOKEN_IN_ADDR = snap.contract_addresses.token_in_fa ?? '';
 export const TOKEN_OUT_ADDR = snap.contract_addresses.token_out_fa ?? '';
 
-// Exact raw -> token string. NO float division of the whole value (that yields
-// "498.4999..."): split into integer/remainder, pad+trim the fractional part.
-// Self-check (must hold exactly):
-//   formatToken(500_000_000) === "500"
-//   formatToken(498_500_000) === "498.5"
-//   formatToken(496_000_000) === "496"
 export function formatToken(raw: number): string {
-  const frac = raw % TOKEN_DIVISOR; // integer remainder, exact for safe integers
-  const whole = (raw - frac) / TOKEN_DIVISOR; // integer quotient, no float floor
+  const frac = raw % TOKEN_DIVISOR;
+  const whole = (raw - frac) / TOKEN_DIVISOR;
   const fracStr = String(frac).padStart(TOKEN_DECIMALS, '0').replace(/0+$/, '');
   const wholeStr = whole.toLocaleString('en-US');
   return fracStr ? `${wholeStr}.${fracStr}` : wholeStr;
 }
 
-// Event-data keys that carry a raw token amount (-> eligible for token annotation
-// in the data panel). Deliberately excludes timestamps, ids, counts, addresses.
 export const AMOUNT_FIELDS = new Set<string>([
   'amount_in',
   'amount_out',
@@ -280,12 +376,6 @@ export const AMOUNT_FIELDS = new Set<string>([
   'request_fee_quants',
 ]);
 
-// Which asset symbol denominates an amount field, given the event it appears in.
-// Ground truth from the capture run: the taker spends tIN and receives tOUT; the
-// operator bond is $COSMO (tCOSMO). The key "amount" is reused across two events
-// (BondDeposited = $COSMO bond, CapabilityUsed = tIN spend), so the event name is
-// required to disambiguate. request_fee_quants is denominated in SUPRA quants (a
-// different asset + decimal scale) -> no swap-token annotation (null).
 const TOKEN_IN_AMOUNT_FIELDS = new Set<string>([
   'amount_in',
   'max_amount_per_day',
@@ -306,9 +396,8 @@ export function amountSymbol(eventName: string, field: string): string | null {
   return null;
 }
 
-// ── Snapshot metadata + SupraScan ───────────────────────────────────────────
+// ── Capture metadata + SupraScan ─────────────────────────────────────────────
 
-// Format an ISO run_date ("2026-06-08") as "08 Jun 2026" for display labels.
 function formatRunDate(iso: string): string {
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const [y, m, d] = iso.split('-');
@@ -318,31 +407,29 @@ function formatRunDate(iso: string): string {
 
 export const META = {
   runDate: snap.run_date,
-  chainId: snap.chain_id, // 6 = Supra native (NOT the EVM chain)
+  chainId: snap.chain_id, // 8 = Supra Mainnet
   rpc: snap.rpc,
-  network: 'Supra Testnet',
+  network: 'Supra Mainnet',
   packageAddr: snap.contract_addresses.package,
   requestId: snap.request_id,
   quoteId: snap.quote_id,
   capId: snap.cap_id,
-  // Provenance flag from the snapshot: an ephemeral deployer's tx hashes are not
-  // persistent, so the UI must not render them as live explorer links.
+  // Persistent Mainnet hashes -> live explorer links (not an ephemeral testnet run).
   ephemeral: snap.ephemeral ?? false,
   ephemeralReason: snap.ephemeral_reason ?? null,
-  // capturedLabel derived from run_date — no hardcoded date.
-  capturedLabel: `snapshot captured ${formatRunDate(snap.run_date)}`,
-  // Honest liveness per snapshot kind: ephemeral snapshots make NO live claim.
+  capturedLabel: `captured ${formatRunDate(snap.run_date)}`,
   livenessLabel: (snap.ephemeral ?? false)
     ? 'captured snapshot — not a live deployment'
-    : 'Live on Supra Testnet',
+    : 'Live on Supra Mainnet',
 };
 
-// SupraScan link — ONLY meaningful for steps that carry a real tx_hash.
+// SupraScan link — base + path confirmed in the Phase-D re-audit (/tx/<hash>, the
+// Tx Details route). Only meaningful for steps that carry a real tx_hash.
+const EXPLORER_TX_BASE = cap.explorer_tx_base; // https://suprascan.io/tx/
 export function supraScanTxUrl(txHash: string): string {
-  return `https://suprascan.io/tx/${txHash}?network=testnet`;
+  return `${EXPLORER_TX_BASE}${txHash}?network=mainnet`;
 }
 
-// Truncate a 0x hash/address for compact display: 0x1234…cdef
 export function truncateHex(hex: string, head = 6, tail = 4): string {
   if (!hex.startsWith('0x') || hex.length <= head + tail + 2) return hex;
   return `${hex.slice(0, head)}…${hex.slice(-tail)}`;

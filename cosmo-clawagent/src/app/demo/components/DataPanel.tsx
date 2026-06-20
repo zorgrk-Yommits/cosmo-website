@@ -78,8 +78,8 @@ export default function DataPanel({ step }: DataPanelProps) {
                 </div>
               ))}
 
-              {/* SupraScan link ONLY for persistent (non-ephemeral) snapshots.
-                  Ephemeral testnet hashes are shown as plain, non-clickable text. */}
+              {/* SupraScan link for persistent (non-ephemeral) captures — the Mainnet
+                  round-trip hashes are live. Ephemeral hashes would render as plain text. */}
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 {META.ephemeral ? (
                   <span
