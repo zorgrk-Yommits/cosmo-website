@@ -7,13 +7,20 @@
 // Guardrail: only TAKER actions live here. Maker (submit_quote/fund_quote) and
 // admin/governance calls are off-chain and intentionally absent.
 //
-// Arg encoding (per Supra dApp-with-StarKey docs + supra-l1-sdk BCS):
-//   address -> AccountAddress.fromHex(a).toUint8Array()  (canonical 32 bytes)
-//   u64     -> BCS.bcsSerializeUint64(BigInt(v))
-// AccountAddress (not HexString) is used for address args so short addresses
-// like 0x1 are left-padded to 32 bytes instead of producing 1 byte.
+// Arg encoding (BCS, per Supra dApp-with-StarKey docs):
+//   address -> 32 canonical bytes, big-endian, short addrs left-padded
+//   u64     -> 8 bytes, little-endian
+//
+// These were originally produced via supra-l1-sdk's TxnBuilderTypes.AccountAddress
+// and BCS helpers. That import is intentionally REMOVED: in the browser bundle the
+// SDK's `export * as TxnBuilderTypes` namespace re-export resolves to `undefined`
+// (webpack/esbuild namespace-reexport interop bug), so `TxnBuilderTypes.AccountAddress`
+// threw "Cannot read properties of undefined (reading 'AccountAddress')" before any
+// StarKey prompt. Both encodings are fixed-width and trivial; the pure
+// implementations below are byte-for-byte identical to the SDK output (verified
+// against AccountAddress.fromHex(a).address and BCS.bcsSerializeUint64) and carry
+// no bundler resolution risk on the hot path.
 
-import { BCS, TxnBuilderTypes } from "supra-l1-sdk";
 import { RFQ_MODULE_NAME, moduleAddrNo0x } from "./rfqConfig";
 
 export type EntryCall = {
@@ -25,12 +32,30 @@ export type EntryCall = {
 };
 
 function addrArg(a: string): Uint8Array {
-  // .address is the canonical 32-byte representation (short addrs left-padded).
-  return TxnBuilderTypes.AccountAddress.fromHex(a).address;
+  // Canonical 32-byte big-endian address; short addrs (e.g. 0x1) left-padded.
+  let h = a.toLowerCase().replace(/^0x/, "");
+  if (h.length > 64) throw new Error(`address too long: ${a}`);
+  if (!/^[0-9a-f]*$/.test(h)) throw new Error(`invalid address hex: ${a}`);
+  h = h.padStart(64, "0");
+  const out = new Uint8Array(32);
+  for (let i = 0; i < 32; i++) out[i] = parseInt(h.slice(i * 2, i * 2 + 2), 16);
+  return out;
 }
 
 function u64Arg(v: number | bigint | string): Uint8Array {
-  return BCS.bcsSerializeUint64(BigInt(v));
+  // BCS u64: 8 bytes, little-endian.
+  const out = new Uint8Array(8);
+  let x = BigInt(v);
+  const MASK = BigInt(255);
+  const SHIFT = BigInt(8);
+  if (x < BigInt(0) || x > BigInt("0xffffffffffffffff")) {
+    throw new Error(`u64 out of range: ${v}`);
+  }
+  for (let i = 0; i < 8; i++) {
+    out[i] = Number(x & MASK);
+    x >>= SHIFT;
+  }
+  return out;
 }
 
 function call(functionName: string, functionArgs: Uint8Array[]): EntryCall {
