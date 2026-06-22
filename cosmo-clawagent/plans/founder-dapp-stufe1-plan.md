@@ -106,6 +106,21 @@ Test-Disziplin: UI/Signing zuerst gegen Testnet chain 6 (Wegwerf-Betraege), dann
 RPC/ChainID-Flip auf Mainnet 8 nach gruenem Loop. Konventionen: targeted git add,
 COSMO/$COSMO, host-seitige Pushes (origin = github cosmo-website).
 
+## Testnet-Target (deployed 2026-06-22, chain 6)
+
+Persistenter Deploy via `cosmo-contracts-move/scripts/deploy-testnet-rfq-target.sh`
+(headless, ephemerer Faucet-Key in gitignored `.testnet-target/`, Move.toml
+rebound+restored). Adressen (nicht geheim) in `.env.local` verdrahtet:
+
+- MODULE_ADDR: `0x2aedf2ea1d77b55638af365ceb75f228d92e86e58eb4cad9f80da8edbbdd5e1c`
+- TOKEN_IN (plain): `0x753813483cb618cf8a71a6eab5a837032680334dbf26e2d951709726bf5ca143`
+- TOKEN_OUT (plain): `0x634d3af5599a4b3eeb541591d1f158e5a9397850c842f942613fedb83e3389b1`
+- publish_main `0xe2c1d592...`, publish_helpers `0xa7a875cf...`, get_next_request_id=0
+
+Reicht fuer create_request + Views + den StarKey-Browser-Test. accept/settle
+brauchen zusaetzlich: CLI-gemintete Trading-Capability (cap_id) + Maker-Daemon
+(Teil b) + minimales Arming (server_quote_pubkey, Maker-Bond).
+
 ## Offene Folge-Kartierung (spaeter)
 
 - dApp-Mint-Flow fuer Trading-Capability (Stufe 1 nutzt CLI-Mint).

@@ -9,16 +9,17 @@ import { useEffect, useMemo, useState } from "react";
 import LifecycleRail from "@/app/demo/components/LifecycleRail";
 import DataPanel from "@/app/demo/components/DataPanel";
 import { useRfqFlow, type CreateForm } from "@/hooks/useRfqFlow";
-import { RFQ_CHAIN_ID } from "@/lib/rfqConfig";
+import { RFQ_CHAIN_ID, RFQ_TOKEN_IN, RFQ_TOKEN_OUT, RFQ_AGENT_NFT } from "@/lib/rfqConfig";
 
 const QUOTE_TTL_SECS = 60; // calibrate via rfqViews.quoteTtlSecs() once live
 
-// Placeholders mirror the mainnet test pair; the founder edits per target chain.
+// Token defaults come from the configured target (env) so the founder isn't
+// pasting addresses; fall back to the mainnet test pair as placeholders.
 const DEFAULT_FORM: CreateForm = {
-  agentNftAddr: "0x1",
-  tokenIn: "0x64ceb0ff89e190cd58e66aa3702d887a0bcd084e205f1d5857e2ff3ae61a0b7f",
+  agentNftAddr: RFQ_AGENT_NFT || "0x1",
+  tokenIn: RFQ_TOKEN_IN || "0x64ceb0ff89e190cd58e66aa3702d887a0bcd084e205f1d5857e2ff3ae61a0b7f",
   amountIn: "1000000",
-  tokenOut: "0x4799c7cc256a0cb38d28847eae42be5caf5f21e5272a4d3eef52965c1d00cff6",
+  tokenOut: RFQ_TOKEN_OUT || "0x4799c7cc256a0cb38d28847eae42be5caf5f21e5272a4d3eef52965c1d00cff6",
   minAmountOut: "996000",
   requestFeeQuants: "0",
   capId: "0",

@@ -37,6 +37,12 @@ export const RFQ_MODULE_ADDR: string =
 
 export const RFQ_MODULE_NAME = "rfq_engine";
 
+// Pre-fill values for the create_request form, target-specific (env-driven).
+// Empty -> the cockpit falls back to its built-in placeholders.
+export const RFQ_TOKEN_IN = process.env.NEXT_PUBLIC_RFQ_TOKEN_IN ?? "";
+export const RFQ_TOKEN_OUT = process.env.NEXT_PUBLIC_RFQ_TOKEN_OUT ?? "";
+export const RFQ_AGENT_NFT = process.env.NEXT_PUBLIC_RFQ_AGENT_NFT ?? "";
+
 // StarKey's createRawTransactionData wants the module address as a 64-char hex
 // string WITHOUT the 0x prefix (see Supra dApp-with-StarKey docs).
 export function moduleAddrNo0x(addr: string = RFQ_MODULE_ADDR): string {
