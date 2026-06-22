@@ -20,7 +20,8 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@context/*": ["./context/*"]
+      "@context/*": ["./context/*"],
+      "supra-l1-sdk": ["./node_modules/supra-l1-sdk/dist/node/index.d.ts"]
     }
   },
   "include": [
