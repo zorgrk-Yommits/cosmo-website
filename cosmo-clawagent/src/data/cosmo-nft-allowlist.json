@@ -1,0 +1,7 @@
+{
+  "stage": "Stage 1 — static UI allowlist",
+  "description": "Public COSMO NFT holder addresses for the Stage-1 access gate. SEED LIST — curate with the real public holder set before relying on it. Stage 2 will add a signed-nonce + on-chain ownership check (see src/lib/nftGate.ts). Addresses are PUBLIC; no private data. Stored normalized: lowercase, 0x-prefixed.",
+  "addresses": [
+    "0xf2785bf6510d738d2f58c48ee62f00ec56462a5bf0de4ccfdebd11cd2b1264e1"
+  ]
+}

@@ -11,6 +11,7 @@ const TOKENOMICS_URL = 'https://www.tadfi.online/community-tokens/COSMO';
 const navLinks: { href: string; label: string; external?: boolean; download?: boolean }[] = [
   { href: '/', label: 'Home' },
   { href: '/demo', label: 'Demo' },
+  { href: '/access', label: 'Access' },
   { href: TOKENOMICS_URL, label: 'Tokenomics', external: true },
 ];
 
