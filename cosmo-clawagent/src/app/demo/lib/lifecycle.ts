@@ -1,17 +1,17 @@
 // RFQ lifecycle model — derived from a static Supra MAINNET round-trip capture.
 // PURE data visualisation: no RPC, no wallet, no EVM. The capture is the only source.
 //
-// Source: mainnet-e2e-roundtrip-capture.json (run 2026-06-20, chain_id 8 = Supra
-// Mainnet, request_id 1, quote_id 0). Founder-only E2E, pair tINTEST -> wCOSMO.
-// Produced by quote-server/src/roundtrip/capture.ts (buildCapture), audited
-// capture<->chain green (Phase D). Unlike the old ephemeral testnet snapshot, these
-// tx hashes are PERSISTENT Mainnet hashes -> rendered as live SupraScan links.
+// Source: d14-s9-roundtrip-2026-06-24.json (run 2026-06-24, chain_id 8 = Supra
+// Mainnet, request_id 2, quote_id 1). D-14 Stage B proof: the Maker leg is signed by
+// K1 (the bonded Maker-Operator, != founder), pair tINTEST -> wCOSMO. Produced by
+// quote-server/src/roundtrip/capture.ts (buildCapture). These tx hashes are
+// PERSISTENT Mainnet hashes -> rendered as live SupraScan links.
 //
 // The capture is "lean" (5 on-chain legs + structured per-leg fields). This module
 // adapts it into the established Snapshot/RawStep shape so every consumer
 // (RfqReplay, LifecycleRail, DeployDrawer, SettlementStage, DataPanel) is unchanged.
 
-import capture from '@/data/mainnet-e2e-roundtrip-capture.json';
+import capture from '@/data/d14-s9-roundtrip-2026-06-24.json';
 
 // ── Enriched capture shapes (source) ─────────────────────────────────────────
 
@@ -182,7 +182,7 @@ function adaptCaptureToSnapshot(c: Capture): Snapshot {
     amount_out: Number(settle?.amount_out ?? 0),
     request_id: c.reqId,
     quote_id: c.quoteId,
-    cap_id: '0',
+    cap_id: '1', // S8-renewed taker capability used in this round-trip
     tier_values: {},
     ephemeral: false, // persistent Mainnet hashes -> live explorer links
     steps,

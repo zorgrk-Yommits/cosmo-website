@@ -48,8 +48,13 @@ export default function NarrativeHeader() {
         </p>
         <p className="text-slate-400">
           That is the mechanism — <span className="text-slate-200">atomic settlement, enforced on-chain</span>. Below is a
-          real one, replayed step by step from a Supra Mainnet round-trip. Here both roles were run by
-          the founder — this proves the settlement mechanism, not market activity.
+          real one, replayed step by step from a <span className="text-slate-200">controlled Supra Mainnet RFQ proof
+          with separated roles</span>: a requesting agent initiates the RFQ,{' '}
+          <span className="text-purple-300 font-medium">Kahless</span> represents the Maker side, and behind Kahless{' '}
+          <span className="text-cyan-300 font-medium">K1</span> acts as the bonded Maker-Operator.{' '}
+          <span className="text-emerald-300 font-medium">COSMO</span> locks, checks and settles the exchange atomically
+          on Supra Mainnet. The founder no longer signs the Maker leg — this proves role separation and the
+          settlement mechanism, not market activity.
         </p>
       </motion.div>
     </header>

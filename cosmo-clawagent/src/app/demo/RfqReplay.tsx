@@ -15,6 +15,8 @@ import LifecycleRail from './components/LifecycleRail';
 import DeployDrawer from './components/DeployDrawer';
 import SettlementStage from './components/SettlementStage';
 import DataPanel from './components/DataPanel';
+import CaveatBox from './components/CaveatBox';
+import Roles from './components/Roles';
 
 const AUTOPLAY_MS = 2200;
 
@@ -98,6 +100,9 @@ export default function RfqReplay() {
         <div className="relative z-10 mx-auto max-w-6xl px-5 py-16 md:py-20">
           <NarrativeHeader />
 
+          {/* ── honest status banner (controlled proof, not permissionless) ── */}
+          <CaveatBox />
+
           {/* ── controls ───────────────────────────────────────────────── */}
           <div className="mt-12 flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">
@@ -171,6 +176,9 @@ export default function RfqReplay() {
           <div className="mt-8">
             <DataPanel step={selected} />
           </div>
+
+          {/* ── the roles (story of the separated-role proof) ──────────── */}
+          <Roles />
 
           {/* footer honesty line */}
           <p className="mt-10 font-mono text-[11px] leading-relaxed text-slate-600">

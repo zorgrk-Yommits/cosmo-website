@@ -1,0 +1,143 @@
+{
+  "run_ts": "2026-06-24T07:32:07.564Z",
+  "chain_id": 8,
+  "rpc_url": "https://rpc-mainnet.supra.com",
+  "explorer_tx_base": "https://suprascan.io/tx/",
+  "reqId": "2",
+  "quoteId": "1",
+  "maker": "0x11c1c2660dc3e764c6b5b12f084cbbb11028b74686aea7a762e09b2ca651da53",
+  "taker": "0xdd98b2b847b7002c600d1dc03a15bbef2c6eb786a265e823260c269fe41e622d",
+  "agent_nft": "0x38c02505865a8b08d6a2fd354554de5906263e1aedd702af3bb8299f1f191738",
+  "quote_pubkey": "0x207a067892821e25d770f1fba0c47c11ff4b813e54162ece9eb839e076231ab6",
+  "quote_pubkey_is_dev": true,
+  "pair": {
+    "token_in": {
+      "address": "0x64ceb0ff89e190cd58e66aa3702d887a0bcd084e205f1d5857e2ff3ae61a0b7f",
+      "symbol": "tINTEST",
+      "decimals": 6,
+      "name": "RFQ E2E Test In"
+    },
+    "token_out": {
+      "address": "0x4799c7cc256a0cb38d28847eae42be5caf5f21e5272a4d3eef52965c1d00cff6",
+      "symbol": "wCOSMO",
+      "decimals": 6,
+      "name": "Wrapped COSMO"
+    }
+  },
+  "legs": [
+    {
+      "name": "create_request",
+      "hash": "0x52750e8e9adbaaa1ada7714b1619a3c55a3fb67a68e723576230a501d76db6ac",
+      "block": 48497066,
+      "ts": 1782286308,
+      "from": "0xdd98b2b847b7002c600d1dc03a15bbef2c6eb786a265e823260c269fe41e622d",
+      "status": "Success",
+      "request_id": "2",
+      "quote_id": null,
+      "amount_in": "1000000",
+      "amount_out": null,
+      "min_amount_out": "996000",
+      "token_in": "0x64ceb0ff89e190cd58e66aa3702d887a0bcd084e205f1d5857e2ff3ae61a0b7f",
+      "token_out": "0x4799c7cc256a0cb38d28847eae42be5caf5f21e5272a4d3eef52965c1d00cff6",
+      "flows": []
+    },
+    {
+      "name": "submit_quote",
+      "hash": "0xe0be76cc55ab376f8ce60f23cb41361d8c8ae5836b7636b451d575644fdbe070",
+      "block": 48497070,
+      "ts": 1782286312,
+      "from": "0x11c1c2660dc3e764c6b5b12f084cbbb11028b74686aea7a762e09b2ca651da53",
+      "status": "Success",
+      "request_id": "2",
+      "quote_id": null,
+      "amount_in": null,
+      "amount_out": "997000",
+      "min_amount_out": null,
+      "token_in": null,
+      "token_out": null,
+      "flows": []
+    },
+    {
+      "name": "fund_quote",
+      "hash": "0x9a76bbd8e7b945260503575469b47e929ace7bf1a2586a6a74499e41ee70967e",
+      "block": 48497073,
+      "ts": 1782286316,
+      "from": "0x11c1c2660dc3e764c6b5b12f084cbbb11028b74686aea7a762e09b2ca651da53",
+      "status": "Success",
+      "request_id": "2",
+      "quote_id": null,
+      "amount_in": null,
+      "amount_out": "997000",
+      "min_amount_out": null,
+      "token_in": null,
+      "token_out": "0x4799c7cc256a0cb38d28847eae42be5caf5f21e5272a4d3eef52965c1d00cff6",
+      "flows": [
+        {
+          "from": "0x11c1c2660dc3e764c6b5b12f084cbbb11028b74686aea7a762e09b2ca651da53",
+          "to": "0xa1d86e8ce745f010341b62d189b29c77b41b7672f2e02fadbafb846e0193977a",
+          "amount": "997000",
+          "token": "0x4799c7cc256a0cb38d28847eae42be5caf5f21e5272a4d3eef52965c1d00cff6"
+        }
+      ]
+    },
+    {
+      "name": "accept_quote",
+      "hash": "0x388c853629a55729dd4017a7d4f5806cef54774ac7a7c90016620f60b8a70ce7",
+      "block": 48497075,
+      "ts": 1782286320,
+      "from": "0xdd98b2b847b7002c600d1dc03a15bbef2c6eb786a265e823260c269fe41e622d",
+      "status": "Success",
+      "request_id": "2",
+      "quote_id": "1",
+      "amount_in": "1000000",
+      "amount_out": "997000",
+      "min_amount_out": null,
+      "token_in": "0x64ceb0ff89e190cd58e66aa3702d887a0bcd084e205f1d5857e2ff3ae61a0b7f",
+      "token_out": "0x4799c7cc256a0cb38d28847eae42be5caf5f21e5272a4d3eef52965c1d00cff6",
+      "flows": [
+        {
+          "from": "0xdd98b2b847b7002c600d1dc03a15bbef2c6eb786a265e823260c269fe41e622d",
+          "to": "0xa1d86e8ce745f010341b62d189b29c77b41b7672f2e02fadbafb846e0193977a",
+          "amount": "1000000",
+          "token": "0x64ceb0ff89e190cd58e66aa3702d887a0bcd084e205f1d5857e2ff3ae61a0b7f"
+        }
+      ]
+    },
+    {
+      "name": "execute_settlement",
+      "hash": "0x7ae2c4f5d9851637a3e807ba81f1bd3e7f8bbb27e6eb5f1dd954bb0647c6fd61",
+      "block": 48497077,
+      "ts": 1782286323,
+      "from": "0x11c1c2660dc3e764c6b5b12f084cbbb11028b74686aea7a762e09b2ca651da53",
+      "status": "Success",
+      "request_id": "2",
+      "quote_id": "1",
+      "amount_in": "1000000",
+      "amount_out": "997000",
+      "min_amount_out": null,
+      "token_in": "0x64ceb0ff89e190cd58e66aa3702d887a0bcd084e205f1d5857e2ff3ae61a0b7f",
+      "token_out": "0x4799c7cc256a0cb38d28847eae42be5caf5f21e5272a4d3eef52965c1d00cff6",
+      "flows": [
+        {
+          "from": "0xa1d86e8ce745f010341b62d189b29c77b41b7672f2e02fadbafb846e0193977a",
+          "to": "0xdd98b2b847b7002c600d1dc03a15bbef2c6eb786a265e823260c269fe41e622d",
+          "amount": "997000",
+          "token": "0x4799c7cc256a0cb38d28847eae42be5caf5f21e5272a4d3eef52965c1d00cff6"
+        },
+        {
+          "from": "0xa1d86e8ce745f010341b62d189b29c77b41b7672f2e02fadbafb846e0193977a",
+          "to": "0x11c1c2660dc3e764c6b5b12f084cbbb11028b74686aea7a762e09b2ca651da53",
+          "amount": "1000000",
+          "token": "0x64ceb0ff89e190cd58e66aa3702d887a0bcd084e205f1d5857e2ff3ae61a0b7f"
+        }
+      ]
+    }
+  ],
+  "hashes": {
+    "create_request": "0x52750e8e9adbaaa1ada7714b1619a3c55a3fb67a68e723576230a501d76db6ac",
+    "submit_quote": "0xe0be76cc55ab376f8ce60f23cb41361d8c8ae5836b7636b451d575644fdbe070",
+    "fund_quote": "0x9a76bbd8e7b945260503575469b47e929ace7bf1a2586a6a74499e41ee70967e",
+    "accept_quote": "0x388c853629a55729dd4017a7d4f5806cef54774ac7a7c90016620f60b8a70ce7",
+    "execute_settlement": "0x7ae2c4f5d9851637a3e807ba81f1bd3e7f8bbb27e6eb5f1dd954bb0647c6fd61"
+  }
+}
