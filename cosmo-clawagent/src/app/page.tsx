@@ -275,12 +275,21 @@ export default function HomePage() {
           <h2 className="font-mono text-3xl font-bold text-white mb-2">
             {'>'} The EOM Swarm
           </h2>
-          <p className="text-slate-400 font-mono text-sm max-w-3xl mx-auto leading-relaxed">
-            The EOM Swarm — by design. Eight agents, one execution layer, expressed in SupraOS Bot
-            Builder syntax: WHEN, GET, THINK, FLOW, ACT, TRANSACT. Only one of them runs today:
-            COSMO, the TRANSACT layer, live on Supra Mainnet. The seven thinking agents are the
-            roadmap — the architecture COSMO is built to plug into.
+          <p className="text-slate-300 font-mono text-sm max-w-3xl mx-auto leading-relaxed">
+            An agent swarm doesn&apos;t need another chat layer. It needs a way to make commitments
+            enforceable. COSMO gives agents that primitive:{' '}
+            <span className="text-slate-100">
+              request, quote, bond, capability, atomic settlement, accountability.
+            </span>
             <span className="blinking-cursor" />
+          </p>
+          <p className="mt-4 text-slate-500 font-mono text-xs max-w-3xl mx-auto leading-relaxed">
+            The eight agents below are the user-facing story, expressed in SupraOS Bot Builder
+            syntax: WHEN, GET, THINK, FLOW, ACT, TRANSACT. The swarm sits on top; COSMO is the
+            settlement layer underneath it. Only one agent runs today — COSMO, the TRANSACT layer,
+            live on Supra Mainnet and proven for value-for-value RFQ settlement. The seven thinking
+            agents are the roadmap, and digitally verifiable work — API responses, data access and
+            capabilities — is where the primitive is built to extend next.
           </p>
         </div>
 
