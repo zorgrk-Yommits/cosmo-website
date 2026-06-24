@@ -9,8 +9,9 @@ export default function CaveatBox() {
       </h2>
       <p className="mt-2 max-w-3xl font-sans text-sm leading-relaxed text-slate-300">
         This demo uses a test pair and controlled amounts on Supra Mainnet. It proves role separation
-        and atomic RFQ settlement. Permissionless operation remains gated behind server-key rotation,
-        hardened quote infrastructure and Stage-2 safety work.
+        and atomic RFQ settlement. The requesting agent stands in for a future SupraOS demand surface —
+        there is no live SupraOS integration in this proof. Permissionless operation remains gated behind
+        server-key rotation, hardened quote infrastructure and Stage-2 safety work.
       </p>
     </aside>
   );

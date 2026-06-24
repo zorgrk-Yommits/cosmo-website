@@ -14,7 +14,7 @@ export default function Roles() {
     <section className="mt-16" aria-label="The roles">
       <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">The roles</h2>
       <p className="mt-3 font-sans text-lg text-slate-300">
-        The <span className="text-slate-100">Taker</span> asks.{' '}
+        <span className="text-slate-100">SupraOS</span> asks.{' '}
         <span className="text-purple-300">Kahless</span> quotes.{' '}
         <span className="text-emerald-300">COSMO</span> settles.{' '}
         <span className="text-cyan-300">Supra</span> finalizes.
@@ -22,26 +22,27 @@ export default function Roles() {
 
       {/* ── two-party flow: Taker (left) → COSMO engine (center) → Kahless+K1 (right) ── */}
       <div className="mt-8 grid items-stretch gap-4 md:grid-cols-[1fr_auto_1fr]">
-        {/* Taker party (first role, left) */}
+        {/* Requesting Agent party (demand side, left) */}
         <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
           {/*
-            TODO: replace with provided Taker figure asset.
-            Drop the image at public/images/taker-figure.png (or .webp) and swap the
+            TODO: replace with provided Requesting-Agent figure asset.
+            Drop the image at public/images/requesting-agent.png (or .webp) and swap the
             placeholder block below for:
-              <Image src="/images/taker-figure.png" alt="Taker agent"
+              <Image src="/images/requesting-agent.png" alt="Requesting agent"
                      width={96} height={96} className="rounded-lg object-cover" />
             (remember to `import Image from 'next/image'`).
           */}
           <div className="flex h-24 w-24 items-center justify-center rounded-lg border border-dashed border-white/20 bg-black/30 text-center">
             <span className="px-2 font-mono text-[10px] uppercase leading-tight tracking-wider text-slate-500">
-              Taker
+              Requesting
               <br />
-              figure
+              Agent
             </span>
           </div>
-          <h3 className="mt-4 font-mono text-sm text-slate-100">Taker</h3>
+          <h3 className="mt-4 font-mono text-sm text-slate-100">Requesting Agent</h3>
           <p className="mt-1 font-sans text-sm text-slate-400">
-            The requesting agent. It has a need and starts the RFQ.
+            A SupraOS-side demand agent that starts the RFQ. Represents the demand side — the future
+            SupraOS demand surface.
           </p>
         </div>
 
@@ -65,7 +66,7 @@ export default function Roles() {
             Kahless <span className="text-slate-500">· Maker-Agent</span>
           </h3>
           <p className="mt-1 font-sans text-sm text-slate-400">
-            The Maker-Agent. Kahless responds with a quote.
+            Represents the Maker side and returns the quote.
           </p>
           {/* K1 — technical operator behind Kahless (deliberately small) */}
           <div className="mt-3 flex items-start gap-2 rounded-lg border border-cyan-500/20 bg-cyan-500/[0.05] px-3 py-2">
@@ -86,8 +87,8 @@ export default function Roles() {
             <h3 className="font-mono text-sm text-slate-100">COSMO</h3>
           </div>
           <p className="mt-1 font-sans text-sm text-slate-400">
-            The settlement layer. COSMO enforces capability checks, escrow and atomic settlement —
-            it is not the Maker or the Taker.
+            The RFQ settlement layer. It locks, checks and settles the exchange atomically — it is not
+            the Maker or the requester.
           </p>
         </div>
         <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
