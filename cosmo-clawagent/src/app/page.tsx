@@ -382,9 +382,9 @@ export default function HomePage() {
             {'>'} The Operator License
           </h2>
           <p className="text-slate-400 font-mono text-sm max-w-3xl mx-auto leading-relaxed">
-            COSMO settles for no one by default. Every quote is bound to a ClawAgent NFT — an
-            on-chain operator license. Not a collectible: today it decides, on-chain, who may settle
-            and how large a trade may be.
+            COSMO settles for no one by default. Every quote is bound to a COSMO Operator License —
+            an on-chain operator credential. Not a collectible: today it decides, on-chain, who may
+            settle and how large a trade may be.
           </p>
         </div>
 
