@@ -16,7 +16,7 @@ const QUOTE_TTL_SECS = 60; // calibrate via rfqViews.quoteTtlSecs() once live
 // Token defaults come from the configured target (env) so the founder isn't
 // pasting addresses; fall back to the mainnet test pair as placeholders.
 const DEFAULT_FORM: CreateForm = {
-  agentNftAddr: RFQ_AGENT_NFT || "0x1",
+  agentNftAddr: RFQ_AGENT_NFT,
   tokenIn: RFQ_TOKEN_IN || "0x64ceb0ff89e190cd58e66aa3702d887a0bcd084e205f1d5857e2ff3ae61a0b7f",
   amountIn: "1000000",
   tokenOut: RFQ_TOKEN_OUT || "0x4799c7cc256a0cb38d28847eae42be5caf5f21e5272a4d3eef52965c1d00cff6",
@@ -114,7 +114,7 @@ export default function FounderCockpit({ walletAddress }: { walletAddress: strin
         <section className="flex flex-col gap-4">
           <h2 className="text-sm font-semibold text-zinc-200">1 · Create request</h2>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="agent_nft_addr" value={form.agentNftAddr} onChange={set("agentNftAddr")} mono />
+            <Field label="Agent NFT (selected identity)" value={form.agentNftAddr} onChange={set("agentNftAddr")} mono />
             <Field label="cap_id (CLI-minted)" value={form.capId} onChange={set("capId")} />
             <Field label="token_in" value={form.tokenIn} onChange={set("tokenIn")} mono />
             <Field label="amount_in" value={form.amountIn} onChange={set("amountIn")} />

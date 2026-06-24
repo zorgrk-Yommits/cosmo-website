@@ -41,7 +41,17 @@ export const RFQ_MODULE_NAME = "rfq_engine";
 // Empty -> the cockpit falls back to its built-in placeholders.
 export const RFQ_TOKEN_IN = process.env.NEXT_PUBLIC_RFQ_TOKEN_IN ?? "";
 export const RFQ_TOKEN_OUT = process.env.NEXT_PUBLIC_RFQ_TOKEN_OUT ?? "";
-export const RFQ_AGENT_NFT = process.env.NEXT_PUBLIC_RFQ_AGENT_NFT ?? "";
+
+// The selected COSMO agent NFT (operator license) the cockpit pre-fills. This is
+// an on-chain agent identity, NOT a wallet: it is neither the Founder/module
+// wallet nor the K1 operator key. Default = the active K1-operated Maker-Agent
+// from the live roundtrip config (src/data/d14-s9-roundtrip-2026-06-24.json ->
+// agent_nft). Override per environment with NEXT_PUBLIC_RFQ_AGENT_NFT.
+export const RFQ_AGENT_NFT_DEFAULT =
+  "0x38c02505865a8b08d6a2fd354554de5906263e1aedd702af3bb8299f1f191738";
+
+export const RFQ_AGENT_NFT =
+  (process.env.NEXT_PUBLIC_RFQ_AGENT_NFT || "").trim() || RFQ_AGENT_NFT_DEFAULT;
 
 // StarKey's createRawTransactionData wants the module address as a 64-char hex
 // string WITHOUT the 0x prefix (see Supra dApp-with-StarKey docs).
