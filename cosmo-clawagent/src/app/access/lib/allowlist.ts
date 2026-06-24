@@ -19,7 +19,13 @@ function hexBody(addr: string): string {
   return addr.trim().toLowerCase().replace(/^0x/, '');
 }
 
-const NORMALIZED: string[] = data.addresses.map(hexBody).filter((h) => h.length > 0);
+// Pad to full 64 hex so a leading-zero-stripped form (the indexer drops them)
+// still compares equal to the wallet's padded native address.
+function pad64(h: string): string {
+  return h.length < 64 ? h.padStart(64, '0') : h;
+}
+
+const NORMALIZED: string[] = data.addresses.map((a) => pad64(hexBody(a))).filter((h) => h.length > 0);
 
 // StarKey may surface either the native Supra address (64 hex) or the EVM address
 // (40 hex); the EVM address is a prefix of the native one. Match tolerantly:
@@ -29,7 +35,10 @@ export function isAllowlisted(address: string | null | undefined): boolean {
   if (!address) return false;
   const c = hexBody(address);
   if (c.length < 40) return false;
-  return NORMALIZED.some((e) => e === c || e.startsWith(c) || c.startsWith(e));
+  const cPad = pad64(c);
+  // Exact (padded native) match, or the connected EVM address is a prefix of the
+  // stored native address (StarKey may surface either form).
+  return NORMALIZED.some((e) => e === cPad || e.startsWith(c));
 }
 
 export const ALLOWLIST_STAGE = data.stage;

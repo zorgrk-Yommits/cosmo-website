@@ -1,7 +1,27 @@
 {
   "stage": "Stage 1 — static UI allowlist",
-  "description": "Public COSMO NFT holder addresses for the Stage-1 access gate. SEED LIST — curate with the real public holder set before relying on it. Stage 2 will add a signed-nonce + on-chain ownership check (see src/lib/nftGate.ts). Addresses are PUBLIC; no private data. Stored normalized: lowercase, 0x-prefixed.",
+  "description": "Public COSMO NFT holder addresses for the Stage-1 access gate. Sourced from the on-chain owner set of the COSMO collection (Tradeport indexer, collection 215d2552-e25f-4f27-b5c6-e2a917b61331) on 2026-06-24, plus two manually-added public addresses. Addresses are PUBLIC; no private data. Normalized: lowercase, 0x-prefixed, padded to 64 hex (leading zeros preserved). Stage 2 will add a signed-nonce + on-chain ownership check (see src/lib/nftGate.ts).",
   "addresses": [
-    "0xf2785bf6510d738d2f58c48ee62f00ec56462a5bf0de4ccfdebd11cd2b1264e1"
+    "0x505054381618d6d1db3a0784b8119537a5dd3cfbbca8095312fafc4b57dd87ed",
+    "0x15e91330dc20e4b0b9f84144d6f97621588beedf373f6e393d7914632ab211e2",
+    "0xd0f37da5c7a0104d8cb161e1ac1e101f90b702c18081b76b62f20137bf40fd0b",
+    "0x3bfbe2d4bca45a07d7c0f37150cc2fffdcb26689c855e8e35d57c8a73e67c1cb",
+    "0x1a42391599836b53eb45aa937e5f4378a1a5aee5cefe829e80372235843b7c2e",
+    "0x6a8b96f714f8e7d92e14be8615f9bc4a5e4c4032727d228625ffb2802748d60f",
+    "0x048754010ec6e286aa693c93774f06da11c2a9f1a994d171e8f44fae64438ded",
+    "0x062494570eceacaafe9bfb9dee25ca739f88c84eb6f3af0ee9865fcf55d0514f",
+    "0x4354bdd158c3c30139020f4999e891006959ef1f82d628dedd7f53a41c829c31",
+    "0x2c055a2af0cf8823942d7bcea4e3ab9428681754e0ddaf3ea076b7c48fcff62a",
+    "0xfdfd52ae01b3ffa9e71f89757ef73b27854ccbf2fd98eb4ac8278bec1ec78b20",
+    "0xa8b11d53b9a385b4dee469346c280ead93b45b12517f3eeeb87bd44a25264e7f",
+    "0xaae8f9da3b3dbde19bfb2bad9c35d6a26b32e58be53927dc6a107650b75588fa",
+    "0x7085a683b80606af80d7ff6291d3d75d69ef9930532d36dbb6e7acb36bc9e64c",
+    "0x863ab509302d215baa25322ba4532568265d708b8c108c402f292d0aedfd2357",
+    "0xfdf7e354d77f71bcdaf1865481be10c23fd42de168316a6e3d25f83c32ab6f40",
+    "0x61779831029410ba22462ffd04f2876ca7d5cde2eaa5da64fed8ddea07e3fe4d",
+    "0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb",
+    "0xf2785bf6510d738d2f58c48ee62f00ec56462a5bf0de4ccfdebd11cd2b1264e1",
+    "0x7462471fe22722aafc214167cf484c8c131d2fb2aec690ea6373a5635b88dd1c",
+    "0xc5aacde857ee7bb4d24544881ae4ca1af35a130369fec6de99f5681d5c4ba098"
   ]
 }
