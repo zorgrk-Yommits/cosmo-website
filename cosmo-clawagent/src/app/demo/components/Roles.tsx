@@ -1,6 +1,7 @@
 'use client';
 
-import { Crown, Cpu, ShieldCheck, Layers, ArrowRight } from 'lucide-react';
+import Image from 'next/image';
+import { Cpu, ShieldCheck, Layers, ArrowRight } from 'lucide-react';
 
 // "The roles" — the controlled Mainnet proof has SEPARATED roles, and this section
 // makes the separation legible:
@@ -24,21 +25,13 @@ export default function Roles() {
       <div className="mt-8 grid items-stretch gap-4 md:grid-cols-[1fr_auto_1fr]">
         {/* Requesting Agent party (demand side, left) */}
         <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-          {/*
-            TODO: replace with provided Requesting-Agent figure asset.
-            Drop the image at public/images/requesting-agent.png (or .webp) and swap the
-            placeholder block below for:
-              <Image src="/images/requesting-agent.png" alt="Requesting agent"
-                     width={96} height={96} className="rounded-lg object-cover" />
-            (remember to `import Image from 'next/image'`).
-          */}
-          <div className="flex h-24 w-24 items-center justify-center rounded-lg border border-dashed border-white/20 bg-black/30 text-center">
-            <span className="px-2 font-mono text-[10px] uppercase leading-tight tracking-wider text-slate-500">
-              Requesting
-              <br />
-              Agent
-            </span>
-          </div>
+          <Image
+            src="/images/requesting-agent.jpg"
+            alt="Requesting agent"
+            width={96}
+            height={96}
+            className="h-24 w-24 rounded-lg border border-white/20 object-cover"
+          />
           <h3 className="mt-4 font-mono text-sm text-slate-100">Requesting Agent</h3>
           <p className="mt-1 font-sans text-sm text-slate-400">
             A SupraOS-side demand agent that starts the RFQ. Represents the demand side — the future
@@ -59,9 +52,13 @@ export default function Roles() {
 
         {/* Maker party (right): Kahless, with K1 operator BEHIND it */}
         <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-          <div className="flex h-24 w-24 items-center justify-center rounded-lg border border-purple-500/30 bg-purple-500/[0.08]">
-            <Crown className="h-10 w-10 text-purple-300" />
-          </div>
+          <Image
+            src="/images/k1-maker-operator.jpeg"
+            alt="K1 — Maker-Operator behind Kahless"
+            width={96}
+            height={96}
+            className="h-24 w-24 rounded-lg border border-purple-500/30 object-cover"
+          />
           <h3 className="mt-4 font-mono text-sm text-slate-100">
             Kahless <span className="text-slate-500">· Maker-Agent</span>
           </h3>
