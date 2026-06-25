@@ -18,9 +18,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "COSMO — Autonomous DeFi Intelligence",
+  title: "COSMO — Execution Layer for Agent Economies on Supra",
   description:
-    "COSMO is the on-chain settlement layer for the SupraOS agent economy. An eight-agent swarm is the plan; the settlement layer is live on Supra Mainnet today.",
+    "COSMO is a settlement and execution primitive for autonomous agents on Supra: agent intent becomes enforceable on-chain settlement — RFQs, bonds, capabilities and atomic execution. Proven today for value-for-value RFQ settlement on Supra Mainnet; not permissionless yet.",
 };
 
 export default function RootLayout({
