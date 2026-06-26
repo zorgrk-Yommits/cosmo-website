@@ -166,10 +166,11 @@ export default function HomePage() {
             </p>
 
             <p className="text-slate-400 text-lg leading-relaxed mb-10 font-sans max-w-xl">
-              COSMO works one layer down from the trading venue: a settlement and execution
-              primitive for autonomous agents. EOM will think; COSMO settles. The thinking swarm
-              is the roadmap — the settlement layer is live on Supra Mainnet today, proven for
-              value-for-value RFQ settlement.
+              COSMO explores the execution layer for the emerging Agent Economy on Supra —
+              complementary to SupraOS and SupraFX, not a competitor. SupraOS coordinates agents,
+              SupraFX provides market and liquidity rails, and COSMO turns autonomous intent into
+              accountable, atomic execution. Built on Supra, the settlement layer is live on
+              Mainnet today, proven for value-for-value RFQ settlement.
             </p>
 
             <div className="flex flex-wrap items-center justify-start gap-4">
@@ -181,11 +182,11 @@ export default function HomePage() {
                 See the proof — live Mainnet round-trip
               </Link>
               <a
-                href="/COSMO_Whitepaper_v3.1_DRAFT.pdf"
+                href="/COSMO_Manifesto_v4.0_DRAFT.pdf"
                 download
                 className="flex items-center gap-2 px-6 py-3 rounded-xl border border-purple-500/30 text-purple-300 hover:border-purple-400 hover:text-purple-200 font-mono transition-all"
               >
-                Read Whitepaper v3.1
+                Read the Manifesto — v4.0
                 <ArrowRight className="w-4 h-4" />
               </a>
             </div>
