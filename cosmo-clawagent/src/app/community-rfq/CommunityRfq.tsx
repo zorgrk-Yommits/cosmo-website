@@ -175,15 +175,16 @@ export default function CommunityRfq() {
             <div className="mb-5 flex items-center gap-3">
               <span className="inline-flex h-2 w-2 rounded-full bg-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.8)]" />
               <span className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
-                Controlled Community RFQ Demo · Stage 1
+                Controlled Community Experiment · Stage 1
               </span>
             </div>
             <h1 className="font-mono text-3xl font-bold tracking-tight text-slate-100 md:text-5xl">
-              Controlled Community RFQ Demo
+              Controlled Community Experiment
             </h1>
             <p className="mt-4 font-sans text-lg text-slate-300">
-              A community wallet can request a small supUSDC → wCOSMO RFQ. Kahless can quote.
-              COSMO can settle the selected request atomically on Supra Mainnet.
+              An early experiment in machine-to-machine commerce. An allowlisted wallet can preview a
+              small supUSDC → wCOSMO request, Kahless can quote, and COSMO can settle the selected
+              request atomically on Supra Mainnet. This is not a public market or a permissionless RFQ venue.
             </p>
             <p className="mt-2 font-mono text-sm text-amber-300">
               Intent-only preview. No funds move.

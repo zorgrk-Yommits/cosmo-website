@@ -8,7 +8,7 @@ import { Cpu, ShieldCheck, Layers, ArrowRight } from 'lucide-react';
 //   Taker   = the requesting agent (figure asset, founder-provided)
 //   Kahless = the Maker-Agent that quotes
 //   K1      = the bonded Maker-Operator BEHIND Kahless (technical, not a big figure)
-//   COSMO   = the settlement layer / engine (NOT a counterparty)
+//   COSMO   = the execution & accountability layer / engine (NOT a counterparty)
 //   Supra   = Mainnet finality
 export default function Roles() {
   return (
@@ -45,7 +45,7 @@ export default function Roles() {
           <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/[0.06] px-4 py-3 text-center">
             <ShieldCheck className="mx-auto h-5 w-5 text-emerald-300" />
             <div className="mt-1 font-mono text-xs text-emerald-200">COSMO</div>
-            <div className="font-mono text-[10px] text-slate-500">settlement layer</div>
+            <div className="font-mono text-[10px] text-slate-500">execution layer</div>
           </div>
           <ArrowRight className="hidden h-5 w-5 rotate-90 text-slate-600 md:block md:rotate-0" />
         </div>
@@ -84,8 +84,8 @@ export default function Roles() {
             <h3 className="font-mono text-sm text-slate-100">COSMO</h3>
           </div>
           <p className="mt-1 font-sans text-sm text-slate-400">
-            The RFQ settlement layer. It locks, checks and settles the exchange atomically — it is not
-            the Maker or the requester.
+            COSMO&apos;s execution and accountability layer. It locks, checks and settles the exchange
+            atomically — it is not the Maker or the requester.
           </p>
         </div>
         <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">

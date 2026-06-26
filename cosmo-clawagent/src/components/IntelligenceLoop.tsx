@@ -41,7 +41,7 @@ const nodes: GraphNode[] = [
   { id: 'strategist', type: 'THINK',     title: 'Strategist',         subtitle: 'Evaluate + route signal',     x: 88, y: 12 },
   { id: 'decision',   type: 'FLOW',      title: 'Strategy Decision',  subtitle: 'Profitable?',                  x: 50, y: 42 },
   { id: 'discard',    type: 'FLOW',      title: 'Discard Signal',     subtitle: 'Back to Arbiter',              x: 22, y: 70 },
-  { id: 'cosmo',      type: 'TRANSACT',  title: 'COSMO',              subtitle: 'On-chain settlement',          x: 78, y: 70, featured: true },
+  { id: 'cosmo',      type: 'TRANSACT',  title: 'COSMO',              subtitle: 'Accountable execution',        x: 78, y: 70, featured: true },
   { id: 'liquidity',  type: 'ACT',       title: 'Liquidity General',  subtitle: 'Vault rebalance',              x: 36, y: 90 },
   { id: 'keeper',     type: 'THINK+ACT', title: 'Keeper',             subtitle: 'Archive + Learning Layer',     x: 64, y: 90 },
 ];
@@ -276,8 +276,8 @@ export default function IntelligenceLoop() {
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mt-6">
         {[
           { value: '8',     label: 'Agents | EOM Swarm' },
-          { value: '1',     label: 'Settlement Layer | COSMO' },
-          { value: '5',     label: 'Chains — planned via SupraFX' },
+          { value: '1',     label: 'Execution Layer | COSMO' },
+          { value: '5',     label: 'Chains — multi-chain roadmap' },
           { value: '21/30', label: 'Council | $COSMO-staked' },
           { value: '60s',   label: 'Window | Settlement Deadline' },
           { value: '∞',     label: 'Loop | Karpathy Feedback' },
