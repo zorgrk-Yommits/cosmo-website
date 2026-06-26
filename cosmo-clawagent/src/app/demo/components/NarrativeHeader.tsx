@@ -3,8 +3,10 @@
 import { motion } from 'framer-motion';
 import { META } from '../lib/lifecycle';
 
-// OBEN — the explainer. Three short ideas, no whitepaper tone:
+// OBEN — the explainer. Plain language, no manifesto tone:
 // what an RFQ is, what atomic means, why atomic is the whole point.
+// Frame: the RFQ is the PROOF, not COSMO's product identity. COSMO is the
+// execution & accountability layer; this is a Mainnet proof of that.
 export default function NarrativeHeader() {
   return (
     <header className="relative max-w-4xl">
@@ -36,6 +38,11 @@ export default function NarrativeHeader() {
         transition={{ duration: 0.55, delay: 0.12 }}
         className="mt-6 space-y-3 text-slate-300 font-sans text-lg leading-relaxed max-w-2xl"
       >
+        <p className="text-slate-200">
+          COSMO demonstrates bonded, accountable execution on Supra Mainnet through an
+          RFQ-based proof. The RFQ is the mechanism that exercises it — not COSMO&apos;s product
+          identity.
+        </p>
         <p>
           An <span className="text-purple-300 font-medium">RFQ</span> — request for quote — is a
           two-party trade: a <span className="text-slate-100">taker</span> asks for a price, a{' '}

@@ -17,10 +17,24 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_TITLE = "COSMO — Execution & Accountability Layer for the Agent Economy";
+const SITE_DESCRIPTION =
+  "COSMO is the execution and accountability layer for the emerging Agent Economy on Supra. Built on Supra and complementary to SupraOS (agent coordination) and SupraFX (market and liquidity rails) — not a competitor — COSMO turns autonomous intent into accountable, atomic on-chain execution. Mainnet proof of accountable execution via an RFQ-based round-trip; not permissionless yet.";
+
 export const metadata: Metadata = {
-  title: "COSMO — Execution Layer for Agent Economies on Supra",
-  description:
-    "COSMO is a settlement and execution primitive for autonomous agents on Supra: agent intent becomes enforceable on-chain settlement — RFQs, bonds, capabilities and atomic execution. Proven today for value-for-value RFQ settlement on Supra Mainnet; not permissionless yet.",
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    siteName: "COSMO",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
 };
 
 export default function RootLayout({

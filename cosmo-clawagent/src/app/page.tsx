@@ -99,13 +99,13 @@ const agents = [
     id: 'COSMO-8',
     name: 'COSMO',
     type: 'TRANSACT',
-    role: 'Settlement Provider',
+    role: 'Accountable Execution',
     category: 'Execution',
     icon: Zap,
     accent: 'purple',
     featured: true,
     description:
-      'The eighth agent and the only one that acts on-chain. Live on Supra Mainnet: receives a confirmed quote and settles the RFQ atomically through audited Move modules.',
+      'The eighth agent and the only one that acts on-chain. Live on Supra Mainnet: COSMO is the execution and accountability layer — it turns a confirmed quote into bonded, atomic settlement through audited Move modules. Proven via an RFQ-based round-trip.',
   },
 ];
 
@@ -156,21 +156,21 @@ export default function HomePage() {
             <h1 className="text-5xl md:text-7xl font-mono font-bold tracking-tight mb-6 text-left">
               <span className="neon-text-purple">COSMO</span>
               <span className="block text-2xl md:text-3xl text-slate-400 font-normal mt-2 tracking-wide">
-                Execution Layer for Agent Economies on Supra
+                Execution &amp; Accountability Layer for the Agent Economy
               </span>
             </h1>
 
             <p className="text-slate-200 text-xl leading-relaxed mb-6 font-mono max-w-xl">
-              COSMO turns agent intent into enforceable on-chain settlement — RFQs, bonds,
-              capabilities, and atomic execution.
+              COSMO turns agent intent into accountable on-chain execution — bonded commitments,
+              capabilities, and atomic settlement that either completes in full or reverts.
             </p>
 
             <p className="text-slate-400 text-lg leading-relaxed mb-10 font-sans max-w-xl">
               COSMO explores the execution layer for the emerging Agent Economy on Supra —
               complementary to SupraOS and SupraFX, not a competitor. SupraOS coordinates agents,
               SupraFX provides market and liquidity rails, and COSMO turns autonomous intent into
-              accountable, atomic execution. Built on Supra, the settlement layer is live on
-              Mainnet today, proven for value-for-value RFQ settlement.
+              accountable, atomic execution. Built on Supra, the execution layer is live on
+              Mainnet today — a proof of accountable execution via an RFQ-based round-trip.
             </p>
 
             <div className="flex flex-wrap items-center justify-start gap-4">
@@ -259,10 +259,11 @@ export default function HomePage() {
           </div>
 
           <p className="mt-8 max-w-4xl font-mono text-[11px] leading-relaxed text-slate-600">
-            Venue-level agentic cross-chain trading is handled by institutional venues in the Supra
-            ecosystem. COSMO works one layer down as the settlement and execution primitive. The
-            current proven capability is atomic value-for-value RFQ settlement; compute and service
-            settlement are roadmap, not current capability — and COSMO is not permissionless yet.
+            Market, liquidity and trading rails are SupraFX&apos;s domain; COSMO is complementary, not
+            a competitor, and works one layer down as the execution and accountability primitive. The
+            current proven capability is accountable execution, demonstrated via an RFQ-based Mainnet
+            round-trip; compute and service settlement are roadmap, not current capability — and COSMO
+            is not permissionless yet.
           </p>
         </div>
       </section>
@@ -287,8 +288,8 @@ export default function HomePage() {
           <p className="mt-4 text-slate-500 font-mono text-xs max-w-3xl mx-auto leading-relaxed">
             The eight agents below are the user-facing story, expressed in SupraOS Bot Builder
             syntax: WHEN, GET, THINK, FLOW, ACT, TRANSACT. The swarm sits on top; COSMO is the
-            settlement layer underneath it. Only one agent runs today — COSMO, the TRANSACT layer,
-            live on Supra Mainnet and proven for value-for-value RFQ settlement. The seven thinking
+            execution and accountability layer underneath it. Only one agent runs today — COSMO,
+            live on Supra Mainnet and proven via an RFQ-based round-trip. The seven thinking
             agents are the roadmap, and digitally verifiable work — API responses, data access and
             capabilities — is where the primitive is built to extend next.
           </p>
@@ -360,7 +361,7 @@ export default function HomePage() {
                   {'>'} BIND TO THE SWARM
                 </h3>
                 <p className="text-slate-400 font-sans text-sm max-w-lg">
-                  Stake $COSMO to secure the settlement layer, earn protocol rewards, and participate in
+                  Stake $COSMO to secure the execution layer, earn protocol rewards, and participate in
                   the future of autonomous DeFi governance under the Imperium Protocol.
                 </p>
               </div>
@@ -485,7 +486,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="relative z-10 border-t border-white/[0.06] py-8 text-center">
         <p className="font-mono text-xs text-slate-600">
-          © 2026 COSMO — Execution Layer for Agent Economies on Supra{' '}
+          © 2026 COSMO — Execution &amp; Accountability Layer for the Agent Economy{' '}
           <span className="text-purple-500">|</span> $COSMO
         </p>
       </footer>

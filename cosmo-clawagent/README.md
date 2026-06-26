@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# COSMO — Execution & Accountability Layer for the Agent Economy
 
-## Getting Started
+Public website for **COSMO**, the execution and accountability layer for the
+emerging Agent Economy on Supra.
 
-First, run the development server:
+## Positioning
+
+COSMO is **built on Supra** and **complementary to** the Supra agent stack — it
+is **not a competitor**:
+
+| Layer | Role |
+|---|---|
+| **SupraOS** | Agent coordination / orchestration layer |
+| **SupraFX** | Market, liquidity and trading rails |
+| **COSMO** | Execution & accountability layer — turns autonomous intent into accountable, atomic on-chain execution |
+
+COSMO turns autonomous intent into accountable, atomic execution. The current
+proven capability is a **Mainnet proof of accountable execution** via an
+RFQ-based round-trip; it is **not permissionless yet**. RFQ is the technical
+proof of the mechanism, not COSMO's product identity.
+
+The primary public statement is the **COSMO Manifesto v4.0** (linked from the
+homepage). See `docs/POSITIONING.md` for the canonical positioning and the
+language guardrails (no hard SupraOS/SupraFX integration or partnership claims).
+
+## Routes
+
+- `/` — positioning + the agent-economy story
+- `/demo` — click-through replay of the controlled Mainnet round-trip (static on-chain data)
+- `/community-rfq` — controlled community experiment in machine-to-machine commerce (intent-only)
+- `/access` — COSMO NFT holder access gate (Stage 1)
+
+## Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev     # dev server
+npm run build   # static export to out/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The site is a static export (`out/`) served by `serve`. `public/` assets —
+including `COSMO_Manifesto_v4.0_DRAFT.pdf` — are copied into `out/` on build.
