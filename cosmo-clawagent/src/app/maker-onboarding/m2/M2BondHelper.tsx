@@ -27,6 +27,9 @@ const M2_ADDR = '0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e
 const MODULE_ADDR = '0xf2785bf6510d738d2f58c48ee62f00ec56462a5bf0de4ccfdebd11cd2b1264e1';
 const WCOSMO_META = '0x4799c7cc256a0cb38d28847eae42be5caf5f21e5272a4d3eef52965c1d00cff6';
 const AMOUNT = 100000000; // 100 wCOSMO (6 decimals) — fixed
+// Phase 6 roundtrip top-up: exactly 1 COSMO -> 1 wCOSMO for the quote escrow,
+// so the roundtrip driver preflight (freeWCOSMO >= 997000) passes. Fixed, no inputs.
+const TOPUP_AMOUNT = 1000000; // 1 wCOSMO (6 decimals) — fixed
 const CHAIN_ID = '8'; // Supra Mainnet
 const RPC = 'https://rpc-mainnet.supra.com';
 const EXPLORER_TX = 'https://suprascan.io/tx/';
@@ -163,12 +166,18 @@ export default function M2BondHelper() {
   const [refreshing, setRefreshing] = useState(false);
 
   const [steps, setSteps] = useState<Record<number, StepState>>({ 1: emptyStep(), 2: emptyStep() });
+  // Phase 6 top-up has its own state so the two bond steps stay untouched.
+  const [topup, setTopup] = useState<StepState>(emptyStep());
   const [log, setLog] = useState<{ text: string; tone: 'ok' | 'bad' | 'warn' | 'info' } | null>(
     null,
   );
 
   const patchStep = useCallback((n: number, patch: Partial<StepState>) => {
     setSteps((s) => ({ ...s, [n]: { ...s[n], ...patch } }));
+  }, []);
+
+  const patchTopup = useCallback((patch: Partial<StepState>) => {
+    setTopup((t) => ({ ...t, ...patch }));
   }, []);
 
   const refreshStatus = useCallback(async (): Promise<ChainStatus | null> => {
@@ -253,6 +262,7 @@ export default function M2BondHelper() {
         setChainMsg(null);
         preparedRef.current = {};
         setSteps({ 1: emptyStep(), 2: emptyStep() });
+        setTopup(emptyStep());
         setLog({ text: 'Account gewechselt — bitte neu verbinden.', tone: 'warn' });
       });
     } catch (e) {
@@ -344,6 +354,76 @@ export default function M2BondHelper() {
     [account, patchStep, refreshStatus],
   );
 
+  // ---- Phase 6 top-up (wcosmo::wrap u64:1000000) ---------------------------------
+  // Same proven payload shape as prepare()/sign(), own handlers + preparedRef slot 3
+  // so the two bond steps stay byte-identical in behavior.
+  const prepareTopup = useCallback(async () => {
+    const p = providerRef.current;
+    if (!p || !account) return;
+    patchTopup({ busy: true });
+    try {
+      const seq = await fetchSeqNum(account);
+      const expiry = Math.ceil(Date.now() / 1000) + 300;
+      const rawTxPayload = [
+        account,
+        seq,
+        MODULE_ADDR,
+        'wcosmo',
+        'wrap',
+        [], // no type args
+        [bcsU64(TOPUP_AMOUNT)], // exactly one u64, hardcoded
+        { txExpiryTime: expiry },
+      ];
+      const data = await p.createRawTransactionData(rawTxPayload);
+      preparedRef.current[3] = data;
+      const text = [
+        `Sender          : ${account}`,
+        `Function-ID     : ${MODULE_ADDR}::wcosmo::wrap`,
+        'Type-Args       : (keine)',
+        `Arg 1 (u64)     : ${TOPUP_AMOUNT}  (= ${fmtAmt(TOPUP_AMOUNT)} wCOSMO)`,
+        `Sequence-Number : ${seq}`,
+        `Expiry (unix)   : ${expiry}`,
+        'Chain           : 8 (Supra Mainnet)',
+      ].join('\n');
+      patchTopup({ payloadText: text, signReady: true });
+      setLog({ text: 'Payload Top-up bereit. Pruefen, dann signieren.', tone: 'info' });
+    } catch (e) {
+      setLog({ text: `Payload-Fehler: ${(e as Error).message ?? e}`, tone: 'bad' });
+    } finally {
+      patchTopup({ busy: false });
+    }
+  }, [account, patchTopup]);
+
+  const signTopup = useCallback(async () => {
+    const p = providerRef.current;
+    const prepared = preparedRef.current[3];
+    if (!p || !account || !prepared) return;
+    patchTopup({ busy: true, signReady: false });
+    try {
+      setLog({ text: 'Warte auf Signatur in StarKey …', tone: 'info' });
+      const txHash = await p.sendTransaction({
+        data: prepared,
+        from: account,
+        to: MODULE_ADDR,
+        chainId: Number(CHAIN_ID),
+        value: '',
+      });
+      preparedRef.current[3] = null;
+      patchTopup({ txHash, payloadText: null });
+      setLog({ text: 'TX gesendet (Top-up). Warte auf on-chain-Bestaetigung …', tone: 'info' });
+      for (let i = 0; i < 20; i++) {
+        await new Promise((r) => setTimeout(r, 3000));
+        const st = await refreshStatus();
+        if (st && st.bal >= BigInt(TOPUP_AMOUNT)) break;
+      }
+    } catch (e) {
+      setLog({ text: `Signatur/Sende-Fehler: ${(e as Error).message ?? e}`, tone: 'bad' });
+      patchTopup({ signReady: true });
+    } finally {
+      patchTopup({ busy: false });
+    }
+  }, [account, patchTopup, refreshStatus]);
+
   // ---- Derived gating ----------------------------------------------------------
   const balOk = status !== null && status.bal >= BigInt(AMOUNT);
   // DONE per requirement: operator_available >= 100 wCOSMO OR eligible === true.
@@ -357,6 +437,15 @@ export default function M2BondHelper() {
     return balOk && status.gate; // bond only with balance AND open deposit gate
   };
   const signEnabled = (n: 1 | 2) => !done && connected && steps[n].signReady && !steps[n].busy;
+
+  // Phase 6 gating: only for the bonded, quote-eligible M2 wallet on chain 8
+  // (address+chain enforced at connect; `account` is only set after both checks).
+  const topupReady = status !== null && status.bal >= BigInt(TOPUP_AMOUNT);
+  const topupBonded =
+    status !== null && status.avail >= BigInt(AMOUNT) && status.elig;
+  const topupPrepEnabled =
+    connected && topupBonded && !topupReady && !anyBusy && !topup.busy;
+  const topupSignEnabled = connected && !topupReady && topup.signReady && !topup.busy;
 
   return (
     <div className="terminal-theme-scope min-h-screen">
@@ -562,6 +651,76 @@ export default function M2BondHelper() {
               )}
             </section>
           ))}
+
+          {/* Phase 6 — roundtrip wCOSMO top-up (fixed 1 COSMO wrap) */}
+          <section
+            className={cn(
+              'mt-6 rounded-xl border p-5',
+              topupReady
+                ? 'border-emerald-500/30 bg-emerald-500/[0.04]'
+                : 'border-white/10 bg-white/[0.02]',
+            )}
+          >
+            <h2 className="font-sans text-sm font-semibold text-slate-200">
+              Phase 6 — Roundtrip wCOSMO Top-up
+            </h2>
+            <p className="mt-1 font-mono text-xs text-slate-400">
+              wcosmo::wrap(u64:{TOPUP_AMOUNT})
+            </p>
+            <p className="mt-1 font-sans text-xs text-slate-500">
+              Wrappt genau 1 $COSMO zu 1 wCOSMO als Quote-Escrow fuer den Roundtrip-Test
+              (Preflight: freie wCOSMO &gt;= 0,997). Der Bond bleibt unberuehrt. Erst
+              freigeschaltet, wenn der Operator-Bond eingezahlt und M2 quote-eligible ist.
+            </p>
+            {topupReady && (
+              <div className="mt-3 flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-emerald-300" />
+                <p className="font-mono text-xs font-bold uppercase tracking-wider text-emerald-300">
+                  Roundtrip top-up ready
+                </p>
+              </div>
+            )}
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={() => void prepareTopup()}
+                disabled={!topupPrepEnabled}
+                className="inline-flex items-center gap-2 rounded-lg border border-sky-500/50 bg-sky-600/20 px-4 py-2 font-mono text-xs text-sky-100 transition-all hover:border-sky-400 hover:bg-sky-600/30 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {topup.busy && !topup.signReady ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : null}
+                Payload anzeigen
+              </button>
+              <button
+                type="button"
+                onClick={() => void signTopup()}
+                disabled={!topupSignEnabled}
+                className="inline-flex items-center gap-2 rounded-lg border border-amber-500/50 bg-amber-600/20 px-4 py-2 font-mono text-xs text-amber-100 transition-all hover:border-amber-400 hover:bg-amber-600/30 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {topupReady ? <Lock className="h-3.5 w-3.5" /> : null}
+                In StarKey signieren
+              </button>
+            </div>
+            {topup.payloadText && (
+              <pre className="mt-4 overflow-x-auto whitespace-pre-wrap break-all rounded-lg border border-dashed border-slate-600 bg-black/40 p-4 font-mono text-[11px] leading-relaxed text-slate-300">
+                {topup.payloadText}
+              </pre>
+            )}
+            {topup.txHash && (
+              <p className="mt-3 break-all font-mono text-xs text-slate-400">
+                TX-Hash:{' '}
+                <a
+                  href={`${EXPLORER_TX}${topup.txHash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300"
+                >
+                  {topup.txHash}
+                </a>
+              </p>
+            )}
+          </section>
 
           {/* log line */}
           {log && (
