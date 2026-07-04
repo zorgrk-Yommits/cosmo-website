@@ -23,6 +23,9 @@ import {
   ArrowRight,
   Lock,
   FileText,
+  ClipboardCopy,
+  Check,
+  Users,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { isAllowlisted, ALLOWLIST_STAGE } from '../access/lib/allowlist';
@@ -379,6 +382,9 @@ export default function CommunityRfq() {
             </ul>
           </section>
 
+          {/* ── Maker Watchlist / Express Interest (static, no backend) ── */}
+          <MakerWatchlist />
+
           {/* ── caveat ── */}
           <aside className="mt-8 rounded-xl border border-amber-500/30 bg-amber-500/[0.06] p-5">
             <p className="font-sans text-sm leading-relaxed text-slate-300">
@@ -393,6 +399,67 @@ export default function CommunityRfq() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Maker Watchlist — static interest CTA. Slots open one at a time under bond
+// caps; there is no signup backend by design. "Express interest" copies a short
+// template the applicant sends through the COSMO community channel; review and
+// onboarding stay manual (allowlist + bond, exactly like M2 Slot-1).
+const INTEREST_TEMPLATE = [
+  'COSMO Maker Watchlist — expression of interest',
+  '',
+  'Operator wallet (Supra, chain 8): 0x…',
+  'Can post the v1 operator bond (100 wCOSMO): yes/no',
+  'Background (market making / agents / infra): …',
+].join('\n');
+
+function MakerWatchlist() {
+  const [copied, setCopied] = useState(false);
+
+  const copyTemplate = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(INTEREST_TEMPLATE);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      /* clipboard unavailable — the template stays visible below */
+    }
+  }, []);
+
+  return (
+    <section className="mt-8 rounded-xl border border-purple-500/30 bg-purple-500/[0.05] p-5">
+      <div className="flex items-center gap-2">
+        <Users className="h-4 w-4 text-purple-300" />
+        <h3 className="font-mono text-sm text-slate-100">Maker Watchlist — express interest</h3>
+      </div>
+      <p className="mt-3 font-sans text-sm leading-relaxed text-slate-300">
+        COSMO&apos;s maker-execution primitive opens slots one at a time, under hard bond caps.
+        Slot 1 (M2) settled its first agent-native RFQ round-trip on Supra Mainnet on 2026-07-04;
+        Slot 2 is pending the Phase 7 observation window. If you want to run a bonded maker on
+        this execution infrastructure, put yourself on the watchlist.
+      </p>
+      <ul className="mt-3 space-y-1.5 font-mono text-[12px] text-slate-400">
+        <li>· v1 requirement: 100 wCOSMO operator bond, one agent, quote-server allowlist</li>
+        <li>· onboarding is manual and capped — no open signup, no automatic approval</li>
+      </ul>
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          onClick={() => void copyTemplate()}
+          className="inline-flex items-center gap-2 rounded-lg border border-purple-500/50 bg-purple-600/20 px-4 py-2 font-mono text-xs text-purple-100 transition-all hover:border-purple-400 hover:bg-purple-600/30"
+        >
+          {copied ? <Check className="h-3.5 w-3.5" /> : <ClipboardCopy className="h-3.5 w-3.5" />}
+          {copied ? 'Copied' : 'Copy interest template'}
+        </button>
+        <span className="font-mono text-[11px] text-slate-500">
+          Send it via the COSMO community channel.
+        </span>
+      </div>
+      <pre className="mt-4 overflow-x-auto whitespace-pre-wrap rounded-lg border border-dashed border-slate-600 bg-black/40 p-4 font-mono text-[11px] leading-relaxed text-slate-400">
+        {INTEREST_TEMPLATE}
+      </pre>
+    </section>
   );
 }
 

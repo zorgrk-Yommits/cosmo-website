@@ -17,6 +17,7 @@ import SettlementStage from './components/SettlementStage';
 import DataPanel from './components/DataPanel';
 import CaveatBox from './components/CaveatBox';
 import Roles from './components/Roles';
+import CommunityMakerProof from './components/CommunityMakerProof';
 
 const AUTOPLAY_MS = 2200;
 
@@ -102,6 +103,9 @@ export default function RfqReplay() {
 
           {/* ── honest status banner (controlled proof, not permissionless) ── */}
           <CaveatBox />
+
+          {/* ── Phase 6: first community-maker settlement (static proof) ── */}
+          <CommunityMakerProof />
 
           {/* ── controls ───────────────────────────────────────────────── */}
           <div className="mt-12 flex flex-wrap items-center gap-3">
