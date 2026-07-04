@@ -410,7 +410,7 @@ const INTEREST_TEMPLATE = [
   'COSMO Maker Watchlist — expression of interest',
   '',
   'Operator wallet (Supra, chain 8): 0x…',
-  'Can post the v1 operator bond (100 wCOSMO): yes/no',
+  'Can obtain / post the assumed v1 operator bond (100 wCOSMO): yes/no',
   'Background (market making / agents / infra): …',
 ].join('\n');
 
@@ -440,9 +440,15 @@ function MakerWatchlist() {
         this execution infrastructure, put yourself on the watchlist.
       </p>
       <ul className="mt-3 space-y-1.5 font-mono text-[12px] text-slate-400">
-        <li>· v1 requirement: 100 wCOSMO operator bond, one agent, quote-server allowlist</li>
+        <li>· current v1 assumption: 100 wCOSMO operator bond, one agent, quote-server allowlist</li>
         <li>· onboarding is manual and capped — no open signup, no automatic approval</li>
       </ul>
+      <p className="mt-3 rounded-lg border border-white/5 bg-black/20 px-3 py-2 font-sans text-[12px] leading-relaxed text-slate-400">
+        <span className="font-mono text-slate-300">Need wCOSMO?</span> wCOSMO is wrapped COSMO
+        used by the maker vault as operator bond collateral. Wrapping does not grant maker
+        access. Maker onboarding remains manual, capped and allowlisted. If a new slot is
+        approved, the operator receives the exact wrap and bond instructions during onboarding.
+      </p>
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <button
           type="button"
