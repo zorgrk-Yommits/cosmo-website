@@ -6,8 +6,6 @@ import { Zap, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
-const TOKENOMICS_URL = 'https://www.tadfi.online/community-tokens/COSMO';
-
 const navLinks: { href: string; label: string; external?: boolean; download?: boolean }[] = [
   { href: '/', label: 'Home' },
   { href: '/demo', label: 'Demo' },
@@ -15,7 +13,6 @@ const navLinks: { href: string; label: string; external?: boolean; download?: bo
   { href: '/community-rfq', label: 'Community' },
   { href: '/maker-capital', label: 'Maker Capital' },
   { href: '/access', label: 'Access' },
-  { href: TOKENOMICS_URL, label: 'Tokenomics', external: true },
 ];
 
 export default function Navigation() {
