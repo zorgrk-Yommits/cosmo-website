@@ -7,7 +7,7 @@
 // RFQ settlement / bonded execution infrastructure; no third-party integration
 // claims.
 
-import { CheckCircle2, Radio, ShieldCheck, Timer } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, Timer } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const EXPLORER_TX = 'https://suprascan.io/tx/';
@@ -45,8 +45,8 @@ const SLOTS = [
   },
   {
     slot: 'Slot 2',
-    status: 'Pending',
-    note: 'Opens only after the Phase 7 observation window',
+    status: 'Reserved',
+    note: 'Phase 7 passed 2026-07-07 — opens against the first committed external operator',
     tone: 'pending' as const,
   },
 ];
@@ -163,24 +163,24 @@ export default function CommunityMakerProof() {
         </table>
       </div>
 
-      {/* phase 7 observation card */}
-      <div className="mt-6 rounded-xl border border-amber-500/30 bg-amber-500/[0.06] p-4">
+      {/* phase 7 observation card — completed 2026-07-07 */}
+      <div className="mt-6 rounded-xl border border-emerald-500/30 bg-emerald-500/[0.06] p-4">
         <div className="flex items-center gap-2">
-          <Timer className="h-4 w-4 text-amber-300" />
-          <h3 className="font-mono text-sm font-semibold text-amber-200">
+          <Timer className="h-4 w-4 text-emerald-300" />
+          <h3 className="font-mono text-sm font-semibold text-emerald-200">
             Phase 7 — observation window
           </h3>
-          <span className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-amber-300">
-            <Radio className="h-3 w-3" />
-            Active
+          <span className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-emerald-300">
+            <CheckCircle2 className="h-3 w-3" />
+            Passed
           </span>
         </div>
         <ul className="mt-3 space-y-1.5 font-sans text-xs leading-relaxed text-slate-300">
-          <li>Active until ~2026-07-07 14:30 UTC — daily read-only checks on peg, bonds and gate logs.</li>
-          <li>No new variable is activated during observation.</li>
+          <li>Completed 2026-07-07 without incident — 72 hours of daily read-only checks on peg, bonds and gate logs.</li>
+          <li>Decision taken (one variable at a time): an anti-spam request fee is now active on the RFQ engine.</li>
           <li>
-            Next decision after the window: Slot 2 (bond cap +100M) <span className="font-mono">OR</span>{' '}
-            fee activation — never both at once.
+            Slot 2 stays a prepared governance option — it opens against the first committed
+            external operator, not on a timer.
           </li>
         </ul>
       </div>

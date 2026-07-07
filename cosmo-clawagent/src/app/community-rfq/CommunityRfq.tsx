@@ -435,9 +435,12 @@ function MakerWatchlist() {
       </div>
       <p className="mt-3 font-sans text-sm leading-relaxed text-slate-300">
         COSMO&apos;s maker-execution primitive opens slots one at a time, under hard bond caps.
-        Slot 1 (M2) settled its first agent-native RFQ round-trip on Supra Mainnet on 2026-07-04;
-        Slot 2 is pending the Phase 7 observation window. If you want to run a bonded maker on
-        this execution infrastructure, put yourself on the watchlist.
+        Slot 1 (M2) settled its first agent-native RFQ round-trip on Supra Mainnet on 2026-07-04
+        and passed its 72-hour observation window without incident. The next slot does not open
+        on a timer — it opens against a committed operator: Slot 2 is reserved for the first
+        serious external maker. If you want to run a bonded maker on this execution
+        infrastructure — controlled RFQ participation, your own keys, your own bond — put
+        yourself on the watchlist.
       </p>
       <ul className="mt-3 space-y-1.5 font-mono text-[12px] text-slate-400">
         <li>· current v1 assumption: 100 wCOSMO operator bond, one agent, quote-server allowlist</li>

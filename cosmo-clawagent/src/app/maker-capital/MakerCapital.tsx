@@ -57,7 +57,7 @@ const DISCLAIMERS = [
   'No yield product',
   'No launch decision',
   'No investment offer',
-  'Phase 7 observation remains separate',
+  'Maker slot governance remains separate',
   'Remaining gates and legal review come first',
 ] as const;
 
