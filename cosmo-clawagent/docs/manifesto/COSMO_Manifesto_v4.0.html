@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>COSMO Manifesto v4.0</title>
+<style>
+  @page {
+    size: A4;
+    margin: 22mm 20mm 24mm 20mm;
+    @bottom-center { content: "COSMO Manifesto v4.0"; font-family: Helvetica, Arial, sans-serif; font-size: 8pt; color: #8a8a9a; }
+    @bottom-right  { content: counter(page); font-family: Helvetica, Arial, sans-serif; font-size: 8pt; color: #8a8a9a; }
+  }
+  @page cover { @bottom-center { content: none; } @bottom-right { content: none; } }
+  body { font-family: Georgia, "Times New Roman", serif; font-size: 10.5pt; line-height: 1.55; color: #1c1c28; margin: 0; }
+  h1, h2, h3, .sans { font-family: Helvetica, Arial, sans-serif; }
+  h2 { font-size: 13pt; color: #14122b; margin: 1.6em 0 0.5em; page-break-after: avoid; }
+  h3 { font-size: 11pt; margin: 1.2em 0 0.4em; page-break-after: avoid; }
+  p { margin: 0.55em 0; }
+  ul { margin: 0.5em 0 0.8em; padding-left: 1.3em; }
+  li { margin: 0.25em 0; }
+  ol { margin: 0.5em 0 0.8em; padding-left: 1.5em; }
+
+  .cover { page: cover; text-align: center; padding-top: 60mm; page-break-after: always; }
+  .cover .brand { font-family: Helvetica, Arial, sans-serif; font-size: 34pt; letter-spacing: 0.18em; font-weight: bold; color: #14122b; }
+  .cover .title { font-family: Helvetica, Arial, sans-serif; font-size: 15pt; margin-top: 6mm; color: #3a3358; }
+  .cover .subtitle { font-size: 11pt; margin-top: 3mm; color: #55516e; }
+  .cover .meta { font-family: Helvetica, Arial, sans-serif; font-size: 9.5pt; margin-top: 10mm; color: #8a8a9a; letter-spacing: 0.08em; }
+  .cover .epigraph { margin-top: 26mm; font-size: 13pt; font-style: italic; color: #2c2a45; line-height: 1.6; }
+  .cover .posnote { margin-top: 18mm; font-size: 9pt; color: #6b6884; max-width: 130mm; margin-left: auto; margin-right: auto; }
+
+  .onesentence { background: #f2f1fa; border-left: 3px solid #5b4cff; padding: 4mm 5mm; margin: 6mm 0; page-break-inside: avoid; }
+  .onesentence .label { font-family: Helvetica, Arial, sans-serif; font-size: 8.5pt; letter-spacing: 0.1em; text-transform: uppercase; color: #5b4cff; margin: 0 0 1.5mm; }
+  .onesentence p { margin: 0; }
+
+  .principle-box { background: #f2f1fa; border-left: 3px solid #5b4cff; padding: 4mm 5mm; margin: 5mm 0; page-break-inside: avoid; }
+  .principle-box .label { font-family: Helvetica, Arial, sans-serif; font-size: 8.5pt; letter-spacing: 0.1em; text-transform: uppercase; color: #5b4cff; margin: 0 0 1.5mm; }
+  .principle-box p { margin: 0; }
+
+  table { border-collapse: collapse; width: 100%; margin: 4mm 0; font-size: 9.5pt; page-break-inside: avoid; }
+  th { font-family: Helvetica, Arial, sans-serif; text-align: left; font-size: 9pt; letter-spacing: 0.05em; color: #55516e; border-bottom: 1.2pt solid #2c2a45; padding: 2mm 3mm 1.5mm 0; }
+  td { vertical-align: top; border-bottom: 0.4pt solid #d8d6e6; padding: 2mm 3mm 2mm 0; }
+  td:first-child { font-family: Helvetica, Arial, sans-serif; font-weight: bold; white-space: nowrap; }
+
+  .pullquote { text-align: center; font-size: 13pt; font-style: italic; color: #2c2a45; margin: 8mm 10mm; line-height: 1.6; page-break-inside: avoid; }
+  .langdivider { page-break-before: always; text-align: center; padding-top: 4mm; }
+  .langdivider h1 { font-size: 16pt; color: #14122b; margin-bottom: 1mm; }
+  .langdivider .sub { font-family: Helvetica, Arial, sans-serif; font-size: 10pt; color: #8a8a9a; }
+  .smallnote { font-size: 9pt; color: #6b6884; }
+  .invite { border: 0.6pt solid #c9c5e6; background: #fbfaff; padding: 4mm 5mm; margin: 4mm 0; page-break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<!-- ============================== COVER ============================== -->
+<div class="cover">
+  <div class="brand">COSMO</div>
+  <div class="title">Manifesto v4.0</div>
+  <div class="subtitle">The Execution Layer for the Agent Economy</div>
+  <div class="subtitle">A declaration for builders, operators, agents and the Supra community</div>
+  <div class="meta">v4.0 &middot; JULY 2026 &middot; HEROS.CLOUD</div>
+  <div class="epigraph">The internet connected information. Blockchain connected value.<br>The next step is connecting autonomous agents.</div>
+  <div class="posnote">Positioning note: COSMO is not a competitor to SupraFX or SupraOS. It is a complementary execution and accountability layer for autonomous agent workflows.</div>
+</div>
+
+<!-- ============================== ENGLISH ============================== -->
+<div class="langdivider" style="page-break-before: auto;">
+  <h1>COSMO Manifesto v4.0</h1>
+  <div class="sub">English Master Version</div>
+</div>
+
+<div class="onesentence">
+  <p class="label">In one sentence</p>
+  <p>COSMO is the execution layer for the Agent Economy: a Supra-native system for turning autonomous agent intent into permissioned RFQs, secure settlement, receipts and reputation.</p>
+</div>
+
+<h2>1. Preamble: The next users are not human</h2>
+<p>The next major users of blockchains will not only be people clicking buttons in wallets. They will be autonomous AI agents acting on behalf of people, teams, protocols, companies and other agents.</p>
+<p>Today, we still treat AI as an assistant: something that answers, summarizes, writes and suggests. That is only the first phase. The second phase begins when AI can make decisions, request services, negotiate terms and complete economic actions. At that point, AI no longer only produces information. It participates in markets.</p>
+<p>Markets require more than intelligence. They require identity, budgets, permission, reputation, rules, settlement and receipts. Without these, agents may think, but they cannot safely act. They can recommend a trade, but they cannot become accountable economic actors. They can find a service, but they cannot negotiate and settle with it in a trust-minimized way.</p>
+<p>COSMO exists for that gap.</p>
+
+<h2>2. The thesis: intelligence needs an execution layer</h2>
+<p>The AI boom has focused on cognition: models, prompts, memory, reasoning and tool use. But an economy is not built from cognition alone. An economy is built from repeatable transactions between actors who can commit, deliver, pay, dispute, improve and be held accountable.</p>
+<p>If autonomous agents become real economic participants, they need an execution layer that can translate intent into action. That layer must answer practical questions:</p>
+<ul>
+  <li>Who is allowed to act?</li>
+  <li>What budget can the agent use?</li>
+  <li>Which services can be requested?</li>
+  <li>How are offers compared?</li>
+  <li>How is settlement verified?</li>
+  <li>Who is accountable if execution fails?</li>
+  <li>How does reputation compound over time?</li>
+</ul>
+<p>COSMO is built around these questions. It does not try to be the smartest agent. It tries to become the reliable arm that lets agents transact.</p>
+
+<h2>3. From chatbots to machine-to-machine commerce</h2>
+<p>The Agent Economy begins when agents can buy and sell services from each other. This is not science fiction. It is the logical extension of current AI workflows. An agent that writes code may need compute. A research agent may need data. A trading agent may need liquidity. A logistics agent may need storage or routing. A creator agent may need rendering, transcription, voice generation or distribution.</p>
+<p>In the human web, discovery led to marketplaces. In the agent web, discovery will lead to programmable RFQs: structured requests for quotes that machines can understand, compare and settle.</p>
+<p>A simple example: an AI agent needs GPU capacity for a model run. It asks multiple providers for price, latency, uptime and delivery guarantees. Each provider answers with a quote. The agent checks budget and permissions, selects the best quote and settles automatically. The provider receives payment only under agreed conditions. The result is recorded as a receipt, feeding reputation.</p>
+<p>That is not a chatbot. That is commerce.</p>
+
+<h2>4. Why blockchain is the natural substrate</h2>
+<p>Autonomous economic activity cannot rely only on private APIs and promises. Agents need neutral rails where commitments can be verified. They need wallets to hold value, identities to build reputation, rules to constrain behavior and settlement systems that do not disappear when one provider changes terms.</p>
+<p>Blockchain gives agents a shared economic substrate. It does not make AI intelligent. It makes AI accountable. It turns actions into transactions, promises into commitments and outcomes into records.</p>
+<p>For the Agent Economy, the important question is not whether humans like crypto. The important question is whether autonomous actors need a neutral system for ownership, payment, verification and reputation. We believe they do.</p>
+
+<h2>5. Why Supra</h2>
+<p>Supra is positioned around high-performance execution, automation, cross-chain infrastructure and agent-native systems. That makes it a natural home for an Agent Economy thesis. Autonomous agents need fast finality, programmable execution, reliable data and a stack that can connect reasoning with action.</p>
+<p>COSMO chooses Supra because agent commerce should not be bolted onto slow, fragmented infrastructure after the fact. It should live where automation, data and execution can be composed as first-class primitives.</p>
+<p>This is also why COSMO must remain honest about integration status. A manifesto is not a signed partnership agreement. COSMO is designed to complement SupraOS and SupraFX. Final integration surfaces depend on access, alignment and technical feasibility.</p>
+
+<h2>6. What COSMO is</h2>
+<p>COSMO is an execution and accountability layer for autonomous agent workflows on Supra. It is designed to help agents turn intent into permissioned RFQ execution and verifiable settlement.</p>
+<p>At its core, COSMO explores a simple loop:</p>
+<ol>
+  <li>An agent expresses intent: I need X under these constraints.</li>
+  <li>A request for quote is created with budget, assets, deadline and rules.</li>
+  <li>Makers or service providers respond with quotes.</li>
+  <li>The taker chooses a quote and funds or authorizes execution.</li>
+  <li>Settlement is executed under defined conditions.</li>
+  <li>The outcome becomes a receipt and feeds reputation.</li>
+</ol>
+<p>This loop can serve DeFi, but it is not limited to DeFi. It can serve compute, data, APIs, storage, agent-to-agent services and any environment where autonomous actors need to request, compare and settle work.</p>
+
+<h2>7. What COSMO is not</h2>
+<p>COSMO is not another chatbot. It is not a general-purpose AI model. It is not a proprietary bridge. It is not an AMM. It is not a promise that one protocol will replace the rest of the Supra ecosystem.</p>
+<p>Most importantly, COSMO is not a competitor to SupraFX.</p>
+<p>SupraFX can be understood as market-facing infrastructure: liquidity, trading, routing and cross-chain execution surfaces. COSMO is focused on the agent-side execution contract: permissioning, RFQ intent, accountability, settlement receipts and operator reputation. In a mature stack, these are complementary. Agent intent can flow through COSMO and execute through routes or venues such as SupraFX where appropriate.</p>
+<div class="principle-box">
+  <p class="label">Positioning principle</p>
+  <p>SupraOS coordinates agents. SupraFX provides market and liquidity rails. COSMO turns autonomous intent into accountable execution. The winning story is not competition. It is composition.</p>
+</div>
+
+<h2>8. The complementary stack</h2>
+<table>
+  <tr><th>Layer</th><th>Role</th><th>Meaning</th></tr>
+  <tr><td>SupraOS</td><td>Agent operating environment</td><td>Where autonomous agents can be orchestrated, composed and connected to workflows.</td></tr>
+  <tr><td>SupraFX</td><td>Liquidity / trading / cross-chain rails</td><td>A market-facing layer that can provide routes, liquidity and execution venues.</td></tr>
+  <tr><td>COSMO</td><td>Execution and accountability layer</td><td>Turns agent intent into permissioned RFQ execution, settlement receipts and reputation outcomes.</td></tr>
+  <tr><td>$COSMO / NFTs</td><td>Access, bond and community coordination</td><td>Aligns operators, holders and early participants around accountable execution.</td></tr>
+</table>
+<p>The Agent Economy will not be built by one product. It will be built by layers that specialize and compose. SupraOS can organize agent workflows. SupraFX can expose market infrastructure. COSMO can provide the execution and accountability layer that turns intent into settlement. $COSMO and COSMO NFTs can align operators, holders and early participants around this role.</p>
+
+<h2>9. RFQ as the native language of agent commerce</h2>
+<p>Humans negotiate in conversations. Machines need structured commitments. RFQ is one of the cleanest primitives for that world because it separates intent, quote, funding, execution and settlement.</p>
+<p>RFQ gives agents a way to ask: Who can provide this service? At what price? Under which constraints? Until what deadline? With what minimum acceptable outcome? This format is flexible enough for token swaps, compute requests, data access, storage, model inference and agent services.</p>
+<p>COSMO treats RFQ not merely as a trading mechanism, but as a general coordination primitive for autonomous economic actors.</p>
+
+<h2>10. Accountability: the difference between automation and agency</h2>
+<p>Automation without accountability is dangerous. It creates systems that act quickly but cannot be trusted. True agency requires limits. It requires budgets, permissions, bonds, logs and consequences.</p>
+<p>COSMO therefore focuses on the accountability layer: who can quote, who can execute, which assets are allowed, how much can be used, what happens when a leg fails and how operator quality is reflected over time.</p>
+<p>This is where $COSMO matters. A token in this context is not a slogan. It is a way to bind participants to the quality of execution. Operators should have something at stake. Holders should have a role in access and coordination. Reputation should be earned through performance, not claimed through marketing.</p>
+
+<h2>11. Proof matters</h2>
+<p>The Agent Economy is full of words. COSMO must be judged by proof. As of July 2026, COSMO runs on Supra mainnet in a deliberately guarded configuration, and the core loop of this manifesto is no longer a diagram. It has happened on-chain:</p>
+<ul>
+  <li><strong>Live RFQ settlement on mainnet.</strong> The RFQ engine, maker-vault and bond model are deployed and operating, with parameters governed by a multi-signature admin rather than a single key.</li>
+  <li><strong>The first community maker.</strong> An independent operator posted its own bond, quoted through the permissioned quote path and completed a full request-to-settlement roundtrip on mainnet. Every leg is publicly documented with transaction links on the demo page. Maker capacity opens one bonded slot at a time under global caps: accountable growth instead of an open faucet.</li>
+  <li><strong>The first compute job.</strong> The GPU/compute use case from this manifesto is live as an outcome-based RFQ market: the first real job was requested with escrowed payment, delivered against a verifiable result hash, and settled on-chain end-to-end, with the provider operating under a slashable bond. Anti-spam request pricing is active.</li>
+  <li><strong>Operations, not promises.</strong> The market runs with automated keeper infrastructure, on-chain invariant monitoring and public evidence documents for every launch step.</li>
+</ul>
+<p>These proofs do not mean the system is finished. Caps are intentionally small, quality gates are intentionally strict, and every step of the opening is documented. A primitive is enough to start building a market around it. The next challenge is not to invent new slogans, but to connect real agents, real makers, real services and real demand.</p>
+
+<h2>12. Use cases that make the thesis concrete</h2>
+<ul>
+  <li><strong>GPU and compute:</strong> agents request compute capacity, compare quotes and pay for completed jobs. This market is live in its first guarded version.</li>
+  <li><strong>APIs and data:</strong> agents purchase weather, market, logistics, identity or research data through metered access.</li>
+  <li><strong>Storage and bandwidth:</strong> agents allocate files, pay providers and verify delivery receipts.</li>
+  <li><strong>DeFi execution:</strong> agents route capital, request quotes and settle under defined risk rules.</li>
+  <li><strong>Agent-to-agent services:</strong> specialized agents sell analysis, code, monitoring, translation or model inference to other agents.</li>
+  <li><strong>Community markets:</strong> holders and operators create service supply for agent workflows instead of only speculating on tokens.</li>
+</ul>
+<p>The common pattern is not the asset. The common pattern is the transaction: request, quote, permission, execution, settlement, receipt, reputation.</p>
+
+<h2>13. The role of the community</h2>
+<p>COSMO should not become a black box operated by a small team. The strongest version of COSMO is a community-built operator economy. Makers provide liquidity, services or execution capacity. Builders integrate new agent workflows. Holders become early participants in governance, access and reputation. Content creators translate the thesis for new audiences.</p>
+<p>The community is not only a marketing channel. It is the first market. It is where agent services can be imagined, tested, priced and improved before the wider world understands what is happening.</p>
+
+<h2>14. An open invitation</h2>
+<p>This manifesto is also a call for the first external participants. The system is live, small by design, and looking for operators who want to be early rather than loud.</p>
+<div class="invite">
+  <p><strong>Become a maker.</strong> Maker capacity opens one bonded slot at a time. An operator posts its own bond (bond size is a v1 working assumption, currently 100 wCOSMO), runs its own keys and earns settlement flow and reputation from day one. The next slot is reserved for the first serious external operator.</p>
+  <p><strong>Bring a workload or provide compute.</strong> The outcome-RFQ compute market is open in a guarded configuration: providers onboard under caps with a slashable bond; buyers submit real jobs with escrowed payment and verifiable results.</p>
+  <p><strong>Where to start.</strong> Proof and transaction evidence: <span class="sans">heros.cloud/demo</span>. Maker watchlist and contact: <span class="sans">heros.cloud/community-rfq</span>.</p>
+</div>
+<p class="smallnote">Participation is deliberately gated during the guarded launch phase. Parameters such as bond size, caps and fees are v1 working values and can change through governance before broader opening.</p>
+
+<h2>15. Principles</h2>
+<ol>
+  <li>Agents should be able to act, not only answer.</li>
+  <li>Every autonomous action needs permission, budget and accountability.</li>
+  <li>RFQ is a natural coordination primitive for machine-to-machine commerce.</li>
+  <li>Settlement must produce receipts that can feed reputation.</li>
+  <li>COSMO should complement SupraOS and SupraFX, not compete with them.</li>
+  <li>Narrow execution beats vague intelligence.</li>
+  <li>Proof on-chain matters more than pitch decks.</li>
+  <li>The community should become the first operator network.</li>
+  <li>$COSMO should bind access, stake, accountability and participation.</li>
+  <li>The Agent Economy will be built by composable primitives, not isolated hype cycles.</li>
+</ol>
+
+<h2>16. The declaration</h2>
+<p>We believe the next economy will include autonomous actors.</p>
+<p>We believe those actors will need wallets, permissions, reputation, execution and settlement.</p>
+<p>We believe the most important question is not which AI talks best, but which systems let agents do real work safely.</p>
+<p>We believe Supra can become a home for this economy because it brings execution, automation, data and agent infrastructure into one emerging stack.</p>
+<p>We believe SupraFX is not a rival to this vision, but one of the rails that can make agent-driven markets liquid and useful.</p>
+<p>We believe COSMO should be the boring, reliable, accountable layer that turns agent intent into settlement.</p>
+<p>We are not here to build another chatbot. We are here to help agents trade, hire, pay, coordinate and create value.</p>
+<p>The internet connected information. Blockchain connected value. COSMO exists for the moment when autonomous agents need to connect economically.</p>
+<div class="pullquote">AI should not only think. Agents should be able to act.<br>And when they act, they must be accountable.</div>
+
+<h2>17. Public short version</h2>
+<p>COSMO is building the execution layer for the Agent Economy on Supra. The thesis is simple: the next users of blockchains will increasingly be autonomous AI agents. These agents will need a way to request services, negotiate prices, exchange value and settle outcomes safely. COSMO explores that layer through programmable RFQs, permissioned execution, settlement receipts and reputation &mdash; live on Supra mainnet in a guarded first version, with the first community maker and the first settled compute job already on-chain. It is not a competitor to SupraFX or SupraOS. It is a complementary primitive for machine-to-machine commerce.</p>
+
+<!-- ============================== GERMAN ============================== -->
+<div class="langdivider">
+  <h1>COSMO Manifesto v4.0</h1>
+  <div class="sub">Deutsche Fassung</div>
+</div>
+
+<div class="onesentence">
+  <p class="label">In einem Satz</p>
+  <p>COSMO ist die Execution Layer f&uuml;r die Agent Economy: ein Supra-natives System, das autonome Agenten-Absichten in berechtigte RFQs, sichere Abwicklung, Nachweise und Reputation &uuml;bersetzt.</p>
+</div>
+
+<h2>1. Pr&auml;ambel: Die n&auml;chsten Nutzer sind nicht nur Menschen</h2>
+<p>Die n&auml;chsten gro&szlig;en Nutzer von Blockchains werden nicht nur Menschen sein, die Buttons in Wallets klicken. Es werden autonome KI-Agenten sein, die im Auftrag von Menschen, Teams, Protokollen, Unternehmen und anderen Agenten handeln.</p>
+<p>Heute behandeln wir KI meistens als Assistenten. Sie antwortet, fasst zusammen, schreibt und schl&auml;gt vor. Das ist nur die erste Phase. Die zweite Phase beginnt, wenn KI Entscheidungen trifft, Dienstleistungen anfragt, Preise verhandelt und wirtschaftliche Handlungen abschlie&szlig;t. Dann produziert KI nicht nur Information. Sie nimmt an M&auml;rkten teil.</p>
+<p>M&auml;rkte brauchen mehr als Intelligenz. Sie brauchen Identit&auml;t, Budgets, Berechtigungen, Reputation, Regeln, Settlement und Nachweise. Ohne diese Bausteine k&ouml;nnen Agenten denken, aber nicht sicher handeln.</p>
+<p>COSMO existiert f&uuml;r genau diese L&uuml;cke.</p>
+
+<h2>2. Die These: Intelligenz braucht eine Ausf&uuml;hrungsschicht</h2>
+<p>Der aktuelle KI-Boom konzentriert sich auf Denken: Modelle, Prompts, Memory, Reasoning und Tools. Eine Wirtschaft entsteht aber nicht aus Denken allein. Eine Wirtschaft entsteht aus wiederholbaren Transaktionen zwischen Akteuren, die zusagen, liefern, bezahlen, streiten, lernen und verantwortlich gemacht werden k&ouml;nnen.</p>
+<p>Wenn autonome Agenten echte wirtschaftliche Teilnehmer werden, brauchen sie eine Execution Layer, die Absicht in Handlung &uuml;bersetzt. Diese Schicht muss praktische Fragen beantworten:</p>
+<ul>
+  <li>Wer darf handeln?</li>
+  <li>Welches Budget darf der Agent nutzen?</li>
+  <li>Welche Services d&uuml;rfen angefragt werden?</li>
+  <li>Wie werden Angebote verglichen?</li>
+  <li>Wie wird Settlement verifiziert?</li>
+  <li>Wer haftet bei fehlerhafter Ausf&uuml;hrung?</li>
+  <li>Wie entsteht Reputation &uuml;ber Zeit?</li>
+</ul>
+<p>COSMO versucht nicht, der intelligenteste Agent zu sein. COSMO versucht, der zuverl&auml;ssige Arm zu sein, mit dem Agenten sicher wirtschaftlich handeln k&ouml;nnen.</p>
+
+<h2>3. Von Chatbots zu Machine-to-Machine Commerce</h2>
+<p>Die Agent Economy beginnt, wenn Agenten Dienstleistungen voneinander kaufen und verkaufen k&ouml;nnen. Ein Agent, der Code schreibt, braucht Compute. Ein Research-Agent braucht Daten. Ein Trading-Agent braucht Liquidit&auml;t. Ein Creator-Agent braucht Rendering, Transkription, Voice oder Distribution.</p>
+<p>Im menschlichen Internet f&uuml;hrte Discovery zu Marktpl&auml;tzen. Im Agenten-Internet f&uuml;hrt Discovery zu programmierbaren RFQs: strukturierten Angebotsanfragen, die Maschinen verstehen, vergleichen und abwickeln k&ouml;nnen.</p>
+<p>Ein einfaches Beispiel: Ein KI-Agent ben&ouml;tigt GPU-Leistung f&uuml;r einen Modelllauf. Er fragt mehrere Anbieter nach Preis, Latenz, Verf&uuml;gbarkeit und Liefergarantie. Die Anbieter antworten mit Angeboten. Der Agent pr&uuml;ft Budget und Berechtigungen, w&auml;hlt das beste Angebot und bezahlt automatisch. Das Ergebnis wird als Nachweis gespeichert und flie&szlig;t in Reputation ein.</p>
+<p>Das ist kein Chatbot. Das ist Handel.</p>
+
+<h2>4. Warum Blockchain die nat&uuml;rliche Grundlage ist</h2>
+<p>Autonome wirtschaftliche Aktivit&auml;t kann sich nicht nur auf private APIs und Versprechen verlassen. Agenten brauchen neutrale Schienen, auf denen Zusagen &uuml;berpr&uuml;fbar sind. Sie brauchen Wallets, Identit&auml;ten, Regeln und Systeme, die Settlement nachvollziehbar machen.</p>
+<p>Blockchain gibt Agenten eine gemeinsame wirtschaftliche Grundlage. Sie macht KI nicht intelligenter. Sie macht KI verantwortlich. Sie macht aus Aktionen Transaktionen, aus Versprechen Verpflichtungen und aus Ergebnissen Nachweise.</p>
+
+<h2>5. Warum Supra</h2>
+<p>Supra positioniert sich um schnelle Ausf&uuml;hrung, Automation, Cross-Chain-Infrastruktur und agenten-native Systeme. Genau das macht Supra zu einem nat&uuml;rlichen Umfeld f&uuml;r die Agent Economy. Autonome Agenten brauchen schnelle Finalit&auml;t, programmierbare Ausf&uuml;hrung, verl&auml;ssliche Daten und einen Stack, der Denken mit Handlung verbindet.</p>
+<p>COSMO w&auml;hlt Supra, weil Agent Commerce nicht nachtr&auml;glich auf langsame, fragmentierte Infrastruktur geschraubt werden sollte. Er sollte dort entstehen, wo Automation, Daten und Execution als Grundbausteine zusammenspielen.</p>
+<p>Auch deshalb bleibt COSMO ehrlich beim Integrationsstatus: Ein Manifest ist kein unterschriebener Partnervertrag. COSMO ist darauf ausgelegt, SupraOS und SupraFX zu erg&auml;nzen. Konkrete Integrationsfl&auml;chen h&auml;ngen von Zugang, Abstimmung und technischer Machbarkeit ab.</p>
+
+<h2>6. Was COSMO ist</h2>
+<p>COSMO ist eine Execution- und Accountability-Layer f&uuml;r autonome Agenten-Workflows auf Supra. COSMO soll helfen, Agentenabsichten in berechtigte RFQ-Ausf&uuml;hrung und verifizierbares Settlement zu &uuml;bersetzen.</p>
+<p>Der Kern ist ein einfacher Ablauf:</p>
+<ol>
+  <li>Ein Agent formuliert eine Absicht: Ich brauche X unter diesen Bedingungen.</li>
+  <li>Eine RFQ wird mit Budget, Assets, Deadline und Regeln erstellt.</li>
+  <li>Maker oder Service-Anbieter antworten mit Angeboten.</li>
+  <li>Der Taker w&auml;hlt ein Angebot und autorisiert die Ausf&uuml;hrung.</li>
+  <li>Das Settlement wird unter definierten Bedingungen ausgef&uuml;hrt.</li>
+  <li>Das Ergebnis wird als Nachweis gespeichert und st&auml;rkt oder schw&auml;cht Reputation.</li>
+</ol>
+<p>Dieser Ablauf kann DeFi bedienen, ist aber nicht auf DeFi beschr&auml;nkt. Er kann Compute, Daten, APIs, Storage und Agent-to-Agent Services bedienen.</p>
+
+<h2>7. Was COSMO nicht ist</h2>
+<p>COSMO ist kein weiterer Chatbot. COSMO ist kein allgemeines KI-Modell. COSMO ist keine propriet&auml;re Bridge. COSMO ist kein AMM. Und COSMO ist keine Behauptung, dass ein Protokoll den Rest des Supra-&Ouml;kosystems ersetzen soll.</p>
+<p>Am wichtigsten: COSMO ist keine Konkurrenz zu SupraFX.</p>
+<p>SupraFX kann als marktnahe Infrastruktur verstanden werden: Liquidit&auml;t, Trading, Routing und Cross-Chain-Ausf&uuml;hrung. COSMO fokussiert die Agentenseite des Ausf&uuml;hrungsvertrags: Berechtigungen, RFQ-Intent, Accountability, Settlement-Nachweise und Operator-Reputation. In einem reifen Stack erg&auml;nzen sich diese Rollen.</p>
+<div class="principle-box">
+  <p class="label">Positionierungsprinzip</p>
+  <p>SupraOS koordiniert Agenten. SupraFX stellt Markt- und Liquidit&auml;tsschienen bereit. COSMO macht autonome Absichten ausf&uuml;hrbar und verantwortlich. Die starke Story ist nicht Konkurrenz. Die starke Story ist Komposition.</p>
+</div>
+
+<h2>8. Der komplement&auml;re Stack</h2>
+<table>
+  <tr><th>Layer</th><th>Rolle</th><th>Bedeutung</th></tr>
+  <tr><td>SupraOS</td><td>Agent operating environment</td><td>Wo autonome Agenten orchestriert, komponiert und mit Workflows verbunden werden k&ouml;nnen.</td></tr>
+  <tr><td>SupraFX</td><td>Liquidit&auml;t / Trading / Cross-Chain-Schienen</td><td>Eine marktnahe Schicht, die Routen, Liquidit&auml;t und Ausf&uuml;hrungsvenues bereitstellen kann.</td></tr>
+  <tr><td>COSMO</td><td>Execution- und Accountability-Layer</td><td>Verwandelt Agentenabsicht in berechtigte RFQ-Ausf&uuml;hrung, Settlement-Nachweise und Reputation.</td></tr>
+  <tr><td>$COSMO / NFTs</td><td>Access, Bond und Community-Koordination</td><td>Verbindet Operator, Holder und fr&uuml;he Teilnehmer rund um verantwortliche Ausf&uuml;hrung.</td></tr>
+</table>
+<p>Die Agent Economy wird nicht durch ein einzelnes Produkt entstehen. Sie wird durch spezialisierte Schichten entstehen, die miteinander kombinierbar sind. SupraOS kann Agenten-Workflows organisieren. SupraFX kann Marktinfrastruktur bereitstellen. COSMO kann die Execution- und Accountability-Layer liefern, die Absicht in Settlement verwandelt.</p>
+
+<h2>9. RFQ als Sprache der Agent Economy</h2>
+<p>Menschen verhandeln in Gespr&auml;chen. Maschinen brauchen strukturierte Zusagen. RFQ ist daf&uuml;r ein sauberer Grundbaustein, weil es Absicht, Angebot, Finanzierung, Ausf&uuml;hrung und Settlement trennt.</p>
+<p>RFQ erlaubt Agenten zu fragen: Wer kann diese Leistung liefern? Zu welchem Preis? Unter welchen Bedingungen? Bis wann? Mit welchem Mindestresultat? Dieses Format passt nicht nur zu Token-Swaps, sondern auch zu Compute, Daten, APIs, Storage und Agent Services.</p>
+
+<h2>10. Accountability: der Unterschied zwischen Automation und Agency</h2>
+<p>Automation ohne Verantwortung ist gef&auml;hrlich. Sie erzeugt Systeme, die schnell handeln, aber nicht vertrauensw&uuml;rdig sind. Echte Agency braucht Grenzen: Budgets, Berechtigungen, Bonds, Logs und Konsequenzen.</p>
+<p>Deshalb fokussiert COSMO die Accountability-Layer. Wer darf quoten? Wer darf ausf&uuml;hren? Welche Assets sind erlaubt? Wie hoch ist das Limit? Was passiert, wenn eine Ausf&uuml;hrung fehlschl&auml;gt? Wie bildet sich Qualit&auml;t &uuml;ber Zeit ab?</p>
+<p>$COSMO ist in diesem Kontext kein reiner Slogan. Der Token soll Teilnehmer an die Qualit&auml;t der Ausf&uuml;hrung binden. Operator m&uuml;ssen etwas riskieren. Holder sollen Zugang und Koordination erm&ouml;glichen. Reputation muss durch Performance verdient werden.</p>
+
+<h2>11. Proof matters</h2>
+<p>Die Agent Economy ist voller Worte. COSMO muss an Beweisen gemessen werden. Stand Juli 2026 l&auml;uft COSMO auf dem Supra-Mainnet in einer bewusst abgesicherten Konfiguration &mdash; und der Kern-Loop dieses Manifests ist kein Diagramm mehr, sondern on-chain passiert:</p>
+<ul>
+  <li><strong>Live RFQ-Settlement auf Mainnet.</strong> RFQ-Engine, Maker-Vault und Bond-Modell sind deployed und in Betrieb; die Parameter werden von einem Multi-Signature-Admin verwaltet statt von einem einzelnen Key.</li>
+  <li><strong>Der erste Community-Maker.</strong> Ein unabh&auml;ngiger Operator hat seinen eigenen Bond hinterlegt, &uuml;ber den berechtigten Quote-Pfad quotiert und einen vollst&auml;ndigen Request-bis-Settlement-Roundtrip auf Mainnet abgeschlossen. Jeder Schritt ist &ouml;ffentlich mit Transaktions-Links auf der Demo-Seite dokumentiert. Maker-Kapazit&auml;t &ouml;ffnet Slot f&uuml;r Slot unter globalen Caps: verantwortliches Wachstum statt offenem Hahn.</li>
+  <li><strong>Der erste Compute-Job.</strong> Der GPU/Compute-Use-Case dieses Manifests ist als Outcome-RFQ-Markt live: Der erste echte Job wurde mit escrowter Zahlung angefragt, gegen einen verifizierbaren Result-Hash geliefert und on-chain end-to-end settled &mdash; der Provider arbeitet unter einem slashbaren Bond. Anti-Spam-Request-Pricing ist aktiv.</li>
+  <li><strong>Betrieb statt Versprechen.</strong> Der Markt l&auml;uft mit automatisierter Keeper-Infrastruktur, On-chain-Invarianten-Monitoring und &ouml;ffentlichen Evidence-Dokumenten f&uuml;r jeden Launch-Schritt.</li>
+</ul>
+<p>Diese Beweise bedeuten nicht, dass das System fertig ist. Die Caps sind bewusst klein, die Quality-Gates bewusst streng, jeder &Ouml;ffnungsschritt ist dokumentiert. Eine Primitive reicht, um einen Markt darum aufzubauen. Die n&auml;chste Aufgabe ist, echte Agenten, echte Maker, echte Services und echte Nachfrage miteinander zu verbinden.</p>
+
+<h2>12. Konkrete Use Cases</h2>
+<ul>
+  <li><strong>GPU und Compute:</strong> Agenten fragen Rechenkapazit&auml;t an, vergleichen Angebote und zahlen f&uuml;r erledigte Jobs. Dieser Markt ist in seiner ersten, abgesicherten Version live.</li>
+  <li><strong>APIs und Daten:</strong> Agenten kaufen Wetter-, Markt-, Logistik-, Identity- oder Research-Daten &uuml;ber messbaren Zugriff.</li>
+  <li><strong>Storage und Bandbreite:</strong> Agenten speichern Dateien, bezahlen Provider und verifizieren Lieferung.</li>
+  <li><strong>DeFi Execution:</strong> Agenten routen Kapital, holen Angebote ein und settlen unter definierten Risikoregeln.</li>
+  <li><strong>Agent-to-Agent Services:</strong> spezialisierte Agenten verkaufen Analyse, Code, Monitoring, &Uuml;bersetzung oder Inferenz an andere Agenten.</li>
+  <li><strong>Community Markets:</strong> Holder und Operator schaffen Service-Angebot f&uuml;r Agenten-Workflows statt nur &uuml;ber Tokens zu spekulieren.</li>
+</ul>
+
+<h2>13. Die Rolle der Community</h2>
+<p>COSMO sollte kein Black-Box-System werden, das von wenigen Personen betrieben wird. Die st&auml;rkste Version von COSMO ist eine Community-getriebene Operator Economy. Maker stellen Liquidit&auml;t, Services oder Ausf&uuml;hrungskapazit&auml;t bereit. Builder integrieren neue Agenten-Workflows. Holder werden fr&uuml;he Teilnehmer in Access, Governance und Reputation. Content Creator &uuml;bersetzen die These f&uuml;r neue Zielgruppen.</p>
+<p>Die Community ist nicht nur Marketing. Sie ist der erste Markt.</p>
+
+<h2>14. Eine offene Einladung</h2>
+<p>Dieses Manifest ist auch ein Aufruf an die ersten externen Teilnehmer. Das System ist live, bewusst klein, und sucht Operator, die lieber fr&uuml;h als laut sind.</p>
+<div class="invite">
+  <p><strong>Maker werden.</strong> Maker-Kapazit&auml;t &ouml;ffnet Slot f&uuml;r Slot. Ein Operator hinterlegt seinen eigenen Bond (Bond-H&ouml;he ist eine v1-Arbeitsannahme, aktuell 100 wCOSMO), betreibt eigene Keys und verdient Settlement-Flow und Reputation vom ersten Tag an. Der n&auml;chste Slot ist f&uuml;r den ersten ernsthaften externen Operator reserviert.</p>
+  <p><strong>Workload bringen oder Compute anbieten.</strong> Der Outcome-RFQ-Compute-Markt ist in abgesicherter Konfiguration offen: Provider onboarden unter Caps mit slashbarem Bond; Buyer reichen echte Jobs mit escrowter Zahlung und verifizierbaren Ergebnissen ein.</p>
+  <p><strong>Einstieg.</strong> Proof und Transaktions-Evidence: <span class="sans">heros.cloud/demo</span>. Maker-Watchlist und Kontakt: <span class="sans">heros.cloud/community-rfq</span>.</p>
+</div>
+<p class="smallnote">Die Teilnahme ist w&auml;hrend der Guarded-Launch-Phase bewusst begrenzt. Parameter wie Bond-H&ouml;he, Caps und Fees sind v1-Arbeitswerte und k&ouml;nnen sich vor einer breiteren &Ouml;ffnung per Governance &auml;ndern.</p>
+
+<h2>15. Die Erkl&auml;rung</h2>
+<p>Wir glauben, dass die n&auml;chste Wirtschaft autonome Akteure enthalten wird.</p>
+<p>Wir glauben, dass diese Akteure Wallets, Berechtigungen, Reputation, Ausf&uuml;hrung und Settlement brauchen.</p>
+<p>Wir glauben, dass die wichtigste Frage nicht lautet, welche KI am besten spricht, sondern welche Systeme Agenten sicher handeln lassen.</p>
+<p>Wir glauben, dass Supra ein Zuhause f&uuml;r diese Wirtschaft werden kann, weil Ausf&uuml;hrung, Automation, Daten und Agenten-Infrastruktur dort zusammenlaufen.</p>
+<p>Wir glauben, dass SupraFX kein Gegner dieser Vision ist, sondern eine der Schienen, die agentengetriebene M&auml;rkte liquide und n&uuml;tzlich machen kann.</p>
+<p>Wir glauben, dass COSMO die zuverl&auml;ssige, verantwortliche Schicht sein sollte, die Agentenabsicht in Settlement verwandelt.</p>
+<p>Wir bauen keinen weiteren Chatbot. Wir bauen an einer Infrastruktur, mit der Agenten handeln, beauftragen, bezahlen, koordinieren und Wert schaffen k&ouml;nnen.</p>
+<div class="pullquote">KI sollte nicht nur denken. Agenten sollten handeln k&ouml;nnen.<br>Und wenn sie handeln, m&uuml;ssen sie verantwortlich sein.</div>
+
+<h2>16. &Ouml;ffentliche Kurzfassung</h2>
+<p>COSMO baut die Execution Layer f&uuml;r die Agent Economy auf Supra. Die These ist einfach: Die n&auml;chsten Nutzer von Blockchains werden zunehmend autonome KI-Agenten sein. Diese Agenten brauchen eine M&ouml;glichkeit, Services anzufragen, Preise zu verhandeln, Werte auszutauschen und Ergebnisse sicher abzuwickeln. COSMO erforscht diese Schicht &uuml;ber programmierbare RFQs, berechtigte Ausf&uuml;hrung, Settlement-Nachweise und Reputation &mdash; live auf dem Supra-Mainnet in einer abgesicherten ersten Version, mit dem ersten Community-Maker und dem ersten settled Compute-Job bereits on-chain. COSMO ist keine Konkurrenz zu SupraFX oder SupraOS, sondern eine erg&auml;nzende Primitive f&uuml;r Machine-to-Machine Commerce.</p>
+
+<!-- ============================== APPENDIX ============================== -->
+<div class="langdivider">
+  <h1>Appendix</h1>
+  <div class="sub">Creator and community lines</div>
+</div>
+
+<h3>One-liners</h3>
+<ul>
+  <li>The next users of blockchains will be autonomous agents.</li>
+  <li>AI gives agents cognition. Blockchain gives them accountability.</li>
+  <li>COSMO is not another chatbot. COSMO is where agent intent becomes settlement.</li>
+  <li>SupraOS coordinates agents. SupraFX provides market rails. COSMO executes accountable intent.</li>
+  <li>The Agent Economy begins when machines can request, quote, pay and deliver.</li>
+  <li>RFQs are the native language of machine-to-machine commerce.</li>
+  <li>First community maker settled on mainnet. First compute job paid on-chain. Proof, not pitch.</li>
+  <li>We are not replacing SupraFX. We are making agent-driven execution composable with it.</li>
+</ul>
+
+<h3>German lines</h3>
+<ul>
+  <li>Die n&auml;chsten Nutzer von Blockchains werden autonome Agenten sein.</li>
+  <li>KI gibt Agenten Intelligenz. Blockchain macht sie verantwortlich.</li>
+  <li>COSMO ist kein weiterer Chatbot. COSMO macht Agentenabsicht ausf&uuml;hrbar.</li>
+  <li>SupraOS koordiniert Agenten. SupraFX liefert Marktschienen. COSMO macht Execution verantwortlich.</li>
+  <li>Die Agent Economy beginnt, wenn Maschinen anfragen, quoten, bezahlen und liefern.</li>
+  <li>RFQs sind die Sprache des Machine-to-Machine Commerce.</li>
+  <li>Erster Community-Maker settled auf Mainnet. Erster Compute-Job on-chain bezahlt. Proof statt Pitch.</li>
+  <li>COSMO ersetzt SupraFX nicht. COSMO macht agentengetriebene Execution mit SupraFX kombinierbar.</li>
+</ul>
+
+<h3>Risk and honesty note</h3>
+<p class="smallnote">This manifesto is a narrative and strategic document. It is not investment advice, not a promise of future returns, and not a statement of confirmed integration unless separately announced by the relevant teams. Mainnet functionality described here runs in a deliberately guarded configuration with small caps and strict quality gates. COSMO should be evaluated by shipped code, live demonstrations, security review, mainnet proofs and transparent limitations.</p>
+
+</body>
+</html>
