@@ -250,10 +250,12 @@ export default function HomePage() {
               settle atomically on Supra Move, with no trusted operator in the settlement path.
             </p>
             <p className="text-slate-400 text-base leading-relaxed font-sans">
-              Today, that primitive is proven for value-for-value execution. The next step is
-              digitally verifiable work: data access, signed outputs, API responses, capabilities,
-              and other machine-to-machine obligations where delivery can be checked
-              cryptographically or on-chain. Longer term, COSMO can extend toward compute and
+              Today, that primitive is proven for value-for-value execution, and a first
+              outcome-based compute market is live in a deliberately guarded v1 — one active job
+              per provider, deterministic workloads, with the first real job settled on Mainnet.
+              The next step is broader digitally verifiable work: data access, signed outputs,
+              API responses, capabilities, and other machine-to-machine obligations where
+              delivery can be checked cryptographically or on-chain — extending toward general
               service settlement through dedicated attestation layers.
             </p>
           </div>
@@ -262,8 +264,9 @@ export default function HomePage() {
             Market, liquidity and trading rails are SupraFX&apos;s domain; COSMO is complementary, not
             a competitor, and works one layer down as the execution and accountability primitive. The
             current proven capability is accountable execution, demonstrated via an RFQ-based Mainnet
-            round-trip; compute and service settlement are roadmap, not current capability — and COSMO
-            is not permissionless yet.
+            round-trip. A first outcome-based compute market is live in a deliberately guarded v1
+            (one active job per provider, deterministic workloads); broader service settlement
+            remains roadmap — and COSMO is not permissionless yet.
           </p>
         </div>
       </section>

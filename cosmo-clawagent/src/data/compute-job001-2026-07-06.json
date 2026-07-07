@@ -1,0 +1,45 @@
+{
+  "job": "job-001",
+  "chain_id": 8,
+  "package": "0x0fd8940dadb96ec354d200fcc73e7b10889b5968a8aabe4caf106ee25d8003c0",
+  "job_id": 0,
+  "settled_at_utc": "2026-07-06",
+  "buyer": "0xe7969846762a20a70b0de8cffed0101ef0dfae5744cbef2b784a476b5a19e15e",
+  "provider": "0x45461e6dafb9d30473b0943be78b056cfaaa1ea9bb5f47a03cc9b7333df2c4d0",
+  "payment_fa": "0x4799c7cc256a0cb38d28847eae42be5caf5f21e5272a4d3eef52965c1d00cff6",
+  "max_price_quants": 300000000,
+  "price_quants": 200000000,
+  "review_window_secs": 3600,
+  "workload_uri": "https://github.com/zorgrk-Yommits/cosmo-contracts-move/blob/f86a60e3a83b385f20422e1587d4a5a7369c366e/docs/jobs/job-001-workload.md",
+  "input_hash": "68747dd41aabd083c4f58822253c0bbf0e6601d24a37a3934b4be836664d3a36",
+  "result_hash": "ceb6d41ee60c5fdc423dbee19ac417130af6d1f178e65c1901a57b16d3d47e61",
+  "settle_path": 0,
+  "explorer_tx_base": "https://suprascan.io/tx/",
+  "legs": [
+    {
+      "name": "create_outcome_request",
+      "detail": "Buyer escrows the full max price (300 wCOSMO) with workload URI, input hash, deadline and review window.",
+      "hash": "0xc7c4ab13d76bdd39ce89eae47eb23d4712bcf725ec05e6fcfca924bfd60d67b1"
+    },
+    {
+      "name": "submit_quote",
+      "detail": "Provider quote (200 wCOSMO) flows through the signed quote path — the guarded-phase quality gate.",
+      "hash": "0xd0da92833c41192ba0082547c5e09dea100f45533942540b46cdc65851d8d60b"
+    },
+    {
+      "name": "accept_quote",
+      "detail": "Buyer accepts; the 100 wCOSMO residual is refunded exactly and job 0 becomes ACTIVE.",
+      "hash": "0x9a74896ca9a19b93baad6b242dde889d39cf962263afea9a5c2e98f991531721"
+    },
+    {
+      "name": "deliver_result",
+      "detail": "Bonded provider delivers against the result hash of the deterministic workload.",
+      "hash": "0x4ada2ff262b80bc70e58dabd04be743c3e4c91436f413cb514bc7aff416dc500"
+    },
+    {
+      "name": "approve_delivery",
+      "detail": "Buyer approves; settlement path 0 pays the provider 200 wCOSMO. Escrow empty, bond untouched.",
+      "hash": "0xaee22bea0f14ae7c9dfe284773e47f86920deb9592d8758d1615293910f1fc54"
+    }
+  ]
+}
