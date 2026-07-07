@@ -38,8 +38,10 @@ COSMO is the **Execution Layer for the Agent Economy** on Supra.
 
 ## Primary public document
 
-- **COSMO Manifesto v4.0 (DRAFT)** — `public/COSMO_Manifesto_v4.0_DRAFT.pdf`,
-  13 pages, served at `/COSMO_Manifesto_v4.0_DRAFT.pdf`.
+- **COSMO Manifesto v4.0 (FINAL, July 2026)** — `public/COSMO_Manifesto_v4.0.pdf`,
+  15 pages, served at `/COSMO_Manifesto_v4.0.pdf`. Editable master:
+  `docs/manifesto/COSMO_Manifesto_v4.0.html` (render via weasyprint).
+  The former DRAFT PDF stays in `public/` so old links keep working.
 - Supersedes Whitepaper v3.1 / v2.0 as the primary public statement.
 - Website wiring landed in commit `bdd0231` (hero link + "Read the Manifesto —
   v4.0" + complementary positioning copy).

@@ -182,7 +182,7 @@ export default function HomePage() {
                 See the proof — live Mainnet round-trip
               </Link>
               <a
-                href="/COSMO_Manifesto_v4.0_DRAFT.pdf"
+                href="/COSMO_Manifesto_v4.0.pdf"
                 download
                 className="flex items-center gap-2 px-6 py-3 rounded-xl border border-purple-500/30 text-purple-300 hover:border-purple-400 hover:text-purple-200 font-mono transition-all"
               >
