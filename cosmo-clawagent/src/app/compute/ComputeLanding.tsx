@@ -24,6 +24,7 @@ import {
   Scale,
 } from 'lucide-react';
 import job001 from '@/data/compute-job001-2026-07-06.json';
+import attest001 from '@/data/compute-attest001-2026-07-08.json';
 
 // ── verified Mainnet parameters (chain 8, provider_vault views, 2026-07-07) ──
 const PARAMS = [
@@ -192,11 +193,58 @@ export default function ComputeLanding() {
         </div>
       </section>
 
-      {/* ── Proof: JOB-001 ── */}
+      {/* ── Proof: ATTEST-001 + JOB-001 ── */}
       <section id="proof" className="relative z-10 max-w-5xl mx-auto px-6 py-10">
         <h2 className="font-mono text-xl text-slate-100 mb-2">
-          Proof — the first real job (JOB-001)
+          Proof — real jobs, settled on mainnet
         </h2>
+
+        <h3 className="font-mono text-base text-slate-200 mt-4 mb-2">
+          ATTEST-001 — the first traded good
+        </h3>
+        <p className="font-sans text-sm leading-relaxed text-slate-400 max-w-3xl mb-4">
+          On {attest001.settled_at_utc}, a buyer paid 200 wCOSMO for an independent,
+          ed25519-signed attestation of four live protocol invariants (wCOSMO peg backing,
+          provider bond above minimum, every admin equal to the 2-of-3 multisig, the
+          request-fee floor) — delivered by an attestor with a 100 wCOSMO bond at stake.
+          Approval was not a click: it was gated by a machine acceptance check with eight
+          criteria — signature against the key frozen in the request, deadline, schema
+          binding to request and job id, freshness (4 seconds used of a 300-second budget),
+          raw evidence per check, live reproducibility, verdict logic, and the on-chain
+          hash anchor. Anyone can re-run the acceptance from the public repo:
+          {' '}<span className="font-mono text-slate-300">attest001.py verify --job-id 1</span>.
+        </p>
+        <p className="font-mono text-[11px] leading-relaxed text-slate-500 max-w-3xl mb-4">
+          Transparency: buyer and attestor are operating-team accounts. What is real either
+          way: the attested on-chain state itself, the bond at stake, and the
+          machine-checkable acceptance — all independently verifiable. Request and delivery
+          are pinned on-chain: input hash {short(attest001.input_hash)} (frozen request),
+          result hash {short(attest001.result_hash)} (signed delivery file).
+        </p>
+        <div className="rounded-xl border border-white/10 bg-white/[0.02] overflow-hidden mb-8">
+          {attest001.legs.map((leg, i) => (
+            <div
+              key={leg.name}
+              className={`flex flex-col md:flex-row md:items-center gap-2 md:gap-4 px-5 py-3 ${i > 0 ? 'border-t border-white/5' : ''}`}
+            >
+              <span className="font-mono text-purple-400 text-xs w-6 shrink-0">{i + 1}</span>
+              <span className="font-mono text-slate-200 text-xs w-48 shrink-0">{leg.name}</span>
+              <span className="font-sans text-slate-400 text-xs leading-relaxed flex-1">{leg.detail}</span>
+              <a
+                href={txUrl(leg.hash)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-[11px] text-purple-300 hover:text-purple-200 shrink-0"
+              >
+                {short(leg.hash)} ↗
+              </a>
+            </div>
+          ))}
+        </div>
+
+        <h3 className="font-mono text-base text-slate-200 mt-4 mb-2">
+          JOB-001 — the machinery proof (two days earlier)
+        </h3>
         <p className="font-sans text-sm leading-relaxed text-slate-400 max-w-3xl mb-4">
           On {job001.settled_at_utc}, the first real compute job settled on Supra Mainnet: a
           deterministic workload (a 1,000,000-step SHA3 chain), requested with 300 wCOSMO

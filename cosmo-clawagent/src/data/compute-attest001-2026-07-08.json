@@ -1,0 +1,45 @@
+{
+  "job": "attest-001",
+  "chain_id": 8,
+  "package": "0x0fd8940dadb96ec354d200fcc73e7b10889b5968a8aabe4caf106ee25d8003c0",
+  "job_id": 1,
+  "settled_at_utc": "2026-07-08",
+  "buyer": "0xe7969846762a20a70b0de8cffed0101ef0dfae5744cbef2b784a476b5a19e15e",
+  "provider": "0x45461e6dafb9d30473b0943be78b056cfaaa1ea9bb5f47a03cc9b7333df2c4d0",
+  "payment_fa": "0x4799c7cc256a0cb38d28847eae42be5caf5f21e5272a4d3eef52965c1d00cff6",
+  "max_price_quants": 200000000,
+  "price_quants": 200000000,
+  "review_window_secs": 3600,
+  "workload_uri": "https://github.com/zorgrk-Yommits/cosmo-contracts-move/blob/28e4e1d48aa3c73436bac0beaa6aa688d2a69305/docs/jobs/attest-001-request.json",
+  "input_hash": "7516be60f3e3512db7a776bc95a244ea6661e7abea4b020f576dfda786b2b6ee",
+  "result_hash": "665404a859e42b9be7a562812c18c1cf9437a31715d6ec21b1e72d4b7caec205",
+  "settle_path": 0,
+  "explorer_tx_base": "https://suprascan.io/tx/",
+  "legs": [
+    {
+      "name": "create_outcome_request",
+      "detail": "Buyer escrows 200 wCOSMO against the frozen, hash-pinned attestation request (r4).",
+      "hash": "0x0119d92ce909316ffa8777bb6c60b482327a6649900d9b8409253f405fdd27ed"
+    },
+    {
+      "name": "submit_quote",
+      "detail": "Production-signed quote at 200 wCOSMO for the bonded attestor.",
+      "hash": "0x2eef53eb3e7c7c02d150e2bf528303daef9db18dcf1493b9e0a028b02a31d736"
+    },
+    {
+      "name": "accept_quote",
+      "detail": "Job 1 minted; the attestor's 100 wCOSMO bond is now on the hook for delivery.",
+      "hash": "0xdb9fd2299b3bc62cd37eeb409458a318833d4e4feaba9b83971240937cdf20fd"
+    },
+    {
+      "name": "deliver_result",
+      "detail": "Signed attestation of four live protocol invariants anchored on-chain (sha3-256 of the delivery file).",
+      "hash": "0x418dad70330b97b2ceb7645b226e3193c963c4f7f96e804aa0f4b979ff5ae3e4"
+    },
+    {
+      "name": "approve_delivery",
+      "detail": "Approve fired only after the machine acceptance check (8 criteria) returned ACCEPT — settle path 0.",
+      "hash": "0x6e71991bad87bd4c59ab75d37075f9cb0428ebc32062a19852bd74514e5394ab"
+    }
+  ]
+}
