@@ -1,0 +1,47 @@
+{
+  "job": "patch-001",
+  "chain_id": 8,
+  "package": "0x0fd8940dadb96ec354d200fcc73e7b10889b5968a8aabe4caf106ee25d8003c0",
+  "job_id": 2,
+  "settled_at_utc": "2026-07-10",
+  "buyer": "0xe7969846762a20a70b0de8cffed0101ef0dfae5744cbef2b784a476b5a19e15e",
+  "provider": "0x45461e6dafb9d30473b0943be78b056cfaaa1ea9bb5f47a03cc9b7333df2c4d0",
+  "payment_fa": "0x4799c7cc256a0cb38d28847eae42be5caf5f21e5272a4d3eef52965c1d00cff6",
+  "max_price_quants": 300000000,
+  "price_quants": 285000000,
+  "review_window_secs": 3600,
+  "base_commit": "743d41eb12ad14acde6609361b88ca9c89cfeac5",
+  "input_hash": "20eef0578a0b66732614435e5c7960530b9e5db571d20d54b54e2dd5a06395e5",
+  "diff_hash": "92b0c80ad19aff5d25b75c536ba8cd0dc53a8b298c0fb059ac6d77eb58cfaaa9",
+  "result_hash": "7a5847bb1843e1d4e3fd9666da726700b295d001a6bceb53b231900c077afdb3",
+  "settle_path": 0,
+  "public_evidence": "https://heros.cloud/evidence/patch-001/",
+  "explorer_tx_base": "https://suprascan.io/tx/",
+  "legs": [
+    {
+      "name": "create_outcome_request",
+      "detail": "Buyer escrows the 300 wCOSMO max price against the frozen, hash-pinned patch request (r5) — pinned commit, allowed files, deadline, acceptance test included.",
+      "hash": "0x7f31c7331c08186ee3a570495dee0eb08b37f92870c84d9136f50e5bf09a1277"
+    },
+    {
+      "name": "submit_quote",
+      "detail": "Production-signed quote at 285 wCOSMO for the bonded provider.",
+      "hash": "0x58e27038c6b3efbbaa2b0e352c492fbaaa9560c3dccd7fcacafacadfb229e7fa"
+    },
+    {
+      "name": "accept_quote",
+      "detail": "Job 2 minted; the 15 wCOSMO residual returns to the buyer and pre-funds the dispute reserve; the provider's 100 wCOSMO bond is on the hook.",
+      "hash": "0x6fe55f4178b20e7dc113ac98cc75fd652086f975f9703390e5851e4c8366f051"
+    },
+    {
+      "name": "deliver_result",
+      "detail": "Signed, job-bound delivery anchored on-chain: sha3-256 of the delivery file, which in turn pins the patch bytes via its diff hash.",
+      "hash": "0xc2e540cbd0b6eacf78a0f83ae236bbf835df6935fdd2480508e6beb2a96c5746"
+    },
+    {
+      "name": "approve_delivery",
+      "detail": "Approval was gated by the ten-criteria machine check returning ACCEPT; settlement pays the provider from escrow (settle path 0).",
+      "hash": "0x852a679d4bc86a201202856399be69aa158e901d77c8fc12ded711c94059c184"
+    }
+  ]
+}

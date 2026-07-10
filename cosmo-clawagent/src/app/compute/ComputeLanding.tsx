@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import job001 from '@/data/compute-job001-2026-07-06.json';
 import attest001 from '@/data/compute-attest001-2026-07-08.json';
+import patch001 from '@/data/compute-patch001-2026-07-10.json';
 
 // ── verified Mainnet parameters (chain 8, provider_vault views, 2026-07-07) ──
 const PARAMS = [
@@ -124,9 +125,10 @@ export default function ComputeLanding() {
         </p>
         <p className="text-slate-400 text-base leading-relaxed mb-8 font-sans max-w-2xl">
           This is not a marketplace pitch. It is a small, deliberately guarded outcome-RFQ market,
-          live on Supra Mainnet, with the first real job already settled end-to-end. It is not
-          permissionless and not self-service: one active job per provider, deterministic
-          workloads, a gated quote path — and personal onboarding for every participant.
+          live on Supra Mainnet, with three real jobs settled end-to-end — most recently a
+          machine-accepted software patch. It is not permissionless and not self-service: one
+          active job per provider, deterministic workloads, a gated quote path — and personal
+          onboarding for every participant.
         </p>
 
         <div className="flex flex-wrap items-center gap-4">
@@ -141,7 +143,7 @@ export default function ComputeLanding() {
             href="#proof"
             className="flex items-center gap-2 px-6 py-3 rounded-xl border border-purple-500/30 text-purple-300 hover:border-purple-400 hover:text-purple-200 font-mono transition-all"
           >
-            See the settled job
+            See the settled jobs
             <ArrowRight className="w-4 h-4" />
           </a>
         </div>
@@ -193,11 +195,69 @@ export default function ComputeLanding() {
         </div>
       </section>
 
-      {/* ── Proof: ATTEST-001 + JOB-001 ── */}
+      {/* ── Proof: PATCH-001 leads, ATTEST-001 follows, JOB-001 is the foundation ── */}
       <section id="proof" className="relative z-10 max-w-5xl mx-auto px-6 py-10">
         <h2 className="font-mono text-xl text-slate-100 mb-2">
           Proof — real jobs, settled on mainnet
         </h2>
+        <p className="font-sans text-sm leading-relaxed text-slate-400 max-w-3xl mb-4">
+          Three settled jobs, each one step further: JOB-001 proved the settlement machinery,
+          ATTEST-001 traded a verified statement, PATCH-001 traded a directly usable work
+          product.
+        </p>
+
+        <h3 className="font-mono text-base text-slate-200 mt-4 mb-2">
+          PATCH-001 — a machine-accepted software patch
+        </h3>
+        <p className="font-sans text-sm leading-relaxed text-slate-400 max-w-3xl mb-4">
+          On {patch001.settled_at_utc}, a buyer paid 285 wCOSMO for a software patch fixing a
+          real, pre-existing defect — an address-canonicalization bug in the maker daemon&apos;s
+          access gate — against a commit frozen in the request. The acceptance test itself
+          travels inside the hash-pinned request, so the provider cannot soften it. Payment was
+          gated by a ten-criteria machine check in a clean clone of the pinned commit: signature
+          against the key frozen in the request, binding to job and request, deadline, the patch
+          applies cleanly, the frozen test fails before and passes after, full suite and
+          typecheck green, only the two allowed files changed, no forbidden changes, and the
+          hash chain from patch bytes through the signed delivery to the on-chain result hash.
+          Only after ACCEPT did the buyer approve — and the paid patch was then actually merged.
+        </p>
+        <p className="font-mono text-[11px] leading-relaxed text-slate-500 max-w-3xl mb-4">
+          Transparency: buyer and provider are operating-team accounts; the provider is a
+          separate bonded account, not an independent party. What is real either way: the
+          defect, the bond at stake, the fixed deadline, and the machine-checkable acceptance.
+          Request, patch and signed delivery are published byte-identical (verify with
+          sha3-256):{' '}
+          <a
+            href={patch001.public_evidence}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-purple-300 hover:text-purple-200"
+          >
+            public evidence artifacts ↗
+          </a>
+          . On-chain anchors: input hash {short(patch001.input_hash)} (frozen request), result
+          hash {short(patch001.result_hash)} (signed delivery, pinning the patch bytes).
+        </p>
+        <div className="rounded-xl border border-white/10 bg-white/[0.02] overflow-hidden mb-8">
+          {patch001.legs.map((leg, i) => (
+            <div
+              key={leg.name}
+              className={`flex flex-col md:flex-row md:items-center gap-2 md:gap-4 px-5 py-3 ${i > 0 ? 'border-t border-white/5' : ''}`}
+            >
+              <span className="font-mono text-purple-400 text-xs w-6 shrink-0">{i + 1}</span>
+              <span className="font-mono text-slate-200 text-xs w-48 shrink-0">{leg.name}</span>
+              <span className="font-sans text-slate-400 text-xs leading-relaxed flex-1">{leg.detail}</span>
+              <a
+                href={txUrl(leg.hash)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-[11px] text-purple-300 hover:text-purple-200 shrink-0"
+              >
+                {short(leg.hash)} ↗
+              </a>
+            </div>
+          ))}
+        </div>
 
         <h3 className="font-mono text-base text-slate-200 mt-4 mb-2">
           ATTEST-001 — the first traded good
@@ -243,7 +303,7 @@ export default function ComputeLanding() {
         </div>
 
         <h3 className="font-mono text-base text-slate-200 mt-4 mb-2">
-          JOB-001 — the machinery proof (two days earlier)
+          JOB-001 — the technical foundation
         </h3>
         <p className="font-sans text-sm leading-relaxed text-slate-400 max-w-3xl mb-4">
           On {job001.settled_at_utc}, the first real compute job settled on Supra Mainnet: a
