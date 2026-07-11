@@ -3,11 +3,12 @@
 // /compute — landing + onboarding page for the outcome-RFQ compute market.
 //
 // Deliberately static: no wallet interaction, no live RPC, no signup backend.
-// Onboarding stays white-glove during the guarded phase; the only interactive
-// element is the copy-to-clipboard pilot template (community-rfq pattern).
+// Provider bond posting is self-service since phase 2 (/compute/bond StarKey
+// helper + /wcosmo guide); the quote path stays gated. The only interactive
+// element here is the copy-to-clipboard pilot template (community-rfq pattern).
 // Market parameters below were re-verified read-only on Supra Mainnet (chain 8)
-// on 2026-07-07 — re-verify before editing (provider_vault views).
-// See plans/compute-landing-page-plan.md.
+// on 2026-07-11 — re-verify before editing (provider_vault views).
+// See plans/compute-selfservice-bond-plan.md + plans/compute-landing-page-plan.md.
 
 import { useCallback, useState } from 'react';
 import Link from 'next/link';
@@ -36,7 +37,7 @@ const PARAMS = [
   { label: 'Cap per provider', value: '1,000 wCOSMO' },
   { label: 'Global bond cap', value: '5,000 wCOSMO (100 bonded today)' },
   { label: 'Active jobs per provider', value: '1 (guarded v1)' },
-  { label: 'No-delivery slash', value: '10% of job price, paid to the buyer' },
+  { label: 'No-delivery slash', value: '10% of the required bond, paid to the buyer (fixed at accept)' },
   { label: 'Dispute bond', value: '500 bps of job price (buyer-side)' },
 ];
 
@@ -55,7 +56,7 @@ const PROVIDER_TEMPLATE = [
   'Wallet (Supra, chain 8): 0x…',
   'Capacity I can offer (hardware / runtime / availability): …',
   'Deterministic workload classes I can run (e.g. batch inference, hashing, data pipelines): …',
-  'Can obtain / post the v1 provider bond (100 wCOSMO): yes/no',
+  'Provider bond (min 100 wCOSMO): already posted via /compute/bond? yes/no',
   'Background (infra / DePIN / agents): …',
 ].join('\n');
 
@@ -416,9 +417,26 @@ export default function ComputeLanding() {
             </div>
             <p className="font-sans text-sm leading-relaxed text-slate-400 mb-4">
               Providers post their own bond and run their own keys. The bond is slashable — that
-              is what makes the on-chain track record credible. Onboarding is open under caps,
-              and every provider is onboarded personally during the guarded phase.
+              is what makes the on-chain track record credible. Posting the bond is self-service
+              via StarKey; the quote path stays gated during the guarded phase, so your first job
+              is set up together.
             </p>
+            <div className="mb-4 flex flex-wrap gap-3">
+              <Link
+                href="/compute/bond/"
+                className="inline-flex items-center gap-2 rounded-lg border border-purple-500/50 bg-purple-600/20 px-4 py-2 font-mono text-xs text-purple-100 transition-all hover:border-purple-400 hover:bg-purple-600/30"
+              >
+                Post your provider bond
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+              <Link
+                href="/wcosmo/"
+                className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/[0.03] px-4 py-2 font-mono text-xs text-slate-300 transition-all hover:border-white/30 hover:text-white"
+              >
+                What is wCOSMO?
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
             <table className="w-full">
               <tbody>
                 {PARAMS.map((p) => (
@@ -430,7 +448,7 @@ export default function ComputeLanding() {
               </tbody>
             </table>
             <p className="mt-3 font-mono text-[10px] leading-relaxed text-slate-600">
-              Values verified read-only on Supra Mainnet (chain 8) on 2026-07-07. All parameters
+              Values verified read-only on Supra Mainnet (chain 8) on 2026-07-11. All parameters
               are v1 working values and can change through governance before broader opening.
             </p>
           </div>
@@ -447,7 +465,7 @@ export default function ComputeLanding() {
             <ul className="space-y-1.5 font-mono text-[12px] text-slate-400">
               <li>· you escrow the max price up front; the residual is refunded exactly on accept</li>
               <li>· payment moves only on your approval — or through defined timeout paths</li>
-              <li>· if a provider fails to deliver, 10% of the job price is paid to you from their bond</li>
+              <li>· if a provider fails to deliver, 10% of their required bond is paid to you (fixed at accept)</li>
               <li>· a dispute path with its own bond keeps both sides honest</li>
             </ul>
             <p className="mt-3 font-sans text-sm leading-relaxed text-slate-400">
@@ -467,10 +485,11 @@ export default function ComputeLanding() {
           </div>
           <p className="font-sans text-sm leading-relaxed text-slate-400">
             This market is intentionally small. Caps are low, each provider can run one active
-            job at a time, quotes flow through a signed quote path operated by the COSMO team,
-            and onboarding is manual. It is not permissionless, not self-service, and not a
-            general GPU marketplace. What it is: a live settlement primitive with real money,
-            real bonds and public evidence for every step — looking for its first external
+            job at a time, and quotes flow through a signed quote path operated by the COSMO
+            team. Posting a provider bond is self-service (/compute/bond) — everything after
+            that is not: quoting is gated, jobs are set up together, and it is not a general
+            GPU marketplace. What it is: a live settlement primitive with real money, real
+            bonds and public evidence for every step — looking for its first external
             participants. The broader class of service settlement remains roadmap.
           </p>
         </div>
