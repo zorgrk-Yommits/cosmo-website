@@ -27,9 +27,11 @@ import job001 from '@/data/compute-job001-2026-07-06.json';
 import attest001 from '@/data/compute-attest001-2026-07-08.json';
 import patch001 from '@/data/compute-patch001-2026-07-10.json';
 
-// ── verified Mainnet parameters (chain 8, provider_vault views, 2026-07-07) ──
+// ── verified Mainnet parameters (chain 8, provider_vault views, 2026-07-07;
+//    payment allowlist re-verified 2026-07-11 via asset_registry views) ──
 const PARAMS = [
   { label: 'Provider onboarding', value: 'open (not paused)' },
+  { label: 'Payment assets (V2)', value: 'wCOSMO · CASH · SUPRA (since 2026-07-11)' },
   { label: 'Minimum provider bond', value: '100 wCOSMO' },
   { label: 'Cap per provider', value: '1,000 wCOSMO' },
   { label: 'Global bond cap', value: '5,000 wCOSMO (100 bonded today)' },
@@ -193,6 +195,70 @@ export default function ComputeLanding() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* ── Multi-asset payments (V2, live 2026-07-11) ── */}
+      <section className="relative z-10 max-w-5xl mx-auto px-6 py-10">
+        <h2 className="font-mono text-xl text-slate-100 mb-2">Pay in the asset that fits</h2>
+        <p className="font-sans text-sm leading-relaxed text-slate-400 mb-6 max-w-3xl">
+          Since 2026-07-11 the market accepts three payment assets. The rule is simple:{' '}
+          <span className="text-slate-200">payment assets pay for the work — wCOSMO secures
+          provider behavior.</span>{' '}
+          Every provider still posts a wCOSMO bond, and every slash is compensated in wCOSMO,
+          no matter which asset a job is priced in.
+        </p>
+        <div className="grid md:grid-cols-3 gap-4 mb-6">
+          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
+            <h3 className="font-mono text-sm text-slate-100 mb-2">wCOSMO</h3>
+            <p className="font-sans text-sm leading-relaxed text-slate-400">
+              The community and security asset. Provider bonds and slash compensation are
+              denominated here — and jobs can be paid in it too.
+            </p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
+            <h3 className="font-mono text-sm text-slate-100 mb-2">CASH</h3>
+            <p className="font-sans text-sm leading-relaxed text-slate-400">
+              Solido CDP stablecoin, backed by SUPRA collateral — not fiat-backed. Listed after
+              an on-chain due diligence including a live redemption test that returned
+              ~$1.00 per CASH.
+            </p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
+            <h3 className="font-mono text-sm text-slate-100 mb-2">SUPRA</h3>
+            <p className="font-sans text-sm leading-relaxed text-slate-400">
+              The native asset — every Supra wallet can pay without swaps or bridges. It is
+              volatile, so keep SUPRA-priced jobs small and their deadlines short.
+            </p>
+          </div>
+        </div>
+        <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5 mb-6">
+          <h3 className="font-mono text-sm text-slate-100 mb-2">Pay straight from your wallet</h3>
+          <p className="font-sans text-sm leading-relaxed text-slate-400 mb-3">
+            Buyers call{' '}
+            <code className="font-mono text-xs text-purple-300">
+              create_outcome_request_v2_coin&lt;CoinType&gt;
+            </code>{' '}
+            and the escrow funds itself from the regular wallet balance (legacy CoinStore first,
+            FA remainder) — no manual migration step. Keep a small gas headroom free on top of
+            the escrowed amount: transaction validation reserves max_gas × gas price upfront.
+          </p>
+          <p className="font-sans text-xs leading-relaxed text-slate-500">
+            Both rails are proven with settled mainnet jobs (payment-rail proofs with
+            deterministic constant workloads — no external work product claimed):{' '}
+            <a className="text-purple-300 hover:text-purple-200 underline decoration-purple-500/40"
+              href={txUrl('0x2876ced5c7cd2e51add16f2a4f1dc119b616f7492887ceca47498a0e0aee113f')}
+              target="_blank" rel="noreferrer">CASH job settled (0.30 CASH)</a>{' · '}
+            <a className="text-purple-300 hover:text-purple-200 underline decoration-purple-500/40"
+              href={txUrl('0x72639d6d0010d05101bbfc5e02008071a7855327130273e0a67f1b504dbf684a')}
+              target="_blank" rel="noreferrer">SUPRA job settled (19 SUPRA)</a>
+          </p>
+        </div>
+        <p className="font-sans text-xs leading-relaxed text-slate-500 max-w-3xl">
+          Honesty note: a fourth asset, dexUSDC (bridged via Dexlyn), was listed on 2026-07-11
+          and disabled the same day after a ~50% market depeg was observed — before a single
+          job used it. Payment assets are governed by a 2-of-3 multisig allowlist and can be
+          disabled for new requests at any time; refunds are never blockable by the allowlist.
+        </p>
       </section>
 
       {/* ── Proof: PATCH-001 leads, ATTEST-001 follows, JOB-001 is the foundation ── */}
