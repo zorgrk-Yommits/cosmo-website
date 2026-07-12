@@ -15,6 +15,7 @@
 // See plans/community-rfq-supra-wcosmo-plan.md.
 
 import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 import {
   Wallet,
   ShieldCheck,
@@ -380,6 +381,17 @@ export default function CommunityRfq() {
                 </li>
               ))}
             </ul>
+            <p className="mt-4 font-sans text-sm text-slate-400">
+              Meanwhile, on the guarded test pair, an autonomous maker is already quoting this
+              market on mainnet —{' '}
+              <Link
+                href="/rfq/"
+                className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300"
+              >
+                watch it live
+              </Link>
+              .
+            </p>
           </section>
 
           {/* ── Maker Watchlist / Express Interest (static, no backend) ── */}

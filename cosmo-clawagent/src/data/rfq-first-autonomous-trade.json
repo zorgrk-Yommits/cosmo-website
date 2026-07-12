@@ -1,0 +1,32 @@
+{
+  "title": "The first autonomous trade",
+  "date_utc": "2026-07-12",
+  "network": "Supra Mainnet (chain 8)",
+  "explorer_tx_base": "https://suprascan.io/tx/",
+  "pair": "tINTEST → wCOSMO (guarded v1 test pair)",
+  "maker": "0x11c1c2660dc3e764c6b5b12f084cbbb11028b74686aea7a762e09b2ca651da53",
+  "taker": "0xdd98b2b847b7002c600d1dc03a15bbef2c6eb786a265e823260c269fe41e622d",
+  "settle": {
+    "request_id": 4,
+    "quote_id": 3,
+    "amount_in": "1.00 tINTEST",
+    "amount_out": "0.997 wCOSMO",
+    "legs": [
+      { "name": "create_request", "signer": "taker", "autonomous": false, "hash": "0x5ec8443a1b110f550adb2fc690d7d1e267f71edb019bf6c69f786090a3d951c0", "detail": "Taker opens the request; the full ask is escrowed on-chain." },
+      { "name": "submit_quote", "signer": "maker", "autonomous": true, "hash": "0xa2b0d6051919fa24149cd51e109440471c422ff181dd49c8af50073b103e44fc", "detail": "The autonomous maker priced and signed this quote without any human in the loop." },
+      { "name": "fund_quote", "signer": "maker", "autonomous": true, "hash": "0x88b356671b327e46fa520645bba645a9b3c73984328788320a011bf4b837063c", "detail": "It escrowed its own wCOSMO against the quote — skin in the game, machine-decided." },
+      { "name": "accept_quote", "signer": "taker", "autonomous": false, "hash": "0xb8b1ee9118347ae511b052e6929a0e75ee78f6d728c379a15a9b4532217299a0", "detail": "Taker accepts within the 60-second quote validity window." },
+      { "name": "execute_settlement", "signer": "maker", "autonomous": true, "hash": "0x089f1e11210c624f8bff3c8e7d01d4269d17020cf6176206284f8f17bc9dfa69", "detail": "The autonomous maker settled both legs atomically, well before the deadline. Security deposit untouched." }
+    ]
+  },
+  "reclaim": {
+    "request_id": 5,
+    "amount_in": "0.50 tINTEST",
+    "legs": [
+      { "name": "create_request", "signer": "taker", "autonomous": false, "hash": "0x86e876417f19a8f584e75e7fd9748c6048f6bef468d1d1edad9ac2639db94c94", "detail": "A second request — this one was deliberately never accepted." },
+      { "name": "submit_quote", "signer": "maker", "autonomous": true, "hash": "0x9092466a793b2ccc8f02420b1f63de03efd964b6b90d8ecd5e9453880a9189bb", "detail": "The autonomous maker quoted it within seconds anyway." },
+      { "name": "fund_quote", "signer": "maker", "autonomous": true, "hash": "0xa4810c497d368b134d07055d9ea03cfe94572eb4d9716284324897a9ef34cf6a", "detail": "And escrowed its side in full." },
+      { "name": "reclaim_unaccepted_quote", "signer": "maker", "autonomous": true, "hash": "0xf05790b49147d86505477dd269a55b759b90220bba6c807ac6951ecb4c6ecbde", "detail": "After the request expired unaccepted, it reclaimed its own escrow — no funds stranded, no human involved." }
+    ]
+  }
+}

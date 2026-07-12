@@ -250,6 +250,14 @@ export default function VaultDashboard() {
           </div>
           <p className="mb-5 font-sans text-sm leading-relaxed text-slate-400">
             The bar is the live wCOSMO held in the vault, split by which operator deposited it.
+            Operator K1 runs autonomously —{' '}
+            <Link
+              href="/rfq/"
+              className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300"
+            >
+              see its live quoting activity
+            </Link>
+            .
           </p>
           {m ? (
             <CompositionBar

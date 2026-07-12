@@ -47,9 +47,20 @@ export const MAKER_OPERATORS = [
   },
 ] as const;
 
+// tINTEST test-pair FA metadata (guarded-v1 RFQ pair token_in; 6 decimals,
+// verified read-only 2026-07-12). Isolated plain FA, no real value.
+export const TINTEST_META =
+  '0x64ceb0ff89e190cd58e66aa3702d887a0bcd084e205f1d5857e2ff3ae61a0b7f';
+export const TINTEST_DECIMALS = 6;
+
+// K1-operated Maker-Agent license (clawagent_v3 NFT; active on-chain).
+export const K1_AGENT_NFT =
+  '0x38c02505865a8b08d6a2fd354554de5906263e1aedd702af3bb8299f1f191738';
+
 export const CHAIN_ID = '8'; // Supra Mainnet
 export const RPC = 'https://rpc-mainnet.supra.com';
 export const EXPLORER_TX = 'https://suprascan.io/tx/';
+export const EXPLORER_ADDR = 'https://suprascan.io/address/';
 export const WCOSMO_DECIMALS = 6;
 
 // ---- StarKey provider (minimal surface we use) ---------------------------------
