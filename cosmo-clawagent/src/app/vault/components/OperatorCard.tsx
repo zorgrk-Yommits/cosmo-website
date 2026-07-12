@@ -39,16 +39,16 @@ export default function OperatorCard({ op, color }: { op: OperatorState; color: 
 
       {op.bond === null ? (
         <div className="space-y-3">
-          <p className="font-mono text-xs text-slate-500">No bond entry on-chain.</p>
+          <p className="font-mono text-xs text-slate-500">No deposit entry on-chain.</p>
           <StatusLamp state="unknown" label="No vault entry" />
         </div>
       ) : (
         <>
           <div className="space-y-2">
-            <Row label="Bond" value={`${fmtAmt(op.bond.amount)} wCOSMO`} />
+            <Row label="Security deposit" value={`${fmtAmt(op.bond.amount)} wCOSMO`} />
             <Row label="Available" value={`${fmtAmt(op.available)} wCOSMO`} />
-            <Row label="Slash basis" value={`${fmtAmt(op.slashBasis)} wCOSMO`} />
-            <Row label="Slash count" value={String(op.bond.slashCount)} />
+            <Row label="Penalty basis" value={`${fmtAmt(op.slashBasis)} wCOSMO`} />
+            <Row label="Penalty count" value={String(op.bond.slashCount)} />
             <Row
               label="Lock"
               value={

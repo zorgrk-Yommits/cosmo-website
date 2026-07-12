@@ -2,15 +2,13 @@
 
 // /compute — landing + onboarding page for the outcome-RFQ compute market.
 //
-// Deliberately static: no wallet interaction, no live RPC, no signup backend.
-// Provider bond posting is self-service since phase 2 (/compute/bond StarKey
-// helper + /wcosmo guide); the quote path stays gated. The only interactive
-// element here is the copy-to-clipboard pilot template (community-rfq pattern).
-// Market parameters below were re-verified read-only on Supra Mainnet (chain 8)
-// on 2026-07-11 — re-verify before editing (provider_vault views).
-// See plans/compute-selfservice-bond-plan.md + plans/compute-landing-page-plan.md.
+// Mostly static landing; the provider_vault market parameters are read LIVE
+// on mount (read-only views, no wallet) so the page can never show stale
+// minimums or limits. Security-deposit posting is self-service since phase 2
+// (/compute/bond StarKey helper + /wcosmo guide); the quote path stays gated.
+// See plans/compute-selfservice-bond-plan.md + plans/bond-ux-clarity-plan.md.
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   ArrowRight,
@@ -27,23 +25,69 @@ import {
 import job001 from '@/data/compute-job001-2026-07-06.json';
 import attest001 from '@/data/compute-attest001-2026-07-08.json';
 import patch001 from '@/data/compute-patch001-2026-07-10.json';
+import { COMPUTE_PKG_ADDR, fmtAmt, rpcView } from '@/lib/mainnetOnchain';
 
-// ── verified Mainnet parameters (chain 8, provider_vault views, 2026-07-07;
-//    payment allowlist re-verified 2026-07-11 via asset_registry views) ──
-const PARAMS = [
-  { label: 'Provider onboarding', value: 'open (not paused)' },
-  { label: 'Payment assets (V2)', value: 'wCOSMO · CASH · SUPRA (since 2026-07-11)' },
-  { label: 'Minimum provider bond', value: '100 wCOSMO' },
-  { label: 'Cap per provider', value: '1,000 wCOSMO' },
-  { label: 'Global bond cap', value: '5,000 wCOSMO (100 bonded today)' },
-  { label: 'Active jobs per provider', value: '1 (guarded v1)' },
-  { label: 'No-delivery slash', value: '10% of the required bond, paid to the buyer (fixed at accept)' },
-  { label: 'Dispute bond', value: '500 bps of job price (buyer-side)' },
-];
+// Live provider_vault market parameters (read on mount, read-only, no wallet).
+type LiveParams = {
+  paused: boolean;
+  minBond: bigint;
+  maxPerProvider: bigint;
+  globalCap: bigint;
+  totalBonded: bigint;
+};
+
+async function fetchLiveParams(): Promise<LiveParams> {
+  const PV = `${COMPUTE_PKG_ADDR}::provider_vault`;
+  const [paused, minBond, maxPer, globalCap, totalBonded] = await Promise.all([
+    rpcView(`${PV}::is_onboarding_paused`, [], []),
+    rpcView(`${PV}::get_min_provider_bond`, [], []),
+    rpcView(`${PV}::get_max_bond_per_provider`, [], []),
+    rpcView(`${PV}::get_global_bond_cap`, [], []),
+    rpcView(`${PV}::get_total_bonded`, [], []),
+  ]);
+  const big = (v: unknown) => BigInt(String(v ?? 0));
+  return {
+    paused: paused === true,
+    minBond: big(minBond),
+    maxPerProvider: big(maxPer),
+    globalCap: big(globalCap),
+    totalBonded: big(totalBonded),
+  };
+}
+
+const ZERO_BI = BigInt(0);
+
+function buildParams(live: LiveParams | null): { label: string; value: string }[] {
+  const wcAmt = (v: bigint) => `${fmtAmt(v)} wCOSMO`;
+  return [
+    {
+      label: 'Provider onboarding',
+      value: live ? (live.paused ? 'paused' : 'open (not paused)') : '—',
+    },
+    { label: 'Payment assets (V2)', value: 'wCOSMO · CASH · SUPRA (since 2026-07-11)' },
+    { label: 'Required minimum deposit', value: live ? wcAmt(live.minBond) : '—' },
+    {
+      label: 'Per-provider limit',
+      value: live ? (live.maxPerProvider > ZERO_BI ? wcAmt(live.maxPerProvider) : 'uncapped') : '—',
+    },
+    {
+      label: 'Global deposit limit',
+      value: live
+        ? `${live.globalCap > ZERO_BI ? wcAmt(live.globalCap) : 'uncapped'} (${fmtAmt(live.totalBonded)} deposited today)`
+        : '—',
+    },
+    { label: 'Active jobs per provider', value: '1 (guarded v1)' },
+    {
+      label: 'No-delivery penalty',
+      value: '10% of the required deposit, paid to the buyer (fixed at accept)',
+    },
+    { label: 'Dispute deposit', value: '500 bps of job price (buyer-side)' },
+  ];
+}
 
 const LOOP = [
   { step: '01', title: 'Request', text: 'A buyer creates an outcome request: workload URI, input hash, max price, deadline, review window. The full max price is escrowed on-chain.' },
-  { step: '02', title: 'Quote', text: 'A bonded provider quotes a price. Quotes flow through a signed quote path — the quality gate of the guarded phase.' },
+  { step: '02', title: 'Quote', text: 'A provider with a security deposit at stake quotes a price. Quotes flow through a signed quote path — the quality gate of the guarded phase.' },
   { step: '03', title: 'Accept', text: 'The buyer accepts a quote. Any residual between max price and quoted price is refunded exactly; the job becomes active.' },
   { step: '04', title: 'Deliver', text: 'The provider runs the workload and delivers against a verifiable result hash. v1 targets deterministic, re-computable workloads.' },
   { step: '05', title: 'Approve', text: 'The buyer verifies and approves within the review window. Timeout and dispute paths exist so neither side can strand the other.' },
@@ -56,7 +100,7 @@ const PROVIDER_TEMPLATE = [
   'Wallet (Supra, chain 8): 0x…',
   'Capacity I can offer (hardware / runtime / availability): …',
   'Deterministic workload classes I can run (e.g. batch inference, hashing, data pipelines): …',
-  'Provider bond (min 100 wCOSMO): already posted via /compute/bond? yes/no',
+  'Provider security deposit: already placed via /compute/bond? yes/no',
   'Background (infra / DePIN / agents): …',
 ].join('\n');
 
@@ -102,6 +146,13 @@ function CopyTemplateButton({ template, label }: { template: string; label: stri
 }
 
 export default function ComputeLanding() {
+  const [live, setLive] = useState<LiveParams | null>(null);
+  useEffect(() => {
+    fetchLiveParams()
+      .then(setLive)
+      .catch(() => setLive(null)); // params table falls back to em-dash placeholders on RPC failure
+  }, []);
+  const PARAMS = buildParams(live);
   return (
     <div className="terminal-container terminal-theme-scope">
       <div className="grid-bg" />
@@ -123,7 +174,8 @@ export default function ComputeLanding() {
         </h1>
 
         <p className="text-slate-200 text-lg leading-relaxed mb-4 font-mono max-w-2xl">
-          A buyer escrows payment. A bonded provider delivers against a verifiable result hash.
+          A buyer escrows payment. A provider with a security deposit at stake delivers against a
+          verifiable result hash.
           Settlement happens on-chain — or not at all.
         </p>
         <p className="text-slate-400 text-base leading-relaxed mb-8 font-sans max-w-2xl">
@@ -203,17 +255,17 @@ export default function ComputeLanding() {
         <h2 className="font-mono text-xl text-slate-100 mb-2">Pay in the asset that fits</h2>
         <p className="font-sans text-sm leading-relaxed text-slate-400 mb-6 max-w-3xl">
           Since 2026-07-11 the market accepts three payment assets. The rule is simple:{' '}
-          <span className="text-slate-200">payment assets pay for the work — wCOSMO secures
-          provider behavior.</span>{' '}
-          Every provider still posts a wCOSMO bond, and every slash is compensated in wCOSMO,
-          no matter which asset a job is priced in.
+          <span className="text-slate-200">payment assets pay for the work — the wCOSMO security
+          deposit guarantees provider behavior.</span>{' '}
+          Every provider still places a wCOSMO security deposit, and every penalty deduction is
+          compensated in wCOSMO, no matter which asset a job is priced in.
         </p>
         <div className="grid md:grid-cols-3 gap-4 mb-6">
           <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
             <h3 className="font-mono text-sm text-slate-100 mb-2">wCOSMO</h3>
             <p className="font-sans text-sm leading-relaxed text-slate-400">
-              The community and security asset. Provider bonds and slash compensation are
-              denominated here — and jobs can be paid in it too.
+              The community and security asset. Provider security deposits and penalty
+              compensation are denominated here — and jobs can be paid in it too.
             </p>
           </div>
           <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
@@ -290,8 +342,9 @@ export default function ComputeLanding() {
         </p>
         <p className="font-mono text-[11px] leading-relaxed text-slate-500 max-w-3xl mb-4">
           Transparency: buyer and provider are operating-team accounts; the provider is a
-          separate bonded account, not an independent party. What is real either way: the
-          defect, the bond at stake, the fixed deadline, and the machine-checkable acceptance.
+          separate account with its own security deposit, not an independent party. What is real
+          either way: the defect, the deposit at stake, the fixed deadline, and the
+          machine-checkable acceptance.
           Request, patch and signed delivery are published byte-identical (verify with
           sha3-256):{' '}
           <a
@@ -332,8 +385,9 @@ export default function ComputeLanding() {
         <p className="font-sans text-sm leading-relaxed text-slate-400 max-w-3xl mb-4">
           On {attest001.settled_at_utc}, a buyer paid 200 wCOSMO for an independent,
           ed25519-signed attestation of four live protocol invariants (wCOSMO peg backing,
-          provider bond above minimum, every admin equal to the 2-of-3 multisig, the
-          request-fee floor) — delivered by an attestor with a 100 wCOSMO bond at stake.
+          provider security deposit above minimum, every admin equal to the 2-of-3 multisig, the
+          request-fee floor) — delivered by an attestor with a 100 wCOSMO security deposit at
+          stake (the historical deposit of that trade).
           Approval was not a click: it was gated by a machine acceptance check with eight
           criteria — signature against the key frozen in the request, deadline, schema
           binding to request and job id, freshness (4 seconds used of a 300-second budget),
@@ -343,7 +397,7 @@ export default function ComputeLanding() {
         </p>
         <p className="font-mono text-[11px] leading-relaxed text-slate-500 max-w-3xl mb-4">
           Transparency: buyer and attestor are operating-team accounts. What is real either
-          way: the attested on-chain state itself, the bond at stake, and the
+          way: the attested on-chain state itself, the deposit at stake, and the
           machine-checkable acceptance — all independently verifiable. Request and delivery
           are pinned on-chain: input hash {short(attest001.input_hash)} (frozen request),
           result hash {short(attest001.result_hash)} (signed delivery file).
@@ -376,14 +430,14 @@ export default function ComputeLanding() {
           On {job001.settled_at_utc}, the first real compute job settled on Supra Mainnet: a
           deterministic workload (a 1,000,000-step SHA3 chain), requested with 300 wCOSMO
           escrowed, quoted and delivered at 200 wCOSMO against an on-chain result hash, approved
-          by the buyer and settled directly to the bonded provider. Input and result hashes are
+          by the buyer and settled directly to the provider. Input and result hashes are
           on-chain and re-computable from the published workload spec.
         </p>
         <p className="font-mono text-[11px] leading-relaxed text-slate-500 max-w-3xl mb-4">
           Transparency: buyer and provider in this first job belong to the operating team — it
           proves the machinery end-to-end, not external demand. That is exactly the gap the pilot
           program below is meant to close. Job economics: price 200 wCOSMO, residual 100 wCOSMO
-          refunded exactly, provider bond untouched, settle path 0 (buyer approval).
+          refunded exactly, provider security deposit untouched, settle path 0 (buyer approval).
         </p>
         <div className="rounded-xl border border-white/10 bg-white/[0.02] overflow-hidden">
           {job001.legs.map((leg, i) => (
@@ -416,17 +470,17 @@ export default function ComputeLanding() {
               <h3 className="font-mono text-sm text-slate-100">Provide compute</h3>
             </div>
             <p className="font-sans text-sm leading-relaxed text-slate-400 mb-4">
-              Providers post their own bond and run their own keys. The bond is slashable — that
-              is what makes the on-chain track record credible. Posting the bond is self-service
-              via StarKey; the quote path stays gated during the guarded phase, so your first job
-              is set up together.
+              Providers place their own security deposit and run their own keys. The deposit is
+              subject to penalty deductions — that is what makes the on-chain track record
+              credible. Placing the deposit is self-service via StarKey; the quote path stays
+              gated during the guarded phase, so your first job is set up together.
             </p>
             <div className="mb-4 flex flex-wrap gap-3">
               <Link
                 href="/compute/bond/"
                 className="inline-flex items-center gap-2 rounded-lg border border-purple-500/50 bg-purple-600/20 px-4 py-2 font-mono text-xs text-purple-100 transition-all hover:border-purple-400 hover:bg-purple-600/30"
               >
-                Post your provider bond
+                Place your security deposit
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
               <Link
@@ -448,8 +502,8 @@ export default function ComputeLanding() {
               </tbody>
             </table>
             <p className="mt-3 font-mono text-[10px] leading-relaxed text-slate-600">
-              Values verified read-only on Supra Mainnet (chain 8) on 2026-07-11. All parameters
-              are v1 working values and can change through governance before broader opening.
+              Values are read live from Supra Mainnet (chain 8) provider_vault views on page
+              load. All parameters are v1 working values and can change through governance.
             </p>
           </div>
           <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
@@ -465,8 +519,8 @@ export default function ComputeLanding() {
             <ul className="space-y-1.5 font-mono text-[12px] text-slate-400">
               <li>· you escrow the max price up front; the residual is refunded exactly on accept</li>
               <li>· payment moves only on your approval — or through defined timeout paths</li>
-              <li>· if a provider fails to deliver, 10% of their required bond is paid to you (fixed at accept)</li>
-              <li>· a dispute path with its own bond keeps both sides honest</li>
+              <li>· if a provider fails to deliver, a penalty deduction of 10% of their required deposit is paid to you (fixed at accept)</li>
+              <li>· a dispute path with its own deposit keeps both sides honest</li>
             </ul>
             <p className="mt-3 font-sans text-sm leading-relaxed text-slate-400">
               For a first pilot we help scope the workload, hand-hold the wCOSMO and gas setup,
@@ -486,11 +540,11 @@ export default function ComputeLanding() {
           <p className="font-sans text-sm leading-relaxed text-slate-400">
             This market is intentionally small. Caps are low, each provider can run one active
             job at a time, and quotes flow through a signed quote path operated by the COSMO
-            team. Posting a provider bond is self-service (/compute/bond) — everything after
-            that is not: quoting is gated, jobs are set up together, and it is not a general
-            GPU marketplace. What it is: a live settlement primitive with real money, real
-            bonds and public evidence for every step — looking for its first external
-            participants. The broader class of service settlement remains roadmap.
+            team. Placing a provider security deposit is self-service (/compute/bond) —
+            everything after that is not: quoting is gated, jobs are set up together, and it is
+            not a general GPU marketplace. What it is: a live settlement primitive with real
+            money, real security deposits and public evidence for every step — looking for its
+            first external participants. The broader class of service settlement remains roadmap.
           </p>
         </div>
       </section>

@@ -4,7 +4,7 @@ import ComputeLanding from './ComputeLanding';
 export const metadata: Metadata = {
   title: 'COSMO — Outcome settlement for compute (guarded v1)',
   description:
-    'A live, deliberately guarded outcome-RFQ market for compute on Supra Mainnet. A buyer escrows payment, a bonded provider delivers against a verifiable result hash, and settlement happens on-chain. First real job settled 2026-07-06. Guarded v1: one active job per provider, deterministic workloads, gated quote path — provider bond posting is self-service, everything after is guarded.',
+    'A live, deliberately guarded outcome-RFQ market for compute on Supra Mainnet. A buyer escrows payment, a provider with a security deposit at stake delivers against a verifiable result hash, and settlement happens on-chain. First real job settled 2026-07-06. Guarded v1: one active job per provider, deterministic workloads, gated quote path — placing the provider security deposit is self-service, everything after is guarded.',
 };
 
 export default function ComputePage() {

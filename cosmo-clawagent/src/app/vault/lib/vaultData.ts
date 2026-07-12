@@ -7,6 +7,7 @@ import {
   COMPUTE_PKG_ADDR,
   MAKER_OPERATORS,
   MAKER_VAULT_RESOURCE_ADDR,
+  PROVIDER_VAULT_RESOURCE_ADDR,
   WCOSMO_META,
   faBalance,
   rpcView,
@@ -37,6 +38,7 @@ export type ProviderVaultData = {
   maxPerProvider: bigint; // 0 = uncapped
   globalCap: bigint; // 0 = uncapped
   totalBonded: bigint;
+  custodyBalance: bigint; // live wCOSMO balance of the provider vault custody account
   paused: boolean;
 };
 
@@ -105,11 +107,12 @@ export async function fetchMakerVault(): Promise<MakerVaultData> {
 }
 
 export async function fetchProviderVault(): Promise<ProviderVaultData> {
-  const [minBond, maxPer, globalCap, totalBonded, paused] = await Promise.all([
+  const [minBond, maxPer, globalCap, totalBonded, custodyBalance, paused] = await Promise.all([
     rpcView(`${PV}::get_min_provider_bond`, [], []),
     rpcView(`${PV}::get_max_bond_per_provider`, [], []),
     rpcView(`${PV}::get_global_bond_cap`, [], []),
     rpcView(`${PV}::get_total_bonded`, [], []),
+    faBalance(PROVIDER_VAULT_RESOURCE_ADDR, WCOSMO_META),
     rpcView(`${PV}::is_onboarding_paused`, [], []),
   ]);
   return {
@@ -117,6 +120,7 @@ export async function fetchProviderVault(): Promise<ProviderVaultData> {
     maxPerProvider: big(maxPer),
     globalCap: big(globalCap),
     totalBonded: big(totalBonded),
+    custodyBalance,
     paused: paused === true,
   };
 }

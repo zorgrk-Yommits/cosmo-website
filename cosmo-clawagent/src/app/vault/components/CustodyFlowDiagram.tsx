@@ -169,7 +169,7 @@ export default function CustodyFlowDiagram({ custodyBalance, operators }: Props)
       style={{ boxShadow: '0 0 16px rgba(139,92,246,0.35)' }}
     >
       <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-purple-300">
-        Custody
+        Held in the vault
       </div>
       <div className="font-mono text-[14px] font-bold leading-tight text-white">
         Resource Account
@@ -217,10 +217,10 @@ export default function CustodyFlowDiagram({ custodyBalance, operators }: Props)
     <div className="rounded-md border border-amber-500/40 bg-black/60 p-3 backdrop-blur-sm">
       <div className="flex items-center gap-1.5">
         <Scissors className="h-3.5 w-3.5 text-amber-300" />
-        <span className="font-mono text-[13px] font-bold text-white">Slash</span>
+        <span className="font-mono text-[13px] font-bold text-white">Penalty deduction</span>
       </div>
       <div className="mt-0.5 font-mono text-[11px] leading-tight text-slate-400">
-        misbehavior → overhang pool
+        misbehavior → penalty pool
       </div>
     </div>
   );
@@ -235,8 +235,11 @@ export default function CustodyFlowDiagram({ custodyBalance, operators }: Props)
     <div
       className="relative rounded-xl border border-white/10 bg-black/40 p-4 md:p-6"
       role="img"
-      aria-label="Custody flow: operator bonds are deposited into the maker vault resource account, which has no private key; funds only leave through withdraw after the lock period or through slashing."
+      aria-label="Maker vault flow: operator security deposits go into the maker vault resource account, which has no private key; funds only leave through withdraw after the lock period or through a penalty deduction."
     >
+      <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-slate-500">
+        Maker vault only — compute provider deposits live in a separate vault (section 2)
+      </p>
       {/* Desktop graph */}
       <div className="relative hidden md:block" style={{ aspectRatio: '1000 / 520', minHeight: 420 }}>
         {edges}

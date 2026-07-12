@@ -24,6 +24,12 @@ export const COSMO_META =
 export const MAKER_VAULT_RESOURCE_ADDR =
   '0x04830c9b762bf0e00d2620026eb172426c686bc8b04a9c350f004482fa1fd54f';
 
+// provider_vault custody resource account (seed "cprfq_bond_v1", derived from
+// COMPUTE_PKG_ADDR). No private key exists; movements only via provider_vault
+// entry functions. Distinct from the maker vault custody account above.
+export const PROVIDER_VAULT_RESOURCE_ADDR =
+  '0x76f115fcea64253ec60633c0cf197db38978822fae4af9cface9d88bf39bd576';
+
 // Known maker operators. There is NO on-chain enumeration view — update this
 // list manually when operators change (source of truth: maker_vault bond txs).
 export const MAKER_OPERATORS = [

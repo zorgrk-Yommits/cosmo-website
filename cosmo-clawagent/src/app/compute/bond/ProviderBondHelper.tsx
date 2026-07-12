@@ -10,6 +10,11 @@
 // Hard-pinned to Supra MAINNET chain 8 via lib/mainnetOnchain — deliberately
 // independent from the env-driven RFQ testnet config. Never asks for keys or
 // seeds; signing happens only in the StarKey popup.
+//
+// Terminology glossary (translation-proof user-facing copy; applies to
+// /compute, /wcosmo and /vault as well): bond → "security deposit",
+// slash → "penalty deduction", custody balance → "held in the vault".
+// Function-IDs, payload lines and code identifiers stay unchanged.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
@@ -270,25 +275,28 @@ export default function ProviderBondHelper() {
   }
   if (target !== null && global) {
     if (target <= ZERO) validation.push('Amount must be greater than zero.');
-    const resulting = (wallet?.bondAmount ?? ZERO) + target;
-    if (resulting < global.minBond) {
+    // On-chain, the minimum applies to each SINGLE deposit (provider_vault
+    // E_BELOW_MIN_BOND checks the tx amount), while both caps apply to the
+    // resulting totals — mirror exactly that here.
+    if (target > ZERO && target < global.minBond) {
       validation.push(
-        `Resulting bond ${fmtAmt(resulting)} would be below the minimum of ${fmtAmt(global.minBond)} wCOSMO.`,
+        `Each deposit must be at least the required minimum of ${fmtAmt(global.minBond)} wCOSMO — this is checked per transaction, not on the total.`,
       );
     }
+    const resulting = (wallet?.bondAmount ?? ZERO) + target;
     if (global.maxPerProvider > ZERO && resulting > global.maxPerProvider) {
       validation.push(
-        `Resulting bond ${fmtAmt(resulting)} would exceed the per-provider cap of ${fmtAmt(global.maxPerProvider)} wCOSMO.`,
+        `Your total security deposit would be ${fmtAmt(resulting)} wCOSMO — above the per-provider limit of ${fmtAmt(global.maxPerProvider)} wCOSMO.`,
       );
     }
     if (global.globalCap > ZERO && target > global.globalCap - global.totalBonded) {
       validation.push(
-        `Amount exceeds the global headroom of ${fmtAmt(global.globalCap - global.totalBonded)} wCOSMO (cap ${fmtAmt(global.globalCap)}, bonded ${fmtAmt(global.totalBonded)}).`,
+        `Amount exceeds the remaining global capacity of ${fmtAmt(global.globalCap - global.totalBonded)} wCOSMO (limit ${fmtAmt(global.globalCap)}, already deposited ${fmtAmt(global.totalBonded)}).`,
       );
     }
     if (wallet && wrapNeeded !== null && wrapNeeded > ZERO && wallet.cosmoBal < wrapNeeded) {
       validation.push(
-        `Not enough $COSMO to wrap: need ${fmtAmt(wrapNeeded)}, wallet holds ${fmtAmt(wallet.cosmoBal)}.`,
+        `Not enough $COSMO to convert: ${fmtAmt(wrapNeeded)} needed, wallet holds ${fmtAmt(wallet.cosmoBal)}.`,
       );
     }
   }
@@ -410,12 +418,14 @@ export default function ProviderBondHelper() {
               </span>
             </div>
             <h1 className="font-mono text-3xl font-bold tracking-tight text-slate-100 md:text-5xl">
-              Provider Bond — Self-Service
+              Compute Provider Security Deposit
             </h1>
             <p className="mt-4 font-sans text-lg text-slate-300">
-              Post your own provider bond in two transactions: wrap $COSMO to wCOSMO, then
-              deposit the bond. The bond is slashable — that is what makes your on-chain track
-              record credible. Signing happens exclusively in StarKey.
+              To take compute jobs you place a refundable security deposit in wCOSMO. If a job
+              is not delivered, a penalty deduction of 10% of the required deposit goes to the
+              buyer. Setting it up takes two separate transactions: first convert $COSMO into
+              wCOSMO, then deposit the wCOSMO as your security. Signing happens exclusively in
+              StarKey.
             </p>
           </header>
 
@@ -505,69 +515,60 @@ export default function ProviderBondHelper() {
             />
           </div>
 
-          {/* on-chain status */}
-          <section className="mt-6 rounded-xl border border-white/10 bg-white/[0.02] p-5">
-            <div className="flex items-center justify-between">
-              <h2 className="font-mono text-xs uppercase tracking-wider text-slate-500">
-                Status (read-only, on-chain)
-              </h2>
-              <button
-                type="button"
-                onClick={() => void refreshStatus()}
-                disabled={refreshing}
-                className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-3 py-1.5 font-mono text-[11px] text-slate-400 transition-all hover:border-white/30 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <RefreshCw className={cn('h-3 w-3', refreshing && 'animate-spin')} />
-                Refresh
-              </button>
-            </div>
+          {/* main display: your security deposit at a glance */}
+          <DepositSummary
+            global={global}
+            wallet={wallet}
+            connected={connected}
+            refreshing={refreshing}
+            onRefresh={() => void refreshStatus()}
+          />
 
-            {/* eligible badge */}
-            {wallet && (
-              <div
-                className={cn(
-                  'mt-4 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 font-mono text-xs',
-                  eligible
-                    ? 'border-emerald-500/40 bg-emerald-500/[0.08] text-emerald-300'
-                    : 'border-amber-500/40 bg-amber-500/[0.08] text-amber-300',
-                )}
-              >
-                {eligible ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Lock className="h-3.5 w-3.5" />}
-                {eligible ? 'provider eligible' : 'not yet eligible'}
-              </div>
-            )}
-
-            <dl className="mt-4 grid gap-3 font-mono text-sm sm:grid-cols-2">
-              <StatusRow k="$COSMO balance" v={wallet ? `${fmtAmt(wallet.cosmoBal)} COSMO` : '— (connect)'} />
-              <StatusRow k="wCOSMO balance" v={wallet ? `${fmtAmt(wallet.wcosmoBal)} wCOSMO` : '— (connect)'} />
-              <StatusRow k="Your bond" v={wallet ? `${fmtAmt(wallet.bondAmount)} wCOSMO` : '— (connect)'} />
-              <StatusRow
-                k="Active jobs / slashes"
-                v={wallet ? `${wallet.activeJobs.toString()} / ${wallet.slashCount.toString()}` : '— (connect)'}
-              />
-              <StatusRow k="Minimum bond" v={global ? `${fmtAmt(global.minBond)} wCOSMO` : '—'} />
-              <StatusRow
-                k="Cap per provider"
-                v={global ? (global.maxPerProvider > ZERO ? `${fmtAmt(global.maxPerProvider)} wCOSMO` : 'uncapped') : '—'}
-              />
-              <StatusRow
-                k="Global cap / bonded"
-                v={
-                  global
-                    ? `${global.globalCap > ZERO ? fmtAmt(global.globalCap) : '∞'} / ${fmtAmt(global.totalBonded)} wCOSMO`
-                    : '—'
-                }
-              />
-              <StatusRow
-                k="Onboarding paused"
-                v={global ? (global.paused ? 'yes' : 'no') : '—'}
-                tone={global ? (global.paused ? 'warn' : 'ok') : undefined}
-              />
-            </dl>
+          {/* all remaining on-chain parameters, collapsed by default */}
+          <section className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-5">
+            <details>
+              <summary className="cursor-pointer font-mono text-xs uppercase tracking-wider text-slate-500 hover:text-slate-300">
+                All on-chain parameters (read-only)
+              </summary>
+              <dl className="mt-4 grid gap-3 font-mono text-sm sm:grid-cols-2">
+                <StatusRow k="$COSMO balance" v={wallet ? `${fmtAmt(wallet.cosmoBal)} COSMO` : '— (connect)'} />
+                <StatusRow
+                  k="Active jobs / penalty deductions"
+                  v={wallet ? `${wallet.activeJobs.toString()} / ${wallet.slashCount.toString()}` : '— (connect)'}
+                />
+                <StatusRow
+                  k="Per-provider limit"
+                  v={global ? (global.maxPerProvider > ZERO ? `${fmtAmt(global.maxPerProvider)} wCOSMO` : 'uncapped') : '—'}
+                />
+                <StatusRow
+                  k="Global limit / total deposited"
+                  v={
+                    global
+                      ? `${global.globalCap > ZERO ? fmtAmt(global.globalCap) : '∞'} / ${fmtAmt(global.totalBonded)} wCOSMO`
+                      : '—'
+                  }
+                />
+                <StatusRow
+                  k="Withdrawal locked until"
+                  v={
+                    wallet
+                      ? wallet.lockedUntil > ZERO && Number(wallet.lockedUntil) * 1000 > Date.now()
+                        ? new Date(Number(wallet.lockedUntil) * 1000).toISOString().slice(0, 16).replace('T', ' ') + ' UTC'
+                        : 'no lock'
+                      : '— (connect)'
+                  }
+                />
+                <StatusRow
+                  k="Onboarding paused"
+                  v={global ? (global.paused ? 'yes' : 'no') : '—'}
+                  tone={global ? (global.paused ? 'warn' : 'ok') : undefined}
+                />
+              </dl>
+            </details>
             {global?.paused && (
               <p className="mt-3 font-sans text-xs leading-relaxed text-amber-300/90">
-                Onboarding is currently paused: you can still deposit a bond, but buyers cannot
-                assign jobs to new providers until it is unpaused.
+                Onboarding is currently paused: you can still place a security deposit, but
+                buyers cannot assign jobs to new providers until it is unpaused.
               </p>
             )}
             {misconfigured && (
@@ -585,17 +586,17 @@ export default function ProviderBondHelper() {
                 <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-300" />
                 <div>
                   <p className="font-mono text-sm font-bold uppercase tracking-wider text-emerald-300">
-                    Provider eligible
+                    Eligible for compute jobs
                   </p>
                   <p className="mt-1 font-sans text-sm leading-relaxed text-slate-200">
-                    Your bond meets the minimum. Next step: reach out with the provider pilot
-                    template on{' '}
+                    Your security deposit meets the required minimum. Next step: reach out with
+                    the provider pilot template on{' '}
                     <Link href="/compute/" className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300">
                       /compute
                     </Link>{' '}
                     — quotes flow through the signed quote path operated by the COSMO team
-                    (guarded v1), so your first job is set up together. You can top up your bond
-                    below at any time within the caps.
+                    (guarded v1), so your first job is set up together. You can add to your
+                    deposit below at any time within the limits.
                   </p>
                 </div>
               </div>
@@ -604,9 +605,10 @@ export default function ProviderBondHelper() {
 
           {/* amount input */}
           <section className="mt-6 rounded-xl border border-white/10 bg-white/[0.02] p-5">
-            <h2 className="font-sans text-sm font-semibold text-slate-200">Bond amount</h2>
+            <h2 className="font-sans text-sm font-semibold text-slate-200">Deposit amount</h2>
             <p className="mt-1 font-sans text-xs text-slate-500">
-              Amount of wCOSMO to deposit as provider bond (default: live minimum bond).
+              Amount of wCOSMO to deposit as your provider security (default: the live required
+              minimum).
             </p>
             <div className="mt-3 flex items-center gap-3">
               <input
@@ -622,8 +624,8 @@ export default function ProviderBondHelper() {
             {target !== null && wrapNeeded !== null && wallet && (
               <p className="mt-2 font-mono text-[11px] text-slate-500">
                 {wrapNeeded > ZERO
-                  ? `Wallet holds ${fmtAmt(wcosmoBal)} wCOSMO → step 1 wraps the missing ${fmtAmt(wrapNeeded)}.`
-                  : `Wallet already holds ${fmtAmt(wcosmoBal)} wCOSMO — step 1 is skipped.`}
+                  ? `Wallet holds ${fmtAmt(wcosmoBal)} wCOSMO → step 1 converts the missing ${fmtAmt(wrapNeeded)} $COSMO.`
+                  : `Wallet already holds ${fmtAmt(wcosmoBal)} wCOSMO — the conversion step is skipped.`}
               </p>
             )}
             {validation.length > 0 && (
@@ -636,6 +638,11 @@ export default function ProviderBondHelper() {
               </ul>
             )}
           </section>
+
+          {/* combined pre-signing plan: what will happen, before → after */}
+          {connected && amountsValid && wallet && global && target !== null && wrapNeeded !== null && (
+            <TransactionPlan target={target} wrapNeeded={wrapNeeded} wallet={wallet} />
+          )}
 
           {/* tx steps */}
           {STEPS.map((step) => {
@@ -653,9 +660,14 @@ export default function ProviderBondHelper() {
               >
                 <h2 className="font-sans text-sm font-semibold text-slate-200">
                   {step.n === 1
-                    ? 'Step 1 · wrap — $COSMO → wCOSMO (skipped if you hold enough wCOSMO)'
-                    : 'Step 2 · deposit the provider bond'}
+                    ? 'Step 1 of 2 — Convert $COSMO into wCOSMO (separate transaction)'
+                    : 'Step 2 of 2 — Deposit wCOSMO as your security (separate transaction)'}
                 </h2>
+                <p className="mt-1 font-sans text-xs text-slate-400">
+                  {step.n === 1
+                    ? 'Converts $COSMO into the same amount of wCOSMO in your wallet. Nothing is deposited yet.'
+                    : 'Moves the wCOSMO from your wallet into the provider vault as your security deposit.'}
+                </p>
                 <p className="mt-1 font-mono text-xs text-slate-400">
                   {step.modName}::{step.fnName}
                   {connected && amountsValid && stepAmount !== null && stepAmount > ZERO
@@ -682,7 +694,7 @@ export default function ProviderBondHelper() {
                     {steps[step.n].busy && !steps[step.n].signReady ? (
                       <Loader2 className="h-3.5 w-3.5 animate-spin" />
                     ) : null}
-                    Show payload
+                    Prepare transaction
                   </button>
                   <button
                     type="button"
@@ -694,9 +706,14 @@ export default function ProviderBondHelper() {
                   </button>
                 </div>
                 {steps[step.n].payloadText && (
-                  <pre className="mt-4 overflow-x-auto whitespace-pre-wrap break-all rounded-lg border border-dashed border-slate-600 bg-black/40 p-4 font-mono text-[11px] leading-relaxed text-slate-300">
-                    {steps[step.n].payloadText}
-                  </pre>
+                  <details open className="mt-4">
+                    <summary className="cursor-pointer font-mono text-[11px] uppercase tracking-wider text-slate-500 hover:text-slate-300">
+                      Raw transaction payload (exactly what you will sign)
+                    </summary>
+                    <pre className="mt-2 overflow-x-auto whitespace-pre-wrap break-all rounded-lg border border-dashed border-slate-600 bg-black/40 p-4 font-mono text-[11px] leading-relaxed text-slate-300">
+                      {steps[step.n].payloadText}
+                    </pre>
+                  </details>
                 )}
                 {steps[step.n].txHash && (
                   <p className="mt-3 break-all font-mono text-xs text-slate-400">
@@ -719,28 +736,31 @@ export default function ProviderBondHelper() {
           <section className="mt-8 rounded-xl border border-amber-500/20 bg-amber-500/[0.04] p-5">
             <div className="flex items-center gap-2 mb-2">
               <Lock className="h-4 w-4 text-amber-300" />
-              <h3 className="font-mono text-sm text-slate-100">Guarded v1 — what a bond does and does not do</h3>
+              <h3 className="font-mono text-sm text-slate-100">
+                Guarded v1 — what the security deposit does and does not do
+              </h3>
             </div>
             <ul className="space-y-1.5 font-sans text-sm leading-relaxed text-slate-400">
               <li>
-                · Posting a bond makes you <span className="text-slate-200">eligible</span>; it does
-                not assign you jobs. Jobs start when a buyer accepts a quote for you.
+                · Placing a security deposit makes you{' '}
+                <span className="text-slate-200">eligible</span>; it does not assign you jobs.
+                Jobs start when a buyer accepts a quote for you.
               </li>
               <li>
                 · Quotes flow through a signed quote path operated by the COSMO team — providers do
                 not price autonomously in v1.
               </li>
-              <li>· One active job per provider (guarded v1 cap).</li>
+              <li>· One active job per provider (guarded v1 limit).</li>
               <li>
-                · The bond is slashable: on a no-delivery, 10% of the required bond is paid to the
-                buyer (fixed at accept time).
+                · On a no-delivery, a penalty deduction of 10% of the required deposit is paid to
+                the buyer (fixed at accept time).
               </li>
               <li>
-                · Withdrawing the bond (`withdraw_provider_bond`) requires the cooldown to have
-                passed and no active job; the remainder must be zero or above the minimum. This
-                page does not offer withdraw in v1.
+                · Withdrawing the deposit (`withdraw_provider_bond`) requires the cooldown to have
+                passed and no active job; full exit is always allowed. This page does not offer
+                withdraw in v1.
               </li>
-              <li>· All parameters (min bond, caps) can change through governance.</li>
+              <li>· All parameters (required minimum, limits) can change through governance.</li>
             </ul>
           </section>
 
@@ -774,6 +794,169 @@ export default function ProviderBondHelper() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Main display: the five questions a provider actually has — required minimum,
+// deposited, still missing, wallet balance, eligibility. Global rows render
+// read-only even without a wallet.
+function DepositSummary({
+  global,
+  wallet,
+  connected,
+  refreshing,
+  onRefresh,
+}: {
+  global: GlobalStatus | null;
+  wallet: WalletStatus | null;
+  connected: boolean;
+  refreshing: boolean;
+  onRefresh: () => void;
+}) {
+  const deposited = wallet?.bondAmount ?? null;
+  const missing =
+    global && wallet
+      ? global.minBond > wallet.bondAmount
+        ? global.minBond - wallet.bondAmount
+        : ZERO
+      : null;
+  const eligible = wallet?.eligible === true;
+
+  return (
+    <section className="mt-6 rounded-xl border border-purple-500/25 bg-purple-500/[0.04] p-5">
+      <div className="flex items-center justify-between">
+        <h2 className="font-mono text-xs uppercase tracking-wider text-purple-300">
+          Your security deposit
+        </h2>
+        <button
+          type="button"
+          onClick={onRefresh}
+          disabled={refreshing}
+          className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-3 py-1.5 font-mono text-[11px] text-slate-400 transition-all hover:border-white/30 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <RefreshCw className={cn('h-3 w-3', refreshing && 'animate-spin')} />
+          Refresh
+        </button>
+      </div>
+      <dl className="mt-4 space-y-2 font-mono text-sm">
+        <div className="flex items-baseline justify-between gap-4">
+          <dt className="text-[12px] text-slate-500">Required minimum</dt>
+          <dd className="text-slate-100">{global ? `${fmtAmt(global.minBond)} wCOSMO` : '—'}</dd>
+        </div>
+        <div className="flex items-baseline justify-between gap-4">
+          <dt className="text-[12px] text-slate-500">Deposited by you</dt>
+          <dd className="text-slate-100">
+            {deposited !== null ? `${fmtAmt(deposited)} wCOSMO` : '— connect wallet'}
+          </dd>
+        </div>
+        <div className="flex items-baseline justify-between gap-4">
+          <dt className="text-[12px] text-slate-500">Still missing</dt>
+          <dd className={missing === ZERO ? 'text-emerald-300' : 'text-slate-100'}>
+            {missing !== null ? `${fmtAmt(missing)} wCOSMO` : '— connect wallet'}
+          </dd>
+        </div>
+        <div className="flex items-baseline justify-between gap-4">
+          <dt className="text-[12px] text-slate-500">wCOSMO in your wallet</dt>
+          <dd className="text-slate-100">
+            {wallet ? `${fmtAmt(wallet.wcosmoBal)} wCOSMO` : '— connect wallet'}
+          </dd>
+        </div>
+      </dl>
+      <div className="mt-4">
+        {!connected ? (
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-3 py-1.5 font-mono text-xs text-slate-400">
+            <Plug className="h-3.5 w-3.5" />
+            Connect your wallet to see your deposit status
+          </span>
+        ) : eligible ? (
+          <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/[0.08] px-3 py-1.5 font-mono text-xs text-emerald-300">
+            <CheckCircle2 className="h-3.5 w-3.5" />
+            Eligible for compute jobs
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/[0.08] px-3 py-1.5 font-mono text-xs text-amber-300">
+            <Lock className="h-3.5 w-3.5" />
+            Not yet eligible — deposit below the required minimum
+          </span>
+        )}
+      </div>
+      {global && deposited !== null && deposited > ZERO && missing !== null && missing > ZERO && (
+        <p className="mt-3 font-sans text-xs leading-relaxed text-amber-300/90">
+          Each single deposit must itself be at least the required minimum — the smallest valid
+          top-up is {fmtAmt(global.minBond)} wCOSMO. Your existing deposit stays withdrawable in
+          full.
+        </p>
+      )}
+    </section>
+  );
+}
+
+// One combined pre-signing panel: plain-English steps + before/after projection.
+// Makes explicit that wrap and deposit are SEPARATE transactions.
+function TransactionPlan({
+  target,
+  wrapNeeded,
+  wallet,
+}: {
+  target: bigint;
+  wrapNeeded: bigint;
+  wallet: WalletStatus;
+}) {
+  const twoTx = wrapNeeded > ZERO;
+  const rows: { label: string; before: bigint; after: bigint }[] = [
+    { label: '$COSMO in wallet', before: wallet.cosmoBal, after: wallet.cosmoBal - wrapNeeded },
+    {
+      label: 'wCOSMO in wallet',
+      before: wallet.wcosmoBal,
+      after: wallet.wcosmoBal + wrapNeeded - target,
+    },
+    { label: 'Your security deposit', before: wallet.bondAmount, after: wallet.bondAmount + target },
+  ];
+  return (
+    <section className="mt-6 rounded-xl border border-sky-500/25 bg-sky-500/[0.04] p-5">
+      <h2 className="font-sans text-sm font-semibold text-slate-200">
+        What will happen — {twoTx ? 'two separate transactions' : 'one transaction'}
+      </h2>
+      <ol className="mt-3 space-y-1.5 font-sans text-sm leading-relaxed">
+        <li className={twoTx ? 'text-slate-300' : 'text-slate-600'}>
+          1.{' '}
+          {twoTx
+            ? `Convert ${fmtAmt(wrapNeeded)} $COSMO into ${fmtAmt(wrapNeeded)} wCOSMO (transaction 1).`
+            : 'Convert — skipped, your wallet already holds enough wCOSMO.'}
+        </li>
+        <li className="text-slate-300">
+          2. Deposit {fmtAmt(target)} wCOSMO as your provider security deposit (transaction{' '}
+          {twoTx ? 2 : 1}).
+        </li>
+      </ol>
+      <p className="mt-2 font-sans text-xs text-slate-500">
+        StarKey asks you to sign each transaction individually — nothing is sent until you
+        confirm.
+      </p>
+      <div className="mt-4 overflow-x-auto">
+        <table className="w-full font-mono text-xs">
+          <thead>
+            <tr className="text-left text-[11px] uppercase tracking-wider text-slate-500">
+              <th className="pb-2 pr-4 font-normal">&nbsp;</th>
+              <th className="pb-2 pr-4 font-normal">Before</th>
+              <th className="pb-2 font-normal">After</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.label} className="border-t border-white/5">
+                <td className="py-1.5 pr-4 text-slate-500">{r.label}</td>
+                <td className="py-1.5 pr-4 text-slate-300">{fmtAmt(r.before)}</td>
+                <td className="py-1.5 text-slate-100">{fmtAmt(r.after)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="mt-2 font-sans text-[11px] text-slate-600">
+        Projection assumes both transactions confirm; SUPRA gas not included.
+      </p>
+    </section>
   );
 }
 

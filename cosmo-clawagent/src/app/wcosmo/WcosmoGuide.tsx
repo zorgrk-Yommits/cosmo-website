@@ -32,7 +32,7 @@ const OTC_TEMPLATE = [
   'COSMO — $COSMO acquisition request (OTC / community)',
   '',
   'Wallet (Supra, chain 8): 0x…',
-  'Intended use (compute provider bond / maker operator bond / other): …',
+  'Intended use (compute provider security deposit / maker operator security deposit / other): …',
   'Amount of $COSMO I am looking for: …',
   'Background (infra / DePIN / agents / community): …',
   'Contact: …',
@@ -115,12 +115,12 @@ export default function WcosmoGuide() {
           </span>
         </div>
         <h1 className="font-mono text-4xl md:text-5xl font-bold tracking-tight text-slate-100">
-          wCOSMO — the bond asset
+          wCOSMO — the security-deposit asset
         </h1>
         <p className="mt-5 max-w-3xl font-sans text-lg leading-relaxed text-slate-300">
-          wCOSMO is a plain 1:1 wrapper around $COSMO. Every bond in the COSMO system — compute
-          provider bonds and maker operator bonds — is denominated in it. Wrapping and unwrapping
-          are permissionless, and the peg is verifiable on-chain at any time.
+          wCOSMO is a plain 1:1 wrapper around $COSMO. Every security deposit in the COSMO system
+          — compute provider deposits and maker operator deposits — is denominated in it. Wrapping
+          and unwrapping are permissionless, and the peg is verifiable on-chain at any time.
         </p>
       </section>
 
@@ -149,15 +149,20 @@ export default function WcosmoGuide() {
           <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
             <div className="flex items-center gap-2 mb-3">
               <ShieldCheck className="h-4 w-4 text-purple-300" />
-              <h3 className="font-mono text-sm text-slate-100">Why bonds live in wCOSMO</h3>
+              <h3 className="font-mono text-sm text-slate-100">
+                Why security deposits live in wCOSMO
+              </h3>
             </div>
             <p className="font-sans text-sm leading-relaxed text-slate-400">
-              Bond custody and slashing need an asset with plain, hook-free transfer semantics.
-              The dispatchable $COSMO cannot serve as vault collateral by construction — the vaults
-              reject dispatchable assets. wCOSMO keeps the economic exposure of $COSMO while giving
-              the bond and escrow paths a predictable settlement surface. If a provider or maker
-              behaves, the bond comes back out 1:1; if they fail to deliver, a defined slice is
-              slashed to the counterparty.
+              Holding deposits and applying penalty deductions needs an asset with plain,
+              hook-free transfer semantics. The dispatchable $COSMO cannot be held by the vaults
+              by construction — they reject dispatchable assets. wCOSMO keeps the economic
+              exposure of $COSMO while giving both vaults — the{' '}
+              <span className="text-slate-300">maker vault</span> (operator deposits) and the
+              separate <span className="text-slate-300">provider vault</span> (compute deposits) —
+              a predictable settlement surface. If a provider or maker behaves, the deposit comes
+              back out 1:1; on a failure to deliver, a defined penalty deduction goes to the
+              counterparty.
             </p>
           </div>
         </div>
@@ -239,17 +244,18 @@ export default function WcosmoGuide() {
               {COSMOCLAW_ADDR.slice(0, 10)}…::wcosmo::wrap(amount)
             </code>
             . Unwrapping works the same way in reverse at any time — as long as the wCOSMO is not
-            currently deposited as a bond.
+            currently placed as a security deposit.
           </p>
           <p className="mt-3 font-sans text-sm leading-relaxed text-slate-400">
-            If you are onboarding as a compute provider, the bond helper builds the wrap and the
-            bond deposit for you, shows each payload in full, and lets you sign both in StarKey:
+            If you are onboarding as a compute provider, the deposit helper builds the conversion
+            and the deposit as two separate transactions, shows each payload in full, and lets
+            you sign both in StarKey:
           </p>
           <Link
             href="/compute/bond/"
             className="mt-4 inline-flex items-center gap-2 rounded-lg border border-purple-500/50 bg-purple-600/20 px-4 py-2 font-mono text-xs text-purple-100 transition-all hover:border-purple-400 hover:bg-purple-600/30"
           >
-            Post your provider bond
+            Place your provider security deposit
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
@@ -285,14 +291,17 @@ export default function WcosmoGuide() {
           <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
             <h3 className="font-mono text-sm text-slate-100 mb-3">Compute track</h3>
             <ul className="space-y-1.5 font-sans text-sm leading-relaxed text-slate-400">
-              <li>· Provider bonds are denominated in wCOSMO (min 100, self-service).</li>
+              <li>
+                · Provider security deposits are denominated in wCOSMO (self-service; the required
+                minimum is read live on the deposit page).
+              </li>
               <li>
                 · Jobs are paid in the payment asset of the request — wCOSMO, CASH or SUPRA on the
                 current allowlist (V2 multi-asset path).
               </li>
               <li>
-                · On a no-delivery, 10% of the required bond is slashed to the buyer (fixed at
-                accept time).
+                · On a no-delivery, a penalty deduction of 10% of the required deposit goes to the
+                buyer (fixed at accept time).
               </li>
             </ul>
             <Link
@@ -305,7 +314,7 @@ export default function WcosmoGuide() {
           <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
             <h3 className="font-mono text-sm text-slate-100 mb-3">Maker track (RFQ)</h3>
             <ul className="space-y-1.5 font-sans text-sm leading-relaxed text-slate-400">
-              <li>· Maker operators post their operator bond in wCOSMO.</li>
+              <li>· Maker operators place their operator security deposit in wCOSMO.</li>
               <li>· Quote escrows on the RFQ rail settle in wCOSMO.</li>
               <li>
                 · Maker onboarding is not self-service — slot 2 is reserved for the first committed
@@ -333,7 +342,8 @@ export default function WcosmoGuide() {
             wCOSMO is infrastructure, not an investment product. Nothing on this page is financial
             advice, and no yield or price appreciation is promised or implied. The markets that use
             wCOSMO are deliberately small, guarded v1 systems with low caps; parameters can change
-            through governance. Wrap what you need for a bond — not more. Built on Supra.
+            through governance. Wrap what you need for a security deposit — not more. Built on
+            Supra.
           </p>
         </div>
       </section>
