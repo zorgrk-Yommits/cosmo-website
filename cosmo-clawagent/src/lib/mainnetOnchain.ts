@@ -19,6 +19,28 @@ export const WCOSMO_META =
 export const COSMO_META =
   '0x11188bb79cd956ab6b8ddff06d64f479358b59ddbd2058a41b447cdf21c17ab0';
 
+// maker_vault custody resource account (seed "maker_vault_v1"). No private key
+// exists; the SignerCapability is held in VaultRegistry at COSMOCLAW_ADDR.
+export const MAKER_VAULT_RESOURCE_ADDR =
+  '0x04830c9b762bf0e00d2620026eb172426c686bc8b04a9c350f004482fa1fd54f';
+
+// Known maker operators. There is NO on-chain enumeration view — update this
+// list manually when operators change (source of truth: maker_vault bond txs).
+export const MAKER_OPERATORS = [
+  {
+    key: 'M2',
+    label: 'Operator M2',
+    role: 'Active maker · Slot 1',
+    addr: '0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb',
+  },
+  {
+    key: 'K1',
+    label: 'Operator K1',
+    role: 'Stage B · D-14',
+    addr: '0x11c1c2660dc3e764c6b5b12f084cbbb11028b74686aea7a762e09b2ca651da53',
+  },
+] as const;
+
 export const CHAIN_ID = '8'; // Supra Mainnet
 export const RPC = 'https://rpc-mainnet.supra.com';
 export const EXPLORER_TX = 'https://suprascan.io/tx/';

@@ -11,6 +11,7 @@ const navLinks: { href: string; label: string; external?: boolean; download?: bo
   { href: '/demo', label: 'Demo' },
   { href: '/compute', label: 'Compute' },
   { href: '/wcosmo', label: 'wCOSMO' },
+  { href: '/vault', label: 'Vault' },
   { href: '/community-rfq', label: 'Community' },
   { href: '/maker-capital', label: 'Maker Capital' },
   { href: '/access', label: 'Access' },
