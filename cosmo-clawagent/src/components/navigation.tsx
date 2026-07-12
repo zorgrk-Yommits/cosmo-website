@@ -8,7 +8,8 @@ import { cn } from '@/lib/utils';
 
 const navLinks: { href: string; label: string; external?: boolean; download?: boolean }[] = [
   { href: '/', label: 'Home' },
-  { href: '/demo', label: 'Demo' },
+  // /demo stays reachable via deep links (homepage, /compute) — nav tab
+  // retired 2026-07-12 in favor of the live /rfq page.
   { href: '/compute', label: 'Compute' },
   { href: '/wcosmo', label: 'wCOSMO' },
   { href: '/vault', label: 'Vault' },
