@@ -27,9 +27,13 @@ import attest001 from '@/data/compute-attest001-2026-07-08.json';
 import patch001 from '@/data/compute-patch001-2026-07-10.json';
 import { COMPUTE_PKG_ADDR, fmtAmt, rpcView } from '@/lib/mainnetOnchain';
 
-// Live provider_vault market parameters (read on mount, read-only, no wallet).
+// Live market parameters (read on mount, read-only, no wallet).
+// `paused` is the provider_vault onboarding switch; `systemPaused` is the compute_rfq
+// system pause. Two different switches — do not conflate them.
 type LiveParams = {
   paused: boolean;
+  systemPaused: boolean;
+  v1Paused: boolean;
   minBond: bigint;
   maxPerProvider: bigint;
   globalCap: bigint;
@@ -38,21 +42,42 @@ type LiveParams = {
 
 async function fetchLiveParams(): Promise<LiveParams> {
   const PV = `${COMPUTE_PKG_ADDR}::provider_vault`;
-  const [paused, minBond, maxPer, globalCap, totalBonded] = await Promise.all([
-    rpcView(`${PV}::is_onboarding_paused`, [], []),
-    rpcView(`${PV}::get_min_provider_bond`, [], []),
-    rpcView(`${PV}::get_max_bond_per_provider`, [], []),
-    rpcView(`${PV}::get_global_bond_cap`, [], []),
-    rpcView(`${PV}::get_total_bonded`, [], []),
-  ]);
+  const RFQ = `${COMPUTE_PKG_ADDR}::compute_rfq`;
+  const [paused, systemPaused, v1Paused, minBond, maxPer, globalCap, totalBonded] =
+    await Promise.all([
+      rpcView(`${PV}::is_onboarding_paused`, [], []),
+      rpcView(`${RFQ}::is_paused`, [], []),
+      rpcView(`${RFQ}::is_v1_paused`, [], []),
+      rpcView(`${PV}::get_min_provider_bond`, [], []),
+      rpcView(`${PV}::get_max_bond_per_provider`, [], []),
+      rpcView(`${PV}::get_global_bond_cap`, [], []),
+      rpcView(`${PV}::get_total_bonded`, [], []),
+    ]);
   const big = (v: unknown) => BigInt(String(v ?? 0));
+  // A missing or garbled view must not silently render as "open" — throw instead, so the
+  // whole table falls back to em-dashes rather than claiming a gate is off.
+  const bool = (v: unknown, name: string): boolean => {
+    if (typeof v !== 'boolean') throw new Error(`view ${name}: expected bool, got ${typeof v}`);
+    return v;
+  };
   return {
-    paused: paused === true,
+    paused: bool(paused, 'is_onboarding_paused'),
+    systemPaused: bool(systemPaused, 'is_paused'),
+    v1Paused: bool(v1Paused, 'is_v1_paused'),
     minBond: big(minBond),
     maxPerProvider: big(maxPer),
     globalCap: big(globalCap),
     totalBonded: big(totalBonded),
   };
+}
+
+// Which request function a buyer can actually call right now. The system pause gates every
+// create, so it has to be read too: E_PAUSED is asserted before E_V1_PAUSED, meaning a
+// paused system never surfaces the v1 gate at all.
+function entryPoint(live: LiveParams): string {
+  if (live.systemPaused) return 'New requests globally paused';
+  if (live.v1Paused) return 'create_outcome_request_v2_coin<CoinType> only';
+  return 'create_outcome_request_v2_coin<CoinType> + create_outcome_request';
 }
 
 const ZERO_BI = BigInt(0);
@@ -64,7 +89,8 @@ function buildParams(live: LiveParams | null): { label: string; value: string }[
       label: 'Provider onboarding',
       value: live ? (live.paused ? 'paused' : 'open (not paused)') : '—',
     },
-    { label: 'Payment assets (V2)', value: 'wCOSMO · CASH · SUPRA (since 2026-07-11)' },
+    { label: 'Request entry point', value: live ? entryPoint(live) : '—' },
+    { label: 'Payment assets', value: 'wCOSMO · CASH · SUPRA (since 2026-07-11)' },
     { label: 'Required minimum deposit', value: live ? wcAmt(live.minBond) : '—' },
     {
       label: 'Per-provider limit',
@@ -76,7 +102,7 @@ function buildParams(live: LiveParams | null): { label: string; value: string }[
         ? `${live.globalCap > ZERO_BI ? wcAmt(live.globalCap) : 'uncapped'} (${fmtAmt(live.totalBonded)} deposited today)`
         : '—',
     },
-    { label: 'Active jobs per provider', value: '1 (guarded v1)' },
+    { label: 'Active jobs per provider', value: '1 (guarded phase)' },
     {
       label: 'No-delivery penalty',
       value: '10% of the required deposit, paid to the buyer (fixed at accept)',
@@ -502,8 +528,11 @@ export default function ComputeLanding() {
               </tbody>
             </table>
             <p className="mt-3 font-mono text-[10px] leading-relaxed text-slate-600">
-              Values are read live from Supra Mainnet (chain 8) provider_vault views on page
-              load. All parameters are v1 working values and can change through governance.
+              Values are read live from Supra Mainnet (chain 8) provider_vault and compute_rfq
+              views on page load. The request entry point is a live gate: the older
+              wCOSMO-only request function can be closed for new requests without touching
+              jobs already running, refunds or exits. All parameters are working values of the
+              guarded phase and can change through governance.
             </p>
           </div>
           <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
