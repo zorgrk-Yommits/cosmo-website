@@ -506,6 +506,37 @@ export default function HomePage() {
         </p>
       </section>
 
+      {/* COSMO Assurance — compact entry point to the research track. Deliberately small
+          and explicitly labelled research/read-only: it must not read as a live product
+          card next to the Mainnet claims above. */}
+      <section className="relative z-10 max-w-7xl mx-auto px-6 pb-24">
+        <div className="rounded-2xl border border-sky-500/25 bg-sky-500/[0.03] p-6 md:p-8">
+          <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+            <div className="max-w-2xl">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-500/15 text-sky-300">
+                  <Radar className="h-3.5 w-3.5" strokeWidth={2.2} />
+                </span>
+                <h2 className="font-mono text-lg font-bold text-white">COSMO Assurance</h2>
+                <span className="rounded-full border border-sky-500/40 bg-sky-500/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-sky-300">
+                  Research prototype · Read-only
+                </span>
+              </div>
+              <p className="mt-3 font-sans text-sm leading-relaxed text-slate-400">
+                Independent checks for economically critical data.
+              </p>
+            </div>
+            <Link
+              href="/assurance/"
+              className="inline-flex shrink-0 items-center gap-2 self-start rounded-xl border border-sky-500/40 bg-sky-500/10 px-5 py-2.5 font-mono text-sm text-sky-200 transition-all hover:border-sky-400 hover:bg-sky-500/15 md:self-auto"
+            >
+              Explore Assurance
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="relative z-10 border-t border-white/[0.06] py-8 text-center">
         <p className="font-mono text-xs text-slate-600">
