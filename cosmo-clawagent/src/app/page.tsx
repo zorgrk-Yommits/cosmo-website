@@ -8,6 +8,7 @@ import {
   Brain,
   Crown,
   Database,
+  Lock,
   Radar,
   ScrollText,
   Search,
@@ -16,6 +17,8 @@ import {
 } from 'lucide-react';
 import BentoItem from '@/components/ui/terminal-bento-grid';
 import IntelligenceLoop from '@/components/IntelligenceLoop';
+import LayerStack from '@/components/LayerStack';
+import PrimitiveChain from '@/components/PrimitiveChain';
 
 const agents = [
   {
@@ -226,48 +229,65 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* The Primitive — positioning: COSMO is the settlement primitive, not the venue */}
+      {/* The Primitive — what COSMO does, shown rather than argued. The layer stack does the
+          work three "not a competitor" sentences used to attempt; the chain is the primitive
+          itself. Honest limits are bundled into the amber box instead of dampening every
+          paragraph. */}
       <section className="relative z-10 max-w-7xl mx-auto px-6 pb-8">
         <div className="rounded-2xl border border-purple-500/20 bg-white/[0.02] p-8 md:p-10 backdrop-blur">
           <div className="flex items-center gap-2 mb-5">
             <span className="w-2 h-2 rounded-full bg-purple-400" />
             <span className="font-mono text-xs uppercase tracking-[0.2em] text-purple-300/80">
-              The primitive, not the venue
+              The primitive
             </span>
           </div>
 
-          <h2 className="font-mono text-2xl md:text-3xl font-bold text-white mb-2 leading-snug max-w-4xl">
-            COSMO does not compete to be the venue. COSMO defines the primitive:{' '}
-            <span className="neon-text-purple">
-              request, bond, capability, atomic settlement, accountability.
-            </span>
+          <h2 className="font-mono text-2xl md:text-3xl font-bold text-white mb-8 leading-snug max-w-4xl">
+            COSMO defines the primitive: an agent&apos;s commitment becomes{' '}
+            <span className="neon-text-purple">binding on-chain</span>, and settlement either
+            completes in full or reverts.
           </h2>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-            <p className="text-slate-300 text-base leading-relaxed font-sans">
-              COSMO works at the settlement-primitive layer: how an autonomous agent posts a
-              request, how a maker collateralizes its commitment with a bond, and how both legs
-              settle atomically on Supra Move, with no trusted operator in the settlement path.
-            </p>
-            <p className="text-slate-400 text-base leading-relaxed font-sans">
-              Today, that primitive is proven for value-for-value execution, and a first
-              outcome-based compute market is live in a deliberately guarded v1 — one active job
-              per provider, deterministic workloads, with the first real job settled on Mainnet.
-              The next step is broader digitally verifiable work: data access, signed outputs,
-              API responses, capabilities, and other machine-to-machine obligations where
-              delivery can be checked cryptographically or on-chain — extending toward general
-              service settlement through dedicated attestation layers.
-            </p>
+          <LayerStack />
+
+          <div className="mt-10">
+            <PrimitiveChain />
           </div>
 
-          <p className="mt-8 max-w-4xl font-mono text-[11px] leading-relaxed text-slate-600">
-            Market, liquidity and trading rails are SupraFX&apos;s domain; COSMO is complementary, not
-            a competitor, and works one layer down as the execution and accountability primitive. The
-            current proven capability is accountable execution, demonstrated via an RFQ-based Mainnet
-            round-trip. A first outcome-based compute market is live in a deliberately guarded v1
-            (one active job per provider, deterministic workloads); broader service settlement
-            remains roadmap — and COSMO is not permissionless yet.
-          </p>
+          {/* The chain claims LIVE; this line is what backs it. Keep it as evidence with
+              links, never as an adjective. */}
+          {/* slate-400, not slate-500: at 11px the dimmer token lands at 4.23:1 and misses AA.
+              This line is the evidence for the chain's LIVE badges — dimming it defeats it. */}
+          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[11px] text-slate-400">
+            <span className="text-slate-300">Proven on Supra Mainnet:</span>
+            <Link href="/demo/" className="text-purple-300/80 underline-offset-4 hover:underline">
+              RFQ round-trip settled
+            </Link>
+            <Link href="/compute/" className="text-purple-300/80 underline-offset-4 hover:underline">
+              3 outcome-based compute jobs settled
+            </Link>
+            <span>all three license gates fired and passed</span>
+          </div>
+
+          {/* Honest limits, bundled and visible — same pattern as /compute's honesty box. */}
+          <div className="mt-10 rounded-xl border border-amber-500/20 bg-amber-500/[0.04] p-5">
+            <div className="flex items-center gap-2 mb-2">
+              <Lock className="h-4 w-4 text-amber-300" />
+              <h3 className="font-mono text-sm text-slate-100">
+                Guarded v1 — what is deliberately small
+              </h3>
+            </div>
+            <p className="font-sans text-sm leading-relaxed text-slate-400">
+              The primitive is proven end-to-end on Mainnet; the access to it is not open. Quotes
+              flow through a signed quote path we operate — a quality gate, not a permissionless
+              market. The outcome-based compute market runs one active job per provider on
+              deterministic workloads. Seven of the eight agents above are roadmap; only COSMO
+              acts on-chain today. The license accumulates no reputation score yet — the trade
+              record lives in transaction events. Broader service settlement — data access,
+              signed outputs, API responses — is where the primitive is built to extend next, and
+              it is not built yet.
+            </p>
+          </div>
         </div>
       </section>
 
