@@ -131,3 +131,31 @@ export async function submitJob(payload: JobSubmission): Promise<{ id: string; s
 export function specUrl(id: string): string {
   return `${API_BASE}/jobs/${encodeURIComponent(id)}/spec`;
 }
+
+// ---- Wallet offer flow (M3) -------------------------------------------------
+
+export interface OfferTerms {
+  jobId: string;
+  providerId: string;
+  price: string;
+  deliverySecs: number;
+  note?: string;
+}
+
+export interface OfferChallenge {
+  challenge: string; // signed TEXT (server rebuilds and compares byte-exact)
+  hexMessage: string; // what StarKey signMessage expects as `message`
+  nonce: string;
+  expiresTs: number;
+}
+
+export async function requestOfferChallenge(terms: OfferTerms): Promise<OfferChallenge> {
+  return request('/offers/challenge', { method: 'POST', body: JSON.stringify(terms) });
+}
+
+export async function submitWalletOffer(
+  terms: OfferTerms,
+  proof: { message: string; signature: string; publicKey: string; address: string },
+): Promise<{ id: string; status: string }> {
+  return request('/offers', { method: 'POST', body: JSON.stringify({ ...terms, proof }) });
+}

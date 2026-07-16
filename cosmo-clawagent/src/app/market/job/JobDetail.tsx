@@ -15,6 +15,7 @@ import { STATUS_BADGE, buildSteps, fmtRel, fmtTs } from '../lib/marketStatus';
 import { specUrl, type TxRefs } from '../lib/marketApi';
 import StepRail from '../components/StepRail';
 import OfferCard from '../components/OfferCard';
+import OfferForm from '../components/OfferForm';
 import HonestyBox from '../components/HonestyBox';
 
 const TX_LABELS: { key: keyof TxRefs; label: string }[] = [
@@ -225,6 +226,16 @@ export default function JobDetail() {
                 Prices are in {job.budgetAsset}. Offer selection and the on-chain escrow flow
                 arrive in the next release stage of this pilot.
               </p>
+              {job.status === 'approved' && (
+                <div className="mt-4">
+                  <OfferForm
+                    jobId={job.id}
+                    budgetAsset={job.budgetAsset}
+                    providers={providers}
+                    onSubmitted={() => void refresh()}
+                  />
+                </div>
+              )}
             </div>
           </>
         )}
