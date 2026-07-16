@@ -169,11 +169,10 @@ export default function HomePage() {
             </p>
 
             <p className="text-slate-400 text-lg leading-relaxed mb-10 font-sans max-w-xl">
-              COSMO explores the execution layer for the emerging Agent Economy on Supra —
-              complementary to SupraOS and SupraFX, not a competitor. SupraOS coordinates agents,
-              SupraFX provides market and liquidity rails, and COSMO turns autonomous intent into
-              accountable, atomic execution. Built on Supra, the execution layer is live on
-              Mainnet today — a proof of accountable execution via an RFQ-based round-trip.
+              COSMO is the execution layer of the agent stack on Supra: SupraOS coordinates
+              agents, SupraFX moves markets and liquidity, COSMO settles the work — bonded,
+              atomic, accountable. Live on Supra Mainnet today; the proofs on this page link
+              straight to the chain.
             </p>
 
             <div className="flex flex-wrap items-center justify-start gap-4">
@@ -214,7 +213,7 @@ export default function HomePage() {
             { label: 'Supra Mainnet', value: 'Live' },
             { label: 'Move modules deployed', value: '5' },
             { label: 'Agents — architecture', value: '8' },
-            { label: 'round-trip settled', value: '1' },
+            { label: 'settled on-chain proofs', value: '4' },
           ].map((stat) => (
             <div
               key={stat.label}
