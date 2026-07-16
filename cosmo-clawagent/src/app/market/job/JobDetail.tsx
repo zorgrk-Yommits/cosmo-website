@@ -16,6 +16,7 @@ import { specUrl, type TxRefs } from '../lib/marketApi';
 import StepRail from '../components/StepRail';
 import OfferCard from '../components/OfferCard';
 import OfferForm from '../components/OfferForm';
+import BuyerFlow from '../components/BuyerFlow';
 import HonestyBox from '../components/HonestyBox';
 
 const TX_LABELS: { key: keyof TxRefs; label: string }[] = [
@@ -223,8 +224,7 @@ export default function JobDetail() {
                 </p>
               )}
               <p className="mt-4 font-mono text-[11px] text-slate-500">
-                Prices are in {job.budgetAsset}. Offer selection and the on-chain escrow flow
-                arrive in the next release stage of this pilot.
+                Prices are in {job.budgetAsset}.
               </p>
               {job.status === 'approved' && (
                 <div className="mt-4">
@@ -237,6 +237,9 @@ export default function JobDetail() {
                 </div>
               )}
             </div>
+
+            {/* ── Buyer on-chain flow (M4) ── */}
+            <BuyerFlow job={job} offers={offers} providers={providers} onChanged={() => void refresh()} />
           </>
         )}
       </section>

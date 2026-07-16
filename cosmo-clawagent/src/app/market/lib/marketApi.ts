@@ -159,3 +159,102 @@ export async function submitWalletOffer(
 ): Promise<{ id: string; status: string }> {
   return request('/offers', { method: 'POST', body: JSON.stringify({ ...terms, proof }) });
 }
+
+// ---- On-chain flow (M4) -------------------------------------------------------
+
+export interface FlowEscrowParams {
+  workloadUri: string;
+  inputHash: string;
+  paymentFa: string;
+  assetSymbol: string;
+  assetDecimals: number;
+  maxPriceQuants: string;
+  minBondQuants: string;
+  jobDeadlineSecs: number;
+  reviewWindowSecs: number;
+}
+
+export interface FlowState {
+  jobId: string;
+  status: JobStatus;
+  selectedOfferId: string | null;
+  buyerWallet: string | null;
+  requestId: number | null;
+  jobIdOnchain: number | null;
+  txRefs: TxRefs;
+  rail: {
+    packageAddr: string;
+    chainId: number;
+    paused: boolean;
+    v2Initialized: boolean;
+    onboardingPaused: boolean;
+    quoteTtlSecs: number;
+  };
+  escrowParams: FlowEscrowParams | null;
+  providerChecks: {
+    wallet: string;
+    eligible: boolean;
+    hasCapacity: boolean;
+    bondQuants: string;
+    bondCoversMinimum: boolean;
+  } | null;
+}
+
+export async function requestSelectChallenge(
+  jobId: string,
+  offerId: string,
+): Promise<OfferChallenge> {
+  return request(`/jobs/${encodeURIComponent(jobId)}/select/challenge`, {
+    method: 'POST',
+    body: JSON.stringify({ offerId }),
+  });
+}
+
+export async function submitSelect(
+  jobId: string,
+  offerId: string,
+  proof: { message: string; signature: string; publicKey: string; address: string },
+): Promise<{ jobId: string; offerId: string; buyerWallet: string }> {
+  return request(`/jobs/${encodeURIComponent(jobId)}/select`, {
+    method: 'POST',
+    body: JSON.stringify({ offerId, proof }),
+  });
+}
+
+export async function fetchFlow(jobId: string): Promise<FlowState> {
+  return request(`/jobs/${encodeURIComponent(jobId)}/flow`);
+}
+
+export async function confirmRequest(
+  jobId: string,
+  txHash?: string,
+): Promise<{ jobId: string; requestId: number }> {
+  return request(`/jobs/${encodeURIComponent(jobId)}/confirm-request`, {
+    method: 'POST',
+    body: JSON.stringify(txHash ? { txHash } : {}),
+  });
+}
+
+export interface ArmResult {
+  txHash: string;
+  requestId: number;
+  solver: string;
+  priceQuants: string;
+  signedAtSecs: number;
+  expiresAtSecs: number;
+  payloadSha3: string;
+}
+
+export async function armQuote(jobId: string): Promise<ArmResult> {
+  return request(`/jobs/${encodeURIComponent(jobId)}/arm`, { method: 'POST', body: '{}' });
+}
+
+export async function confirmAccept(
+  jobId: string,
+  txHash?: string,
+): Promise<{ jobId: string; jobIdOnchain: number }> {
+  return request(`/jobs/${encodeURIComponent(jobId)}/confirm-accept`, {
+    method: 'POST',
+    body: JSON.stringify(txHash ? { txHash } : {}),
+  });
+}
