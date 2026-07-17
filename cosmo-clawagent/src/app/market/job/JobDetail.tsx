@@ -20,6 +20,7 @@ import FlowRail from '../components/FlowRail';
 import OfferCard from '../components/OfferCard';
 import OfferForm from '../components/OfferForm';
 import NextStepPanel from '../components/NextStepPanel';
+import DeliverPanel from '../components/DeliverPanel';
 import HonestyBox from '../components/HonestyBox';
 
 const TX_LABELS: { key: keyof TxRefs; label: string }[] = [
@@ -193,6 +194,11 @@ export default function JobDetail() {
               providers={providers}
               onChanged={() => void refresh()}
             />
+
+            {/* ── Provider delivery (M5) ── */}
+            {job.jobIdOnchain != null && job.status !== 'settled' && (
+              <DeliverPanel job={job} providers={providers} onChanged={() => void refresh()} />
+            )}
 
             {/* ── Lifecycle ── */}
             <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-6">

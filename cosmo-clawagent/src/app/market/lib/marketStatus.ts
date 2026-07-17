@@ -30,6 +30,14 @@ export const STATUS_BADGE: Record<JobStatus, StatusBadge> = {
     label: 'On-chain execution',
     cls: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300',
   },
+  delivered: {
+    label: 'Delivered — awaiting approval',
+    cls: 'border-amber-500/40 bg-amber-500/10 text-amber-300',
+  },
+  settled: {
+    label: 'Settled',
+    cls: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300',
+  },
 };
 
 export type StepState = 'done' | 'active' | 'pending';
@@ -48,23 +56,22 @@ export interface UnifiedStep {
   label: string;
   onchain: boolean;
   buyerAction?: 1 | 2 | 3; // the three buttons the buyer actually presses
-  future?: boolean; // M5 — visible as "soon", never actionable
   state: StepState;
   txKey?: keyof TxRefs;
 }
 
 // The unified lifecycle: ONE rail for the whole page. The buyer's three
 // action steps (select / escrow / accept) are emphasized; arming is a server
-// detail and deliberately has no node of its own. Deliver/settle exist on the
-// Move rail already but have no product surface yet (M5).
+// detail and deliberately has no node of its own. Delivery is the provider's
+// step; approval/settlement closes the loop (M5).
 const UNIFIED_STEPS: Omit<UnifiedStep, 'state'>[] = [
   { id: 'review', label: 'Posted & review', onchain: false },
   { id: 'offers', label: 'Offers', onchain: false },
   { id: 'select', label: 'Select offer', onchain: false, buyerAction: 1 },
   { id: 'escrow', label: 'Fund escrow', onchain: true, buyerAction: 2, txKey: 'create' },
   { id: 'accept', label: 'Accept quote', onchain: true, buyerAction: 3, txKey: 'accept' },
-  { id: 'deliver', label: 'Delivery', onchain: true, future: true, txKey: 'deliver' },
-  { id: 'settle', label: 'Settlement', onchain: true, future: true, txKey: 'settle' },
+  { id: 'deliver', label: 'Delivery', onchain: true, txKey: 'deliver' },
+  { id: 'settle', label: 'Settlement', onchain: true, txKey: 'settle' },
 ];
 
 // The rail derives from ids/fields, not just the coarse off-chain status, so
@@ -78,8 +85,12 @@ export interface UnifiedStepInput {
 
 export function buildUnifiedSteps(job: UnifiedStepInput, offersCount: number): UnifiedStep[] {
   let active: number;
-  if (job.jobIdOnchain != null) {
-    active = 5; // deliver "active" = waiting on M5, rendered passively
+  if (job.status === 'settled') {
+    active = 7; // beyond the last index — everything done
+  } else if (job.status === 'delivered') {
+    active = 6; // settlement (buyer approval or review timeout)
+  } else if (job.jobIdOnchain != null) {
+    active = 5; // delivery — the provider's turn
   } else if (job.requestId != null) {
     active = 4; // accept (arming happens invisibly inside this step)
   } else if (job.selectedOfferId) {

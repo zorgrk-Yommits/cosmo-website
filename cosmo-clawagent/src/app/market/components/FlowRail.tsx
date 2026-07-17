@@ -4,8 +4,7 @@
 // (replaces the old StepRail + BuyerFlow step circles pair). Every node keeps
 // its explicit OFF-CHAIN / ON-CHAIN badge (the trust boundary is rendered,
 // not implied); the buyer's three action steps are visually emphasized with
-// numbered dots and a "you" pill; M5 nodes are tagged "soon" and never look
-// actionable.
+// numbered dots and a "you" pill.
 
 import { Check, Circle, Link2, Server } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -35,8 +34,6 @@ export default function FlowRail({
     <div className="overflow-x-auto">
       <ol className="flex min-w-max items-start gap-0" aria-label="Job lifecycle">
         {steps.map((step, i) => {
-          // M5 steps never pulse like an action — they wait, amber-tinted.
-          const waitingOnM5 = step.future && step.state === 'active';
           const s = STATE_STYLE[step.state];
           const isBuyer = step.buyerAction !== undefined;
           const tx = step.txKey ? job.txRefs[step.txKey] : undefined;
@@ -64,17 +61,12 @@ export default function FlowRail({
                   className={cn(
                     'relative inline-flex shrink-0 items-center justify-center rounded-full border',
                     isBuyer ? 'h-8 w-8 font-mono text-xs font-bold' : 'h-6 w-6',
-                    waitingOnM5
-                      ? 'border-amber-500/50 bg-amber-500/10 text-amber-300'
-                      : s.dot,
+                    s.dot,
                     isBuyer && step.state === 'active' && 'ring-2 ring-purple-500/30',
                   )}
                 >
-                  {step.state === 'active' && !step.future && (
+                  {step.state === 'active' && (
                     <span className="absolute inset-0 animate-ping rounded-full border border-purple-400/50" />
-                  )}
-                  {waitingOnM5 && (
-                    <span className="absolute inset-0 animate-pulse rounded-full border border-amber-400/40" />
                   )}
                   {step.state === 'done' ? (
                     <Check className={isBuyer ? 'h-4 w-4' : 'h-3 w-3'} />
@@ -87,7 +79,7 @@ export default function FlowRail({
                 <span
                   className={cn(
                     'whitespace-nowrap font-mono text-[10px] uppercase tracking-wider',
-                    waitingOnM5 ? 'text-amber-300' : s.text,
+                    s.text,
                     isBuyer && 'font-bold',
                   )}
                 >
@@ -104,11 +96,6 @@ export default function FlowRail({
                   {step.onchain ? <Link2 className="h-2.5 w-2.5" /> : <Server className="h-2.5 w-2.5" />}
                   {step.onchain ? 'on-chain' : 'off-chain'}
                 </span>
-                {step.future && (
-                  <span className="rounded-full border border-slate-500/30 bg-slate-500/10 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-slate-500">
-                    soon (M5)
-                  </span>
-                )}
                 {tx && (
                   <a
                     href={`${EXPLORER_TX}${tx}`}

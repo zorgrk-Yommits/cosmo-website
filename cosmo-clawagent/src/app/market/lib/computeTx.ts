@@ -128,3 +128,24 @@ export function acceptQuoteV2(p: {
 export function cancelRequestV2(p: { requestId: number }): ComputeEntryCall {
   return call('cancel_request_v2', [u64Arg(p.requestId)]);
 }
+
+// deliver_result_v2(solver, job_id, result_hash, result_uri) —
+// compute_rfq.move:2519. SOLVER signs; requires on-chain status ACTIVE and
+// now < job_deadline_secs. result_hash must be exactly 32 bytes (the
+// attestation's SHA3-256); result_uri is the attestation URL (event-only).
+export function deliverResultV2(p: {
+  jobIdOnchain: number;
+  resultHash: string; // 0x-hex, 32 bytes
+  resultUri: string;
+}): ComputeEntryCall {
+  const h = p.resultHash.toLowerCase().replace(/^0x/, '');
+  if (h.length !== 64) throw new Error('result_hash must be 32 bytes (64 hex chars)');
+  return call('deliver_result_v2', [u64Arg(p.jobIdOnchain), hexArg(p.resultHash), utf8Arg(p.resultUri)]);
+}
+
+// approve_delivery_v2(buyer, job_id) — compute_rfq.move:2559. BUYER signs;
+// requires DELIVERED; settles ATOMICALLY (pays the solver price + dispute
+// bond in this one transaction).
+export function approveDeliveryV2(p: { jobIdOnchain: number }): ComputeEntryCall {
+  return call('approve_delivery_v2', [u64Arg(p.jobIdOnchain)]);
+}

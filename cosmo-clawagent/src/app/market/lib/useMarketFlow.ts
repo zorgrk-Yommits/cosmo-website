@@ -30,7 +30,9 @@ import {
   ApiError,
   armQuote,
   confirmAccept,
+  confirmDeliver,
   confirmRequest,
+  confirmSettle,
   fetchFlow,
   requestSelectChallenge,
   submitSelect,
@@ -39,8 +41,14 @@ import {
 } from './marketApi';
 import { connectWallet, signChallenge, sameWallet } from './marketWallet';
 import { connectMainnetWallet, signAndSendCompute } from './computeSend';
-import { acceptQuoteV2, createOutcomeRequestV2 } from './computeTx';
-import { fetchOnchainQuote, type OnchainQuote } from './computeViews';
+import { acceptQuoteV2, approveDeliveryV2, createOutcomeRequestV2 } from './computeTx';
+import {
+  fetchOnchainJob,
+  fetchOnchainQuote,
+  JOB_ONCHAIN_STATUS,
+  type OnchainJob,
+  type OnchainQuote,
+} from './computeViews';
 
 export type FlowBusy =
   | null
@@ -49,7 +57,8 @@ export type FlowBusy =
   | 'confirming'
   | 'arming'
   | 'accepting'
-  | 'confirming-accept';
+  | 'confirming-accept'
+  | 'approving';
 
 export type ArmState = 'idle' | 'arming' | 'armed' | 'failed' | 'expired';
 
@@ -74,11 +83,14 @@ export interface MarketFlow {
   armState: ArmState;
   armError: string | null;
   autoArmsLeft: number;
+  onchainJob: OnchainJob | null; // M5: live get_job_v2 during deliver/approve
+  onchainJobChecked: boolean;
   connect: () => Promise<void>;
   selectOffer: (offerId: string) => Promise<void>;
   createEscrow: () => Promise<void>;
   rearm: () => Promise<void>; // manual retry/re-arm — resets the auto budget
   accept: () => Promise<void>;
+  approve: () => Promise<void>; // M5: buyer approves delivery (settles atomically)
   refreshFlow: () => Promise<void>;
 }
 
@@ -98,8 +110,11 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
   const [armError, setArmError] = useState<string | null>(null);
   const [autoArmsLeft, setAutoArmsLeft] = useState(AUTO_ARM_BUDGET);
   const [nowSec, setNowSec] = useState(() => Math.floor(Date.now() / 1000));
+  // Tri-state like quote: undefined = not yet read.
+  const [onchainJob, setOnchainJob] = useState<OnchainJob | null | undefined>(undefined);
   const autoArmsRef = useRef(AUTO_ARM_BUDGET);
   const armInFlight = useRef(false);
+  const syncRef = useRef({ deliver: false, settle: false });
   const changedRef = useRef(onChanged);
   changedRef.current = onChanged;
 
@@ -148,6 +163,61 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
     const iv = setInterval(() => setNowSec(Math.floor(Date.now() / 1000)), 1_000);
     return () => clearInterval(iv);
   }, [flow?.requestId, flow?.jobIdOnchain]);
+
+  // M5: poll get_job_v2 during the deliver/approve phase. Separate from the
+  // quote poll (which is gated on jobIdOnchain == null). Stops once the
+  // off-chain status reaches the terminal 'settled'.
+  useEffect(() => {
+    const jid = flow?.jobIdOnchain;
+    if (jid == null || flow?.status === 'settled') return;
+    let stop = false;
+    const tick = async () => {
+      try {
+        const j = await fetchOnchainJob(jid);
+        if (!stop) setOnchainJob(j);
+      } catch {
+        // keep the last value — unreadable chain state is never a "no"
+      }
+    };
+    void tick();
+    const iv = setInterval(() => void tick(), 5_000);
+    return () => {
+      stop = true;
+      clearInterval(iv);
+    };
+  }, [flow?.jobIdOnchain, flow?.status]);
+
+  // M5 self-heal: if the chain is ahead of the off-chain record (DELIVERED or
+  // SETTLED without a confirm), post the confirm once so the state can never
+  // wedge behind the chain. Guarded refs prevent repeat posts; a failed
+  // confirm re-arms the guard so a later poll retries.
+  useEffect(() => {
+    if (!jobId || !flow || onchainJob === undefined || onchainJob === null) return;
+    if (
+      onchainJob.status === JOB_ONCHAIN_STATUS.DELIVERED &&
+      flow.status === 'onchain' &&
+      !syncRef.current.deliver
+    ) {
+      syncRef.current.deliver = true;
+      void confirmDeliver(jobId)
+        .then(() => refreshFlow())
+        .catch(() => {
+          syncRef.current.deliver = false;
+        });
+    }
+    if (
+      onchainJob.status === JOB_ONCHAIN_STATUS.SETTLED &&
+      flow.status !== 'settled' &&
+      !syncRef.current.settle
+    ) {
+      syncRef.current.settle = true;
+      void confirmSettle(jobId)
+        .then(() => refreshFlow())
+        .catch(() => {
+          syncRef.current.settle = false;
+        });
+    }
+  }, [jobId, flow, onchainJob, refreshFlow]);
 
   // Effective expiry: the chain read lags an arm by up to one 5s poll tick, so
   // right after arming the ArmResult's expiry is authoritative.
@@ -351,6 +421,50 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
     });
   }, [jobId, run]);
 
+  // M5: buyer approves the delivery — approve_delivery_v2 settles atomically
+  // (price + dispute bond are paid out to the solver in this one tx).
+  const approve = useCallback(async () => {
+    if (!jobId) return;
+    await run('approving', async () => {
+      const f = await fetchFlow(jobId);
+      if (typeof f.jobIdOnchain !== 'number') throw new Error('No on-chain job to approve.');
+      // Anti-drift: the chain decides whether there is anything to approve.
+      const jv = await fetchOnchainJob(f.jobIdOnchain);
+      if (jv.status === JOB_ONCHAIN_STATUS.SETTLED) {
+        await confirmSettle(jobId).catch(() => undefined);
+        return 'Already settled on-chain.';
+      }
+      if (jv.status !== JOB_ONCHAIN_STATUS.DELIVERED) {
+        throw new Error('No delivered result on-chain yet — nothing to approve.');
+      }
+      const account = await connectMainnetWallet();
+      setWallet(account);
+      if (f.buyerWallet && !sameWallet(account, f.buyerWallet)) {
+        throw new Error('Connected wallet is not the buyer wallet for this job.');
+      }
+      if (!sameWallet(account, jv.buyer)) {
+        throw new Error('Connected wallet is not the on-chain buyer for this job.');
+      }
+      const txHash = await signAndSendCompute(
+        approveDeliveryV2({ jobIdOnchain: f.jobIdOnchain }),
+        account,
+      );
+      let lastErr: Error | null = null;
+      for (let i = 0; i < 10; i++) {
+        await sleep(3_000);
+        try {
+          await confirmSettle(jobId, txHash);
+          return 'Delivery approved — job settled, payout released to the provider.';
+        } catch (e) {
+          lastErr = e as Error;
+        }
+      }
+      throw new Error(
+        `Approve transaction ${txHash} was sent, but settlement could not be confirmed yet (${lastErr?.message}). Reload this page in a minute — funds are safe.`,
+      );
+    });
+  }, [jobId, run]);
+
   return {
     flow,
     flowChecked,
@@ -365,11 +479,14 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
     armState,
     armError,
     autoArmsLeft,
+    onchainJob: onchainJob ?? null,
+    onchainJobChecked: onchainJob !== undefined,
     connect,
     selectOffer,
     createEscrow,
     rearm,
     accept,
+    approve,
     refreshFlow,
   };
 }

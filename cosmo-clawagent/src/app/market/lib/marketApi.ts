@@ -2,7 +2,14 @@
 // origin via nginx). Shapes mirror the backend's PUBLIC projections exactly —
 // contactEmail/moderationNote/sigProof never appear here by design.
 
-export type JobStatus = 'submitted' | 'approved' | 'rejected' | 'selected' | 'onchain';
+export type JobStatus =
+  | 'submitted'
+  | 'approved'
+  | 'rejected'
+  | 'selected'
+  | 'onchain'
+  | 'delivered'
+  | 'settled';
 
 export interface TxRefs {
   create?: string;
@@ -30,6 +37,9 @@ export interface MarketJob {
   selectedOfferId?: string;
   requestId?: number;
   jobIdOnchain?: number;
+  // Frozen delivery attestation (M5) — hash of the exact bytes served at
+  // /jobs/:id/attestation; goes on-chain as result_hash.
+  attestationHash?: string;
   txRefs: TxRefs;
 }
 
@@ -190,6 +200,10 @@ export interface FlowState {
     onboardingPaused: boolean;
     quoteTtlSecs: number;
   };
+  deliver: {
+    attestationUri: string;
+    attestationHash: string | null;
+  } | null;
   escrowParams: FlowEscrowParams | null;
   providerChecks: {
     wallet: string;
@@ -254,6 +268,34 @@ export async function confirmAccept(
   txHash?: string,
 ): Promise<{ jobId: string; jobIdOnchain: number }> {
   return request(`/jobs/${encodeURIComponent(jobId)}/confirm-accept`, {
+    method: 'POST',
+    body: JSON.stringify(txHash ? { txHash } : {}),
+  });
+}
+
+// ---- M5 delivery ------------------------------------------------------------
+
+// URL of the frozen delivery attestation — this exact URL goes on-chain as
+// result_uri; the sha3-256 of its bytes is result_hash.
+export function attestationUrl(id: string): string {
+  return `${API_BASE}/jobs/${encodeURIComponent(id)}/attestation`;
+}
+
+export async function confirmDeliver(
+  jobId: string,
+  txHash?: string,
+): Promise<{ jobId: string; status: JobStatus; resultHash: string }> {
+  return request(`/jobs/${encodeURIComponent(jobId)}/confirm-deliver`, {
+    method: 'POST',
+    body: JSON.stringify(txHash ? { txHash } : {}),
+  });
+}
+
+export async function confirmSettle(
+  jobId: string,
+  txHash?: string,
+): Promise<{ jobId: string; status: JobStatus }> {
+  return request(`/jobs/${encodeURIComponent(jobId)}/confirm-settle`, {
     method: 'POST',
     body: JSON.stringify(txHash ? { txHash } : {}),
   });

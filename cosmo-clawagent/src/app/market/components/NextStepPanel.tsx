@@ -12,6 +12,7 @@ import {
   AlertTriangle,
   CheckCircle2,
   Clock3,
+  FileJson,
   Hourglass,
   Loader2,
   RefreshCw,
@@ -21,9 +22,10 @@ import {
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { EXPLORER_TX } from '@/lib/mainnetOnchain';
-import type { MarketJob, MarketOffer, MarketProvider } from '../lib/marketApi';
+import { attestationUrl, type MarketJob, type MarketOffer, type MarketProvider } from '../lib/marketApi';
 import { useMarketFlow, QUOTE_SAFETY_SECS } from '../lib/useMarketFlow';
-import { fmtDelivery } from '../lib/marketStatus';
+import { JOB_ONCHAIN_STATUS } from '../lib/computeViews';
+import { fmtDelivery, fmtRel, fmtTs } from '../lib/marketStatus';
 import { CTA_BIG, CTA_DANGER, BTN_GHOST } from './cta';
 
 function fmtQuants(quants: string, decimals: number): string {
@@ -52,7 +54,9 @@ type Stage =
   | 'accept'
   | 'arm-failed'
   | 'expired-manual'
-  | 'active';
+  | 'active'
+  | 'approve'
+  | 'settled';
 
 const STAGE_STEP: Partial<Record<Stage, 1 | 2 | 3>> = {
   select: 1,
@@ -93,9 +97,22 @@ export default function NextStepPanel({
   const secsLeft = f.quoteExpiresAt !== null ? Math.max(0, f.quoteExpiresAt - nowSec) : 0;
   const quoteLive = f.armState === 'armed' && secsLeft > QUOTE_SAFETY_SECS;
   const txAccept = flow?.txRefs.accept ?? job.txRefs.accept;
+  const txRefs = flow?.txRefs ?? job.txRefs;
+  const oj = f.onchainJob;
 
   function deriveStage(): Stage {
-    if (jobIdOnchain != null) return 'active';
+    if (job.status === 'settled' || flow?.status === 'settled') return 'settled';
+    if (jobIdOnchain != null) {
+      if (oj?.status === JOB_ONCHAIN_STATUS.SETTLED) return 'settled'; // confirm-settle self-heals in the hook
+      if (
+        oj?.status === JOB_ONCHAIN_STATUS.DELIVERED ||
+        job.status === 'delivered' ||
+        flow?.status === 'delivered'
+      ) {
+        return 'approve';
+      }
+      return 'active';
+    }
     if (job.status === 'submitted') return 'moderation';
     if (job.status === 'rejected') return 'rejected';
     if (job.status === 'approved' && offers.length === 0) return 'awaiting-offers';
@@ -401,27 +418,137 @@ export default function NextStepPanel({
         )}
 
         {stage === 'active' && (
+          <div className="space-y-3">
+            <div className="flex items-start gap-3">
+              <Hourglass className="mt-0.5 h-5 w-5 shrink-0 text-purple-300" />
+              <p className="font-sans text-sm leading-relaxed text-slate-300">
+                <span className="font-bold text-slate-100">
+                  On-chain job #{jobIdOnchain} is active — the provider is working.
+                </span>{' '}
+                Nothing to do right now; the approval button appears here once the result is
+                delivered.
+                {txAccept && (
+                  <>
+                    {' '}
+                    <a
+                      href={`${EXPLORER_TX}${txAccept}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sky-400 hover:text-sky-300"
+                    >
+                      View the accept transaction
+                    </a>
+                    .
+                  </>
+                )}
+              </p>
+            </div>
+            {oj && nowSec <= oj.jobDeadlineSecs && (
+              <p className="flex items-center gap-2 font-mono text-xs text-slate-400">
+                <Clock3 className="h-3.5 w-3.5 text-emerald-300" />
+                Delivery due {fmtTs(oj.jobDeadlineSecs)}{' '}
+                <span className="text-slate-500">({fmtRel(oj.jobDeadlineSecs, nowSec)})</span>
+              </p>
+            )}
+            {oj && oj.status === JOB_ONCHAIN_STATUS.ACTIVE && nowSec > oj.jobDeadlineSecs && (
+              <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-amber-300">
+                <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                The delivery deadline has passed without a result. Delivery is no longer possible
+                on-chain; the escrow can be reclaimed by the buyer (claim_no_delivery). Contact us
+                and we will walk you through it.
+              </p>
+            )}
+          </div>
+        )}
+
+        {stage === 'approve' && (
+          <div className="space-y-4">
+            <p className="font-sans text-sm leading-relaxed text-slate-300">
+              The provider delivered a result. The on-chain result hash commits to this
+              attestation document byte-for-byte:
+            </p>
+            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+              <a
+                href={flow?.deliver?.attestationUri ?? attestationUrl(job.id)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 font-mono text-xs text-sky-400 hover:text-sky-300"
+              >
+                <FileJson className="h-3.5 w-3.5" />
+                View the attestation document
+              </a>
+              {(job.attestationHash ?? flow?.deliver?.attestationHash) && (
+                <p className="mt-2 break-all font-mono text-[11px] text-slate-400">
+                  SHA3-256: {job.attestationHash ?? flow?.deliver?.attestationHash}
+                  <span className="text-slate-500"> — the hash on-chain equals the SHA3-256 of that document.</span>
+                </p>
+              )}
+            </div>
+            {oj && oj.deliveredAt > 0 && (
+              <p className="flex items-center gap-2 font-mono text-xs text-slate-400">
+                <Clock3 className="h-3.5 w-3.5 text-amber-300" />
+                Review window until {fmtTs(oj.deliveredAt + oj.reviewWindowSecs)} — after that,
+                settlement can be triggered permissionlessly.
+              </p>
+            )}
+            <p className="font-mono text-[11px] leading-relaxed text-slate-500">
+              Something wrong with the result? An on-chain dispute path exists — contact us
+              before the review window ends and do not approve.
+            </p>
+            <button
+              type="button"
+              className={CTA_BIG}
+              disabled={f.busy !== null || oj?.status !== JOB_ONCHAIN_STATUS.DELIVERED}
+              onClick={() => void f.approve()}
+            >
+              {f.busy === 'approving' ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <CheckCircle2 className="h-5 w-5" />
+              )}
+              Approve delivery with StarKey
+            </button>
+            <p className="font-mono text-[11px] text-slate-500">
+              Approval settles atomically: the price and the provider bond are released in this
+              one transaction.
+            </p>
+          </div>
+        )}
+
+        {stage === 'settled' && (
           <div className="flex items-start gap-3">
             <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-300" />
             <p className="font-sans text-sm leading-relaxed text-slate-300">
-              <span className="font-bold text-emerald-300">
-                On-chain job #{jobIdOnchain} is active.
-              </span>{' '}
-              Delivery and settlement follow on the rail (M5) — nothing to do right now.
-              {txAccept && (
+              <span className="font-bold text-emerald-300">Job settled on-chain.</span>{' '}
+              {selectedOffer ? `${selectedOffer.price} ${job.budgetAsset}` : 'The payment'} was
+              paid out to the provider and the bond released — the marketplace loop is closed.
+              {txRefs.deliver && (
                 <>
                   {' '}
                   <a
-                    href={`${EXPLORER_TX}${txAccept}`}
+                    href={`${EXPLORER_TX}${txRefs.deliver}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sky-400 hover:text-sky-300"
                   >
-                    View the accept transaction
+                    Delivery transaction
                   </a>
-                  .
                 </>
               )}
+              {txRefs.settle && (
+                <>
+                  {txRefs.deliver ? ' · ' : ' '}
+                  <a
+                    href={`${EXPLORER_TX}${txRefs.settle}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sky-400 hover:text-sky-300"
+                  >
+                    Settlement transaction
+                  </a>
+                </>
+              )}
+              .
             </p>
           </div>
         )}
