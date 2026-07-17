@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Build-Snapshots und lokale Screenshots — nie committen
+/out.pre-*/
+/out.bak-*/
+/docs/screenshots/
