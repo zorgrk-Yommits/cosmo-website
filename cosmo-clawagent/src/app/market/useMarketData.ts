@@ -8,6 +8,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   fetchJob,
   fetchJobs,
+  fetchJobStatus,
   fetchProviders,
   type MarketJob,
   type MarketOffer,
@@ -82,4 +83,15 @@ export function useMarketJob(id: string | null) {
 export function useMarketProviders() {
   const fetcher = useCallback(() => fetchProviders(), []);
   return usePolled<MarketProvider[]>(fetcher);
+}
+
+// Lightweight status poll for jobs that are not publicly listed (submitted /
+// rejected): GET /jobs/:id/status answers for ANY status — knowing the id is
+// the capability. Used as the moderation fallback on the job detail page.
+export function useMarketJobStatus(id: string | null, enabled: boolean) {
+  const fetcher = useCallback(() => {
+    if (!id || !enabled) return Promise.reject(new Error('disabled'));
+    return fetchJobStatus(id);
+  }, [id, enabled]);
+  return usePolled<Awaited<ReturnType<typeof fetchJobStatus>>>(fetcher);
 }

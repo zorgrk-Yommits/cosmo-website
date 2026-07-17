@@ -5,10 +5,11 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Briefcase, PlusCircle, RefreshCw, Users } from 'lucide-react';
+import { Bookmark, Briefcase, PlusCircle, RefreshCw, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useMarketJobs } from './useMarketData';
 import { STATUS_BADGE, fmtRel, fmtTs } from './lib/marketStatus';
+import { getMyJobs, type MyJobEntry } from './lib/myJobs';
 import HonestyBox from './components/HonestyBox';
 
 export default function MarketHome() {
@@ -20,6 +21,10 @@ export default function MarketHome() {
     const id = setInterval(() => setNowSec(Math.floor(Date.now() / 1000)), 1000);
     return () => clearInterval(id);
   }, []);
+
+  // Effect-gated: localStorage must not touch the prerendered static HTML.
+  const [mine, setMine] = useState<MyJobEntry[]>([]);
+  useEffect(() => setMine(getMyJobs()), []);
 
   const list = jobs.data ?? null;
 
@@ -80,6 +85,46 @@ export default function MarketHome() {
           </Link>
         </div>
       </section>
+
+      {/* ── My jobs (browser-local) ── */}
+      {mine.length > 0 && (
+        <section className="relative z-10 mx-auto max-w-5xl px-6 py-4">
+          <div className="rounded-xl border border-purple-500/25 bg-purple-500/[0.04] p-6">
+            <div className="mb-4 flex items-center gap-2">
+              <Bookmark className="h-4 w-4 text-purple-300" />
+              <h2 className="font-mono text-sm font-bold text-slate-100">My jobs</h2>
+            </div>
+            <div className="space-y-2">
+              {mine.map((entry) => {
+                const live = list?.find((j) => j.id === entry.id) ?? null;
+                const badge = live ? STATUS_BADGE[live.status] : null;
+                return (
+                  <Link
+                    key={entry.id}
+                    href={`/market/job/?id=${encodeURIComponent(entry.id)}`}
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-white/10 bg-black/20 px-4 py-3 transition-all hover:border-purple-500/40"
+                  >
+                    <span className="font-mono text-sm text-slate-200">{entry.title}</span>
+                    <span
+                      className={cn(
+                        'rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider',
+                        badge
+                          ? badge.cls
+                          : 'border-slate-500/40 bg-slate-500/10 text-slate-400',
+                      )}
+                    >
+                      {badge ? badge.label : 'In review / not public'}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+            <p className="mt-3 font-mono text-[11px] text-slate-500">
+              Stored only in this browser.
+            </p>
+          </div>
+        </section>
+      )}
 
       {/* ── Job board ── */}
       <section className="relative z-10 mx-auto max-w-5xl px-6 py-4">

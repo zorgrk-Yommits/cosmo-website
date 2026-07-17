@@ -1,0 +1,444 @@
+'use client';
+
+// "Your next step" — the hero panel of the job page (replaces BuyerFlow).
+// Exactly ONE state is active at a time and it renders exactly ONE big CTA
+// (or an explicit waiting card when it is not the buyer's turn). The buyer
+// sees three actions total: select offer, fund escrow, accept quote — arming
+// the provider quote is a server call and runs automatically in between
+// (useMarketFlow's auto-arm), surfacing here only as "Preparing your quote".
+
+import { useEffect, useState } from 'react';
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Clock3,
+  Hourglass,
+  Loader2,
+  RefreshCw,
+  Send,
+  Wallet,
+} from 'lucide-react';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
+import { EXPLORER_TX } from '@/lib/mainnetOnchain';
+import type { MarketJob, MarketOffer, MarketProvider } from '../lib/marketApi';
+import { useMarketFlow, QUOTE_SAFETY_SECS } from '../lib/useMarketFlow';
+import { fmtDelivery } from '../lib/marketStatus';
+import { CTA_BIG, CTA_DANGER, BTN_GHOST } from './cta';
+
+function fmtQuants(quants: string, decimals: number): string {
+  const v = BigInt(quants);
+  const base = BigInt(10) ** BigInt(decimals);
+  const whole = v / base;
+  const frac = (v % base).toString().padStart(decimals, '0').replace(/0+$/, '');
+  return frac ? `${whole}.${frac}` : whole.toString();
+}
+
+function fmtCountdown(secs: number): string {
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  return `${m}:${String(s).padStart(2, '0')}`;
+}
+
+type Stage =
+  | 'loading'
+  | 'moderation'
+  | 'rejected'
+  | 'awaiting-offers'
+  | 'backend-down'
+  | 'select'
+  | 'escrow'
+  | 'preparing'
+  | 'accept'
+  | 'arm-failed'
+  | 'expired-manual'
+  | 'active';
+
+const STAGE_STEP: Partial<Record<Stage, 1 | 2 | 3>> = {
+  select: 1,
+  escrow: 2,
+  preparing: 3,
+  accept: 3,
+  'arm-failed': 3,
+  'expired-manual': 3,
+};
+
+export default function NextStepPanel({
+  job,
+  offers,
+  providers,
+  onChanged,
+}: {
+  job: MarketJob;
+  offers: MarketOffer[];
+  providers: MarketProvider[];
+  onChanged: () => void;
+}) {
+  const f = useMarketFlow(job.id, onChanged);
+  const [pickedOffer, setPickedOffer] = useState<string>('');
+  const [nowSec, setNowSec] = useState(() => Math.floor(Date.now() / 1000));
+  useEffect(() => {
+    const iv = setInterval(() => setNowSec(Math.floor(Date.now() / 1000)), 1000);
+    return () => clearInterval(iv);
+  }, []);
+
+  const flow = f.flow;
+  const requestId = flow?.requestId ?? job.requestId ?? null;
+  const jobIdOnchain = flow?.jobIdOnchain ?? job.jobIdOnchain ?? null;
+  const selectedOfferId = flow?.selectedOfferId ?? job.selectedOfferId ?? null;
+  const selectedOffer = offers.find((o) => o.id === selectedOfferId) ?? null;
+  const selectedProvider = selectedOffer
+    ? (providers.find((p) => p.id === selectedOffer.providerId) ?? null)
+    : null;
+  const secsLeft = f.quoteExpiresAt !== null ? Math.max(0, f.quoteExpiresAt - nowSec) : 0;
+  const quoteLive = f.armState === 'armed' && secsLeft > QUOTE_SAFETY_SECS;
+  const txAccept = flow?.txRefs.accept ?? job.txRefs.accept;
+
+  function deriveStage(): Stage {
+    if (jobIdOnchain != null) return 'active';
+    if (job.status === 'submitted') return 'moderation';
+    if (job.status === 'rejected') return 'rejected';
+    if (job.status === 'approved' && offers.length === 0) return 'awaiting-offers';
+    if (!f.flowChecked && flow === null) return 'loading';
+    if (flow === null) return 'backend-down';
+    if (!selectedOfferId) return 'select';
+    if (requestId == null) return 'escrow';
+    if (f.armState === 'failed') return 'arm-failed';
+    // Expiry with auto-arm budget left resolves itself within a tick — show
+    // "preparing" instead of flashing the manual re-arm card.
+    if (f.armState === 'expired' && f.autoArmsLeft === 0) return 'expired-manual';
+    if (quoteLive) return 'accept';
+    return 'preparing';
+  }
+  const stage = deriveStage();
+  const stepNo = STAGE_STEP[stage];
+
+  const providerIneligible =
+    flow?.providerChecks != null &&
+    !(
+      flow.providerChecks.eligible &&
+      flow.providerChecks.bondCoversMinimum &&
+      flow.providerChecks.hasCapacity
+    );
+
+  return (
+    <div className="mt-6 rounded-xl border border-purple-500/25 bg-purple-500/[0.04] p-6">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <Wallet className="h-4 w-4 text-purple-300" />
+          <h2 className="font-mono text-sm font-bold text-slate-100">Your next step</h2>
+        </div>
+        {stepNo && (
+          <span className="rounded-full border border-purple-500/40 bg-purple-500/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-purple-300">
+            Step {stepNo} of 3
+          </span>
+        )}
+      </div>
+
+      <div className="mt-4">
+        {stage === 'loading' && (
+          <div className="flex items-center gap-2 font-mono text-xs text-slate-400">
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            Loading flow state…
+          </div>
+        )}
+
+        {stage === 'moderation' && (
+          <div className="flex items-start gap-3">
+            <span className="mt-1 inline-flex h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-slate-400" />
+            <p className="font-sans text-sm leading-relaxed text-slate-300">
+              Your job is <span className="font-bold text-slate-100">in review</span>. Once
+              approved it opens for offers from curated pilot providers — we also reach out by
+              email. Nothing to do right now.
+            </p>
+          </div>
+        )}
+
+        {stage === 'rejected' && (
+          <p className="font-sans text-sm leading-relaxed text-slate-300">
+            This job was not approved for the pilot board.{' '}
+            <Link href="/market/post/" className="text-sky-400 hover:text-sky-300">
+              Post a new job
+            </Link>{' '}
+            if you want to try a different scope.
+          </p>
+        )}
+
+        {stage === 'awaiting-offers' && (
+          <div className="flex items-start gap-3">
+            <span className="mt-1 inline-flex h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-purple-400" />
+            <p className="font-sans text-sm leading-relaxed text-slate-300">
+              <span className="font-bold text-slate-100">Open for offers</span> — curated pilot
+              providers have been notified. As soon as the first offer arrives, you pick one here
+              and take the job on-chain. Nothing to do right now.
+            </p>
+          </div>
+        )}
+
+        {stage === 'backend-down' && (
+          <div className="space-y-3">
+            <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-amber-300/90">
+              <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              Market service is unreachable — the flow is paused. Your on-chain state is safe;
+              nothing is lost.
+            </p>
+            <button type="button" className={BTN_GHOST} onClick={() => void f.refreshFlow()}>
+              <RefreshCw className="h-3 w-3" />
+              Retry
+            </button>
+          </div>
+        )}
+
+        {stage === 'select' && (
+          <div className="space-y-4">
+            <p className="font-sans text-sm leading-relaxed text-slate-300">
+              Pick the offer you want. Your selection is signed with your StarKey wallet and
+              binds it as the buyer wallet for this job.
+            </p>
+            <div className="space-y-2">
+              {offers.map((o) => {
+                const prov = providers.find((p) => p.id === o.providerId);
+                const picked = pickedOffer === o.id;
+                return (
+                  <label
+                    key={o.id}
+                    className={cn(
+                      'flex cursor-pointer items-center justify-between gap-3 rounded-lg border px-4 py-3 transition-all',
+                      picked
+                        ? 'border-purple-400/60 bg-purple-500/10'
+                        : 'border-white/10 bg-black/20 hover:border-white/25',
+                    )}
+                  >
+                    <span className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        name="pick-offer"
+                        checked={picked}
+                        onChange={() => setPickedOffer(o.id)}
+                      />
+                      <span className="font-mono text-sm text-slate-200">
+                        {prov?.name ?? o.providerId}
+                      </span>
+                    </span>
+                    <span className="font-mono text-xs text-slate-400">
+                      <span className="font-bold text-slate-200">
+                        {o.price} {job.budgetAsset}
+                      </span>{' '}
+                      · {fmtDelivery(o.deliverySecs)}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+            <button
+              type="button"
+              className={CTA_BIG}
+              disabled={!pickedOffer || f.busy !== null}
+              onClick={() => void f.selectOffer(pickedOffer)}
+            >
+              {f.busy === 'selecting' ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <Wallet className="h-5 w-5" />
+              )}
+              Select offer &amp; sign with StarKey
+            </button>
+          </div>
+        )}
+
+        {stage === 'escrow' && flow && (
+          <div className="space-y-4">
+            {selectedOffer && (
+              <p className="font-sans text-sm leading-relaxed text-slate-300">
+                Selected:{' '}
+                <span className="font-bold text-slate-100">
+                  {selectedProvider?.name ?? selectedOffer.providerId}
+                </span>{' '}
+                — {selectedOffer.price} {job.budgetAsset} ·{' '}
+                {fmtDelivery(selectedOffer.deliverySecs)}
+              </p>
+            )}
+            {flow.escrowParams ? (
+              <p className="font-sans text-sm leading-relaxed text-slate-300">
+                Funding the escrow locks{' '}
+                <span className="font-bold text-slate-100">
+                  {fmtQuants(flow.escrowParams.maxPriceQuants, flow.escrowParams.assetDecimals)}{' '}
+                  {flow.escrowParams.assetSymbol}
+                </span>{' '}
+                against the frozen spec hash. Unspent escrow returns to you at acceptance; you
+                can cancel any time before accepting. Need {flow.escrowParams.assetSymbol}? See
+                the{' '}
+                <a href="/wcosmo/" className="text-sky-400 hover:text-sky-300">
+                  conversion guide
+                </a>
+                .
+              </p>
+            ) : (
+              <p className="font-mono text-xs text-amber-300">
+                Escrow parameters are not available yet — refresh in a moment.
+              </p>
+            )}
+            {flow.rail.paused && (
+              <p className="font-mono text-xs text-amber-300">
+                The on-chain rail is paused — escrow is disabled.
+              </p>
+            )}
+            {providerIneligible && (
+              <p className="flex items-start gap-1.5 font-mono text-xs text-amber-300">
+                <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                The selected provider is not currently eligible on-chain (bond/capacity). Escrow
+                is blocked until that is resolved.
+              </p>
+            )}
+            <button
+              type="button"
+              className={CTA_BIG}
+              disabled={f.busy !== null || flow.rail.paused || !flow.escrowParams}
+              onClick={() => void f.createEscrow()}
+            >
+              {f.busy === 'escrowing' ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <Send className="h-5 w-5" />
+              )}
+              Fund escrow with StarKey
+            </button>
+            <p className="font-mono text-[11px] text-slate-500">
+              After this signature the quote is prepared automatically — your next action is the
+              final accept.
+            </p>
+          </div>
+        )}
+
+        {stage === 'preparing' && (
+          <div className="flex items-start gap-3">
+            <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-purple-300" />
+            <p className="font-sans text-sm leading-relaxed text-slate-300">
+              <span className="font-bold text-slate-100">Preparing your quote…</span> We verify
+              the escrow on-chain and arm the provider quote (server-signed). No action needed —
+              the accept button appears here in a moment.
+            </p>
+          </div>
+        )}
+
+        {stage === 'accept' && (
+          <div className="space-y-4">
+            <p className="font-sans text-sm leading-relaxed text-slate-300">
+              A signed quote is live on-chain
+              {f.quote && flow?.escrowParams && (
+                <>
+                  :{' '}
+                  <span className="font-bold text-slate-100">
+                    {fmtQuants(f.quote.price, flow.escrowParams.assetDecimals)}{' '}
+                    {flow.escrowParams.assetSymbol}
+                  </span>{' '}
+                  from {f.quote.solver.slice(0, 10)}…
+                </>
+              )}
+              . Accepting locks the provider in and refunds unspent escrow. The acceptance is
+              checked against the exact on-chain quote — if anything drifted, the chain rejects
+              it.
+            </p>
+            <div className="flex items-center gap-2 font-mono text-sm">
+              <Clock3
+                className={cn('h-4 w-4', secsLeft < 60 ? 'text-amber-300' : 'text-emerald-300')}
+              />
+              <span className={cn(secsLeft < 60 ? 'text-amber-300' : 'text-emerald-300')}>
+                Quote valid {fmtCountdown(secsLeft)}
+              </span>
+              <span className="text-[11px] text-slate-500">— renews automatically</span>
+            </div>
+            <button
+              type="button"
+              className={CTA_BIG}
+              disabled={f.busy !== null}
+              onClick={() => void f.accept()}
+            >
+              {f.busy === 'accepting' ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <CheckCircle2 className="h-5 w-5" />
+              )}
+              Accept quote with StarKey
+            </button>
+          </div>
+        )}
+
+        {stage === 'arm-failed' && (
+          <div className="space-y-4">
+            <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-rose-300">
+              <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              {f.armError ?? 'Preparing the quote failed.'}
+            </p>
+            <button
+              type="button"
+              className={CTA_DANGER}
+              disabled={f.busy !== null}
+              onClick={() => void f.rearm()}
+            >
+              <RefreshCw className={cn('h-5 w-5', f.busy === 'arming' && 'animate-spin')} />
+              Retry
+            </button>
+          </div>
+        )}
+
+        {stage === 'expired-manual' && (
+          <div className="space-y-4">
+            <p className="flex items-start gap-1.5 font-sans text-sm leading-relaxed text-slate-300">
+              <Hourglass className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
+              The quote expired. Get a fresh one — it is free and needs no wallet signature.
+            </p>
+            <button
+              type="button"
+              className={CTA_BIG}
+              disabled={f.busy !== null}
+              onClick={() => void f.rearm()}
+            >
+              <RefreshCw className={cn('h-5 w-5', f.busy === 'arming' && 'animate-spin')} />
+              Re-arm quote
+            </button>
+          </div>
+        )}
+
+        {stage === 'active' && (
+          <div className="flex items-start gap-3">
+            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-300" />
+            <p className="font-sans text-sm leading-relaxed text-slate-300">
+              <span className="font-bold text-emerald-300">
+                On-chain job #{jobIdOnchain} is active.
+              </span>{' '}
+              Delivery and settlement follow on the rail (M5) — nothing to do right now.
+              {txAccept && (
+                <>
+                  {' '}
+                  <a
+                    href={`${EXPLORER_TX}${txAccept}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sky-400 hover:text-sky-300"
+                  >
+                    View the accept transaction
+                  </a>
+                  .
+                </>
+              )}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {f.error && (
+        <p className="mt-4 flex items-start gap-1.5 font-mono text-[11px] text-rose-300">
+          <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
+          {f.error}
+        </p>
+      )}
+      {f.info && !f.error && <p className="mt-4 font-mono text-[11px] text-emerald-300">{f.info}</p>}
+
+      <p className="mt-4 border-t border-white/5 pt-3 font-mono text-[11px] text-slate-500">
+        You sign with your own StarKey wallet; this site never holds funds or keys. Every
+        on-chain step is a verifiable Supra Mainnet transaction.
+      </p>
+    </div>
+  );
+}

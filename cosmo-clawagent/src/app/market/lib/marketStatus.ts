@@ -1,8 +1,8 @@
 // Display mapping for market jobs (rfqActivity.ts precedent): status chips
-// and the 7-step lifecycle rail with an explicit OFF-CHAIN/ON-CHAIN badge per
+// and the unified lifecycle rail with an explicit OFF-CHAIN/ON-CHAIN badge per
 // step — the honest boundary is part of the UI, not a footnote.
 
-import type { JobStatus, MarketJob } from './marketApi';
+import type { JobStatus, TxRefs } from './marketApi';
 
 export interface StatusBadge {
   label: string;
@@ -34,40 +34,64 @@ export const STATUS_BADGE: Record<JobStatus, StatusBadge> = {
 
 export type StepState = 'done' | 'active' | 'pending';
 
-export interface MarketStep {
-  id: string;
+export type UnifiedStepId =
+  | 'review'
+  | 'offers'
+  | 'select'
+  | 'escrow'
+  | 'accept'
+  | 'deliver'
+  | 'settle';
+
+export interface UnifiedStep {
+  id: UnifiedStepId;
   label: string;
   onchain: boolean;
+  buyerAction?: 1 | 2 | 3; // the three buttons the buyer actually presses
+  future?: boolean; // M5 — visible as "soon", never actionable
   state: StepState;
+  txKey?: keyof TxRefs;
 }
 
-// The 7-step spec from the release plan. Steps 1-3 run on our server; from
-// selection (step 4) on, every step is a verifiable mainnet transaction.
-const STEPS: { id: string; label: string; onchain: boolean }[] = [
-  { id: 'posted', label: 'Job posted', onchain: false },
-  { id: 'review', label: 'Review + spec freeze', onchain: false },
+// The unified lifecycle: ONE rail for the whole page. The buyer's three
+// action steps (select / escrow / accept) are emphasized; arming is a server
+// detail and deliberately has no node of its own. Deliver/settle exist on the
+// Move rail already but have no product surface yet (M5).
+const UNIFIED_STEPS: Omit<UnifiedStep, 'state'>[] = [
+  { id: 'review', label: 'Posted & review', onchain: false },
   { id: 'offers', label: 'Offers', onchain: false },
-  { id: 'escrow', label: 'Selection + escrow', onchain: true },
-  { id: 'delivery', label: 'Delivery', onchain: true },
-  { id: 'acceptance', label: 'Acceptance / dispute', onchain: true },
-  { id: 'settlement', label: 'Settlement', onchain: true },
+  { id: 'select', label: 'Select offer', onchain: false, buyerAction: 1 },
+  { id: 'escrow', label: 'Fund escrow', onchain: true, buyerAction: 2, txKey: 'create' },
+  { id: 'accept', label: 'Accept quote', onchain: true, buyerAction: 3, txKey: 'accept' },
+  { id: 'deliver', label: 'Delivery', onchain: true, future: true, txKey: 'deliver' },
+  { id: 'settle', label: 'Settlement', onchain: true, future: true, txKey: 'settle' },
 ];
 
-// Which step is ACTIVE for a given off-chain status. Finer on-chain
-// sub-states (delivered, disputed, settled) arrive with M4/M5 once the rail
-// can read them from the on-chain request; until then "onchain" sits at
-// escrow-done, delivery-active.
-const ACTIVE_STEP: Record<JobStatus, number> = {
-  submitted: 1, // review active
-  approved: 2, // offers active
-  rejected: 1, // review was the terminal step
-  selected: 3, // escrow active
-  onchain: 4, // delivery active
-};
+// The rail derives from ids/fields, not just the coarse off-chain status, so
+// it also works for the moderation fallback's minimal synthetic job.
+export interface UnifiedStepInput {
+  status: JobStatus;
+  selectedOfferId?: string;
+  requestId?: number;
+  jobIdOnchain?: number;
+}
 
-export function buildSteps(job: MarketJob): MarketStep[] {
-  const active = ACTIVE_STEP[job.status];
-  return STEPS.map((s, i) => ({
+export function buildUnifiedSteps(job: UnifiedStepInput, offersCount: number): UnifiedStep[] {
+  let active: number;
+  if (job.jobIdOnchain != null) {
+    active = 5; // deliver "active" = waiting on M5, rendered passively
+  } else if (job.requestId != null) {
+    active = 4; // accept (arming happens invisibly inside this step)
+  } else if (job.selectedOfferId) {
+    active = 3; // escrow
+  } else if (job.status === 'approved' && offersCount > 0) {
+    active = 2; // select
+  } else if (job.status === 'approved') {
+    active = 1; // offers
+  } else {
+    active = 0; // submitted / rejected — review
+  }
+  return UNIFIED_STEPS.map((s, i) => ({
     ...s,
     state: i < active ? 'done' : i === active ? 'active' : 'pending',
   }));

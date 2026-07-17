@@ -6,9 +6,11 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ArrowLeft, CheckCircle2, Send, ShieldQuestion } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ApiError, submitJob } from '../lib/marketApi';
+import { addMyJob } from '../lib/myJobs';
 import HonestyBox from '../components/HonestyBox';
 
 // Mirror of the server-side rail constraint: deadlines at most 7 days out
@@ -67,6 +69,7 @@ const inputCls =
   'w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 font-mono text-sm text-slate-200 placeholder:text-slate-600 focus:border-purple-500/50 focus:outline-none';
 
 export default function PostJobForm() {
+  const router = useRouter();
   const [form, setForm] = useState<FormState>(EMPTY);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -128,7 +131,11 @@ export default function PostJobForm() {
         buyerWallet: form.buyerWallet.trim() || undefined,
         website: form.website,
       });
+      // Remember the job locally (nobody should have to memorize an id) and
+      // take the user straight to their job page.
+      addMyJob({ id: res.id, title: form.title.trim(), createdAt: Date.now() });
       setSubmitted({ id: res.id });
+      router.push(`/market/job/?id=${encodeURIComponent(res.id)}`);
     } catch (err) {
       if (err instanceof ApiError && err.fieldErrors) {
         const mapped: Record<string, string> = {};
@@ -171,25 +178,17 @@ export default function PostJobForm() {
               <h2 className="font-mono text-sm font-bold text-slate-100">Submission received</h2>
             </div>
             <p className="mt-2 font-sans text-sm leading-relaxed text-slate-300">
-              Your job is in the moderation queue. Keep this reference — it is your handle on the
-              submission:
-            </p>
-            <p className="mt-3 break-all rounded-lg border border-white/10 bg-black/30 px-3 py-2 font-mono text-sm text-emerald-300">
-              {submitted.id}
-            </p>
-            <p className="mt-3 font-sans text-sm leading-relaxed text-slate-400">
-              Once approved, it appears on{' '}
-              <Link href="/market/" className="text-sky-400 hover:text-sky-300">
-                the job board
-              </Link>{' '}
-              and its detail page becomes{' '}
+              Taking you to your job page… If nothing happens,{' '}
               <Link
                 href={`/market/job/?id=${encodeURIComponent(submitted.id)}`}
                 className="text-sky-400 hover:text-sky-300"
               >
-                publicly visible
+                open it here
               </Link>
-              . We will also reach out by email.
+              .
+            </p>
+            <p className="mt-3 break-all rounded-lg border border-white/10 bg-black/30 px-3 py-2 font-mono text-sm text-emerald-300">
+              {submitted.id}
             </p>
           </div>
         ) : (
