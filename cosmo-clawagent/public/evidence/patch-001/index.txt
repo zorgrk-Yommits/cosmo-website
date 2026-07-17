@@ -1,0 +1,8 @@
+PATCH-001 -- public evidence artifacts (Supra mainnet chain 8, compute_rfq job 2)
+Byte-identical copies of the repo artifacts. Verify with: openssl dgst -sha3-256 <file>
+
+patch-001-request.json   sha3-256 20eef0578a0b66732614435e5c7960530b9e5db571d20d54b54e2dd5a06395e5  (= on-chain input_hash, request r5)
+patch-001.patch          sha3-256 92b0c80ad19aff5d25b75c536ba8cd0dc53a8b298c0fb059ac6d77eb58cfaaa9  (= diff_hash in the delivery)
+patch-001-delivery.json  sha3-256 7a5847bb1843e1d4e3fd9666da726700b295d001a6bceb53b231900c077afdb3  (= on-chain result_hash, job 2)
+
+approve tx (settle_path 0, 285 wCOSMO): 0x852a679d4bc86a201202856399be69aa158e901d77c8fc12ded711c94059c184

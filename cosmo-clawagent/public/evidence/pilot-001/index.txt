@@ -1,0 +1,18 @@
+PILOT-001 -- public evidence artifacts (Supra mainnet chain 8, compute_rfq job 5 / request 10, agent market pilot)
+Byte-identical copies of the canonical documents. Verify with: openssl dgst -sha3-256 <file>
+
+pilot-001-spec.json         sha3-256 335f12423cda9aa8ff9ef44c9983cbe7a1a5d46f215bf25c2af2774b757328be  (= on-chain input_hash, request 10)
+pilot-001-attestation.json  sha3-256 967005090332e014792b7183c3c07a01e7c3494985ce2cf23c7c327c06d8040c  (= on-chain result_hash, job 5)
+
+On-chain lifecycle (package 0x0fd8940dadb96ec354d200fcc73e7b10889b5968a8aabe4caf106ee25d8003c0, view get_job_v2(5)):
+  escrow  (buyer)                    0xa8d69c340f5acb053b9a4aa05ae3a65a54c611b6c4120088913dc77fd4a00f03
+  quote   (server-relayed, auto-arm) 0xa26cf49bbee2a9d7d87a38cb90b675722fa0105e03ca8625a720fcdf7c490f71
+  accept  (buyer)                    0x33ab980daa30a47bba25b35ec675f3ccaaf981df5b2b51cb2a235233bfe01ce4
+  deliver (provider)                 0x28801fb4f4d12966584bf6b14a8d9a81cab3e95037c0f94a9e94668915e60684
+  settle  (buyer approve, settle_path 0, 2 wCOSMO to solver)
+                                     0x92ecb9d284cf249fc12369974e97dc61db34d463a1d86f96fc15aeeb0cc6fa68
+
+buyer  0xfe09b3568692fe35a0de65ac3f19146d6af485b11761c4fe1fcd4b2139bf103f
+solver 0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb (Operator M2)
+
+Settled 2026-07-17. Explorer: https://suprascan.io/tx/<hash>

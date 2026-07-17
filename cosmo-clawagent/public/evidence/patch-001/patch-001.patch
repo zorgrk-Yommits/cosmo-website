@@ -1,0 +1,98 @@
+diff --git a/quote-server/src/gate.ts b/quote-server/src/gate.ts
+index 44b2506..237cb08 100644
+--- a/quote-server/src/gate.ts
++++ b/quote-server/src/gate.ts
+@@ -70,8 +70,16 @@ export function loadGateConfig(path: string): GateConfig {
+   return cfg;
+ }
+ 
++// The RPC strips leading zeros from addresses (0x0a05.. comes back as
++// 0xa05..), while gate configs are hand-maintained in the canonical 64-hex
++// form. Canonicalize to lowercase 0x + 64 hex chars so both forms of the
++// same address compare equal; non-hex input keeps its lowercased form and
++// can then only ever hit the default-reject path (no new throw surface).
+ function normAddr(a: string): string {
+-  return a.toLowerCase().startsWith("0x") ? a.toLowerCase() : `0x${a.toLowerCase()}`;
++  const lower = a.toLowerCase();
++  const hex = lower.startsWith("0x") ? lower.slice(2) : lower;
++  if (!/^[0-9a-f]{1,64}$/.test(hex)) return lower;
++  return `0x${hex.padStart(64, "0")}`;
+ }
+ 
+ // Stateful gate: holds the sliding rate-limit windows. Config is passed per
+diff --git a/quote-server/test/gate.test.ts b/quote-server/test/gate.test.ts
+index 28bf80c..50c0c1b 100644
+--- a/quote-server/test/gate.test.ts
++++ b/quote-server/test/gate.test.ts
+@@ -98,6 +98,33 @@ describe("allowlist", () => {
+     const req = { ...Q1_REQUEST, agentNftAddr: AGENT.toUpperCase().replace("0X", "0x") };
+     expect(() => gate.check(testConfig(), req, 0n)).not.toThrow();
+   });
++
++  // The RPC strips leading zeros (0x0b.. arrives as 0xb..); config entries
++  // are hand-maintained in the canonical 64-hex form. Both forms of the
++  // same address must match -- in either direction.
++  it("matches a canonical 64-hex entry against the RPC-stripped address", () => {
++    const cfg = testConfig();
++    cfg.entries.push({
++      label: "zero-lead",
++      agentNftAddr: "0x0" + "b".repeat(63),
++      operator: "0xcafe",
++      enabled: true,
++    });
++    const req = { ...Q1_REQUEST, agentNftAddr: "0x" + "b".repeat(63) };
++    expect(gate.check(cfg, req, 0n).label).toBe("zero-lead");
++  });
++
++  it("matches an RPC-stripped entry against the canonical padded address", () => {
++    const cfg = testConfig();
++    cfg.entries.push({
++      label: "zero-lead",
++      agentNftAddr: "0x" + "b".repeat(63),
++      operator: "0xcafe",
++      enabled: true,
++    });
++    const req = { ...Q1_REQUEST, agentNftAddr: "0x0" + "b".repeat(63) };
++    expect(gate.check(cfg, req, 0n).label).toBe("zero-lead");
++  });
+ });
+ 
+ describe("kill-switch", () => {
+@@ -133,9 +160,37 @@ describe("rate-limit (sliding window)", () => {
+     const other = { ...Q1_REQUEST, agentNftAddr: "0x" + "aa".repeat(32) };
+     expect(() => gate.check(cfg, other, 5n)).not.toThrow();
+   });
++
++  it("counts both forms of the same address in ONE window", () => {
++    const cfg = testConfig({ rateLimit: { maxPerWindow: 1, windowSecs: 60 } });
++    cfg.entries.push({
++      label: "zero-lead",
++      agentNftAddr: "0x0" + "b".repeat(63),
++      operator: "0xcafe",
++      enabled: true,
++    });
++    gate.check(cfg, { ...Q1_REQUEST, agentNftAddr: "0x" + "b".repeat(63) }, 0n);
++    expect(() =>
++      gate.check(cfg, { ...Q1_REQUEST, agentNftAddr: "0x0" + "b".repeat(63) }, 1n),
++    ).toThrow(/rate limit/);
++  });
+ });
+ 
+ describe("logging (JSONL, accept AND reject)", () => {
++  it("records the canonical 64-hex agent address for stripped input", () => {
++    const cfg = testConfig();
++    cfg.entries.push({
++      label: "zero-lead",
++      agentNftAddr: "0x0" + "b".repeat(63),
++      operator: "0xcafe",
++      enabled: true,
++    });
++    gate.check(cfg, { ...Q1_REQUEST, agentNftAddr: "0x" + "b".repeat(63) }, 0n);
++    const lines = readFileSync(logPath, "utf-8").trim().split("\n");
++    const rec = JSON.parse(lines[lines.length - 1]!);
++    expect(rec.agentNftAddr).toBe("0x0" + "b".repeat(63));
++  });
++
+   it("writes one line per decision with agent/pair/notional/decision/reason", () => {
+     const cfg = testConfig();
+     gate.check(cfg, Q1_REQUEST, 42n);

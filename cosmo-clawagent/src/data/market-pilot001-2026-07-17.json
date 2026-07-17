@@ -1,0 +1,45 @@
+{
+  "version": "cosmo-market-pilot-proof-v1",
+  "date": "2026-07-17",
+  "jobId": "job_mrnqscfbzcinte",
+  "jobIdOnchain": 5,
+  "requestId": 10,
+  "buyer": "0xfe09b3568692fe35a0de65ac3f19146d6af485b11761c4fe1fcd4b2139bf103f",
+  "solver": "0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb",
+  "solverName": "Operator M2",
+  "price": "2",
+  "asset": "wCOSMO",
+  "spec_hash": "0x335f12423cda9aa8ff9ef44c9983cbe7a1a5d46f215bf25c2af2774b757328be",
+  "result_hash": "0x967005090332e014792b7183c3c07a01e7c3494985ce2cf23c7c327c06d8040c",
+  "explorer_tx_base": "https://suprascan.io/tx/",
+  "public_evidence": "https://heros.cloud/evidence/pilot-001/",
+  "job_url": "/market/job/?id=job_mrnqscfbzcinte",
+  "attestation_url": "/api/market/jobs/job_mrnqscfbzcinte/attestation",
+  "legs": [
+    {
+      "step": "Fund escrow (create_outcome_request_v2)",
+      "actor": "buyer",
+      "tx": "0xa8d69c340f5acb053b9a4aa05ae3a65a54c611b6c4120088913dc77fd4a00f03"
+    },
+    {
+      "step": "Quote armed (submit_quote_v3, auto)",
+      "actor": "server",
+      "tx": "0xa26cf49bbee2a9d7d87a38cb90b675722fa0105e03ca8625a720fcdf7c490f71"
+    },
+    {
+      "step": "Accept quote (accept_quote_v2)",
+      "actor": "buyer",
+      "tx": "0x33ab980daa30a47bba25b35ec675f3ccaaf981df5b2b51cb2a235233bfe01ce4"
+    },
+    {
+      "step": "Deliver result (deliver_result_v2)",
+      "actor": "provider",
+      "tx": "0x28801fb4f4d12966584bf6b14a8d9a81cab3e95037c0f94a9e94668915e60684"
+    },
+    {
+      "step": "Approve & settle (approve_delivery_v2)",
+      "actor": "buyer",
+      "tx": "0x92ecb9d284cf249fc12369974e97dc61db34d463a1d86f96fc15aeeb0cc6fa68"
+    }
+  ]
+}

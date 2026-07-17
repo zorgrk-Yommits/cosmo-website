@@ -5,12 +5,21 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Bookmark, Briefcase, PlusCircle, RefreshCw, Users } from 'lucide-react';
+import { Bookmark, Bot, Briefcase, ExternalLink, FileJson, PlusCircle, RefreshCw, ShieldCheck, User, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useMarketJobs } from './useMarketData';
 import { STATUS_BADGE, fmtRel, fmtTs } from './lib/marketStatus';
 import { getMyJobs, type MyJobEntry } from './lib/myJobs';
 import HonestyBox from './components/HonestyBox';
+import pilot001 from '@/data/market-pilot001-2026-07-17.json';
+
+const shortHash = (h: string) => `${h.slice(0, 10)}…${h.slice(-8)}`;
+
+const ACTOR_BADGE: Record<string, { label: string; cls: string; icon: 'user' | 'bot' }> = {
+  buyer: { label: 'buyer', cls: 'border-sky-500/40 bg-sky-500/10 text-sky-300', icon: 'user' },
+  server: { label: 'server', cls: 'border-purple-500/40 bg-purple-500/10 text-purple-300', icon: 'bot' },
+  provider: { label: 'provider', cls: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300', icon: 'user' },
+};
 
 export default function MarketHome() {
   const { section: jobs, refreshing, lastUpdated, refresh } = useMarketJobs();
@@ -189,6 +198,87 @@ export default function MarketHome() {
           ) : (
             <div className="h-24 w-full animate-pulse rounded bg-white/5" />
           )}
+        </div>
+      </section>
+
+      {/* ── Settled proof: PILOT-001 ── */}
+      <section className="relative z-10 mx-auto max-w-5xl px-6 py-4">
+        <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
+          <div className="mb-2 flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 text-emerald-300" />
+            <h2 className="font-mono text-sm font-bold text-slate-100">
+              Settled proof — PILOT-001 ({pilot001.date})
+            </h2>
+          </div>
+          <p className="mb-4 font-sans text-sm leading-relaxed text-slate-400">
+            The first marketplace trade settled end-to-end on Supra Mainnet: {pilot001.price}{' '}
+            {pilot001.asset} from buyer to {pilot001.solverName}, on-chain job #
+            {pilot001.jobIdOnchain}. Every step is a transaction:
+          </p>
+          <div className="space-y-2">
+            {pilot001.legs.map((leg, i) => {
+              const badge = ACTOR_BADGE[leg.actor] ?? ACTOR_BADGE.buyer;
+              return (
+                <div
+                  key={leg.tx}
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-white/10 bg-black/20 px-4 py-2.5"
+                >
+                  <span className="flex items-center gap-2.5 font-mono text-xs text-slate-300">
+                    <span className="text-slate-600">{i + 1}</span>
+                    {leg.step}
+                    <span
+                      className={cn(
+                        'inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider',
+                        badge.cls,
+                      )}
+                    >
+                      {badge.icon === 'bot' ? <Bot className="h-2.5 w-2.5" /> : <User className="h-2.5 w-2.5" />}
+                      {badge.label}
+                    </span>
+                  </span>
+                  <a
+                    href={`${pilot001.explorer_tx_base}${leg.tx}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 font-mono text-[11px] text-sky-400 hover:text-sky-300"
+                  >
+                    {shortHash(leg.tx)}
+                    <ExternalLink className="h-2.5 w-2.5" />
+                  </a>
+                </div>
+              );
+            })}
+          </div>
+          <p className="mt-3 break-all font-mono text-[11px] text-slate-500">
+            On-chain result_hash {pilot001.result_hash} = SHA3-256 of the attestation document.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
+            <Link
+              href={pilot001.job_url}
+              className="inline-flex items-center gap-1.5 font-mono text-xs text-sky-400 hover:text-sky-300"
+            >
+              <Briefcase className="h-3 w-3" />
+              Job page
+            </Link>
+            <a
+              href={pilot001.attestation_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 font-mono text-xs text-sky-400 hover:text-sky-300"
+            >
+              <FileJson className="h-3 w-3" />
+              Attestation document
+            </a>
+            <a
+              href={pilot001.public_evidence}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 font-mono text-xs text-sky-400 hover:text-sky-300"
+            >
+              <ShieldCheck className="h-3 w-3" />
+              Evidence artifacts
+            </a>
+          </div>
         </div>
       </section>
 
