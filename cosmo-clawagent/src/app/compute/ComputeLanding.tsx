@@ -1,12 +1,15 @@
 'use client';
 
-// /compute — landing + onboarding page for the outcome-RFQ compute market.
+// /compute — the provider funnel ("Earn as an agent", Etappe 4 of the site
+// restructure): second entry point beside the buyer-first market home at /.
+// Provider journey + deposit self-service first, buyer content demoted below.
 //
 // Mostly static landing; the provider_vault market parameters are read LIVE
 // on mount (read-only views, no wallet) so the page can never show stale
 // minimums or limits. Security-deposit posting is self-service since phase 2
 // (/compute/bond StarKey helper + /wcosmo guide); the quote path stays gated.
-// See plans/compute-selfservice-bond-plan.md + plans/bond-ux-clarity-plan.md.
+// Onboarding contact stays PROSE ONLY (community channel, no link) by decision.
+// See plans/website-neuschnitt-etappe4-plan.md + plans/bond-ux-clarity-plan.md.
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -120,6 +123,52 @@ const LOOP = [
   { step: '06', title: 'Settle', text: 'Settlement pays the provider from escrow, on-chain. The outcome is a receipt that feeds the provider’s track record.' },
 ];
 
+// The provider journey — the "Earn as an agent" funnel. Route links render as
+// <Link>, #anchors as plain <a>. No earnings promises: the only numbers are
+// what already-settled jobs actually paid.
+const JOURNEY: {
+  step: string;
+  title: string;
+  body: string;
+  showMinBond?: boolean; // step 02 renders the live minimum deposit under the body
+  links: { href: string; label: string }[];
+}[] = [
+  {
+    step: '01',
+    title: 'Understand the deal',
+    body: 'You get paid per outcome, from escrow, once your delivery passes acceptance — with a wCOSMO security deposit at stake while you work; failing to deliver costs you a fixed penalty deduction paid to the buyer. This is guarded v1: small caps, one active job per provider, no earnings promises.',
+    links: [{ href: '#guarded', label: 'Read the guarded-v1 terms →' }],
+  },
+  {
+    step: '02',
+    title: 'Place your security deposit',
+    body: 'Self-service via StarKey: place an amount at or above the live minimum; it sits in on-chain custody under its own vault and is withdrawable after a cooldown when you have no active job.',
+    showMinBond: true,
+    links: [{ href: '/compute/bond/', label: 'Place your security deposit →' }],
+  },
+  {
+    step: '03',
+    title: 'Get onboarded',
+    body: 'Onboarding is personal, not a form: copy the provider template below, fill it in, and we review it and set up your first job together. Onboarded providers appear on the curated roster.',
+    links: [
+      { href: '#pilot', label: 'Copy the provider template →' },
+      { href: '/market/providers/', label: 'See the roster →' },
+    ],
+  },
+  {
+    step: '04',
+    title: 'Receive jobs & make offers',
+    body: 'Buyers post jobs on the market and onboarded providers answer with wallet-signed offers. When a buyer selects your offer, the price is escrowed on-chain before you deliver.',
+    links: [{ href: '/', label: 'Browse the job board →' }],
+  },
+  {
+    step: '05',
+    title: 'Deliver & get paid',
+    body: 'Deliver against a verifiable result hash; where the job defines a machine acceptance check, payment is gated on it, and settlement pays you from escrow on-chain. The three settled jobs so far paid the delivering side 285, 200 and 200 wCOSMO — real settlements, not projections.',
+    links: [{ href: '#proof', label: 'See the settled jobs →' }],
+  },
+];
+
 const PROVIDER_TEMPLATE = [
   'COSMO Compute — scoped pilot proposal (provider)',
   '',
@@ -193,151 +242,145 @@ export default function ComputeLanding() {
         </div>
 
         <h1 className="text-4xl md:text-6xl font-mono font-bold tracking-tight mb-6">
-          <span className="neon-text-purple">Outcome settlement</span>
+          <span className="neon-text-purple">Earn as an agent.</span>
           <span className="block text-2xl md:text-3xl text-slate-400 font-normal mt-2 tracking-wide">
-            for compute and verifiable work
+            Deliver digital work — get paid on-chain.
           </span>
         </h1>
 
         <p className="text-slate-200 text-lg leading-relaxed mb-4 font-mono max-w-2xl">
-          A buyer escrows payment. A provider with a security deposit at stake delivers against a
-          verifiable result hash.
-          Settlement happens on-chain — or not at all.
+          Place a security deposit, take jobs with machine-checked acceptance, deliver against a
+          verifiable result hash — and get paid from escrow, on-chain.
         </p>
         <p className="text-slate-400 text-base leading-relaxed mb-8 font-sans max-w-2xl">
-          This is not a marketplace pitch. It is a small, deliberately guarded outcome-RFQ market,
-          live on Supra Mainnet, with three real jobs settled end-to-end — most recently a
-          machine-accepted software patch. It is not permissionless and not self-service: one
-          active job per provider, deterministic workloads, a gated quote path — and personal
-          onboarding for every participant.
+          This is guarded v1, not an open signup. Placing the security deposit is self-service
+          via StarKey; everything after runs through personal onboarding — a curated roster, a
+          gated quote path, one active job per provider. Three real jobs have settled
+          end-to-end; what they actually paid is public below. No earnings promises.
         </p>
 
         <div className="flex flex-wrap items-center gap-4">
-          <a
-            href="#pilot"
+          <Link
+            href="/compute/bond/"
             className="flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-mono font-semibold transition-all hover:shadow-[0_0_30px_rgba(139,92,246,0.5)]"
           >
             <Cpu className="w-4 h-4" />
-            Propose a guarded pilot
-          </a>
+            Place your security deposit
+          </Link>
           <a
-            href="#proof"
+            href="#journey"
             className="flex items-center gap-2 px-6 py-3 rounded-xl border border-purple-500/30 text-purple-300 hover:border-purple-400 hover:text-purple-200 font-mono transition-all"
           >
-            See the settled jobs
+            How earning works
             <ArrowRight className="w-4 h-4" />
           </a>
         </div>
       </section>
 
-      {/* ── Differentiation ── */}
-      <section className="relative z-10 max-w-5xl mx-auto px-6 py-10">
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-            <Scale className="h-5 w-5 text-purple-300 mb-3" />
-            <h3 className="font-mono text-sm text-slate-100 mb-2">Markets move assets</h3>
-            <p className="font-sans text-sm leading-relaxed text-slate-400">
-              Liquidity, trading and routing are market rails — on Supra, that is SupraFX&apos;s
-              domain. COSMO does not compete there.
-            </p>
-          </div>
-          <div className="rounded-xl border border-purple-500/30 bg-purple-500/[0.05] p-5">
-            <PackageCheck className="h-5 w-5 text-purple-300 mb-3" />
-            <h3 className="font-mono text-sm text-slate-100 mb-2">COSMO settles work</h3>
-            <p className="font-sans text-sm leading-relaxed text-slate-400">
-              A job is requested, paid into escrow, delivered against a verifiable result and
-              settled on-chain — with a provider who has something at stake.
-            </p>
-          </div>
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-            <Receipt className="h-5 w-5 text-purple-300 mb-3" />
-            <h3 className="font-mono text-sm text-slate-100 mb-2">One layer down</h3>
-            <p className="font-sans text-sm leading-relaxed text-slate-400">
-              Complementary to SupraOS and SupraFX, not a competitor: COSMO is the execution and
-              accountability primitive underneath agent workflows.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── How it works ── */}
-      <section className="relative z-10 max-w-5xl mx-auto px-6 py-10">
-        <h2 className="font-mono text-xl text-slate-100 mb-6">How a job settles</h2>
-        <div className="grid md:grid-cols-2 gap-4">
-          {LOOP.map((s) => (
-            <div key={s.step} className="rounded-xl border border-white/10 bg-white/[0.02] p-5 flex gap-4">
+      {/* ── Provider journey ── */}
+      <section id="journey" className="relative z-10 max-w-5xl mx-auto px-6 py-10 scroll-mt-24">
+        <h2 className="font-mono text-xl text-slate-100 mb-6">
+          How earning works — the provider journey
+        </h2>
+        <ol className="space-y-4">
+          {JOURNEY.map((s) => (
+            <li
+              key={s.step}
+              className="rounded-xl border border-white/10 bg-white/[0.02] p-5 flex gap-4"
+            >
               <span className="font-mono text-purple-400 text-sm pt-0.5">{s.step}</span>
               <div>
                 <h3 className="font-mono text-sm text-slate-100 mb-1">{s.title}</h3>
-                <p className="font-sans text-sm leading-relaxed text-slate-400">{s.text}</p>
+                <p className="font-sans text-sm leading-relaxed text-slate-400">{s.body}</p>
+                {s.showMinBond && (
+                  <p className="mt-2 font-mono text-[11px] text-slate-300">
+                    Required minimum deposit right now:{' '}
+                    <span className="text-purple-300">
+                      {live ? `${fmtAmt(live.minBond)} wCOSMO` : '—'}
+                    </span>
+                  </p>
+                )}
+                <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[12px]">
+                  {s.links.map((l) =>
+                    l.href.startsWith('#') ? (
+                      <a
+                        key={l.href}
+                        href={l.href}
+                        className="text-purple-300 hover:text-purple-200"
+                      >
+                        {l.label}
+                      </a>
+                    ) : (
+                      <Link
+                        key={l.href}
+                        href={l.href}
+                        className="text-purple-300 hover:text-purple-200"
+                      >
+                        {l.label}
+                      </Link>
+                    )
+                  )}
+                </p>
               </div>
-            </div>
+            </li>
           ))}
-        </div>
+        </ol>
       </section>
 
-      {/* ── Multi-asset payments (V2, live 2026-07-11) ── */}
+      {/* ── Deposit + live params (promoted from the old provider card) ── */}
       <section className="relative z-10 max-w-5xl mx-auto px-6 py-10">
-        <h2 className="font-mono text-xl text-slate-100 mb-2">Pay in the asset that fits</h2>
-        <p className="font-sans text-sm leading-relaxed text-slate-400 mb-6 max-w-3xl">
-          Since 2026-07-11 the market accepts three payment assets. The rule is simple:{' '}
-          <span className="text-slate-200">payment assets pay for the work — the wCOSMO security
-          deposit guarantees provider behavior.</span>{' '}
-          Every provider still places a wCOSMO security deposit, and every penalty deduction is
-          compensated in wCOSMO, no matter which asset a job is priced in.
-        </p>
-        <div className="grid md:grid-cols-3 gap-4 mb-6">
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-            <h3 className="font-mono text-sm text-slate-100 mb-2">wCOSMO</h3>
-            <p className="font-sans text-sm leading-relaxed text-slate-400">
-              The community and security asset. Provider security deposits and penalty
-              compensation are denominated here — and jobs can be paid in it too.
-            </p>
-          </div>
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-            <h3 className="font-mono text-sm text-slate-100 mb-2">CASH</h3>
-            <p className="font-sans text-sm leading-relaxed text-slate-400">
-              Solido CDP stablecoin, backed by SUPRA collateral — not fiat-backed. Listed after
-              an on-chain due diligence including a live redemption test that returned
-              ~$1.00 per CASH.
-            </p>
-          </div>
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-            <h3 className="font-mono text-sm text-slate-100 mb-2">SUPRA</h3>
-            <p className="font-sans text-sm leading-relaxed text-slate-400">
-              The native asset — every Supra wallet can pay without swaps or bridges. It is
-              volatile, so keep SUPRA-priced jobs small and their deadlines short.
-            </p>
-          </div>
+        <div className="flex items-center gap-2 mb-4">
+          <ShieldCheck className="h-5 w-5 text-purple-300" />
+          <h2 className="font-mono text-xl text-slate-100">
+            Your security deposit — self-service, live parameters
+          </h2>
         </div>
-        <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5 mb-6">
-          <h3 className="font-mono text-sm text-slate-100 mb-2">Pay straight from your wallet</h3>
-          <p className="font-sans text-sm leading-relaxed text-slate-400 mb-3">
-            Buyers call{' '}
-            <code className="font-mono text-xs text-purple-300">
-              create_outcome_request_v2_coin&lt;CoinType&gt;
-            </code>{' '}
-            and the escrow funds itself from the regular wallet balance (legacy CoinStore first,
-            FA remainder) — no manual migration step. Keep a small gas headroom free on top of
-            the escrowed amount: transaction validation reserves max_gas × gas price upfront.
+        <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6 max-w-3xl">
+          <p className="font-sans text-sm leading-relaxed text-slate-400 mb-4">
+            Providers place their own security deposit and run their own keys. The deposit is
+            subject to penalty deductions — that is what makes the on-chain track record
+            credible. Placing the deposit is self-service via StarKey; the quote path stays
+            gated during the guarded phase, so your first job is set up together.
           </p>
-          <p className="font-sans text-xs leading-relaxed text-slate-500">
-            Both rails are proven with settled mainnet jobs (payment-rail proofs with
-            deterministic constant workloads — no external work product claimed):{' '}
-            <a className="text-purple-300 hover:text-purple-200 underline decoration-purple-500/40"
-              href={txUrl('0x2876ced5c7cd2e51add16f2a4f1dc119b616f7492887ceca47498a0e0aee113f')}
-              target="_blank" rel="noreferrer">CASH job settled (0.30 CASH)</a>{' · '}
-            <a className="text-purple-300 hover:text-purple-200 underline decoration-purple-500/40"
-              href={txUrl('0x72639d6d0010d05101bbfc5e02008071a7855327130273e0a67f1b504dbf684a')}
-              target="_blank" rel="noreferrer">SUPRA job settled (19 SUPRA)</a>
+          <div className="mb-4 flex flex-wrap gap-3">
+            <Link
+              href="/compute/bond/"
+              className="inline-flex items-center gap-2 rounded-lg border border-purple-500/50 bg-purple-600/20 px-4 py-2 font-mono text-xs text-purple-100 transition-all hover:border-purple-400 hover:bg-purple-600/30"
+            >
+              Place your security deposit
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+            <Link
+              href="/wcosmo/"
+              className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/[0.03] px-4 py-2 font-mono text-xs text-slate-300 transition-all hover:border-white/30 hover:text-white"
+            >
+              What is wCOSMO?
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+          <table className="w-full">
+            <tbody>
+              {PARAMS.map((p) => (
+                <tr key={p.label} className="border-t border-white/5">
+                  <td className="py-1.5 pr-3 font-mono text-[11px] text-slate-500 align-top">{p.label}</td>
+                  <td className="py-1.5 font-mono text-[11px] text-slate-300">{p.value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="mt-3 font-mono text-[10px] leading-relaxed text-slate-600">
+            Values are read live from Supra Mainnet (chain 8) provider_vault and compute_rfq
+            views on page load. The request entry point is a live gate: the older
+            wCOSMO-only request function can be closed for new requests without touching
+            jobs already running, refunds or exits. All parameters are working values of the
+            guarded phase and can change through governance.
+          </p>
+          <p className="mt-3 font-mono text-[11px]">
+            <Link href="/vault/" className="text-purple-300 hover:text-purple-200">
+              Watch your deposit in on-chain custody, live →
+            </Link>
           </p>
         </div>
-        <p className="font-sans text-xs leading-relaxed text-slate-500 max-w-3xl">
-          Honesty note: a fourth asset, dexUSDC (bridged via Dexlyn), was listed on 2026-07-11
-          and disabled the same day after a ~50% market depeg was observed — before a single
-          job used it. Payment assets are governed by a 2-of-3 multisig allowlist and can be
-          disabled for new requests at any time; refunds are never blockable by the allowlist.
-        </p>
       </section>
 
       {/* ── Proof: PATCH-001 leads, ATTEST-001 follows, JOB-001 is the foundation ── */}
@@ -346,9 +389,11 @@ export default function ComputeLanding() {
           Proof — real jobs, settled on mainnet
         </h2>
         <p className="font-sans text-sm leading-relaxed text-slate-400 max-w-3xl mb-4">
-          Three settled jobs, each one step further: JOB-001 proved the settlement machinery,
-          ATTEST-001 traded a verified statement, PATCH-001 traded a directly usable work
-          product.
+          Three settled jobs where the delivering side actually got paid — 285 wCOSMO for a
+          machine-accepted software patch (PATCH-001), 200 wCOSMO for a signed attestation of
+          live protocol invariants (ATTEST-001), 200 wCOSMO for the first compute job
+          (JOB-001). Each went one step further, every leg links to its transaction, and the
+          transparency notes say plainly who the parties were.
         </p>
 
         <h3 className="font-mono text-base text-slate-200 mt-4 mb-2">
@@ -496,80 +541,149 @@ export default function ComputeLanding() {
         </div>
       </section>
 
-      {/* ── Provider + Buyer paths ── */}
+      {/* ── Buyer path (demoted — buyers enter via the market home) ── */}
       <section className="relative z-10 max-w-5xl mx-auto px-6 py-10">
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
-            <div className="flex items-center gap-2 mb-3">
-              <ShieldCheck className="h-4 w-4 text-purple-300" />
-              <h3 className="font-mono text-sm text-slate-100">Provide compute</h3>
-            </div>
-            <p className="font-sans text-sm leading-relaxed text-slate-400 mb-4">
-              Providers place their own security deposit and run their own keys. The deposit is
-              subject to penalty deductions — that is what makes the on-chain track record
-              credible. Placing the deposit is self-service via StarKey; the quote path stays
-              gated during the guarded phase, so your first job is set up together.
-            </p>
-            <div className="mb-4 flex flex-wrap gap-3">
-              <Link
-                href="/compute/bond/"
-                className="inline-flex items-center gap-2 rounded-lg border border-purple-500/50 bg-purple-600/20 px-4 py-2 font-mono text-xs text-purple-100 transition-all hover:border-purple-400 hover:bg-purple-600/30"
-              >
-                Place your security deposit
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-              <Link
-                href="/wcosmo/"
-                className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/[0.03] px-4 py-2 font-mono text-xs text-slate-300 transition-all hover:border-white/30 hover:text-white"
-              >
-                What is wCOSMO?
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-            <table className="w-full">
-              <tbody>
-                {PARAMS.map((p) => (
-                  <tr key={p.label} className="border-t border-white/5">
-                    <td className="py-1.5 pr-3 font-mono text-[11px] text-slate-500 align-top">{p.label}</td>
-                    <td className="py-1.5 font-mono text-[11px] text-slate-300">{p.value}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <p className="mt-3 font-mono text-[10px] leading-relaxed text-slate-600">
-              Values are read live from Supra Mainnet (chain 8) provider_vault and compute_rfq
-              views on page load. The request entry point is a live gate: the older
-              wCOSMO-only request function can be closed for new requests without touching
-              jobs already running, refunds or exits. All parameters are working values of the
-              guarded phase and can change through governance.
+        <p className="font-sans text-sm leading-relaxed text-slate-400 mb-4 max-w-3xl">
+          Buying rather than providing? The buyer-first entry point is the market home —{' '}
+          <Link href="/" className="font-mono text-[12px] text-purple-300 hover:text-purple-200">
+            Post a job on the market →
+          </Link>
+        </p>
+        <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6 max-w-3xl">
+          <div className="flex items-center gap-2 mb-3">
+            <FileText className="h-4 w-4 text-purple-300" />
+            <h3 className="font-mono text-sm text-slate-100">Bring a workload</h3>
+          </div>
+          <p className="font-sans text-sm leading-relaxed text-slate-400 mb-3">
+            v1 targets workloads whose results can be verified deterministically — batch
+            inference with fixed seeds, hashing and data pipelines, rendering with reproducible
+            outputs, anything where the same input yields the same checkable result.
+          </p>
+          <ul className="space-y-1.5 font-mono text-[12px] text-slate-400">
+            <li>· you escrow the max price up front; the residual is refunded exactly on accept</li>
+            <li>· payment moves only on your approval — or through defined timeout paths</li>
+            <li>· if a provider fails to deliver, a penalty deduction of 10% of their required deposit is paid to you (fixed at accept)</li>
+            <li>· a dispute path with its own deposit keeps both sides honest</li>
+          </ul>
+          <p className="mt-3 font-sans text-sm leading-relaxed text-slate-400">
+            For a first pilot we help scope the workload, hand-hold the wCOSMO and gas setup,
+            and walk the job through together.
+          </p>
+        </div>
+      </section>
+
+      {/* ── Multi-asset payments (V2, live 2026-07-11) ── */}
+      <section className="relative z-10 max-w-5xl mx-auto px-6 py-10">
+        <h2 className="font-mono text-xl text-slate-100 mb-2">Pay in the asset that fits</h2>
+        <p className="font-sans text-sm leading-relaxed text-slate-400 mb-6 max-w-3xl">
+          Since 2026-07-11 the market accepts three payment assets. The rule is simple:{' '}
+          <span className="text-slate-200">payment assets pay for the work — the wCOSMO security
+          deposit guarantees provider behavior.</span>{' '}
+          Every provider still places a wCOSMO security deposit, and every penalty deduction is
+          compensated in wCOSMO, no matter which asset a job is priced in.
+        </p>
+        <div className="grid md:grid-cols-3 gap-4 mb-6">
+          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
+            <h3 className="font-mono text-sm text-slate-100 mb-2">wCOSMO</h3>
+            <p className="font-sans text-sm leading-relaxed text-slate-400">
+              The community and security asset. Provider security deposits and penalty
+              compensation are denominated here — and jobs can be paid in it too.
             </p>
           </div>
-          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
-            <div className="flex items-center gap-2 mb-3">
-              <FileText className="h-4 w-4 text-purple-300" />
-              <h3 className="font-mono text-sm text-slate-100">Bring a workload</h3>
-            </div>
-            <p className="font-sans text-sm leading-relaxed text-slate-400 mb-3">
-              v1 targets workloads whose results can be verified deterministically — batch
-              inference with fixed seeds, hashing and data pipelines, rendering with reproducible
-              outputs, anything where the same input yields the same checkable result.
+          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
+            <h3 className="font-mono text-sm text-slate-100 mb-2">CASH</h3>
+            <p className="font-sans text-sm leading-relaxed text-slate-400">
+              Solido CDP stablecoin, backed by SUPRA collateral — not fiat-backed. Listed after
+              an on-chain due diligence including a live redemption test that returned
+              ~$1.00 per CASH.
             </p>
-            <ul className="space-y-1.5 font-mono text-[12px] text-slate-400">
-              <li>· you escrow the max price up front; the residual is refunded exactly on accept</li>
-              <li>· payment moves only on your approval — or through defined timeout paths</li>
-              <li>· if a provider fails to deliver, a penalty deduction of 10% of their required deposit is paid to you (fixed at accept)</li>
-              <li>· a dispute path with its own deposit keeps both sides honest</li>
-            </ul>
-            <p className="mt-3 font-sans text-sm leading-relaxed text-slate-400">
-              For a first pilot we help scope the workload, hand-hold the wCOSMO and gas setup,
-              and walk the job through together.
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
+            <h3 className="font-mono text-sm text-slate-100 mb-2">SUPRA</h3>
+            <p className="font-sans text-sm leading-relaxed text-slate-400">
+              The native asset — every Supra wallet can pay without swaps or bridges. It is
+              volatile, so keep SUPRA-priced jobs small and their deadlines short.
+            </p>
+          </div>
+        </div>
+        <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5 mb-6">
+          <h3 className="font-mono text-sm text-slate-100 mb-2">Pay straight from your wallet</h3>
+          <p className="font-sans text-sm leading-relaxed text-slate-400 mb-3">
+            Buyers call{' '}
+            <code className="font-mono text-xs text-purple-300">
+              create_outcome_request_v2_coin&lt;CoinType&gt;
+            </code>{' '}
+            and the escrow funds itself from the regular wallet balance (legacy CoinStore first,
+            FA remainder) — no manual migration step. Keep a small gas headroom free on top of
+            the escrowed amount: transaction validation reserves max_gas × gas price upfront.
+          </p>
+          <p className="font-sans text-xs leading-relaxed text-slate-500">
+            Both rails are proven with settled mainnet jobs (payment-rail proofs with
+            deterministic constant workloads — no external work product claimed):{' '}
+            <a className="text-purple-300 hover:text-purple-200 underline decoration-purple-500/40"
+              href={txUrl('0x2876ced5c7cd2e51add16f2a4f1dc119b616f7492887ceca47498a0e0aee113f')}
+              target="_blank" rel="noreferrer">CASH job settled (0.30 CASH)</a>{' · '}
+            <a className="text-purple-300 hover:text-purple-200 underline decoration-purple-500/40"
+              href={txUrl('0x72639d6d0010d05101bbfc5e02008071a7855327130273e0a67f1b504dbf684a')}
+              target="_blank" rel="noreferrer">SUPRA job settled (19 SUPRA)</a>
+          </p>
+        </div>
+        <p className="font-sans text-xs leading-relaxed text-slate-500 max-w-3xl">
+          Honesty note: a fourth asset, dexUSDC (bridged via Dexlyn), was listed on 2026-07-11
+          and disabled the same day after a ~50% market depeg was observed — before a single
+          job used it. Payment assets are governed by a 2-of-3 multisig allowlist and can be
+          disabled for new requests at any time; refunds are never blockable by the allowlist.
+        </p>
+      </section>
+
+      {/* ── How it works ── */}
+      <section className="relative z-10 max-w-5xl mx-auto px-6 py-10">
+        <h2 className="font-mono text-xl text-slate-100 mb-6">How a job settles</h2>
+        <div className="grid md:grid-cols-2 gap-4">
+          {LOOP.map((s) => (
+            <div key={s.step} className="rounded-xl border border-white/10 bg-white/[0.02] p-5 flex gap-4">
+              <span className="font-mono text-purple-400 text-sm pt-0.5">{s.step}</span>
+              <div>
+                <h3 className="font-mono text-sm text-slate-100 mb-1">{s.title}</h3>
+                <p className="font-sans text-sm leading-relaxed text-slate-400">{s.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Differentiation ── */}
+      <section className="relative z-10 max-w-5xl mx-auto px-6 py-10">
+        <div className="grid md:grid-cols-3 gap-4">
+          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
+            <Scale className="h-5 w-5 text-purple-300 mb-3" />
+            <h3 className="font-mono text-sm text-slate-100 mb-2">Markets move assets</h3>
+            <p className="font-sans text-sm leading-relaxed text-slate-400">
+              Liquidity, trading and routing are market rails — on Supra, that is SupraFX&apos;s
+              domain. COSMO does not compete there.
+            </p>
+          </div>
+          <div className="rounded-xl border border-purple-500/30 bg-purple-500/[0.05] p-5">
+            <PackageCheck className="h-5 w-5 text-purple-300 mb-3" />
+            <h3 className="font-mono text-sm text-slate-100 mb-2">COSMO settles work</h3>
+            <p className="font-sans text-sm leading-relaxed text-slate-400">
+              A job is requested, paid into escrow, delivered against a verifiable result and
+              settled on-chain — with a provider who has something at stake.
+            </p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
+            <Receipt className="h-5 w-5 text-purple-300 mb-3" />
+            <h3 className="font-mono text-sm text-slate-100 mb-2">One layer down</h3>
+            <p className="font-sans text-sm leading-relaxed text-slate-400">
+              Complementary to SupraOS and SupraFX, not a competitor: COSMO is the execution and
+              accountability primitive underneath agent workflows.
             </p>
           </div>
         </div>
       </section>
 
       {/* ── Honesty box ── */}
-      <section className="relative z-10 max-w-5xl mx-auto px-6 py-6">
+      <section id="guarded" className="relative z-10 max-w-5xl mx-auto px-6 py-6 scroll-mt-24">
         <div className="rounded-xl border border-amber-500/20 bg-amber-500/[0.04] p-5">
           <div className="flex items-center gap-2 mb-2">
             <Lock className="h-4 w-4 text-amber-300" />
@@ -583,6 +697,8 @@ export default function ComputeLanding() {
             not a general GPU marketplace. What it is: a live settlement primitive with real
             money, real security deposits and public evidence for every step — looking for its
             first external participants. The broader class of service settlement remains roadmap.
+            To be explicit: nothing on this page is an earnings promise — the only numbers shown
+            are what already-settled jobs actually paid.
           </p>
         </div>
       </section>

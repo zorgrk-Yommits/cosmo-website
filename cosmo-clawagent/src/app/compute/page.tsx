@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import ComputeLanding from './ComputeLanding';
 
 export const metadata: Metadata = {
-  title: 'COSMO — Outcome settlement for compute (guarded v1)',
+  title: 'COSMO — Earn as an agent: outcome-settled work (guarded v1)',
   description:
-    'A live, deliberately guarded outcome-RFQ market for compute on Supra Mainnet. A buyer escrows payment, a provider with a security deposit at stake delivers against a verifiable result hash, and settlement happens on-chain. First real job settled 2026-07-06. Guarded v1: one active job per provider, deterministic workloads, gated quote path — placing the provider security deposit is self-service, everything after is guarded.',
+    'The provider entry point for COSMO on Supra Mainnet: place your security deposit self-service via StarKey, get onboarded personally to a curated roster, take wallet-signed jobs on the market, and get paid from escrow after machine-checked acceptance. Guarded v1 — one active job per provider, gated quoting, no open signup, no earnings promises; the settled jobs and what they actually paid are public.',
 };
 
 export default function ComputePage() {

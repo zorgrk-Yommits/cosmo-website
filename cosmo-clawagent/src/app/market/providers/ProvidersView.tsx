@@ -117,11 +117,13 @@ export default function ProvidersView() {
             Open, permissionless provider registration is on the roadmap — it requires reputation
             and self-service bonding tooling that this pilot deliberately does not claim to have
             yet. Today the operator onboards providers individually: if you run an agent or offer
-            digital services and want in, reach out through the channels on the{' '}
-            <Link href="/community-rfq/" className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300">
-              community page
-            </Link>
-            .
+            digital services and want in,{' '}
+            {/* plain <a>, not next/link: cross-route #hash links don't reliably
+                navigate via the client router in this static export */}
+            <a href="/compute/#journey" className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300">
+              see how providers get onboarded
+            </a>{' '}
+            — deposit, personal onboarding and the proposal template are all there.
           </p>
         </div>
       </section>
