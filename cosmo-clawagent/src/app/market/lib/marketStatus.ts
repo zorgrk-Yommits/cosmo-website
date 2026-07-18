@@ -23,7 +23,7 @@ export const STATUS_BADGE: Record<JobStatus, StatusBadge> = {
     cls: 'border-slate-500/40 bg-slate-500/10 text-slate-400',
   },
   selected: {
-    label: 'Offer selected — escrow next',
+    label: 'Offer selected — you fund next',
     cls: 'border-sky-500/40 bg-sky-500/10 text-sky-300',
   },
   onchain: {
@@ -31,7 +31,7 @@ export const STATUS_BADGE: Record<JobStatus, StatusBadge> = {
     cls: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300',
   },
   delivered: {
-    label: 'Delivered — awaiting approval',
+    label: 'Delivered — buyer approval next',
     cls: 'border-amber-500/40 bg-amber-500/10 text-amber-300',
   },
   settled: {
@@ -61,15 +61,16 @@ export interface UnifiedStep {
 }
 
 // The unified lifecycle: ONE rail for the whole page. The buyer's three
-// action steps (select / escrow / accept) are emphasized; arming is a server
+// action steps (select / fund / confirm) are emphasized; arming is a server
 // detail and deliberately has no node of its own. Delivery is the provider's
-// step; approval/settlement closes the loop (M5).
+// step; approval/settlement closes the loop (M5). Labels use buyer
+// vocabulary (Sprachpass, Etappe 5); ids stay technical.
 const UNIFIED_STEPS: Omit<UnifiedStep, 'state'>[] = [
   { id: 'review', label: 'Posted & review', onchain: false },
   { id: 'offers', label: 'Offers', onchain: false },
   { id: 'select', label: 'Select offer', onchain: false, buyerAction: 1 },
-  { id: 'escrow', label: 'Fund escrow', onchain: true, buyerAction: 2, txKey: 'create' },
-  { id: 'accept', label: 'Accept quote', onchain: true, buyerAction: 3, txKey: 'accept' },
+  { id: 'escrow', label: 'Fund the job', onchain: true, buyerAction: 2, txKey: 'create' },
+  { id: 'accept', label: 'Confirm & start', onchain: true, buyerAction: 3, txKey: 'accept' },
   { id: 'deliver', label: 'Delivery', onchain: true, txKey: 'deliver' },
   { id: 'settle', label: 'Settlement', onchain: true, txKey: 'settle' },
 ];

@@ -18,16 +18,16 @@ export default function HonestyBox() {
         </li>
         <li>
           · From the moment a buyer selects an offer, every step is a transaction on Supra
-          Mainnet: escrow, delivery, acceptance or dispute, and payout. Each one links to
-          the explorer.
+          Mainnet: funding (escrow), delivery, acceptance or dispute, and payout. Each one
+          links to the explorer.
         </li>
         <li>
-          · Providers today are curated pilot partners with a security deposit bonded
-          on-chain. An open, permissionless provider network is roadmap, not current fact.
+          · Providers today are curated pilot partners with a security deposit locked
+          on-chain. An open provider network is roadmap, not current fact.
         </li>
         <li>
           · Approved job specifications are frozen: the exact bytes are published under a
-          stable URL and their SHA3-256 hash is what the on-chain escrow commits to.
+          stable URL and their SHA3-256 hash is what the on-chain funding is locked to.
         </li>
       </ul>
     </div>

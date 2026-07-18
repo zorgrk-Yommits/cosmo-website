@@ -276,7 +276,7 @@ export default function PostJobForm() {
 
             <Field
               label="Your Supra wallet (optional)"
-              hint="If you already have one — it becomes the buyer wallet for the on-chain escrow. You can add it later."
+              hint="If you already have one — this is the wallet you later pay from when you fund the job. You can add it later; we ask again when it is needed."
               error={errors.buyerWallet}
             >
               <input
@@ -312,8 +312,9 @@ export default function PostJobForm() {
 
             <p className="flex items-start gap-2 font-sans text-xs leading-relaxed text-slate-500">
               <ShieldQuestion className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-              Payment happens later and on-chain: after approval you select an offer and fund the
-              escrow from your own wallet. Posting a job costs nothing and commits you to nothing.
+              Payment happens later and on-chain: after approval you select an offer and fund
+              the job from your own wallet — the money is held on-chain and refunded if the job
+              does not go ahead. Posting a job costs nothing and commits you to nothing.
             </p>
           </form>
         )}

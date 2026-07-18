@@ -24,9 +24,9 @@ import DeliverPanel from '../components/DeliverPanel';
 import HonestyBox from '../components/HonestyBox';
 
 const TX_LABELS: { key: keyof TxRefs; label: string }[] = [
-  { key: 'create', label: 'Escrow created' },
-  { key: 'submitQuote', label: 'Quote submitted' },
-  { key: 'accept', label: 'Quote accepted' },
+  { key: 'create', label: 'Job funded' },
+  { key: 'submitQuote', label: 'Provider offer confirmed' },
+  { key: 'accept', label: 'Job confirmed & started' },
   { key: 'deliver', label: 'Result delivered' },
   { key: 'dispute', label: 'Delivery disputed' },
   { key: 'settle', label: 'Settled' },
@@ -263,7 +263,8 @@ export default function JobDetail() {
                 </div>
                 <p className="font-sans text-sm leading-relaxed text-slate-400">
                   On approval this job&apos;s specification was frozen to an immutable canonical
-                  document. Its SHA3-256 hash is what the on-chain escrow commits to.
+                  document. The on-chain contract stores its SHA3-256 hash, so the specification
+                  cannot change after funding.
                 </p>
                 <dl className="mt-3 grid gap-x-6 gap-y-3">
                   <Fact label="Spec hash (SHA3-256)">

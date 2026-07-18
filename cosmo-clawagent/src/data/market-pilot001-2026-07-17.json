@@ -17,17 +17,17 @@
   "attestation_url": "/api/market/jobs/job_mrnqscfbzcinte/attestation",
   "legs": [
     {
-      "step": "Fund escrow (create_outcome_request_v2)",
+      "step": "Fund the job (create_outcome_request_v2)",
       "actor": "buyer",
       "tx": "0xa8d69c340f5acb053b9a4aa05ae3a65a54c611b6c4120088913dc77fd4a00f03"
     },
     {
-      "step": "Quote armed (submit_quote_v3, auto)",
+      "step": "Provider offer prepared (submit_quote_v3, auto)",
       "actor": "server",
       "tx": "0xa26cf49bbee2a9d7d87a38cb90b675722fa0105e03ca8625a720fcdf7c490f71"
     },
     {
-      "step": "Accept quote (accept_quote_v2)",
+      "step": "Confirm & start (accept_quote_v2)",
       "actor": "buyer",
       "tx": "0x33ab980daa30a47bba25b35ec675f3ccaaf981df5b2b51cb2a235233bfe01ce4"
     },

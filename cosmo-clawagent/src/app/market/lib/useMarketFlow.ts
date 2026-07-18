@@ -264,7 +264,7 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
       setArmState('failed');
       setArmError(
         e instanceof ApiError && e.status === 503
-          ? 'Quote signing is temporarily unavailable on our server. Your escrow is safe on-chain — retry in a moment.'
+          ? 'Preparing the offer is temporarily unavailable on our server. Your funds are safe in the on-chain contract — retry in a moment.'
           : ((e as Error).message ?? String(e)),
       );
     } finally {
@@ -326,7 +326,7 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
         const challenge = await requestSelectChallenge(jobId, offerId);
         const proof = await signChallenge(challenge.hexMessage, challenge.nonce);
         await submitSelect(jobId, offerId, { message: challenge.challenge, ...proof });
-        return 'Offer selected and signed. Next step: fund the on-chain escrow.';
+        return 'Offer selected and signed. Next step: fund the job.';
       });
     },
     [jobId, flow?.buyerWallet, run],
@@ -336,10 +336,10 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
     if (!jobId) return;
     await run('escrowing', async () => {
       const f = await fetchFlow(jobId); // fresh params — never stale ones
-      if (!f.escrowParams) throw new Error('No selected offer / escrow parameters available.');
-      if (f.rail.paused) throw new Error('The on-chain rail is paused — escrow is disabled.');
+      if (!f.escrowParams) throw new Error('No selected offer / funding details available.');
+      if (f.rail.paused) throw new Error('The on-chain contract is paused — funding is disabled right now.');
       if (f.providerChecks && !(f.providerChecks.eligible && f.providerChecks.bondCoversMinimum && f.providerChecks.hasCapacity)) {
-        throw new Error('The selected provider is not currently eligible on-chain — escrow would be wasted.');
+        throw new Error('The selected provider does not currently meet the on-chain requirements — funding would be lost.');
       }
       const account = await connectMainnetWallet();
       setWallet(account);
@@ -365,13 +365,13 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
         await sleep(3_000);
         try {
           const r = await confirmRequest(jobId, txHash);
-          return `Escrow confirmed on-chain (request #${r.requestId}). Preparing your quote…`;
+          return `Funding confirmed on-chain (request #${r.requestId}). Preparing the final step…`;
         } catch (e) {
           lastErr = e as Error;
         }
       }
       throw new Error(
-        `Escrow transaction ${txHash} was sent, but the request could not be confirmed yet (${lastErr?.message}). Reload this page in a minute — funds are recoverable via cancel if anything is off.`,
+        `The funding transaction ${txHash} was sent, but the request could not be confirmed yet (${lastErr?.message}). Reload this page in a minute — if anything is off, you can cancel and get the funds back.`,
       );
     });
   }, [jobId, run]);
@@ -383,13 +383,13 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
       if (typeof f.requestId !== 'number') throw new Error('No on-chain request to accept against.');
       // Anti-drift: the expected tuple comes from the CHAIN, never local state.
       const q = await fetchOnchainQuote(f.requestId);
-      if (!q.hasQuote) throw new Error('No quote is live on-chain — a fresh one is being prepared.');
+      if (!q.hasQuote) throw new Error('No offer is ready on-chain — a fresh one is being prepared.');
       const now = Math.floor(Date.now() / 1000);
       const ttl = f.rail.quoteTtlSecs || 300;
       if (now > q.signedAtSecs + ttl - QUOTE_SAFETY_SECS) {
         // Flag expiry so the auto-arm effect fetches a fresh quote once idle.
         setArmState('expired');
-        throw new Error('The on-chain quote expired before acceptance — a fresh one is being prepared.');
+        throw new Error("The offer's validity window ran out before confirmation — a fresh one is being prepared.");
       }
       const account = await connectMainnetWallet();
       setWallet(account);
@@ -410,13 +410,13 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
         await sleep(3_000);
         try {
           const r = await confirmAccept(jobId, txHash);
-          return `Quote accepted — on-chain job #${r.jobIdOnchain} is active.`;
+          return `Job confirmed — on-chain job #${r.jobIdOnchain} is active.`;
         } catch (e) {
           lastErr = e as Error;
         }
       }
       throw new Error(
-        `Accept transaction ${txHash} was sent, but the job could not be confirmed yet (${lastErr?.message}). Reload this page in a minute.`,
+        `The confirmation transaction ${txHash} was sent, but the job could not be confirmed yet (${lastErr?.message}). Reload this page in a minute.`,
       );
     });
   }, [jobId, run]);

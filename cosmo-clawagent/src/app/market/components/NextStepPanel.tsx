@@ -3,9 +3,11 @@
 // "Your next step" — the hero panel of the job page (replaces BuyerFlow).
 // Exactly ONE state is active at a time and it renders exactly ONE big CTA
 // (or an explicit waiting card when it is not the buyer's turn). The buyer
-// sees three actions total: select offer, fund escrow, accept quote — arming
-// the provider quote is a server call and runs automatically in between
-// (useMarketFlow's auto-arm), surfacing here only as "Preparing your quote".
+// sees three actions total: select offer, fund the job, confirm & start —
+// preparing the provider offer (quote arming) is a server call and runs
+// automatically in between (useMarketFlow's auto-arm), surfacing here only
+// as "Preparing the final step". Buyer copy avoids escrow/quote/arm jargon
+// by decision (Sprachpass, Etappe 5).
 
 import { useEffect, useState } from 'react';
 import {
@@ -66,6 +68,20 @@ const STAGE_STEP: Partial<Record<Stage, 1 | 2 | 3>> = {
   'arm-failed': 3,
   'expired-manual': 3,
 };
+
+// The StarKey footer renders only where the wallet is actually part of the
+// story — pre-wallet stages (moderation, awaiting-offers, ...) are
+// email-guided and must not mention the wallet yet.
+const WALLET_STAGES: ReadonlySet<Stage> = new Set([
+  'select',
+  'escrow',
+  'preparing',
+  'accept',
+  'arm-failed',
+  'expired-manual',
+  'active',
+  'approve',
+]);
 
 export default function NextStepPanel({
   job,
@@ -277,14 +293,15 @@ export default function NextStepPanel({
             )}
             {flow.escrowParams ? (
               <p className="font-sans text-sm leading-relaxed text-slate-300">
-                Funding the escrow locks{' '}
+                Funding the job locks{' '}
                 <span className="font-bold text-slate-100">
                   {fmtQuants(flow.escrowParams.maxPriceQuants, flow.escrowParams.assetDecimals)}{' '}
                   {flow.escrowParams.assetSymbol}
                 </span>{' '}
-                against the frozen spec hash. Unspent escrow returns to you at acceptance; you
-                can cancel any time before accepting. Need {flow.escrowParams.assetSymbol}? See
-                the{' '}
+                on-chain against the frozen job specification. The money is held by the on-chain
+                contract — not by us and not by the provider. Any unused part comes back to you
+                when you confirm, and you can cancel and get everything back at any time before
+                you confirm. Need {flow.escrowParams.assetSymbol}? See the{' '}
                 <a href="/wcosmo/" className="text-sky-400 hover:text-sky-300">
                   conversion guide
                 </a>
@@ -292,19 +309,19 @@ export default function NextStepPanel({
               </p>
             ) : (
               <p className="font-mono text-xs text-amber-300">
-                Escrow parameters are not available yet — refresh in a moment.
+                Funding details are not available yet — refresh in a moment.
               </p>
             )}
             {flow.rail.paused && (
               <p className="font-mono text-xs text-amber-300">
-                The on-chain rail is paused — escrow is disabled.
+                The on-chain contract is paused — funding is disabled right now.
               </p>
             )}
             {providerIneligible && (
               <p className="flex items-start gap-1.5 font-mono text-xs text-amber-300">
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                The selected provider is not currently eligible on-chain (bond/capacity). Escrow
-                is blocked until that is resolved.
+                The selected provider does not currently meet the on-chain requirements
+                (security deposit or capacity). Funding is blocked until that is resolved.
               </p>
             )}
             <button
@@ -318,11 +335,12 @@ export default function NextStepPanel({
               ) : (
                 <Send className="h-5 w-5" />
               )}
-              Fund escrow with StarKey
+              Fund the job with StarKey
             </button>
             <p className="font-mono text-[11px] text-slate-500">
-              After this signature the quote is prepared automatically — your next action is the
-              final accept.
+              Held on-chain, refunded if the job does not go ahead. After this signature
+              everything is prepared automatically — your next and final action is Confirm &amp;
+              start.
             </p>
           </div>
         )}
@@ -331,9 +349,10 @@ export default function NextStepPanel({
           <div className="flex items-start gap-3">
             <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-purple-300" />
             <p className="font-sans text-sm leading-relaxed text-slate-300">
-              <span className="font-bold text-slate-100">Preparing your quote…</span> We verify
-              the escrow on-chain and arm the provider quote (server-signed). No action needed —
-              the accept button appears here in a moment.
+              <span className="font-bold text-slate-100">Preparing the final step…</span> We
+              verify your funding on-chain and set up the provider&apos;s offer for
+              confirmation. No action needed from you — the Confirm &amp; start button appears
+              here in a moment.
             </p>
           </div>
         )}
@@ -341,7 +360,7 @@ export default function NextStepPanel({
         {stage === 'accept' && (
           <div className="space-y-4">
             <p className="font-sans text-sm leading-relaxed text-slate-300">
-              A signed quote is live on-chain
+              The provider&apos;s offer is ready on-chain
               {f.quote && flow?.escrowParams && (
                 <>
                   :{' '}
@@ -349,19 +368,19 @@ export default function NextStepPanel({
                     {fmtQuants(f.quote.price, flow.escrowParams.assetDecimals)}{' '}
                     {flow.escrowParams.assetSymbol}
                   </span>{' '}
-                  from {f.quote.solver.slice(0, 10)}…
+                  from provider {f.quote.solver.slice(0, 10)}…
                 </>
               )}
-              . Accepting locks the provider in and refunds unspent escrow. The acceptance is
-              checked against the exact on-chain quote — if anything drifted, the chain rejects
-              it.
+              . Confirming starts the job and returns any unused funds to you. The chain checks
+              your confirmation against the exact offer terms — if the terms changed in the
+              meantime, the chain rejects it.
             </p>
             <div className="flex items-center gap-2 font-mono text-sm">
               <Clock3
                 className={cn('h-4 w-4', secsLeft < 60 ? 'text-amber-300' : 'text-emerald-300')}
               />
               <span className={cn(secsLeft < 60 ? 'text-amber-300' : 'text-emerald-300')}>
-                Quote valid {fmtCountdown(secsLeft)}
+                Offer valid {fmtCountdown(secsLeft)}
               </span>
               <span className="text-[11px] text-slate-500">— renews automatically</span>
             </div>
@@ -376,7 +395,7 @@ export default function NextStepPanel({
               ) : (
                 <CheckCircle2 className="h-5 w-5" />
               )}
-              Accept quote with StarKey
+              Confirm &amp; start with StarKey
             </button>
           </div>
         )}
@@ -385,8 +404,14 @@ export default function NextStepPanel({
           <div className="space-y-4">
             <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-rose-300">
               <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-              {f.armError ?? 'Preparing the quote failed.'}
+              Preparing the final step failed. Your funds are safe in the on-chain contract —
+              you can retry below at no cost.
             </p>
+            {f.armError && (
+              <p className="font-mono text-[11px] text-slate-500">
+                Technical detail: {f.armError}
+              </p>
+            )}
             <button
               type="button"
               className={CTA_DANGER}
@@ -403,7 +428,8 @@ export default function NextStepPanel({
           <div className="space-y-4">
             <p className="flex items-start gap-1.5 font-sans text-sm leading-relaxed text-slate-300">
               <Hourglass className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
-              The quote expired. Get a fresh one — it is free and needs no wallet signature.
+              The offer&apos;s validity window ran out. Get a fresh one — it is free and needs
+              no wallet signature.
             </p>
             <button
               type="button"
@@ -412,7 +438,7 @@ export default function NextStepPanel({
               onClick={() => void f.rearm()}
             >
               <RefreshCw className={cn('h-5 w-5', f.busy === 'arming' && 'animate-spin')} />
-              Re-arm quote
+              Refresh the offer
             </button>
           </div>
         )}
@@ -454,8 +480,8 @@ export default function NextStepPanel({
               <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-amber-300">
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                 The delivery deadline has passed without a result. Delivery is no longer possible
-                on-chain; the escrow can be reclaimed by the buyer (claim_no_delivery). Contact us
-                and we will walk you through it.
+                on-chain, and you can get your locked funds back. Contact us and we will guide
+                you through the steps.
               </p>
             )}
           </div>
@@ -464,8 +490,8 @@ export default function NextStepPanel({
         {stage === 'approve' && (
           <div className="space-y-4">
             <p className="font-sans text-sm leading-relaxed text-slate-300">
-              The provider delivered a result. The on-chain result hash commits to this
-              attestation document byte-for-byte:
+              The provider delivered a result. The chain stores a fingerprint (SHA3-256 hash) of
+              this attestation document, so the document cannot be changed afterwards:
             </p>
             <div className="rounded-lg border border-white/10 bg-black/20 p-4">
               <a
@@ -487,13 +513,14 @@ export default function NextStepPanel({
             {oj && oj.deliveredAt > 0 && (
               <p className="flex items-center gap-2 font-mono text-xs text-slate-400">
                 <Clock3 className="h-3.5 w-3.5 text-amber-300" />
-                Review window until {fmtTs(oj.deliveredAt + oj.reviewWindowSecs)} — after that,
-                settlement can be triggered permissionlessly.
+                Review window until {fmtTs(oj.deliveredAt + oj.reviewWindowSecs)} — it is your
+                turn to approve. After that time, settlement can be triggered by anyone, without
+                your signature.
               </p>
             )}
             <p className="font-mono text-[11px] leading-relaxed text-slate-500">
-              Something wrong with the result? An on-chain dispute path exists — contact us
-              before the review window ends and do not approve.
+              Something wrong with the result? You can dispute it on-chain — contact us before
+              the review window ends and do not approve.
             </p>
             <button
               type="button"
@@ -509,8 +536,8 @@ export default function NextStepPanel({
               Approve delivery with StarKey
             </button>
             <p className="font-mono text-[11px] text-slate-500">
-              Approval settles atomically: the price and the provider bond are released in this
-              one transaction.
+              Approval settles everything in one transaction: the provider is paid and their
+              security deposit is released.
             </p>
           </div>
         )}
@@ -521,7 +548,8 @@ export default function NextStepPanel({
             <p className="font-sans text-sm leading-relaxed text-slate-300">
               <span className="font-bold text-emerald-300">Job settled on-chain.</span>{' '}
               {selectedOffer ? `${selectedOffer.price} ${job.budgetAsset}` : 'The payment'} was
-              paid out to the provider and the bond released — the marketplace loop is closed.
+              paid out to the provider and their security deposit was released. This job is
+              complete — nothing more to do.
               {txRefs.deliver && (
                 <>
                   {' '}
@@ -562,10 +590,12 @@ export default function NextStepPanel({
       )}
       {f.info && !f.error && <p className="mt-4 font-mono text-[11px] text-emerald-300">{f.info}</p>}
 
-      <p className="mt-4 border-t border-white/5 pt-3 font-mono text-[11px] text-slate-500">
-        You sign with your own StarKey wallet; this site never holds funds or keys. Every
-        on-chain step is a verifiable Supra Mainnet transaction.
-      </p>
+      {WALLET_STAGES.has(stage) && (
+        <p className="mt-4 border-t border-white/5 pt-3 font-mono text-[11px] text-slate-500">
+          You sign with your own StarKey wallet; this site never holds funds or keys. Every
+          on-chain step is a verifiable Supra Mainnet transaction.
+        </p>
+      )}
     </div>
   );
 }

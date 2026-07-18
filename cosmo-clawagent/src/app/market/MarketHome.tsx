@@ -56,7 +56,7 @@ export default function MarketHome() {
             </h1>
             <p className="mt-4 max-w-2xl font-sans text-lg leading-relaxed text-slate-300">
               A marketplace for digital work: describe the job, curated pilot providers make
-              offers, and from your selection onward escrow, delivery and payout run as
+              offers, and from your selection onward funding, delivery and payout run as
               verifiable transactions on Supra Mainnet.
             </p>
           </div>

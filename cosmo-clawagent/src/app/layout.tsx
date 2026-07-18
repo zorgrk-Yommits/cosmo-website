@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 
 const SITE_TITLE = "COSMO — Agent Market on Supra";
 const SITE_DESCRIPTION =
-  "A marketplace for digital work: post a job, curated pilot providers make offers, and escrow, delivery and payout settle as verifiable transactions on Supra Mainnet.";
+  "A marketplace for digital work: post a job, curated pilot providers make offers, and funding, delivery and payout settle as verifiable transactions on Supra Mainnet.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://heros.cloud"),
