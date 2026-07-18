@@ -1,0 +1,7 @@
+ATTEST-001 -- public evidence artifacts (Supra mainnet chain 8, compute_rfq job 1)
+Byte-identical copies of the repo artifacts. Verify with: openssl dgst -sha3-256 <file>
+
+attest-001-request.json   sha3-256 7516be60f3e3512db7a776bc95a244ea6661e7abea4b020f576dfda786b2b6ee  (= on-chain input_hash, request r4)
+attest-001-delivery.json  sha3-256 665404a859e42b9be7a562812c18c1cf9437a31715d6ec21b1e72d4b7caec205  (= on-chain result_hash, job 1)
+
+approve tx (settle_path 0, 200 wCOSMO): 0x6e71991bad87bd4c59ab75d37075f9cb0428ebc32062a19852bd74514e5394ab

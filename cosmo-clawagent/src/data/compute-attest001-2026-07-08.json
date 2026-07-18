@@ -14,6 +14,7 @@
   "input_hash": "7516be60f3e3512db7a776bc95a244ea6661e7abea4b020f576dfda786b2b6ee",
   "result_hash": "665404a859e42b9be7a562812c18c1cf9437a31715d6ec21b1e72d4b7caec205",
   "settle_path": 0,
+  "public_evidence": "https://heros.cloud/evidence/attest-001/",
   "explorer_tx_base": "https://suprascan.io/tx/",
   "legs": [
     {

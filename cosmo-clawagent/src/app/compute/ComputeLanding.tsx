@@ -424,8 +424,17 @@ export default function ComputeLanding() {
         <p className="font-mono text-[11px] leading-relaxed text-slate-500 max-w-3xl mb-4">
           Transparency: buyer and attestor are operating-team accounts. What is real either
           way: the attested on-chain state itself, the deposit at stake, and the
-          machine-checkable acceptance — all independently verifiable. Request and delivery
-          are pinned on-chain: input hash {short(attest001.input_hash)} (frozen request),
+          machine-checkable acceptance — all independently verifiable. Request and signed
+          delivery are published byte-identical (verify with sha3-256):{' '}
+          <a
+            href={attest001.public_evidence}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-purple-300 hover:text-purple-200"
+          >
+            public evidence artifacts ↗
+          </a>
+          . On-chain anchors: input hash {short(attest001.input_hash)} (frozen request),
           result hash {short(attest001.result_hash)} (signed delivery file).
         </p>
         <div className="rounded-xl border border-white/10 bg-white/[0.02] overflow-hidden mb-8">

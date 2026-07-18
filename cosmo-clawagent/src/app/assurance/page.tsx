@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import Assurance from './Assurance';
 
-const TITLE = 'COSMO Assurance — Price Integrity Guard';
+const TITLE = 'COSMO Trust — Evidence, Honesty Principles, Assurance';
 const DESCRIPTION =
-  'A read-only research prototype for independently evaluating the economic plausibility, freshness and evidence coverage of critical oracle values.';
+  'Four settled on-chain proofs, the honesty rules this site holds itself to, and the Price Integrity Guard research module. Every claim links to a transaction or a hash.';
 
 export const metadata: Metadata = {
   title: TITLE,
