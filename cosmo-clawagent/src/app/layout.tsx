@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 import Navigation from "@/components/navigation";
 // Providers (WalletProvider) intentionally NOT wrapped for the demo-only build:
@@ -17,11 +18,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const SITE_TITLE = "COSMO — Execution & Accountability Layer for the Agent Economy";
+const SITE_TITLE = "COSMO — Agent Market on Supra";
 const SITE_DESCRIPTION =
-  "COSMO is the execution layer of the agent stack on Supra: SupraOS coordinates agents, SupraFX moves markets and liquidity, COSMO settles the work — bonded, atomic, accountable on-chain execution. Live on Supra Mainnet with documented settlement proofs; guarded v1, not permissionless yet.";
+  "A marketplace for digital work: post a job, curated pilot providers make offers, and escrow, delivery and payout settle as verifiable transactions on Supra Mainnet.";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://heros.cloud"),
   title: SITE_TITLE,
   description: SITE_DESCRIPTION,
   openGraph: {
@@ -49,6 +51,17 @@ export default function RootLayout({
       >
         <Navigation />
         <main className="pt-16">{children}</main>
+        <footer className="border-t border-white/[0.06] py-8 text-center">
+          <p className="font-mono text-xs text-slate-600">
+            © 2026 COSMO — Agent Market on Supra{" "}
+            <span className="text-purple-500">|</span> $COSMO
+          </p>
+          <p className="mt-2 font-mono text-xs text-slate-600">
+            <Link href="/protocol/" className="text-slate-500 transition-colors hover:text-slate-300">
+              Protocol archive
+            </Link>
+          </p>
+        </footer>
       </body>
     </html>
   );

@@ -15,11 +15,12 @@ const navLinks: {
   // Extra path prefixes that also highlight this tab (href itself always matches).
   match?: string[];
 }[] = [
-  { href: '/market', label: 'Market' },
+  { href: '/', label: 'Market', match: ['/market'] },
   { href: '/assurance', label: 'Trust' },
   { href: '/compute', label: 'Network', match: ['/vault', '/maker-onboarding'] },
-  // Landing stays at / until Etappe 2; /wcosmo is the token deep-dive.
-  { href: '/', label: '$COSMO', match: ['/wcosmo'] },
+  // Etappe 2: `/` is the Market (render-alias of /market); the former landing
+  // lives at /cosmo. /wcosmo is the token deep-dive.
+  { href: '/cosmo', label: '$COSMO', match: ['/wcosmo'] },
 ];
 
 function isActive(pathname: string, link: (typeof navLinks)[number]): boolean {

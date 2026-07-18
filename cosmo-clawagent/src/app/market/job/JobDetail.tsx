@@ -76,7 +76,7 @@ export default function JobDetail() {
 
       <section className="relative z-10 mx-auto max-w-5xl px-6 pt-24 pb-8">
         <Link
-          href="/market/"
+          href="/"
           className="inline-flex items-center gap-1.5 font-mono text-xs text-slate-400 transition-colors hover:text-white"
         >
           <ArrowLeft className="h-3 w-3" />
@@ -86,7 +86,7 @@ export default function JobDetail() {
         {!id && (
           <p className="mt-8 font-mono text-sm text-slate-400">
             No job selected — pick one from{' '}
-            <Link href="/market/" className="text-sky-400 hover:text-sky-300">
+            <Link href="/" className="text-sky-400 hover:text-sky-300">
               the job board
             </Link>
             .

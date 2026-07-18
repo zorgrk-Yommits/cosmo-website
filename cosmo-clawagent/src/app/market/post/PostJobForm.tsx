@@ -156,7 +156,7 @@ export default function PostJobForm() {
 
       <section className="relative z-10 mx-auto max-w-3xl px-6 pt-24 pb-8">
         <Link
-          href="/market/"
+          href="/"
           className="inline-flex items-center gap-1.5 font-mono text-xs text-slate-400 transition-colors hover:text-white"
         >
           <ArrowLeft className="h-3 w-3" />
