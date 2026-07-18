@@ -15,6 +15,7 @@ import {
   HelpCircle,
   AlertTriangle,
 } from 'lucide-react';
+import ProtocolNotice from '@/components/ProtocolNotice';
 
 const RISK_SPLIT = [
   {
@@ -68,6 +69,7 @@ export default function MakerCapital() {
         <div className="grid-bg" />
 
         <div className="relative z-10 mx-auto max-w-4xl px-5 py-16 md:py-24">
+          <ProtocolNotice />
           {/* header */}
           <header className="max-w-3xl">
             <div className="mb-5 flex flex-wrap items-center gap-3">

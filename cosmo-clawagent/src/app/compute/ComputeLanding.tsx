@@ -610,6 +610,9 @@ export default function ComputeLanding() {
             <Link href="/demo/" className="text-purple-300 hover:text-purple-200">
               RFQ mainnet proof →
             </Link>
+            <Link href="/vault/" className="text-purple-300 hover:text-purple-200">
+              Maker vault →
+            </Link>
             <a href="/COSMO_Manifesto_v4.0.pdf" className="text-purple-300 hover:text-purple-200">
               Manifesto v4.0 (PDF) →
             </a>

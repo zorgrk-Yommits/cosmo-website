@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Play, Pause, RotateCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import ProtocolNotice from '@/components/ProtocolNotice';
 import {
   ALL_STEPS,
   CORE_STEPS,
@@ -99,6 +100,7 @@ export default function RfqReplay() {
         <div className="grid-bg" />
 
         <div className="relative z-10 mx-auto max-w-6xl px-5 py-16 md:py-20">
+          <ProtocolNotice />
           <NarrativeHeader />
 
           {/* ── honest status banner (controlled proof, not permissionless) ── */}

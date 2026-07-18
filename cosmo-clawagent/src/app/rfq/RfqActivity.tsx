@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Activity, Lock, Radio, RefreshCw, ScrollText } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import ProtocolNotice from '@/components/ProtocolNotice';
 import { useRfqActivity } from './useRfqActivity';
 import { deriveDisplayPhase } from './lib/rfqActivity';
 import MakerVitals from './components/MakerVitals';
@@ -77,6 +78,7 @@ export default function RfqActivity() {
 
       {/* ── Hero ── */}
       <section className="relative z-10 mx-auto max-w-5xl px-6 pt-24 pb-8">
+        <ProtocolNotice />
         <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-purple-500/25 bg-purple-500/10 px-3 py-1.5">
           <span className="inline-flex h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
           <span className="font-mono text-xs uppercase tracking-[0.2em] text-slate-300">

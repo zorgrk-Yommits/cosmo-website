@@ -6,20 +6,29 @@ import { Zap, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
-const navLinks: { href: string; label: string; external?: boolean; download?: boolean }[] = [
-  { href: '/', label: 'Home' },
-  // /demo stays reachable via deep links (homepage, /compute) — nav tab
-  // retired 2026-07-12 in favor of the live /rfq page.
-  { href: '/compute', label: 'Compute' },
-  { href: '/wcosmo', label: 'wCOSMO' },
-  { href: '/vault', label: 'Vault' },
-  { href: '/rfq', label: 'RFQ Live' },
+// 4-area nav (Etappe 1 of the site restructure). Retired tracks (/rfq,
+// /community-rfq, /maker-capital, /access, /demo) stay reachable via the
+// archive hub at /protocol and direct URLs — they just left the nav.
+const navLinks: {
+  href: string;
+  label: string;
+  // Extra path prefixes that also highlight this tab (href itself always matches).
+  match?: string[];
+}[] = [
   { href: '/market', label: 'Market' },
-  { href: '/assurance', label: 'Assurance' },
-  { href: '/community-rfq', label: 'Community' },
-  { href: '/maker-capital', label: 'Maker Capital' },
-  { href: '/access', label: 'Access' },
+  { href: '/assurance', label: 'Trust' },
+  { href: '/compute', label: 'Network', match: ['/vault', '/maker-onboarding'] },
+  // Landing stays at / until Etappe 2; /wcosmo is the token deep-dive.
+  { href: '/', label: '$COSMO', match: ['/wcosmo'] },
 ];
+
+function isActive(pathname: string, link: (typeof navLinks)[number]): boolean {
+  // trailingSlash export: usePathname can report '/market/' — normalize.
+  const path = pathname.replace(/\/+$/, '') || '/';
+  return [link.href, ...(link.match ?? [])].some((t) =>
+    t === '/' ? path === '/' : path === t || path.startsWith(t + '/')
+  );
+}
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -43,22 +52,11 @@ export default function Navigation() {
           {navLinks.map((link) => {
             const className = cn(
               'px-4 py-2 rounded-lg font-mono text-sm transition-all duration-200',
-              pathname === link.href
+              isActive(pathname, link)
                 ? 'bg-purple-500/15 text-purple-300 border border-purple-500/30'
                 : 'text-slate-400 hover:text-white hover:bg-white/5'
             );
-            return link.external ? (
-              <a
-                key={link.href}
-                href={link.href}
-                target={link.download ? undefined : '_blank'}
-                rel="noopener noreferrer"
-                download={link.download}
-                className={className}
-              >
-                {link.label}
-              </a>
-            ) : (
+            return (
               <Link key={link.href} href={link.href} className={className}>
                 {link.label}
               </Link>
@@ -83,23 +81,11 @@ export default function Navigation() {
           {navLinks.map((link) => {
             const className = cn(
               'px-4 py-3 rounded-lg font-mono text-sm transition-all',
-              pathname === link.href
+              isActive(pathname, link)
                 ? 'bg-purple-500/15 text-purple-300'
                 : 'text-slate-400 hover:text-white'
             );
-            return link.external ? (
-              <a
-                key={link.href}
-                href={link.href}
-                target={link.download ? undefined : '_blank'}
-                rel="noopener noreferrer"
-                download={link.download}
-                onClick={() => setMenuOpen(false)}
-                className={className}
-              >
-                {link.label}
-              </a>
-            ) : (
+            return (
               <Link
                 key={link.href}
                 href={link.href}

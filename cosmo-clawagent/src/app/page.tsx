@@ -542,6 +542,11 @@ export default function HomePage() {
           © 2026 COSMO — Execution &amp; Accountability Layer for the Agent Economy{' '}
           <span className="text-purple-500">|</span> $COSMO
         </p>
+        <p className="mt-2 font-mono text-xs text-slate-600">
+          <Link href="/protocol/" className="text-slate-500 transition-colors hover:text-slate-300">
+            Protocol archive
+          </Link>
+        </p>
       </footer>
     </div>
   );

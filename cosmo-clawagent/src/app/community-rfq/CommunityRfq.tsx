@@ -16,6 +16,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
+import ProtocolNotice from '@/components/ProtocolNotice';
 import {
   Wallet,
   ShieldCheck,
@@ -174,6 +175,7 @@ export default function CommunityRfq() {
         <div className="grid-bg" />
 
         <div className="relative z-10 mx-auto max-w-3xl px-5 py-16 md:py-24">
+          <ProtocolNotice />
           {/* ── header ── */}
           <header className="max-w-2xl">
             <div className="mb-5 flex items-center gap-3">
