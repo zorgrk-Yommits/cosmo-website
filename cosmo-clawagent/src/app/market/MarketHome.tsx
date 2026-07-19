@@ -5,7 +5,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Bookmark, Bot, Briefcase, ExternalLink, FileJson, PlusCircle, RefreshCw, ShieldCheck, User, Users } from 'lucide-react';
+import { Bookmark, Bot, Briefcase, Coins, ExternalLink, FileJson, PlusCircle, RefreshCw, ShieldCheck, User, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useMarketJobs } from './useMarketData';
 import { STATUS_BADGE, fmtRel, fmtTs } from './lib/marketStatus';
@@ -91,6 +91,13 @@ export default function MarketHome() {
           >
             <Users className="h-4 w-4" />
             Pilot providers
+          </Link>
+          <Link
+            href="/buy/"
+            className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 font-mono text-sm text-slate-300 transition-all hover:border-white/30 hover:text-white"
+          >
+            <Coins className="h-4 w-4" />
+            Buy wCOSMO (capped pilot)
           </Link>
         </div>
       </section>
