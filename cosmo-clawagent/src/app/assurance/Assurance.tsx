@@ -252,6 +252,7 @@ const LIMITATIONS = [
   'Not a full smart-contract audit',
   'Does not assess governance, access control, liquidity or total protocol safety unless explicitly registered',
   'Currently two verified subjects: Bonzo replay and Solido snapshot',
+  'Baseline identifiers (tag, commit, test count) reference a private repository and are not independently verifiable from this page yet',
 ] as const;
 
 export default function Assurance() {
@@ -711,6 +712,12 @@ export default function Assurance() {
                   </div>
                 ))}
               </dl>
+
+              <p className="mt-3 font-mono text-[11px] leading-relaxed text-slate-500">
+                Provenance, honestly: these identifiers reference a private repository, so
+                you cannot verify them from this page today. Verification materials are
+                available on request; publishing the repository is under consideration.
+              </p>
 
               <div className="mt-4 rounded-lg border border-purple-500/25 bg-purple-500/[0.05] px-4 py-3">
                 <p className="font-mono text-[12px] font-bold leading-relaxed text-purple-200">
