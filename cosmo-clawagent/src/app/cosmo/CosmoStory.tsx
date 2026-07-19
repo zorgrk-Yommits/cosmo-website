@@ -288,6 +288,15 @@ export default function CosmoStory() {
               signed outputs, API responses — is where the primitive is built to extend next, and
               it is not built yet.
             </p>
+            <p className="mt-3 font-sans text-sm leading-relaxed text-slate-400">
+              Want to hold the token? A small, capped direct sale of wCOSMO against SUPRA is
+              live as a pilot —{' '}
+              <a href="/buy/" className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300">
+                buy wCOSMO
+              </a>{' '}
+              (hard on-chain caps, floor-protected price, no buy-back commitment; every caveat
+              is stated on the page itself).
+            </p>
           </div>
         </div>
       </section>

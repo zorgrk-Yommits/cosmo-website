@@ -273,10 +273,18 @@ export default function WcosmoGuide() {
         <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
           <h3 className="font-mono text-sm text-slate-100 mb-3">Getting $COSMO — the honest part</h3>
           <p className="font-sans text-sm leading-relaxed text-slate-400">
-            There is currently <span className="text-slate-200">no public listing and no DEX pool</span>{' '}
-            for $COSMO. The token is held by a small community, and acquisition happens over the
-            counter — you talk to us. That is not a growth hack; it is where a deliberately guarded
-            v1 honestly stands. If you want to participate as a provider or maker, copy the template
+            Three ways, honestly ranked.{' '}
+            <span className="text-slate-200">Direct sale (new, capped pilot):</span> you can buy
+            wCOSMO against SUPRA straight from the project treasury on{' '}
+            <Link href="/buy/" className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300">
+              /buy
+            </Link>{' '}
+            — small inventory, hard on-chain caps, floor-protected price, no buy-back commitment;
+            all caveats are on that page.{' '}
+            <span className="text-slate-200">Atmos:</span> a COSMO/SUPRA pool exists but its
+            liquidity is thin — treat quotes there accordingly.{' '}
+            <span className="text-slate-200">OTC / community:</span> for provider- or
+            maker-scale amounts, acquisition still happens over the counter — copy the template
             and reach out through the contact channel on{' '}
             <Link href="/compute/" className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300">
               /compute

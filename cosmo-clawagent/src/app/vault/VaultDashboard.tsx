@@ -392,12 +392,20 @@ export default function VaultDashboard() {
           ) : (
             <div className="h-3 w-full animate-pulse rounded bg-white/5" />
           )}
-          <Link
-            href="/wcosmo/"
-            className="mt-5 inline-flex items-center gap-1 font-mono text-xs text-sky-400 hover:text-sky-300"
-          >
-            About wCOSMO <ArrowRight className="h-3 w-3" />
-          </Link>
+          <div className="mt-5 flex flex-wrap gap-4">
+            <Link
+              href="/wcosmo/"
+              className="inline-flex items-center gap-1 font-mono text-xs text-sky-400 hover:text-sky-300"
+            >
+              About wCOSMO <ArrowRight className="h-3 w-3" />
+            </Link>
+            <Link
+              href="/buy/"
+              className="inline-flex items-center gap-1 font-mono text-xs text-sky-400 hover:text-sky-300"
+            >
+              Buy wCOSMO (capped pilot) <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
         </div>
       </section>
 

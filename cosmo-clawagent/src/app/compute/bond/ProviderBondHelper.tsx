@@ -449,14 +449,21 @@ export default function ProviderBondHelper() {
               </li>
               <li>· SUPRA in the wallet for gas</li>
               <li>
-                · $COSMO in the wallet — there is no public listing; see the{' '}
+                · $COSMO or wCOSMO in the wallet — a small capped{' '}
+                <Link
+                  href="/buy/"
+                  className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300"
+                >
+                  direct sale
+                </Link>{' '}
+                is live (pilot); for larger amounts see the{' '}
                 <Link
                   href="/wcosmo/"
                   className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300"
                 >
                   wCOSMO guide
                 </Link>{' '}
-                for how to obtain it (OTC / community)
+                (OTC / community)
               </li>
             </ul>
           </aside>
