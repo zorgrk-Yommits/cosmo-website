@@ -115,6 +115,62 @@ export function bcsU64(n: number | bigint): Uint8Array {
   return out;
 }
 
+// SUPRA native coin uses 8 decimals (Quants). Used by the /buy sale helper.
+export const SUPRA_DECIMALS = 8;
+
+// Format a raw SUPRA amount (8 decimals) for display.
+export const fmtSupraAmt = (q: string | number | bigint) =>
+  (Number(q) / 1e8).toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 8,
+  });
+
+// Parse a human SUPRA amount ("1000", "12.5") into raw units (10^8) without
+// float math. Returns null on invalid input or more than 8 fraction digits.
+export function parseSupraAmount(input: string): bigint | null {
+  const s = (input || '').trim().replace(',', '.');
+  if (!/^\d+(\.\d*)?$/.test(s)) return null;
+  const [whole, frac = ''] = s.split('.');
+  if (frac.length > SUPRA_DECIMALS) return null;
+  const fracPadded = frac.padEnd(SUPRA_DECIMALS, '0');
+  try {
+    return BigInt(whole) * BigInt(100000000) + BigInt(fracPadded === '' ? 0 : fracPadded);
+  } catch {
+    return null;
+  }
+}
+
+// BCS vector<u8>: ULEB128 length prefix + raw bytes. Needed for the
+// signature argument of cosmo_sale::buy (the only non-u64 entry arg on the
+// self-service pages).
+export function bcsBytes(bytes: Uint8Array): Uint8Array {
+  const prefix: number[] = [];
+  let n = bytes.length;
+  do {
+    let b = n & 0x7f;
+    n >>= 7;
+    if (n > 0) b |= 0x80;
+    prefix.push(b);
+  } while (n > 0);
+  const out = new Uint8Array(prefix.length + bytes.length);
+  out.set(prefix, 0);
+  out.set(bytes, prefix.length);
+  return out;
+}
+
+// Hex string (with or without 0x) -> bytes.
+export function hexToBytes(hex: string): Uint8Array {
+  const h = hex.startsWith('0x') ? hex.slice(2) : hex;
+  if (h.length % 2 !== 0 || !/^[0-9a-fA-F]*$/.test(h)) {
+    throw new Error('invalid hex');
+  }
+  const out = new Uint8Array(h.length / 2);
+  for (let i = 0; i < out.length; i++) {
+    out[i] = parseInt(h.slice(i * 2, i * 2 + 2), 16);
+  }
+  return out;
+}
+
 // Parse a human amount string ("100", "100.5") into base units (10^6) without
 // float math. Returns null on invalid input or more than 6 fraction digits.
 export function parseAmount(input: string): bigint | null {

@@ -4,8 +4,9 @@
 // the live peg status (read-only on-chain views), how to wrap/unwrap, and the
 // honest answer on obtaining $COSMO (no public listing — OTC / community).
 // Serves both the compute track (provider bond) and the maker track (operator
-// bond) descriptively. Client component only for the live peg widget and the
-// copy-template button; no wallet interaction on this page.
+// bond) descriptively. Client component for the live peg widget, the
+// copy-template button and (since G1b-3) the self-service UnwrapHelper —
+// the only wallet interaction on this page lives in that helper.
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -27,6 +28,7 @@ import {
   fmtAmt,
   rpcView,
 } from '@/lib/mainnetOnchain';
+import UnwrapHelper from './UnwrapHelper';
 
 const OTC_TEMPLATE = [
   'COSMO — $COSMO acquisition request (OTC / community)',
@@ -259,6 +261,11 @@ export default function WcosmoGuide() {
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
+      </section>
+
+      {/* ── Unwrap self-service (G1b-3) ── */}
+      <section className="relative z-10 max-w-5xl mx-auto px-6 py-6">
+        <UnwrapHelper />
       </section>
 
       {/* ── Getting $COSMO — honest ── */}
