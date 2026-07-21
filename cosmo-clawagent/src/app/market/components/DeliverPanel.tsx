@@ -18,6 +18,8 @@ import { cn } from '@/lib/utils';
 import { EXPLORER_TX } from '@/lib/mainnetOnchain';
 import {
   confirmDeliver,
+  requestResultChallenge,
+  submitResult,
   type MarketJob,
   type MarketProvider,
   type NextRoleBlock,
@@ -25,7 +27,7 @@ import {
 import { connectMainnetWallet, signAndSendCompute } from '../lib/computeSend';
 import { deliverResultV2 } from '../lib/computeTx';
 import { fetchOnchainJob, JOB_ONCHAIN_STATUS, type OnchainJob } from '../lib/computeViews';
-import { sameWallet } from '../lib/marketWallet';
+import { sameWallet, signChallenge } from '../lib/marketWallet';
 import { BlockerCards } from './NextStepPanel';
 import { CTA_BIG, BTN_GHOST } from './cta';
 
@@ -72,6 +74,33 @@ export default function DeliverPanel({
   const tmpl = action?.txTemplate ?? null;
   const hashToCommit = tmpl?.display.hashToCommit ?? null;
   const resultUri = tmpl?.args.find((a) => a.name === 'result_uri')?.value ?? null;
+
+  // L3 artifact jobs: registration comes first — the solver signs the exact
+  // hash+uri; only then does the server hand out a deliver template.
+  const needsRegistration = block?.action?.id === 'register_result';
+  const [regHash, setRegHash] = useState('');
+  const [regUri, setRegUri] = useState('');
+  const [regBusy, setRegBusy] = useState(false);
+
+  const doRegister = useCallback(async () => {
+    setRegBusy(true);
+    setError(null);
+    try {
+      const hash = regHash.trim();
+      const uri = regUri.trim();
+      if (!/^0x[0-9a-fA-F]{64}$/.test(hash)) {
+        throw new Error('Result hash must be 0x + 64 hex chars (SHA3-256 of the artifact bytes).');
+      }
+      const challenge = await requestResultChallenge(job.id, hash, uri);
+      const proof = await signChallenge(challenge.hexMessage, challenge.nonce);
+      await submitResult(job.id, hash, uri, { message: challenge.challenge, ...proof });
+      onChanged();
+    } catch (e) {
+      setError((e as Error).message ?? String(e));
+    } finally {
+      setRegBusy(false);
+    }
+  }, [job.id, regHash, regUri, onChanged]);
 
   // On-chain job poll (10s), stops at SETTLED.
   useEffect(() => {
@@ -168,6 +197,51 @@ export default function DeliverPanel({
       {oj !== null && oj.status === JOB_ONCHAIN_STATUS.ACTIVE && (
         <div className="space-y-3">
           {block && block.blockers.length > 0 && <BlockerCards blockers={block.blockers} />}
+
+          {needsRegistration && (
+            <div className="space-y-3 rounded-lg border border-white/10 bg-black/20 p-4">
+              <p className="font-mono text-[10px] uppercase tracking-wider text-purple-300">
+                Step 1: register your artifact result (wallet signature, no gas)
+              </p>
+              <label className="block">
+                <span className="font-mono text-[11px] text-slate-400">
+                  SHA3-256 of the exact artifact bytes (0x + 64 hex)
+                </span>
+                <input
+                  type="text"
+                  value={regHash}
+                  onChange={(e) => setRegHash(e.target.value)}
+                  placeholder="0x…"
+                  className="mt-1 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 font-mono text-xs text-slate-200 placeholder:text-slate-600"
+                />
+              </label>
+              <label className="block">
+                <span className="font-mono text-[11px] text-slate-400">
+                  Result URI (where the artifact bytes will be served)
+                </span>
+                <input
+                  type="url"
+                  value={regUri}
+                  onChange={(e) => setRegUri(e.target.value)}
+                  placeholder="https://…"
+                  className="mt-1 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 font-mono text-xs text-slate-200 placeholder:text-slate-600"
+                />
+              </label>
+              <button
+                type="button"
+                className={CTA_BIG}
+                disabled={regBusy || !regHash || !regUri}
+                onClick={() => void doRegister()}
+              >
+                {regBusy ? <Loader2 className="h-5 w-5 animate-spin" /> : <Wallet className="h-5 w-5" />}
+                Register result with StarKey
+              </button>
+              <p className="font-mono text-[11px] leading-relaxed text-slate-500">
+                Only the solver wallet can register. The deliver step unlocks afterwards and will
+                commit exactly the hash you register here — nothing else.
+              </p>
+            </div>
+          )}
 
           {hashToCommit && resultUri && (
             <div className="rounded-lg border border-rose-500/25 bg-rose-500/[0.04] p-4">

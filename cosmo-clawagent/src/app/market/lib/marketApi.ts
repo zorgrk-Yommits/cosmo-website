@@ -40,6 +40,11 @@ export interface MarketJob {
   // Frozen delivery attestation (M5) — hash of the exact bytes served at
   // /jobs/:id/attestation; goes on-chain as result_hash.
   attestationHash?: string;
+  // L3: deliverable type (absent = attestation) and, for artifact jobs, the
+  // solver-registered result hash/uri.
+  jobType?: 'attestation' | 'artifact';
+  expectedResultHash?: string;
+  expectedResultUri?: string;
   txRefs: TxRefs;
 }
 
@@ -370,4 +375,29 @@ export interface NextStepsDoc {
 
 export async function fetchNextSteps(jobId: string): Promise<NextStepsDoc> {
   return request(`/jobs/${encodeURIComponent(jobId)}/next-steps`);
+}
+
+// ---- L3 artifact result registration (solver, wallet-signed) ----------------
+
+export async function requestResultChallenge(
+  jobId: string,
+  resultHash: string,
+  resultUri: string,
+): Promise<OfferChallenge> {
+  return request(`/jobs/${encodeURIComponent(jobId)}/result/challenge`, {
+    method: 'POST',
+    body: JSON.stringify({ resultHash, resultUri }),
+  });
+}
+
+export async function submitResult(
+  jobId: string,
+  resultHash: string,
+  resultUri: string,
+  proof: { message: string; signature: string; publicKey: string; address: string },
+): Promise<{ jobId: string; resultHash: string; resultUri: string }> {
+  return request(`/jobs/${encodeURIComponent(jobId)}/result`, {
+    method: 'POST',
+    body: JSON.stringify({ resultHash, resultUri, proof }),
+  });
 }
