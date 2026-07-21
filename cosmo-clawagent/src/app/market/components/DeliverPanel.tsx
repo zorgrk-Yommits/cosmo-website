@@ -1,31 +1,32 @@
 'use client';
 
-// M5 provider panel: deliver the result on-chain. Renders on the job page
-// once an on-chain job exists; only the assigned SOLVER wallet can act (the
-// on-chain solver is the truth — OfferForm's roster-match pattern, but
-// matched against get_job_v2). The deliverable is the backend-frozen
-// attestation document: its URL goes on-chain as result_uri, its SHA3-256 as
-// result_hash. Without a frozen hash the CTA never renders (fail closed).
+// PROVIDER role panel (L2: a tab inside RoleNextStep, no longer a separately
+// mounted card — end of the role mixing, finding B5). Driven by the server's
+// next-steps document: the deliver action arrives as a ready tx template whose
+// display.hashToCommit is the EXACT hash that will be committed irreversibly.
+// B6 rule: the hash is shown up front and the CTA stays disabled until the
+// operator explicitly confirms that exact hash. Only the assigned SOLVER
+// wallet can act (on-chain get_job_v2.solver is the truth).
 //
 // Deliberately self-contained (no useMarketFlow): that hook is buyer-shaped
-// and already instantiated in NextStepPanel — a second instance would double
+// and already instantiated once per page — a second instance would double
 // every poll.
 
 import { useCallback, useEffect, useState } from 'react';
-import { AlertTriangle, CheckCircle2, Clock3, FileJson, Loader2, Package, RefreshCw, Wallet } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Clock3, FileJson, Loader2, Package, Wallet } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EXPLORER_TX } from '@/lib/mainnetOnchain';
 import {
-  attestationUrl,
   confirmDeliver,
-  fetchFlow,
   type MarketJob,
   type MarketProvider,
+  type NextRoleBlock,
 } from '../lib/marketApi';
 import { connectMainnetWallet, signAndSendCompute } from '../lib/computeSend';
 import { deliverResultV2 } from '../lib/computeTx';
 import { fetchOnchainJob, JOB_ONCHAIN_STATUS, type OnchainJob } from '../lib/computeViews';
 import { sameWallet } from '../lib/marketWallet';
+import { BlockerCards } from './NextStepPanel';
 import { CTA_BIG, BTN_GHOST } from './cta';
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -44,18 +45,19 @@ function fmtCountdown(secs: number): string {
 export default function DeliverPanel({
   job,
   providers,
+  block,
   onChanged,
 }: {
   job: MarketJob; // mounted only with jobIdOnchain != null
   providers: MarketProvider[];
+  block: NextRoleBlock | null; // the server doc's provider role block
   onChanged: () => void;
 }) {
   const jobIdOnchain = job.jobIdOnchain!;
   const [oj, setOj] = useState<OnchainJob | null>(null);
-  const [deliver, setDeliver] = useState<{ attestationUri: string; attestationHash: string } | null>(null);
-  const [attError, setAttError] = useState(false);
   const [wallet, setWallet] = useState<string | null>(null);
   const [phase, setPhase] = useState<'idle' | 'sending'>('idle');
+  const [hashConfirmed, setHashConfirmed] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [nowSec, setNowSec] = useState(() => Math.floor(Date.now() / 1000));
 
@@ -63,6 +65,13 @@ export default function DeliverPanel({
     const iv = setInterval(() => setNowSec(Math.floor(Date.now() / 1000)), 1000);
     return () => clearInterval(iv);
   }, []);
+
+  // The deliver action comes from the SERVER document — template args carry
+  // the exact result_hash / result_uri; nothing is derived client-side.
+  const action = block?.action?.id === 'deliver_result' ? block.action : null;
+  const tmpl = action?.txTemplate ?? null;
+  const hashToCommit = tmpl?.display.hashToCommit ?? null;
+  const resultUri = tmpl?.args.find((a) => a.name === 'result_uri')?.value ?? null;
 
   // On-chain job poll (10s), stops at SETTLED.
   useEffect(() => {
@@ -84,28 +93,6 @@ export default function DeliverPanel({
     };
   }, [jobIdOnchain]);
 
-  // Attestation bootstrap — order matters: GET /attestation triggers the
-  // backend freeze, then /flow carries the stored hash.
-  const loadAttestation = useCallback(async () => {
-    setAttError(false);
-    try {
-      const r = await fetch(attestationUrl(job.id));
-      if (!r.ok) throw new Error(`attestation ${r.status}`);
-      const f = await fetchFlow(job.id);
-      if (f.deliver?.attestationHash) {
-        setDeliver({ attestationUri: f.deliver.attestationUri, attestationHash: f.deliver.attestationHash });
-      } else {
-        throw new Error('attestation hash missing');
-      }
-    } catch {
-      setAttError(true);
-    }
-  }, [job.id]);
-
-  useEffect(() => {
-    void loadAttestation();
-  }, [loadAttestation]);
-
   const connect = useCallback(async () => {
     setError(null);
     try {
@@ -116,7 +103,7 @@ export default function DeliverPanel({
   }, []);
 
   const doDeliver = useCallback(async () => {
-    if (!deliver) return;
+    if (!hashToCommit || !resultUri || !hashConfirmed) return;
     setPhase('sending');
     setError(null);
     try {
@@ -132,31 +119,28 @@ export default function DeliverPanel({
       const txHash = await signAndSendCompute(
         deliverResultV2({
           jobIdOnchain,
-          resultHash: deliver.attestationHash,
-          resultUri: deliver.attestationUri,
+          resultHash: hashToCommit,
+          resultUri,
         }),
         account,
       );
-      let lastErr: Error | null = null;
-      for (let i = 0; i < 10; i++) {
+      // Fast path only — the server's chain poller (L1) is the sync guarantee.
+      for (let i = 0; i < 3; i++) {
         await sleep(3_000);
         try {
           await confirmDeliver(job.id, txHash);
-          onChanged();
-          setPhase('idle');
-          return;
-        } catch (e) {
-          lastErr = e as Error;
+          break;
+        } catch {
+          // retry quietly; the poller records it either way
         }
       }
-      throw new Error(
-        `Delivery transaction ${txHash} was sent, but not confirmed yet (${lastErr?.message}). Reload in a minute — the chain state is authoritative.`,
-      );
+      onChanged();
+      setPhase('idle');
     } catch (e) {
       setError((e as Error).message ?? String(e));
       setPhase('idle');
     }
-  }, [deliver, job.id, jobIdOnchain, onChanged]);
+  }, [hashToCommit, resultUri, hashConfirmed, job.id, jobIdOnchain, onChanged]);
 
   const isSolver = wallet !== null && oj !== null && sameWallet(wallet, oj.solver);
   const solverName = oj ? (providers.find((p) => sameWallet(p.wallet, oj.solver))?.name ?? null) : null;
@@ -164,14 +148,14 @@ export default function DeliverPanel({
   const deadlinePassed = oj !== null && nowSec > oj.jobDeadlineSecs;
 
   return (
-    <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-6">
+    <div className="rounded-b-xl rounded-tr-xl border border-white/10 bg-white/[0.02] p-6">
       <div className="mb-1 flex items-center gap-2">
         <Package className="h-4 w-4 text-purple-300" />
         <h2 className="font-mono text-sm font-bold text-slate-100">Provider: deliver the result</h2>
       </div>
       <p className="mb-4 font-sans text-xs leading-relaxed text-slate-400">
-        The assigned provider{solverName ? ` (${solverName})` : ''} delivers by committing the
-        attestation document on-chain: its URL becomes result_uri, its SHA3-256 the result_hash.
+        {block?.headline ??
+          `The assigned provider${solverName ? ` (${solverName})` : ''} delivers by committing the result hash on-chain.`}
       </p>
 
       {oj === null && (
@@ -183,37 +167,34 @@ export default function DeliverPanel({
 
       {oj !== null && oj.status === JOB_ONCHAIN_STATUS.ACTIVE && (
         <div className="space-y-3">
-          {deliver ? (
-            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+          {block && block.blockers.length > 0 && <BlockerCards blockers={block.blockers} />}
+
+          {hashToCommit && resultUri && (
+            <div className="rounded-lg border border-rose-500/25 bg-rose-500/[0.04] p-4">
+              <p className="font-mono text-[10px] uppercase tracking-wider text-rose-300">
+                This exact hash will be committed on-chain — irreversibly
+              </p>
+              <p className="mt-2 break-all font-mono text-[11px] text-slate-300">{hashToCommit}</p>
               <a
-                href={deliver.attestationUri}
+                href={resultUri}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 font-mono text-xs text-sky-400 hover:text-sky-300"
+                className="mt-2 inline-flex items-center gap-1.5 font-mono text-xs text-sky-400 hover:text-sky-300"
               >
                 <FileJson className="h-3.5 w-3.5" />
-                Attestation document (result_uri)
+                Open the document behind it (result_uri)
               </a>
-              <p className="mt-2 break-all font-mono text-[11px] text-slate-400">
-                result_hash: {deliver.attestationHash}
-              </p>
+              <label className="mt-3 flex cursor-pointer items-start gap-2 font-mono text-[11px] text-slate-300">
+                <input
+                  type="checkbox"
+                  checked={hashConfirmed}
+                  onChange={(e) => setHashConfirmed(e.target.checked)}
+                  className="mt-0.5"
+                />
+                I opened the document, recomputed or verified this hash, and want to commit
+                exactly this hash as the delivery result.
+              </label>
             </div>
-          ) : attError ? (
-            <div className="space-y-2">
-              <p className="flex items-start gap-1.5 font-mono text-xs text-amber-300">
-                <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                The attestation is not ready — without its hash nothing can be delivered.
-              </p>
-              <button type="button" className={BTN_GHOST} onClick={() => void loadAttestation()}>
-                <RefreshCw className="h-3 w-3" />
-                Retry
-              </button>
-            </div>
-          ) : (
-            <p className="flex items-center gap-2 font-mono text-xs text-slate-400">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              Preparing the attestation…
-            </p>
           )}
 
           {!deadlinePassed && (
@@ -247,7 +228,7 @@ export default function DeliverPanel({
             <button
               type="button"
               className={CTA_BIG}
-              disabled={phase === 'sending' || !deliver || deadlinePassed}
+              disabled={phase === 'sending' || !hashToCommit || !hashConfirmed || deadlinePassed}
               onClick={() => void doDeliver()}
             >
               {phase === 'sending' ? <Loader2 className="h-5 w-5 animate-spin" /> : <Package className="h-5 w-5" />}

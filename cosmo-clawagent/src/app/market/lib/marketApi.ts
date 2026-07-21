@@ -300,3 +300,74 @@ export async function confirmSettle(
     body: JSON.stringify(txHash ? { txHash } : {}),
   });
 }
+
+// ---- L2 next-steps ----------------------------------------------------------
+// Server-computed "whose turn, what is the ONE next action per role" document.
+// The website renders it; external solver agents consume the same endpoint.
+
+export type NextRole = 'buyer' | 'provider' | 'observer';
+export type NextTurn = 'buyer' | 'provider' | 'server' | 'nobody';
+
+export interface NextBlocker {
+  code: string;
+  cause: string;
+  remedy: string;
+}
+
+export interface NextTxTemplate {
+  function: string;
+  typeArgs: string[];
+  args: { name: string; type: 'u64' | 'address' | 'hex_bytes' | 'utf8_bytes'; value: string }[];
+  display: { hashToCommit: string | null; deadline: number | null };
+}
+
+export interface NextAction {
+  id: string;
+  kind: 'wallet_tx' | 'wallet_sign' | 'api_call';
+  txTemplate?: NextTxTemplate;
+  api?: { method: 'GET' | 'POST'; path: string };
+  signerWallet: string | null;
+}
+
+export interface NextOfferReadiness {
+  offerId: string;
+  providerId: string;
+  providerName: string;
+  providerWallet: string;
+  price: string;
+  deliverySecs: number;
+  eligible: boolean;
+  hasCapacity: boolean;
+  bondQuants: string;
+  bondCoversMinimum: boolean;
+  blockers: NextBlocker[];
+}
+
+export interface NextRoleBlock {
+  role: NextRole;
+  state: string;
+  headline: string;
+  action: NextAction | null;
+  blockers: NextBlocker[];
+  offerReadiness?: NextOfferReadiness[];
+}
+
+export interface NextStepsDoc {
+  jobId: string;
+  jobType: 'attestation' | 'artifact';
+  status: JobStatus;
+  requestId: number | null;
+  jobIdOnchain: number | null;
+  chain: {
+    readAt: number;
+    requestStatus: number | null;
+    jobStatus: number | null;
+    quote: { solver: string; priceQuants: string; signedAtSecs: number; expiresAtSecs: number } | null;
+  };
+  turn: NextTurn;
+  roles: NextRoleBlock[];
+}
+
+export async function fetchNextSteps(jobId: string): Promise<NextStepsDoc> {
+  return request(`/jobs/${encodeURIComponent(jobId)}/next-steps`);
+}

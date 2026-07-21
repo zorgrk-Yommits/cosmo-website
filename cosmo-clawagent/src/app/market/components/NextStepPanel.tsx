@@ -1,13 +1,12 @@
 'use client';
 
-// "Your next step" — the hero panel of the job page (replaces BuyerFlow).
-// Exactly ONE state is active at a time and it renders exactly ONE big CTA
-// (or an explicit waiting card when it is not the buyer's turn). The buyer
-// sees three actions total: select offer, fund the job, confirm & start —
-// preparing the provider offer (quote arming) is a server call and runs
-// automatically in between (useMarketFlow's auto-arm), surfacing here only
-// as "Preparing the final step". Buyer copy avoids escrow/quote/arm jargon
-// by decision (Sprachpass, Etappe 5).
+// "Your next step" — the BUYER role panel of the job page (L2: rendered as a
+// tab inside RoleNextStep). The stage no longer derives client-side: the
+// server's next-steps document is the single source of "whose turn / which
+// action" (deriveStage() removed, L2 Lifecycle-Neuschnitt); only the arm/
+// quote-countdown overlays stay client-side because auto-arm lives in the
+// browser by design. Exactly ONE CTA or an explicit waiting card renders per
+// state. Buyer copy avoids escrow/quote/arm jargon (Sprachpass, Etappe 5).
 
 import { useEffect, useState } from 'react';
 import {
@@ -24,11 +23,36 @@ import {
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { EXPLORER_TX } from '@/lib/mainnetOnchain';
-import { attestationUrl, type MarketJob, type MarketOffer, type MarketProvider } from '../lib/marketApi';
-import { useMarketFlow, QUOTE_SAFETY_SECS } from '../lib/useMarketFlow';
+import {
+  attestationUrl,
+  type MarketJob,
+  type MarketOffer,
+  type MarketProvider,
+  type NextBlocker,
+  type NextStepsDoc,
+} from '../lib/marketApi';
+import { QUOTE_SAFETY_SECS, type MarketFlow } from '../lib/useMarketFlow';
 import { JOB_ONCHAIN_STATUS } from '../lib/computeViews';
 import { fmtDelivery, fmtRel, fmtTs } from '../lib/marketStatus';
 import { CTA_BIG, CTA_DANGER, BTN_GHOST } from './cta';
+
+// Blocker cards: the server names cause AND remedy (B1/B2) — render both.
+export function BlockerCards({ blockers }: { blockers: NextBlocker[] }) {
+  if (blockers.length === 0) return null;
+  return (
+    <div className="space-y-2">
+      {blockers.map((b) => (
+        <div key={b.code} className="rounded-lg border border-amber-500/30 bg-amber-500/[0.06] p-3">
+          <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-amber-300">
+            <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+            {b.cause}
+          </p>
+          <p className="mt-1 pl-5 font-sans text-xs leading-relaxed text-slate-400">{b.remedy}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function fmtQuants(quants: string, decimals: number): string {
   const v = BigInt(quants);
@@ -58,7 +82,8 @@ type Stage =
   | 'expired-manual'
   | 'active'
   | 'approve'
-  | 'settled';
+  | 'settled'
+  | 'blocked';
 
 const STAGE_STEP: Partial<Record<Stage, 1 | 2 | 3>> = {
   select: 1,
@@ -87,14 +112,15 @@ export default function NextStepPanel({
   job,
   offers,
   providers,
-  onChanged,
+  doc,
+  f,
 }: {
   job: MarketJob;
   offers: MarketOffer[];
   providers: MarketProvider[];
-  onChanged: () => void;
+  doc: NextStepsDoc | null; // server-computed; null = backend unreachable
+  f: MarketFlow; // owned by RoleNextStep (single instance per page)
 }) {
-  const f = useMarketFlow(job.id, onChanged);
   const [pickedOffer, setPickedOffer] = useState<string>('');
   const [nowSec, setNowSec] = useState(() => Math.floor(Date.now() / 1000));
   useEffect(() => {
@@ -103,7 +129,6 @@ export default function NextStepPanel({
   }, []);
 
   const flow = f.flow;
-  const requestId = flow?.requestId ?? job.requestId ?? null;
   const jobIdOnchain = flow?.jobIdOnchain ?? job.jobIdOnchain ?? null;
   const selectedOfferId = flow?.selectedOfferId ?? job.selectedOfferId ?? null;
   const selectedOffer = offers.find((o) => o.id === selectedOfferId) ?? null;
@@ -116,46 +141,61 @@ export default function NextStepPanel({
   const txRefs = flow?.txRefs ?? job.txRefs;
   const oj = f.onchainJob;
 
-  function deriveStage(): Stage {
-    if (job.status === 'settled' || flow?.status === 'settled') return 'settled';
-    if (jobIdOnchain != null) {
-      if (oj?.status === JOB_ONCHAIN_STATUS.SETTLED) return 'settled'; // confirm-settle self-heals in the hook
-      if (
-        oj?.status === JOB_ONCHAIN_STATUS.DELIVERED ||
-        job.status === 'delivered' ||
-        flow?.status === 'delivered'
-      ) {
-        return 'approve';
+  // L2: the stage comes from the SERVER's next-steps document (the single
+  // "whose turn" source). Only auto-arm/quote-countdown overlays remain
+  // client-side — the server cannot see the browser's arm budget.
+  const buyerBlock = doc?.roles.find((r) => r.role === 'buyer') ?? null;
+
+  function stageFromServer(): Stage {
+    switch (buyerBlock!.state) {
+      case 'moderation':
+        return 'moderation';
+      case 'rejected':
+        return 'rejected';
+      case 'awaiting_offers':
+        return 'awaiting-offers';
+      case 'select':
+        return 'select';
+      case 'fund_escrow':
+        return 'escrow';
+      case 'arming':
+      case 'accept': {
+        if (f.armState === 'failed') return 'arm-failed';
+        if (f.armState === 'expired' && f.autoArmsLeft === 0) return 'expired-manual';
+        return quoteLive ? 'accept' : 'preparing';
       }
-      return 'active';
+      case 'syncing':
+        return 'preparing';
+      case 'waiting_delivery':
+        return 'active';
+      case 'approve':
+        return 'approve';
+      case 'settled':
+        return 'settled';
+      default:
+        // request_closed / inconsistent / chain_unreadable / exception:
+        // render the server's blockers verbatim — cause and remedy included.
+        return 'blocked';
     }
+  }
+
+  function deriveStage(): Stage {
+    if (buyerBlock) return stageFromServer();
+    // No server document: safe minimal fallback, never an action.
+    if (job.status === 'settled' || flow?.status === 'settled') return 'settled';
     if (job.status === 'submitted') return 'moderation';
     if (job.status === 'rejected') return 'rejected';
-    if (job.status === 'approved' && offers.length === 0) return 'awaiting-offers';
     if (!f.flowChecked && flow === null) return 'loading';
-    if (flow === null) return 'backend-down';
-    if (!selectedOfferId) return 'select';
-    if (requestId == null) return 'escrow';
-    if (f.armState === 'failed') return 'arm-failed';
-    // Expiry with auto-arm budget left resolves itself within a tick — show
-    // "preparing" instead of flashing the manual re-arm card.
-    if (f.armState === 'expired' && f.autoArmsLeft === 0) return 'expired-manual';
-    if (quoteLive) return 'accept';
-    return 'preparing';
+    return 'backend-down';
   }
   const stage = deriveStage();
   const stepNo = STAGE_STEP[stage];
 
-  const providerIneligible =
-    flow?.providerChecks != null &&
-    !(
-      flow.providerChecks.eligible &&
-      flow.providerChecks.bondCoversMinimum &&
-      flow.providerChecks.hasCapacity
-    );
+  const serverBlockers = buyerBlock?.blockers ?? [];
+  const escrowBlocked = stage === 'escrow' && (buyerBlock ? buyerBlock.action === null : false);
 
   return (
-    <div className="mt-6 rounded-xl border border-purple-500/25 bg-purple-500/[0.04] p-6">
+    <div className="rounded-b-xl rounded-tr-xl border border-purple-500/25 bg-purple-500/[0.04] p-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Wallet className="h-4 w-4 text-purple-300" />
@@ -232,34 +272,49 @@ export default function NextStepPanel({
               {offers.map((o) => {
                 const prov = providers.find((p) => p.id === o.providerId);
                 const picked = pickedOffer === o.id;
+                // B1/B2: on-chain readiness is checked BEFORE selection — a
+                // blocked offer says so here, not after funding.
+                const readiness = buyerBlock?.offerReadiness?.find((r) => r.offerId === o.id) ?? null;
+                const ready = readiness === null || readiness.blockers.length === 0;
                 return (
-                  <label
-                    key={o.id}
-                    className={cn(
-                      'flex cursor-pointer items-center justify-between gap-3 rounded-lg border px-4 py-3 transition-all',
-                      picked
-                        ? 'border-purple-400/60 bg-purple-500/10'
-                        : 'border-white/10 bg-black/20 hover:border-white/25',
-                    )}
-                  >
-                    <span className="flex items-center gap-3">
-                      <input
-                        type="radio"
-                        name="pick-offer"
-                        checked={picked}
-                        onChange={() => setPickedOffer(o.id)}
-                      />
-                      <span className="font-mono text-sm text-slate-200">
-                        {prov?.name ?? o.providerId}
+                  <div key={o.id}>
+                    <label
+                      className={cn(
+                        'flex cursor-pointer items-center justify-between gap-3 rounded-lg border px-4 py-3 transition-all',
+                        picked
+                          ? 'border-purple-400/60 bg-purple-500/10'
+                          : 'border-white/10 bg-black/20 hover:border-white/25',
+                      )}
+                    >
+                      <span className="flex items-center gap-3">
+                        <input
+                          type="radio"
+                          name="pick-offer"
+                          checked={picked}
+                          onChange={() => setPickedOffer(o.id)}
+                        />
+                        <span className="font-mono text-sm text-slate-200">
+                          {prov?.name ?? o.providerId}
+                        </span>
+                        {!ready && (
+                          <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-amber-300">
+                            not ready
+                          </span>
+                        )}
                       </span>
-                    </span>
-                    <span className="font-mono text-xs text-slate-400">
-                      <span className="font-bold text-slate-200">
-                        {o.price} {job.budgetAsset}
-                      </span>{' '}
-                      · {fmtDelivery(o.deliverySecs)}
-                    </span>
-                  </label>
+                      <span className="font-mono text-xs text-slate-400">
+                        <span className="font-bold text-slate-200">
+                          {o.price} {job.budgetAsset}
+                        </span>{' '}
+                        · {fmtDelivery(o.deliverySecs)}
+                      </span>
+                    </label>
+                    {picked && readiness && readiness.blockers.length > 0 && (
+                      <div className="mt-2">
+                        <BlockerCards blockers={readiness.blockers} />
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>
@@ -312,22 +367,11 @@ export default function NextStepPanel({
                 Funding details are not available yet — refresh in a moment.
               </p>
             )}
-            {flow.rail.paused && (
-              <p className="font-mono text-xs text-amber-300">
-                The on-chain contract is paused — funding is disabled right now.
-              </p>
-            )}
-            {providerIneligible && (
-              <p className="flex items-start gap-1.5 font-mono text-xs text-amber-300">
-                <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                The selected provider does not currently meet the on-chain requirements
-                (security deposit or capacity). Funding is blocked until that is resolved.
-              </p>
-            )}
+            <BlockerCards blockers={serverBlockers} />
             <button
               type="button"
               className={CTA_BIG}
-              disabled={f.busy !== null || flow.rail.paused || !flow.escrowParams}
+              disabled={f.busy !== null || escrowBlocked || flow.rail.paused || !flow.escrowParams}
               onClick={() => void f.createEscrow()}
             >
               {f.busy === 'escrowing' ? (
@@ -539,6 +583,13 @@ export default function NextStepPanel({
               Approval settles everything in one transaction: the provider is paid and their
               security deposit is released.
             </p>
+          </div>
+        )}
+
+        {stage === 'blocked' && buyerBlock && (
+          <div className="space-y-4">
+            <p className="font-sans text-sm leading-relaxed text-slate-300">{buyerBlock.headline}</p>
+            <BlockerCards blockers={buyerBlock.blockers} />
           </div>
         )}
 

@@ -30,7 +30,6 @@ import {
   ApiError,
   armQuote,
   confirmAccept,
-  confirmDeliver,
   confirmRequest,
   confirmSettle,
   fetchFlow,
@@ -114,7 +113,6 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
   const [onchainJob, setOnchainJob] = useState<OnchainJob | null | undefined>(undefined);
   const autoArmsRef = useRef(AUTO_ARM_BUDGET);
   const armInFlight = useRef(false);
-  const syncRef = useRef({ deliver: false, settle: false });
   const changedRef = useRef(onChanged);
   changedRef.current = onChanged;
 
@@ -187,37 +185,9 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
     };
   }, [flow?.jobIdOnchain, flow?.status]);
 
-  // M5 self-heal: if the chain is ahead of the off-chain record (DELIVERED or
-  // SETTLED without a confirm), post the confirm once so the state can never
-  // wedge behind the chain. Guarded refs prevent repeat posts; a failed
-  // confirm re-arms the guard so a later poll retries.
-  useEffect(() => {
-    if (!jobId || !flow || onchainJob === undefined || onchainJob === null) return;
-    if (
-      onchainJob.status === JOB_ONCHAIN_STATUS.DELIVERED &&
-      flow.status === 'onchain' &&
-      !syncRef.current.deliver
-    ) {
-      syncRef.current.deliver = true;
-      void confirmDeliver(jobId)
-        .then(() => refreshFlow())
-        .catch(() => {
-          syncRef.current.deliver = false;
-        });
-    }
-    if (
-      onchainJob.status === JOB_ONCHAIN_STATUS.SETTLED &&
-      flow.status !== 'settled' &&
-      !syncRef.current.settle
-    ) {
-      syncRef.current.settle = true;
-      void confirmSettle(jobId)
-        .then(() => refreshFlow())
-        .catch(() => {
-          syncRef.current.settle = false;
-        });
-    }
-  }, [jobId, flow, onchainJob, refreshFlow]);
+  // L2: the browser no longer self-heals chain-ahead state — the backend's
+  // chain poller (L1) is the sync guarantee. The hook only READS; if the
+  // server record lags the chain for a tick, the next flow poll catches up.
 
   // Effective expiry: the chain read lags an arm by up to one 5s poll tick, so
   // right after arming the ArmResult's expiry is authoritative.
@@ -359,20 +329,19 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
         }),
         account,
       );
-      // The view lags the broadcast by a few seconds — retry the confirm.
-      let lastErr: Error | null = null;
-      for (let i = 0; i < 10; i++) {
+      // Fast path: a few quick confirms (the view lags the broadcast). If they
+      // miss, that is FINE — the server's chain poller records the request on
+      // its own; a lost callback can no longer wedge the flow (L1).
+      for (let i = 0; i < 3; i++) {
         await sleep(3_000);
         try {
           const r = await confirmRequest(jobId, txHash);
           return `Funding confirmed on-chain (request #${r.requestId}). Preparing the final step…`;
-        } catch (e) {
-          lastErr = e as Error;
+        } catch {
+          // retry quietly
         }
       }
-      throw new Error(
-        `The funding transaction ${txHash} was sent, but the request could not be confirmed yet (${lastErr?.message}). Reload this page in a minute — if anything is off, you can cancel and get the funds back.`,
-      );
+      return `Funding transaction ${txHash} sent — the server syncs it automatically; this page updates in a moment.`;
     });
   }, [jobId, run]);
 
@@ -405,19 +374,17 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
         }),
         account,
       );
-      let lastErr: Error | null = null;
-      for (let i = 0; i < 10; i++) {
+      // Fast path only — the chain poller (L1) is the sync guarantee.
+      for (let i = 0; i < 3; i++) {
         await sleep(3_000);
         try {
           const r = await confirmAccept(jobId, txHash);
           return `Job confirmed — on-chain job #${r.jobIdOnchain} is active.`;
-        } catch (e) {
-          lastErr = e as Error;
+        } catch {
+          // retry quietly
         }
       }
-      throw new Error(
-        `The confirmation transaction ${txHash} was sent, but the job could not be confirmed yet (${lastErr?.message}). Reload this page in a minute.`,
-      );
+      return `Confirmation transaction ${txHash} sent — the server syncs it automatically; this page updates in a moment.`;
     });
   }, [jobId, run]);
 
@@ -449,19 +416,17 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
         approveDeliveryV2({ jobIdOnchain: f.jobIdOnchain }),
         account,
       );
-      let lastErr: Error | null = null;
-      for (let i = 0; i < 10; i++) {
+      // Fast path only — the chain poller (L1) is the sync guarantee.
+      for (let i = 0; i < 3; i++) {
         await sleep(3_000);
         try {
           await confirmSettle(jobId, txHash);
           return 'Delivery approved — job settled, payout released to the provider.';
-        } catch (e) {
-          lastErr = e as Error;
+        } catch {
+          // retry quietly
         }
       }
-      throw new Error(
-        `Approve transaction ${txHash} was sent, but settlement could not be confirmed yet (${lastErr?.message}). Reload this page in a minute — funds are safe.`,
-      );
+      return `Approve transaction ${txHash} sent — the server syncs the settlement automatically; funds are safe.`;
     });
   }, [jobId, run]);
 
