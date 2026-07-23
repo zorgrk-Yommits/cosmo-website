@@ -55,6 +55,38 @@ export async function signChallenge(
   return { signature: res.signature, publicKey: res.publicKey, address: res.address };
 }
 
+// B7: whether this browser has ever completed a StarKey connect on the market
+// pages. Gates the passive account() read so first-time visitors never get a
+// surprise wallet popup.
+const WALLET_SEEN_KEY = 'cosmo_market_wallet_seen';
+
+export function markWalletSeen(): void {
+  try {
+    localStorage.setItem(WALLET_SEEN_KEY, '1');
+  } catch {
+    /* private mode — chip simply stays passive-less */
+  }
+}
+
+// Passive read of the currently active StarKey account. Never prompts on a
+// first visit (seen-flag gate); any provider error resolves to null.
+export async function getAccountSilent(): Promise<string | null> {
+  try {
+    if (localStorage.getItem(WALLET_SEEN_KEY) !== '1') return null;
+  } catch {
+    return null;
+  }
+  const provider = getMarketWallet();
+  if (!provider) return null;
+  try {
+    const raw = await provider.account();
+    const addr = Array.isArray(raw) ? raw[0] : raw;
+    return typeof addr === 'string' && addr.startsWith('0x') ? addr : null;
+  } catch {
+    return null;
+  }
+}
+
 export const sameWallet = (a: string, b: string) =>
   a.toLowerCase().replace(/^0x/, '').padStart(64, '0') ===
   b.toLowerCase().replace(/^0x/, '').padStart(64, '0');

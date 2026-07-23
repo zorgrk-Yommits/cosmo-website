@@ -373,8 +373,11 @@ export interface NextStepsDoc {
   roles: NextRoleBlock[];
 }
 
-export async function fetchNextSteps(jobId: string): Promise<NextStepsDoc> {
-  return request(`/jobs/${encodeURIComponent(jobId)}/next-steps`);
+// B7: viewerWallet personalizes offer readiness server-side (self-quote
+// warning per offer BEFORE selection). Optional and additive.
+export async function fetchNextSteps(jobId: string, viewerWallet?: string): Promise<NextStepsDoc> {
+  const q = viewerWallet ? `?wallet=${encodeURIComponent(viewerWallet)}` : '';
+  return request(`/jobs/${encodeURIComponent(jobId)}/next-steps${q}`);
 }
 
 // ---- L3 artifact result registration (solver, wallet-signed) ----------------

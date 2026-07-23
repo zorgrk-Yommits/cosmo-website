@@ -32,6 +32,7 @@ import {
   type NextStepsDoc,
 } from '../lib/marketApi';
 import { QUOTE_SAFETY_SECS, type MarketFlow } from '../lib/useMarketFlow';
+import { sameWallet } from '../lib/marketWallet';
 import { JOB_ONCHAIN_STATUS } from '../lib/computeViews';
 import { fmtDelivery, fmtRel, fmtTs } from '../lib/marketStatus';
 import { CTA_BIG, CTA_DANGER, BTN_GHOST } from './cta';
@@ -50,6 +51,84 @@ export function BlockerCards({ blockers }: { blockers: NextBlocker[] }) {
           <p className="mt-1 pl-5 font-sans text-xs leading-relaxed text-slate-400">{b.remedy}</p>
         </div>
       ))}
+    </div>
+  );
+}
+
+// B7: ONE offer list for both the select stage and the change-selection
+// panel. Readiness (incl. the pre-selection self-quote gate) comes from the
+// server document; the connected-wallet comparison additionally warns
+// client-side even before a personalized document has arrived.
+function OfferPicker({
+  offers,
+  providers,
+  readinessList,
+  pickedOffer,
+  onPick,
+  wallet,
+  budgetAsset,
+}: {
+  offers: MarketOffer[];
+  providers: MarketProvider[];
+  readinessList: { offerId: string; providerWallet: string; blockers: NextBlocker[] }[] | null;
+  pickedOffer: string;
+  onPick: (id: string) => void;
+  wallet: string | null;
+  budgetAsset: string;
+}) {
+  return (
+    <div className="space-y-2">
+      {offers.map((o) => {
+        const prov = providers.find((p) => p.id === o.providerId);
+        const picked = pickedOffer === o.id;
+        // B1/B2: on-chain readiness is checked BEFORE selection — a
+        // blocked offer says so here, not after funding.
+        const readiness = readinessList?.find((r) => r.offerId === o.id) ?? null;
+        const ready = readiness === null || readiness.blockers.length === 0;
+        const ownWallet =
+          wallet !== null &&
+          ((prov?.wallet && sameWallet(wallet, prov.wallet)) ||
+            (readiness?.providerWallet && sameWallet(wallet, readiness.providerWallet)));
+        return (
+          <div key={o.id}>
+            <label
+              className={cn(
+                'flex cursor-pointer items-center justify-between gap-3 rounded-lg border px-4 py-3 transition-all',
+                picked
+                  ? 'border-purple-400/60 bg-purple-500/10'
+                  : 'border-white/10 bg-black/20 hover:border-white/25',
+              )}
+            >
+              <span className="flex items-center gap-3">
+                <input type="radio" name="pick-offer" checked={picked} onChange={() => onPick(o.id)} />
+                <span className="font-mono text-sm text-slate-200">{prov?.name ?? o.providerId}</span>
+                {!ready && (
+                  <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-amber-300">
+                    not ready
+                  </span>
+                )}
+              </span>
+              <span className="font-mono text-xs text-slate-400">
+                <span className="font-bold text-slate-200">
+                  {o.price} {budgetAsset}
+                </span>{' '}
+                · {fmtDelivery(o.deliverySecs)}
+              </span>
+            </label>
+            {ownWallet && (
+              <p className="mt-1 flex items-start gap-1.5 pl-1 font-mono text-xs text-amber-300">
+                <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                This is the wallet you are connected with — you cannot buy from yourself.
+              </p>
+            )}
+            {picked && readiness && readiness.blockers.length > 0 && (
+              <div className="mt-2">
+                <BlockerCards blockers={readiness.blockers} />
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -194,6 +273,14 @@ export default function NextStepPanel({
   const serverBlockers = buyerBlock?.blockers ?? [];
   const escrowBlocked = stage === 'escrow' && (buyerBlock ? buyerBlock.action === null : false);
 
+  // B7: nothing is on-chain yet -> selection can still be changed.
+  const requestId = flow?.requestId ?? doc?.requestId ?? null;
+  const pickedProviderWallet = (() => {
+    const o = offers.find((x) => x.id === pickedOffer);
+    return o ? (providers.find((p) => p.id === o.providerId)?.wallet ?? null) : null;
+  })();
+  const pickedIsOwnWallet = !!(f.wallet && pickedProviderWallet && sameWallet(f.wallet, pickedProviderWallet));
+
   return (
     <div className="rounded-b-xl rounded-tr-xl border border-purple-500/25 bg-purple-500/[0.04] p-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -268,60 +355,19 @@ export default function NextStepPanel({
               Pick the offer you want. Your selection is signed with your StarKey wallet and
               binds it as the buyer wallet for this job.
             </p>
-            <div className="space-y-2">
-              {offers.map((o) => {
-                const prov = providers.find((p) => p.id === o.providerId);
-                const picked = pickedOffer === o.id;
-                // B1/B2: on-chain readiness is checked BEFORE selection — a
-                // blocked offer says so here, not after funding.
-                const readiness = buyerBlock?.offerReadiness?.find((r) => r.offerId === o.id) ?? null;
-                const ready = readiness === null || readiness.blockers.length === 0;
-                return (
-                  <div key={o.id}>
-                    <label
-                      className={cn(
-                        'flex cursor-pointer items-center justify-between gap-3 rounded-lg border px-4 py-3 transition-all',
-                        picked
-                          ? 'border-purple-400/60 bg-purple-500/10'
-                          : 'border-white/10 bg-black/20 hover:border-white/25',
-                      )}
-                    >
-                      <span className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="pick-offer"
-                          checked={picked}
-                          onChange={() => setPickedOffer(o.id)}
-                        />
-                        <span className="font-mono text-sm text-slate-200">
-                          {prov?.name ?? o.providerId}
-                        </span>
-                        {!ready && (
-                          <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-amber-300">
-                            not ready
-                          </span>
-                        )}
-                      </span>
-                      <span className="font-mono text-xs text-slate-400">
-                        <span className="font-bold text-slate-200">
-                          {o.price} {job.budgetAsset}
-                        </span>{' '}
-                        · {fmtDelivery(o.deliverySecs)}
-                      </span>
-                    </label>
-                    {picked && readiness && readiness.blockers.length > 0 && (
-                      <div className="mt-2">
-                        <BlockerCards blockers={readiness.blockers} />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+            <OfferPicker
+              offers={offers}
+              providers={providers}
+              readinessList={buyerBlock?.offerReadiness ?? null}
+              pickedOffer={pickedOffer}
+              onPick={setPickedOffer}
+              wallet={f.wallet}
+              budgetAsset={job.budgetAsset}
+            />
             <button
               type="button"
               className={CTA_BIG}
-              disabled={!pickedOffer || f.busy !== null}
+              disabled={!pickedOffer || f.busy !== null || pickedIsOwnWallet}
               onClick={() => void f.selectOffer(pickedOffer)}
             >
               {f.busy === 'selecting' ? (
@@ -386,6 +432,39 @@ export default function NextStepPanel({
               everything is prepared automatically — your next and final action is Confirm &amp;
               start.
             </p>
+            {/* B7 escape hatch: a blocked funding stage is never a dead end
+                while nothing is on-chain — the buyer can re-select here. */}
+            {escrowBlocked && requestId == null && offers.length > 0 && (
+              <div className="border-t border-white/10 pt-4">
+                <h3 className="font-mono text-xs font-bold text-slate-100">Change selection</h3>
+                <p className="mt-1 mb-3 font-sans text-sm leading-relaxed text-slate-300">
+                  You can pick a different offer — nothing is locked yet. Selecting again also
+                  re-binds the buyer wallet to the account you sign with.
+                </p>
+                <OfferPicker
+                  offers={offers}
+                  providers={providers}
+                  readinessList={buyerBlock?.offerReadiness ?? null}
+                  pickedOffer={pickedOffer}
+                  onPick={setPickedOffer}
+                  wallet={f.wallet}
+                  budgetAsset={job.budgetAsset}
+                />
+                <button
+                  type="button"
+                  className={cn(BTN_GHOST, 'mt-3')}
+                  disabled={!pickedOffer || f.busy !== null || pickedIsOwnWallet}
+                  onClick={() => void f.selectOffer(pickedOffer)}
+                >
+                  {f.busy === 'selecting' ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Wallet className="h-4 w-4" />
+                  )}
+                  Select this offer instead &amp; sign with StarKey
+                </button>
+              </div>
+            )}
           </div>
         )}
 

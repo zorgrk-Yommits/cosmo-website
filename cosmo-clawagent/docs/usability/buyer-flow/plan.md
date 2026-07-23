@@ -85,6 +85,8 @@ Musste geholfen werden, gilt die Session als "Hilfe erforderlich", nicht als Erf
 | A6 | "Preparing the final step…" (Auto-Arm) wird als normaler Automatik-Zwischenschritt gelesen | Sie warten die angekündigten Sekunden ab | Sie reloaden, klicken zurück, brechen ab oder fragen, ob etwas hängt |
 | A7 | Nutzer finden ihren Job später wieder (my-jobs = localStorage) | Sie kehren im selben Browser zurück und finden den Job über die Startseite | Sie kommen mit anderem Gerät/Browser oder Inkognito wieder, finden nichts und halten den Job für verloren |
 | A8 | Nutzer erkennen selbst, dass sie fertig sind und was finanziell passiert ist | Bei "Settled" benennen sie unaufgefordert: Ergebnis erhalten, Preis gezahlt, Rest zurück | Sie fragen "bin ich jetzt fertig?", prüfen ratlos die Wallet, können den gezahlten Betrag nicht benennen |
+| A9 | Der Wallet-Chip (oben rechts) wird bemerkt und als "damit bin ich gerade unterwegs" verstanden (neu nach B7, 2026-07-23) | Bei der Frage nach dem aktiven Konto zeigen/nennen sie den Chip; bei falschem Konto wechseln sie in der StarKey-Extension und laden neu | Sie übersehen den Chip, suchen das aktive Konto in der Wallet-Extension statt auf der Seite, oder verstehen das Provider-Wallet-Badge nicht |
+| A10 | Im blockierten Funding-Zustand wird "Change selection" gefunden und als Ausweg verstanden (neu nach B7, 2026-07-23) | Nach dem Blocker-Hinweis scrollen sie zum Abschnitt, wählen ein anderes Angebot oder wechseln das Konto und wählen neu | Sie bleiben am deaktivierten Fund-Button hängen, reloaden wiederholt oder fragen "wie komme ich hier raus?" |
 
 ## Zielgröße und begründete Abweichung
 

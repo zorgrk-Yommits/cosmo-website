@@ -23,6 +23,7 @@ import { useMarketFlow } from '../lib/useMarketFlow';
 import { sameWallet } from '../lib/marketWallet';
 import NextStepPanel from './NextStepPanel';
 import DeliverPanel from './DeliverPanel';
+import WalletChip from './WalletChip';
 
 const TURN_LABEL: Record<NextStepsDoc['turn'], string> = {
   buyer: 'Turn: buyer',
@@ -47,13 +48,15 @@ export default function RoleNextStep({
   const [tab, setTab] = useState<NextRole>('buyer');
   const [tabTouched, setTabTouched] = useState(false);
 
+  // B7: the doc is personalized to the passively known wallet (?wallet=) so
+  // the self-quote warning appears per offer BEFORE any selection is signed.
   const refreshDoc = useCallback(async () => {
     try {
-      setDoc(await fetchNextSteps(job.id));
+      setDoc(await fetchNextSteps(job.id, f.wallet ?? undefined));
     } catch {
       setDoc(null); // backend down -> panels fall back fail-closed
     }
-  }, [job.id]);
+  }, [job.id, f.wallet]);
 
   useEffect(() => {
     void refreshDoc();
@@ -68,11 +71,19 @@ export default function RoleNextStep({
     doc?.roles.find((r) => r.role === 'provider')?.action?.signerWallet ??
     f.onchainJob?.solver ??
     null;
+  // B7 (F4): also match the wallet against the offer providers' wallets so a
+  // provider-wallet visitor lands on the provider tab BEFORE accept.
+  const offerProviderWallets = providers
+    .filter((p) => offers.some((o) => o.providerId === p.id))
+    .map((p) => p.wallet)
+    .filter((w): w is string => typeof w === 'string');
   useEffect(() => {
     if (tabTouched || !f.wallet) return;
     if (solverWallet && sameWallet(f.wallet, solverWallet)) setTab('provider');
     else if (buyerWallet && sameWallet(f.wallet, buyerWallet)) setTab('buyer');
-  }, [f.wallet, buyerWallet, solverWallet, tabTouched]);
+    else if (offerProviderWallets.some((w) => sameWallet(f.wallet!, w))) setTab('provider');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [f.wallet, buyerWallet, solverWallet, tabTouched, offerProviderWallets.join(',')]);
 
   const providerBlock = doc?.roles.find((r) => r.role === 'provider') ?? null;
   const observerBlock = doc?.roles.find((r) => r.role === 'observer') ?? null;
@@ -116,12 +127,20 @@ export default function RoleNextStep({
             </button>
           ))}
         </div>
-        {doc && (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-slate-400">
-            <Radio className="h-3 w-3 text-emerald-300" />
-            {TURN_LABEL[doc.turn]}
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {doc && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-slate-400">
+              <Radio className="h-3 w-3 text-emerald-300" />
+              {TURN_LABEL[doc.turn]}
+            </span>
+          )}
+          <WalletChip
+            wallet={f.wallet}
+            buyerWallet={buyerWallet}
+            providers={providers}
+            onConnect={() => void f.connect()}
+          />
+        </div>
       </div>
 
       {tab === 'buyer' && (

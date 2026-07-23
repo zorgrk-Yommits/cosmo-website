@@ -38,7 +38,7 @@ import {
   type ArmResult,
   type FlowState,
 } from './marketApi';
-import { connectWallet, signChallenge, sameWallet } from './marketWallet';
+import { connectWallet, signChallenge, sameWallet, getAccountSilent, markWalletSeen } from './marketWallet';
 import { connectMainnetWallet, signAndSendCompute } from './computeSend';
 import { acceptQuoteV2, approveDeliveryV2, createOutcomeRequestV2 } from './computeTx';
 import {
@@ -132,6 +132,27 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
   useEffect(() => {
     void refreshFlow();
   }, [refreshFlow]);
+
+  // B7 (F1/F4): passively pick up the already-connected StarKey account on
+  // load and on tab focus, so the wallet chip and the role-tab highlight work
+  // BEFORE the first signing action. Never prompts (seen-flag gate inside),
+  // never overwrites a known wallet with null.
+  useEffect(() => {
+    let stop = false;
+    const read = async () => {
+      const addr = await getAccountSilent();
+      // A fresh non-null read always wins (the user may have switched
+      // accounts in the extension); a null read never clears a known wallet.
+      if (!stop && addr) setWallet(addr);
+    };
+    void read();
+    const onFocus = () => void read();
+    window.addEventListener('focus', onFocus);
+    return () => {
+      stop = true;
+      window.removeEventListener('focus', onFocus);
+    };
+  }, []);
 
   // Poll the on-chain quote while a request exists and is not yet accepted.
   useEffect(() => {
@@ -276,6 +297,7 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
     setError(null);
     try {
       const addr = await connectMainnetWallet();
+      markWalletSeen();
       setWallet(addr);
     } catch (e) {
       setError((e as Error).message ?? String(e));
@@ -287,19 +309,18 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
       if (!jobId) return;
       await run('selecting', async () => {
         const addr = await connectWallet();
+        markWalletSeen();
         setWallet(addr);
-        if (flow?.buyerWallet && !sameWallet(addr, flow.buyerWallet)) {
-          throw new Error(
-            'The connected wallet is not the buyer wallet bound to this job. Switch accounts in StarKey.',
-          );
-        }
+        // B7/R3: no buyer-wallet pre-check here — the server re-binds the
+        // buyer wallet from the fresh signature while nothing is on-chain,
+        // and hard-rejects self-quotes (422).
         const challenge = await requestSelectChallenge(jobId, offerId);
         const proof = await signChallenge(challenge.hexMessage, challenge.nonce);
         await submitSelect(jobId, offerId, { message: challenge.challenge, ...proof });
         return 'Offer selected and signed. Next step: fund the job.';
       });
     },
-    [jobId, flow?.buyerWallet, run],
+    [jobId, run],
   );
 
   const createEscrow = useCallback(async () => {
@@ -312,6 +333,7 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
         throw new Error('The selected provider does not currently meet the on-chain requirements — funding would be lost.');
       }
       const account = await connectMainnetWallet();
+      markWalletSeen();
       setWallet(account);
       if (f.buyerWallet && !sameWallet(account, f.buyerWallet)) {
         throw new Error('Connected wallet is not the buyer wallet for this job.');
@@ -361,6 +383,7 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
         throw new Error("The offer's validity window ran out before confirmation — a fresh one is being prepared.");
       }
       const account = await connectMainnetWallet();
+      markWalletSeen();
       setWallet(account);
       if (f.buyerWallet && !sameWallet(account, f.buyerWallet)) {
         throw new Error('Connected wallet is not the buyer wallet for this job.');
@@ -405,6 +428,7 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
         throw new Error('No delivered result on-chain yet — nothing to approve.');
       }
       const account = await connectMainnetWallet();
+      markWalletSeen();
       setWallet(account);
       if (f.buyerWallet && !sameWallet(account, f.buyerWallet)) {
         throw new Error('Connected wallet is not the buyer wallet for this job.');
