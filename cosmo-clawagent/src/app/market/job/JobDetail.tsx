@@ -1,44 +1,30 @@
 'use client';
 
-// /market/job?id=<id> — job detail (query-param routing: static export has no
-// dynamic segments). The "Your next step" hero panel leads the page — one big
-// CTA per state — followed by the unified lifecycle rail, job facts, frozen
-// spec and offers. Jobs still in moderation are not publicly listed; a
-// lightweight status poll renders a waiting view for the submitter instead.
+// /market/job?id=<id> — the BUYER page (role split 2026-07-23: one page per
+// role; providers act on /market/work). Query-param routing: static export
+// has no dynamic segments. The "Your next step" hero panel leads the page —
+// one big CTA per state — followed by the buyer-only lifecycle rail, job
+// facts, frozen spec and the offers the buyer chooses from. Jobs still in
+// moderation are not publicly listed; a lightweight status poll renders a
+// waiting view for the submitter instead.
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { ArrowLeft, FileJson, Fingerprint, ListChecks, RefreshCw, Route } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ListChecks, RefreshCw, Route } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { EXPLORER_TX } from '@/lib/mainnetOnchain';
 import { useMarketJob, useMarketJobStatus, useMarketProviders } from '../useMarketData';
-import { STATUS_BADGE, fmtRel, fmtTs } from '../lib/marketStatus';
-import { specUrl, type TxRefs } from '../lib/marketApi';
+import { STATUS_BADGE, buildBuyerSteps } from '../lib/marketStatus';
 import { getMyJobs } from '../lib/myJobs';
+import { useMarketFlow } from '../lib/useMarketFlow';
+import { useNextStepsDoc } from '../lib/useNextStepsDoc';
+import { sameWallet } from '../lib/marketWallet';
 import FlowRail from '../components/FlowRail';
 import OfferCard from '../components/OfferCard';
-import OfferForm from '../components/OfferForm';
-import RoleNextStep from '../components/RoleNextStep';
+import NextStepPanel from '../components/NextStepPanel';
+import TurnStatusLine from '../components/TurnStatusLine';
+import { FrozenSpecCard, JobFactsCard, TxRecord } from '../components/JobInfoSections';
 import HonestyBox from '../components/HonestyBox';
-
-const TX_LABELS: { key: keyof TxRefs; label: string }[] = [
-  { key: 'create', label: 'Job funded' },
-  { key: 'submitQuote', label: 'Provider offer confirmed' },
-  { key: 'accept', label: 'Job confirmed & started' },
-  { key: 'deliver', label: 'Result delivered' },
-  { key: 'dispute', label: 'Delivery disputed' },
-  { key: 'settle', label: 'Settled' },
-];
-
-function Fact({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <dt className="font-mono text-[10px] uppercase tracking-wider text-slate-500">{label}</dt>
-      <dd className="mt-0.5 font-mono text-xs text-slate-300">{children}</dd>
-    </div>
-  );
-}
 
 export default function JobDetail() {
   const params = useSearchParams();
@@ -49,6 +35,9 @@ export default function JobDetail() {
   const job = section.data?.job ?? null;
   const offers = section.data?.offers ?? [];
   const providers = providersSection.data ?? [];
+
+  const f = useMarketFlow(job?.id ?? null, () => void refresh());
+  const { doc } = useNextStepsDoc(job?.id ?? null, f.wallet);
 
   // Moderation fallback: the public job fetch 404s for submitted/rejected
   // jobs, but the status endpoint answers for any id.
@@ -68,6 +57,20 @@ export default function JobDetail() {
     const tick = setInterval(() => setNowSec(Math.floor(Date.now() / 1000)), 1000);
     return () => clearInterval(tick);
   }, []);
+
+  // Role split: if the connected wallet belongs to a provider on this job,
+  // this is probably the wrong page — offer a link, never a redirect.
+  const buyerWallet = f.flow?.buyerWallet ?? job?.buyerWallet ?? null;
+  const solverWallet =
+    doc?.roles.find((r) => r.role === 'provider')?.action?.signerWallet ?? f.onchainJob?.solver ?? null;
+  const walletIsProvider =
+    !!f.wallet &&
+    ((solverWallet ? sameWallet(f.wallet, solverWallet) : false) ||
+      providers.some(
+        (p) => p.wallet && offers.some((o) => o.providerId === p.id) && sameWallet(f.wallet!, p.wallet),
+      ));
+
+  const workUrl = id ? `/market/work/?id=${encodeURIComponent(id)}` : '/market/work/';
 
   return (
     <div className="terminal-container terminal-theme-scope">
@@ -134,15 +137,14 @@ export default function JobDetail() {
             <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-6">
               <div className="mb-4 flex items-center gap-2">
                 <Route className="h-4 w-4 text-purple-300" />
-                <h2 className="font-mono text-sm font-bold text-slate-100">Lifecycle</h2>
+                <h2 className="font-mono text-sm font-bold text-slate-100">Your steps</h2>
               </div>
               <FlowRail
-                job={{
-                  status: fallbackStatus.status,
-                  requestId: fallbackStatus.requestId,
-                  txRefs: fallbackStatus.txRefs,
-                }}
-                offersCount={0}
+                steps={buildBuyerSteps(
+                  { status: fallbackStatus.status, requestId: fallbackStatus.requestId },
+                  0,
+                )}
+                txRefs={fallbackStatus.txRefs}
               />
             </div>
           </>
@@ -186,100 +188,51 @@ export default function JobDetail() {
               </div>
             </div>
 
-            {/* ── Your next step (L2: role tabs, server-computed turn) ── */}
-            <RoleNextStep
-              job={job}
-              offers={offers}
+            {/* ── Status line + wallet ── */}
+            <TurnStatusLine
+              ownRole="buyer"
+              doc={doc}
+              wallet={f.wallet}
+              buyerWallet={buyerWallet}
               providers={providers}
-              onChanged={() => void refresh()}
+              onConnect={() => void f.connect()}
             />
 
-            {/* ── Lifecycle ── */}
-            <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-6">
-              <div className="mb-4 flex items-center gap-2">
-                <Route className="h-4 w-4 text-purple-300" />
-                <h2 className="font-mono text-sm font-bold text-slate-100">Lifecycle</h2>
-              </div>
-              <FlowRail job={job} offersCount={offers.length} />
-              {Object.values(job.txRefs).some(Boolean) && (
-                <dl className="mt-5 grid gap-x-6 gap-y-3 sm:grid-cols-3">
-                  {TX_LABELS.filter(({ key }) => job.txRefs[key]).map(({ key, label }) => (
-                    <Fact key={key} label={label}>
-                      <a
-                        href={`${EXPLORER_TX}${job.txRefs[key]}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sky-400 hover:text-sky-300"
-                      >
-                        view transaction
-                      </a>
-                    </Fact>
-                  ))}
-                </dl>
-              )}
-            </div>
-
-            {/* ── Job facts ── */}
-            <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-6">
-              <div className="mb-4 flex items-center gap-2">
-                <ListChecks className="h-4 w-4 text-purple-300" />
-                <h2 className="font-mono text-sm font-bold text-slate-100">Job</h2>
-              </div>
-              <p className="whitespace-pre-line font-sans text-sm leading-relaxed text-slate-300">
-                {job.description}
-              </p>
-              <div className="mt-4 rounded-lg border border-white/10 bg-black/20 p-4">
-                <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500">
-                  Acceptance criteria
+            {/* ── Provider-wallet hint (never a redirect) ── */}
+            {walletIsProvider && (
+              <div className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/[0.06] p-3">
+                <p className="flex items-start gap-1.5 font-sans text-sm leading-relaxed text-amber-200">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
+                  <span>
+                    You are connected with a provider wallet for this job. This page is the
+                    buyer&apos;s view — offers and delivery happen on the provider view.{' '}
+                    <Link href={workUrl} className="font-bold text-sky-400 hover:text-sky-300">
+                      Open the provider view →
+                    </Link>
+                  </span>
                 </p>
-                <p className="mt-1.5 whitespace-pre-line font-sans text-sm leading-relaxed text-slate-300">
-                  {job.acceptanceCriteria}
-                </p>
-              </div>
-              <dl className="mt-4 grid gap-x-6 gap-y-3 sm:grid-cols-3">
-                <Fact label="Budget">
-                  {job.budgetAmount} {job.budgetAsset}
-                </Fact>
-                <Fact label="Deadline">
-                  {fmtTs(job.deadlineTs)}{' '}
-                  <span className="text-slate-500">({fmtRel(job.deadlineTs, nowSec)})</span>
-                </Fact>
-                <Fact label="Posted">{fmtTs(job.createdAt)}</Fact>
-              </dl>
-            </div>
-
-            {/* ── Frozen spec ── */}
-            {job.specHash && (
-              <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-6">
-                <div className="mb-3 flex items-center gap-2">
-                  <Fingerprint className="h-4 w-4 text-purple-300" />
-                  <h2 className="font-mono text-sm font-bold text-slate-100">Frozen specification</h2>
-                </div>
-                <p className="font-sans text-sm leading-relaxed text-slate-400">
-                  On approval this job&apos;s specification was frozen to an immutable canonical
-                  document. The on-chain contract stores its SHA3-256 hash, so the specification
-                  cannot change after funding.
-                </p>
-                <dl className="mt-3 grid gap-x-6 gap-y-3">
-                  <Fact label="Spec hash (SHA3-256)">
-                    <span className="break-all">{job.specHash}</span>
-                  </Fact>
-                  <Fact label="Canonical document">
-                    <a
-                      href={specUrl(job.id)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-sky-400 hover:text-sky-300"
-                    >
-                      <FileJson className="h-3 w-3" />
-                      {specUrl(job.id)}
-                    </a>
-                  </Fact>
-                </dl>
               </div>
             )}
 
-            {/* ── Offers ── */}
+            {/* ── Your next step (buyer panel, server-computed turn) ── */}
+            <div className="mt-4">
+              <NextStepPanel job={job} offers={offers} providers={providers} doc={doc} f={f} />
+            </div>
+
+            {/* ── Your steps (buyer-only rail) ── */}
+            <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-6">
+              <div className="mb-4 flex items-center gap-2">
+                <Route className="h-4 w-4 text-purple-300" />
+                <h2 className="font-mono text-sm font-bold text-slate-100">Your steps</h2>
+              </div>
+              <FlowRail steps={buildBuyerSteps(job, offers.length)} txRefs={job.txRefs} />
+              <TxRecord txRefs={job.txRefs} />
+            </div>
+
+            <JobFactsCard job={job} nowSec={nowSec} />
+            <FrozenSpecCard job={job} />
+
+            {/* ── Offers (the buyer chooses; providers submit on /market/work) ── */}
             <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-6">
               <div className="mb-4 flex items-center gap-2">
                 <ListChecks className="h-4 w-4 text-purple-300" />
@@ -300,23 +253,22 @@ export default function JobDetail() {
                 </div>
               ) : (
                 <p className="font-mono text-xs text-slate-500">
-                  No offers yet. Curated pilot providers are notified of approved jobs.
+                  No offers yet. Curated pilot providers are notified of approved jobs and submit
+                  offers on the provider view.
                 </p>
               )}
               <p className="mt-4 font-mono text-[11px] text-slate-500">
                 Prices are in {job.budgetAsset}.
               </p>
-              {job.status === 'approved' && (
-                <div className="mt-4">
-                  <OfferForm
-                    jobId={job.id}
-                    budgetAsset={job.budgetAsset}
-                    providers={providers}
-                    onSubmitted={() => void refresh()}
-                  />
-                </div>
-              )}
             </div>
+
+            {/* ── Cross-link to the provider view ── */}
+            <p className="mt-6 font-mono text-xs text-slate-500">
+              Are you a provider on this job? Offers and delivery live on the{' '}
+              <Link href={workUrl} className="text-sky-400 hover:text-sky-300">
+                provider view →
+              </Link>
+            </p>
           </>
         )}
       </section>

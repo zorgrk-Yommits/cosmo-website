@@ -23,7 +23,7 @@ export const STATUS_BADGE: Record<JobStatus, StatusBadge> = {
     cls: 'border-slate-500/40 bg-slate-500/10 text-slate-400',
   },
   selected: {
-    label: 'Offer selected — you fund next',
+    label: 'Offer selected — buyer funds next',
     cls: 'border-sky-500/40 bg-sky-500/10 text-sky-300',
   },
   onchain: {
@@ -42,56 +42,60 @@ export const STATUS_BADGE: Record<JobStatus, StatusBadge> = {
 
 export type StepState = 'done' | 'active' | 'pending';
 
-export type UnifiedStepId =
-  | 'review'
-  | 'offers'
-  | 'select'
-  | 'escrow'
-  | 'accept'
-  | 'deliver'
-  | 'settle';
-
-export interface UnifiedStep {
-  id: UnifiedStepId;
+// Role split (2026-07-23): ONE rail per page, showing only the page's own
+// role. `own` marks the page-role's actions (numbered for the buyer's four
+// buttons, unnumbered `true` for provider actions — the artifact-only
+// register node would otherwise renumber the chain per job type). `waiting`
+// marks the single collapsed node where the other side / the marketplace
+// acts. Arming stays a server detail with no node of its own.
+export interface RoleStep {
+  id: string;
   label: string;
   onchain: boolean;
-  buyerAction?: 1 | 2 | 3; // the three buttons the buyer actually presses
+  own?: 1 | 2 | 3 | 4 | true;
+  waiting?: true;
   state: StepState;
   txKey?: keyof TxRefs;
 }
 
-// The unified lifecycle: ONE rail for the whole page. The buyer's three
-// action steps (select / fund / confirm) are emphasized; arming is a server
-// detail and deliberately has no node of its own. Delivery is the provider's
-// step; approval/settlement closes the loop (M5). Labels use buyer
-// vocabulary (Sprachpass, Etappe 5); ids stay technical.
-const UNIFIED_STEPS: Omit<UnifiedStep, 'state'>[] = [
-  { id: 'review', label: 'Posted & review', onchain: false },
-  { id: 'offers', label: 'Offers', onchain: false },
-  { id: 'select', label: 'Select offer', onchain: false, buyerAction: 1 },
-  { id: 'escrow', label: 'Fund the job', onchain: true, buyerAction: 2, txKey: 'create' },
-  { id: 'accept', label: 'Confirm & start', onchain: true, buyerAction: 3, txKey: 'accept' },
-  { id: 'deliver', label: 'Delivery', onchain: true, txKey: 'deliver' },
-  { id: 'settle', label: 'Settlement', onchain: true, txKey: 'settle' },
-];
-
 // The rail derives from ids/fields, not just the coarse off-chain status, so
 // it also works for the moderation fallback's minimal synthetic job.
-export interface UnifiedStepInput {
+export interface RoleStepInput {
   status: JobStatus;
   selectedOfferId?: string;
   requestId?: number;
   jobIdOnchain?: number;
+  jobType?: 'attestation' | 'artifact';
+  expectedResultHash?: string;
 }
 
-export function buildUnifiedSteps(job: UnifiedStepInput, offersCount: number): UnifiedStep[] {
+type StepDef = Omit<RoleStep, 'state'>;
+
+const BUYER_STEPS: StepDef[] = [
+  { id: 'review', label: 'Posted & review', onchain: false },
+  { id: 'offers', label: 'Offers arrive', onchain: false, waiting: true },
+  { id: 'select', label: 'Select offer', onchain: false, own: 1 },
+  { id: 'escrow', label: 'Fund the job', onchain: true, own: 2, txKey: 'create' },
+  { id: 'accept', label: 'Confirm & start', onchain: true, own: 3, txKey: 'accept' },
+  { id: 'working', label: 'Provider is working', onchain: true, waiting: true, txKey: 'deliver' },
+  { id: 'approve', label: 'Approve delivery', onchain: true, own: 4 },
+  { id: 'settled', label: 'Settled', onchain: true, txKey: 'settle' },
+];
+
+const withStates = (defs: StepDef[], active: number): RoleStep[] =>
+  defs.map((s, i) => ({
+    ...s,
+    state: i < active ? 'done' : i === active ? 'active' : 'pending',
+  }));
+
+export function buildBuyerSteps(job: RoleStepInput, offersCount: number): RoleStep[] {
   let active: number;
   if (job.status === 'settled') {
-    active = 7; // beyond the last index — everything done
+    active = 8; // beyond the last index — everything done
   } else if (job.status === 'delivered') {
-    active = 6; // settlement (buyer approval or review timeout)
+    active = 6; // approve delivery — the buyer's fourth action
   } else if (job.jobIdOnchain != null) {
-    active = 5; // delivery — the provider's turn
+    active = 5; // provider is working
   } else if (job.requestId != null) {
     active = 4; // accept (arming happens invisibly inside this step)
   } else if (job.selectedOfferId) {
@@ -103,10 +107,37 @@ export function buildUnifiedSteps(job: UnifiedStepInput, offersCount: number): U
   } else {
     active = 0; // submitted / rejected — review
   }
-  return UNIFIED_STEPS.map((s, i) => ({
-    ...s,
-    state: i < active ? 'done' : i === active ? 'active' : 'pending',
-  }));
+  return withStates(BUYER_STEPS, active);
+}
+
+export function buildProviderSteps(job: RoleStepInput): RoleStep[] {
+  const isArtifact = job.jobType === 'artifact';
+  const defs: StepDef[] = [
+    { id: 'open', label: 'Job open for offers', onchain: false, waiting: true },
+    { id: 'offer', label: 'Submit your offer', onchain: false, own: true },
+    { id: 'buyer', label: 'Buyer selects & funds', onchain: true, waiting: true, txKey: 'accept' },
+    ...(isArtifact ? [{ id: 'register', label: 'Register result', onchain: false, own: true as const }] : []),
+    { id: 'deliver', label: 'Deliver result', onchain: true, own: true, txKey: 'deliver' },
+    { id: 'settled', label: 'Paid & settled', onchain: true, txKey: 'settle' },
+  ];
+  const idx = (id: string) => defs.findIndex((s) => s.id === id);
+  let active: number;
+  if (job.status === 'settled') {
+    active = defs.length; // everything done
+  } else if (job.status === 'delivered') {
+    active = idx('settled'); // payout pending (buyer approval or timeout)
+  } else if (job.jobIdOnchain != null && isArtifact && !job.expectedResultHash) {
+    active = idx('register');
+  } else if (job.jobIdOnchain != null) {
+    active = idx('deliver');
+  } else if (job.selectedOfferId || job.requestId != null) {
+    active = idx('buyer');
+  } else if (job.status === 'approved') {
+    active = idx('offer'); // offers stay replaceable until selection
+  } else {
+    active = idx('open'); // submitted / rejected
+  }
+  return withStates(defs, active);
 }
 
 export const fmtTs = (secs: number) =>

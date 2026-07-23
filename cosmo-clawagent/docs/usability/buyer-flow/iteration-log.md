@@ -35,6 +35,31 @@
   TP01-Beobachtungen mit unvoreingenommenen Personen. Bis dahin gilt:
   **Technisch umgesetzt — Nutzbarkeit noch nicht durch reale Beobachtung belegt.**
 
+## Eintrag 2 — 2026-07-23 (Rollensplit: zwei Seiten)
+
+- Auslösende Befunde: Produkt-Feedback Rene (direkt, 2026-07-23): Auftraggeber und
+  Auftragnehmer in EINER Lebenszykluskette nicht anschaulich. Plan
+  `plans/market-role-split-plan.md` (`b9fdb7d`).
+- Änderung: `/market/job` = reine Buyer-Seite (Tabs weg, OfferForm raus, Buyer-Rail
+  ①–④ inkl. neuem Approve-Node, Provider-Wallet-Banner statt Auto-Redirect);
+  NEU `/market/work` = Provider-Seite (OfferForm, DeliverPanel, Provider-Rail mit
+  Ein-Wartezustand-Kollaps, /next-steps-Maschinenlink); Observer-Tab → neutrale
+  TurnStatusLine auf beiden Seiten; geteilt durch Extraktion (JobInfoSections,
+  TurnStatusLine, useNextStepsDoc/usePassiveWallet, FlowRail als pure Renderer);
+  „Step {n} of 4"; STATUS_BADGE „selected" rollenbenannt. Backend unberührt.
+- Angrenzend geprüft: Moderation-Fallback auf Buyer-Rail umgestellt; alle bestehenden
+  /market/job-Links bleiben gültig; /next-steps vor/nach Deploy identisch (nur
+  dynamisches readAt); pilot001-Evidenz-JSON unangetastet.
+- Automatisierte Tests: tsc + next build (FlowRail-Signaturwechsel als Compile-Gate);
+  agent-browser-Walkthrough beider Seiten gegen den real GESETTELTEN kahless-Job
+  (Settled-Endzustand beidseitig korrekt, Provider-Rail 5 Nodes mit YOU-Pills,
+  Statuszeile, Querlinks, Maschinenlink). Approved-Zustand der Work-Seite (OfferForm)
+  nur per Code-Identität belegt (Komponente unverändert umgezogen) — Live-Beleg steht
+  aus, kein approved-Job vorhanden.
+- Retest: **ausstehend** — neue Annahmen A11–A13 in plan.md; nächster realer Test =
+  TP01 bzw. nächster Provider-Kontakt (Link muss auf /market/work zeigen).
+  **Technisch umgesetzt — Nutzbarkeit noch nicht durch reale Beobachtung belegt.**
+
 ## Eintrag-Template
 
 ```markdown

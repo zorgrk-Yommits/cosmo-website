@@ -177,7 +177,7 @@ export default function DeliverPanel({
   const deadlinePassed = oj !== null && nowSec > oj.jobDeadlineSecs;
 
   return (
-    <div className="rounded-b-xl rounded-tr-xl border border-white/10 bg-white/[0.02] p-6">
+    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
       <div className="mb-1 flex items-center gap-2">
         <Package className="h-4 w-4 text-purple-300" />
         <h2 className="font-mono text-sm font-bold text-slate-100">Provider: deliver the result</h2>

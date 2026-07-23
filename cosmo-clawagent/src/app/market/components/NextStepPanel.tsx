@@ -164,13 +164,16 @@ type Stage =
   | 'settled'
   | 'blocked';
 
-const STAGE_STEP: Partial<Record<Stage, 1 | 2 | 3>> = {
+// Role split (2026-07-23): the buyer has FOUR actions — approve is a real
+// numbered step now, matching the buyer rail's node ④.
+const STAGE_STEP: Partial<Record<Stage, 1 | 2 | 3 | 4>> = {
   select: 1,
   escrow: 2,
   preparing: 3,
   accept: 3,
   'arm-failed': 3,
   'expired-manual': 3,
+  approve: 4,
 };
 
 // The StarKey footer renders only where the wallet is actually part of the
@@ -282,7 +285,7 @@ export default function NextStepPanel({
   const pickedIsOwnWallet = !!(f.wallet && pickedProviderWallet && sameWallet(f.wallet, pickedProviderWallet));
 
   return (
-    <div className="rounded-b-xl rounded-tr-xl border border-purple-500/25 bg-purple-500/[0.04] p-6">
+    <div className="rounded-xl border border-purple-500/25 bg-purple-500/[0.04] p-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Wallet className="h-4 w-4 text-purple-300" />
@@ -290,7 +293,7 @@ export default function NextStepPanel({
         </div>
         {stepNo && (
           <span className="rounded-full border border-purple-500/40 bg-purple-500/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-purple-300">
-            Step {stepNo} of 3
+            Step {stepNo} of 4
           </span>
         )}
       </div>
@@ -429,8 +432,8 @@ export default function NextStepPanel({
             </button>
             <p className="font-mono text-[11px] text-slate-500">
               Held on-chain, refunded if the job does not go ahead. After this signature
-              everything is prepared automatically — your next and final action is Confirm &amp;
-              start.
+              everything is prepared automatically — your next action is Confirm &amp; start; your
+              last step, approving the delivery, comes once the provider delivers.
             </p>
             {/* B7 escape hatch: a blocked funding stage is never a dead end
                 while nothing is on-chain — the buyer can re-select here. */}
