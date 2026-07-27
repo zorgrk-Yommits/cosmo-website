@@ -12,31 +12,31 @@ export interface StatusBadge {
 export const STATUS_BADGE: Record<JobStatus, StatusBadge> = {
   submitted: {
     label: 'In moderation',
-    cls: 'border-slate-500/40 bg-slate-500/10 text-slate-300',
+    cls: 'border-line-base bg-white/[0.02] text-ink-2',
   },
   approved: {
     label: 'Open for offers',
-    cls: 'border-purple-500/40 bg-purple-500/10 text-purple-300',
+    cls: 'border-phase-active/40 bg-phase-active/10 text-phase-active',
   },
   rejected: {
     label: 'Rejected',
-    cls: 'border-slate-500/40 bg-slate-500/10 text-slate-400',
+    cls: 'border-line-base bg-white/[0.02] text-ink-2',
   },
   selected: {
     label: 'Offer selected — buyer funds next',
-    cls: 'border-sky-500/40 bg-sky-500/10 text-sky-300',
+    cls: 'border-phase-proof/40 bg-phase-proof/10 text-phase-proof',
   },
   onchain: {
     label: 'On-chain execution',
-    cls: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300',
+    cls: 'border-phase-settled/40 bg-phase-settled/10 text-phase-settled',
   },
   delivered: {
     label: 'Delivered — buyer approval next',
-    cls: 'border-amber-500/40 bg-amber-500/10 text-amber-300',
+    cls: 'border-phase-proof/40 bg-phase-proof/10 text-phase-proof',
   },
   settled: {
     label: 'Settled',
-    cls: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300',
+    cls: 'border-phase-settled/40 bg-phase-settled/10 text-phase-settled',
   },
 };
 

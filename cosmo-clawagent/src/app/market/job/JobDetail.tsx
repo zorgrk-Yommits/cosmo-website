@@ -79,16 +79,16 @@ export default function JobDetail() {
       <section className="relative z-10 mx-auto max-w-5xl px-6 pt-24 pb-8">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 font-mono text-xs text-slate-400 transition-colors hover:text-white"
+          className="inline-flex items-center gap-1.5 font-mono text-xs text-ink-1 transition-colors hover:text-white"
         >
           <ArrowLeft className="h-3 w-3" />
           All jobs
         </Link>
 
         {!id && (
-          <p className="mt-8 font-mono text-sm text-slate-400">
+          <p className="mt-8 font-mono text-sm text-ink-1">
             No job selected — pick one from{' '}
-            <Link href="/" className="text-sky-400 hover:text-sky-300">
+            <Link href="/" className="text-phase-proof hover:text-phase-proof">
               the job board
             </Link>
             .
@@ -99,7 +99,7 @@ export default function JobDetail() {
         {statusFallbackEnabled && fallbackStatus && !job && (
           <>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-              <h1 className="font-mono text-2xl font-bold tracking-tight text-slate-100 md:text-3xl">
+              <h1 className="font-mono text-2xl font-bold tracking-tight text-ink-0 md:text-3xl">
                 {myTitle ?? 'Your submitted job'}
               </h1>
               <span
@@ -112,21 +112,21 @@ export default function JobDetail() {
               </span>
             </div>
 
-            <div className="mt-6 rounded-xl border border-purple-500/25 bg-purple-500/[0.04] p-6">
-              <h2 className="font-mono text-sm font-bold text-slate-100">Your next step</h2>
+            <div className="mt-6 rounded-xl border border-phase-active/25 bg-phase-active/[0.04] p-6">
+              <h2 className="font-mono text-sm font-bold text-ink-0">Your next step</h2>
               {fallbackStatus.status === 'rejected' ? (
-                <p className="mt-3 font-sans text-sm leading-relaxed text-slate-300">
+                <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
                   This job was not approved for the pilot board.{' '}
-                  <Link href="/market/post/" className="text-sky-400 hover:text-sky-300">
+                  <Link href="/market/post/" className="text-phase-proof hover:text-phase-proof">
                     Post a new job
                   </Link>{' '}
                   if you want to try a different scope.
                 </p>
               ) : (
                 <div className="mt-3 flex items-start gap-3">
-                  <span className="mt-1 inline-flex h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-slate-400" />
-                  <p className="font-sans text-sm leading-relaxed text-slate-300">
-                    Your job is <span className="font-bold text-slate-100">in review</span>. Once
+                  <span className="mt-1 inline-flex h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-ink-2" />
+                  <p className="font-sans text-sm leading-relaxed text-ink-1">
+                    Your job is <span className="font-bold text-ink-0">in review</span>. Once
                     approved it opens for offers from curated pilot providers — we also reach out
                     by email. Nothing to do right now; this page updates automatically.
                   </p>
@@ -134,10 +134,10 @@ export default function JobDetail() {
               )}
             </div>
 
-            <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-6">
+            <div className="mt-4 rounded-xl border border-line-base bg-surface-1 p-6">
               <div className="mb-4 flex items-center gap-2">
-                <Route className="h-4 w-4 text-purple-300" />
-                <h2 className="font-mono text-sm font-bold text-slate-100">Your steps</h2>
+                <Route className="h-4 w-4 text-phase-active" />
+                <h2 className="font-mono text-sm font-bold text-ink-0">Your steps</h2>
               </div>
               <FlowRail
                 steps={buildBuyerSteps(
@@ -151,20 +151,20 @@ export default function JobDetail() {
         )}
 
         {statusFallbackEnabled && !fallbackStatus && statusSection.error && (
-          <p className="mt-8 font-mono text-sm text-slate-400">
+          <p className="mt-8 font-mono text-sm text-ink-1">
             This job is not publicly visible ({section.error}). It may still be in moderation —
             check back later.
           </p>
         )}
 
         {id && !section.error && !job && (
-          <div className="mt-8 h-24 w-full animate-pulse rounded bg-white/5" />
+          <div className="mt-8 h-24 w-full animate-pulse rounded bg-surface-2" />
         )}
 
         {job && nowSec !== null && (
           <>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-              <h1 className="font-mono text-2xl font-bold tracking-tight text-slate-100 md:text-3xl">
+              <h1 className="font-mono text-2xl font-bold tracking-tight text-ink-0 md:text-3xl">
                 {job.title}
               </h1>
               <div className="flex items-center gap-3">
@@ -180,7 +180,7 @@ export default function JobDetail() {
                   type="button"
                   onClick={() => void refresh()}
                   disabled={refreshing}
-                  className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-3 py-1.5 font-mono text-[11px] text-slate-400 transition-all hover:border-white/30 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-lg border border-line-base px-3 py-1.5 font-mono text-[11px] text-ink-1 transition-all hover:border-line-strong hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <RefreshCw className={cn('h-3 w-3', refreshing && 'animate-spin')} />
                   Refresh
@@ -200,13 +200,13 @@ export default function JobDetail() {
 
             {/* ── Provider-wallet hint (never a redirect) ── */}
             {walletIsProvider && (
-              <div className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/[0.06] p-3">
-                <p className="flex items-start gap-1.5 font-sans text-sm leading-relaxed text-amber-200">
-                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
+              <div className="mt-3 rounded-lg border border-phase-proof/30 bg-phase-proof/[0.06] p-3">
+                <p className="flex items-start gap-1.5 font-sans text-sm leading-relaxed text-phase-proof">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-phase-proof" />
                   <span>
                     You are connected with a provider wallet for this job. This page is the
                     buyer&apos;s view — offers and delivery happen on the provider view.{' '}
-                    <Link href={workUrl} className="font-bold text-sky-400 hover:text-sky-300">
+                    <Link href={workUrl} className="font-bold text-phase-proof hover:text-phase-proof">
                       Open the provider view →
                     </Link>
                   </span>
@@ -220,10 +220,10 @@ export default function JobDetail() {
             </div>
 
             {/* ── Your steps (buyer-only rail) ── */}
-            <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-6">
+            <div className="mt-4 rounded-xl border border-line-base bg-surface-1 p-6">
               <div className="mb-4 flex items-center gap-2">
-                <Route className="h-4 w-4 text-purple-300" />
-                <h2 className="font-mono text-sm font-bold text-slate-100">Your steps</h2>
+                <Route className="h-4 w-4 text-phase-active" />
+                <h2 className="font-mono text-sm font-bold text-ink-0">Your steps</h2>
               </div>
               <FlowRail steps={buildBuyerSteps(job, offers.length)} txRefs={job.txRefs} />
               <TxRecord txRefs={job.txRefs} />
@@ -233,10 +233,10 @@ export default function JobDetail() {
             <FrozenSpecCard job={job} />
 
             {/* ── Offers (the buyer chooses; providers submit on /market/work) ── */}
-            <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-6">
+            <div className="mt-4 rounded-xl border border-line-base bg-surface-1 p-6">
               <div className="mb-4 flex items-center gap-2">
-                <ListChecks className="h-4 w-4 text-purple-300" />
-                <h2 className="font-mono text-sm font-bold text-slate-100">
+                <ListChecks className="h-4 w-4 text-phase-active" />
+                <h2 className="font-mono text-sm font-bold text-ink-0">
                   Offers ({offers.length})
                 </h2>
               </div>
@@ -252,20 +252,20 @@ export default function JobDetail() {
                   ))}
                 </div>
               ) : (
-                <p className="font-mono text-xs text-slate-500">
+                <p className="font-mono text-xs text-ink-2">
                   No offers yet. Curated pilot providers are notified of approved jobs and submit
                   offers on the provider view.
                 </p>
               )}
-              <p className="mt-4 font-mono text-[11px] text-slate-500">
+              <p className="mt-4 font-mono text-[11px] text-ink-2">
                 Prices are in {job.budgetAsset}.
               </p>
             </div>
 
             {/* ── Cross-link to the provider view ── */}
-            <p className="mt-6 font-mono text-xs text-slate-500">
+            <p className="mt-6 font-mono text-xs text-ink-2">
               Are you a provider on this job? Offers and delivery live on the{' '}
-              <Link href={workUrl} className="text-sky-400 hover:text-sky-300">
+              <Link href={workUrl} className="text-phase-proof hover:text-phase-proof">
                 provider view →
               </Link>
             </p>

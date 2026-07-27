@@ -40,7 +40,7 @@ interface AdminProvider {
 const CRED_KEY = 'cosmo-market-admin-auth';
 
 const inputCls =
-  'w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 font-mono text-sm text-slate-200 placeholder:text-slate-600 focus:border-purple-500/50 focus:outline-none';
+  'w-full rounded-lg border border-line-base bg-surface-inset px-3 py-2 font-mono text-sm text-ink-0 placeholder:text-ink-2 focus:border-phase-active/50 focus:outline-none';
 
 const btnCls =
   'inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 font-mono text-xs transition-all disabled:cursor-not-allowed disabled:opacity-50';
@@ -156,19 +156,19 @@ export default function AdminConsole() {
       <section className="relative z-10 mx-auto max-w-5xl px-6 pt-24 pb-24">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 font-mono text-xs text-slate-400 transition-colors hover:text-white"
+          className="inline-flex items-center gap-1.5 font-mono text-xs text-ink-1 transition-colors hover:text-white"
         >
           <ArrowLeft className="h-3 w-3" />
           Market
         </Link>
 
-        <h1 className="mt-6 font-mono text-3xl font-bold tracking-tight text-slate-100">
+        <h1 className="mt-6 font-mono text-3xl font-bold tracking-tight text-ink-0">
           Market admin
         </h1>
 
         {!auth ? (
           <form onSubmit={login} className="mt-8 max-w-sm space-y-4">
-            <p className="font-sans text-sm text-slate-400">
+            <p className="font-sans text-sm text-ink-1">
               Operator access. The API behind this console is BasicAuth-gated at the proxy.
             </p>
             <input
@@ -186,10 +186,10 @@ export default function AdminConsole() {
               onChange={(e) => setPass(e.target.value)}
               autoComplete="current-password"
             />
-            {authError && <p className="font-mono text-xs text-rose-300">{authError}</p>}
+            {authError && <p className="font-mono text-xs text-phase-fault">{authError}</p>}
             <button
               type="submit"
-              className={cn(btnCls, 'border-purple-500/40 bg-purple-500/15 text-purple-200 hover:border-purple-400')}
+              className={cn(btnCls, 'border-phase-active/40 bg-phase-active/15 text-phase-active hover:border-phase-active')}
             >
               <KeyRound className="h-3.5 w-3.5" />
               Unlock
@@ -201,7 +201,7 @@ export default function AdminConsole() {
               <button
                 type="button"
                 onClick={() => void reload()}
-                className={cn(btnCls, 'border-white/10 text-slate-400 hover:border-white/30 hover:text-white')}
+                className={cn(btnCls, 'border-line-base text-ink-1 hover:border-line-strong hover:text-white')}
               >
                 <RefreshCw className="h-3 w-3" />
                 Reload
@@ -212,40 +212,40 @@ export default function AdminConsole() {
                   sessionStorage.removeItem(CRED_KEY);
                   setAuth(null);
                 }}
-                className={cn(btnCls, 'border-white/10 text-slate-500 hover:text-slate-300')}
+                className={cn(btnCls, 'border-line-base text-ink-2 hover:text-ink-1')}
               >
                 Lock
               </button>
             </div>
 
             {error && (
-              <div className="mt-4 rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 font-mono text-xs text-rose-300">
+              <div className="mt-4 rounded-lg border border-phase-fault/30 bg-phase-fault/10 px-4 py-2.5 font-mono text-xs text-phase-fault">
                 {error}
               </div>
             )}
 
             {/* ── Moderation queue ── */}
-            <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.02] p-6">
-              <h2 className="font-mono text-sm font-bold text-slate-100">
+            <div className="mt-6 rounded-xl border border-line-base bg-surface-1 p-6">
+              <h2 className="font-mono text-sm font-bold text-ink-0">
                 Moderation queue ({queue?.length ?? '…'})
               </h2>
               <div className="mt-4 space-y-4">
                 {queue?.map((job) => (
-                  <div key={job.id} className="rounded-xl border border-white/10 bg-black/20 p-4">
+                  <div key={job.id} className="rounded-xl border border-line-base bg-surface-inset p-4">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="font-mono text-sm font-bold text-slate-100">{job.title}</span>
-                      <span className="font-mono text-[11px] text-slate-500">{fmtTs(job.createdAt)}</span>
+                      <span className="font-mono text-sm font-bold text-ink-0">{job.title}</span>
+                      <span className="font-mono text-[11px] text-ink-2">{fmtTs(job.createdAt)}</span>
                     </div>
-                    <p className="mt-2 whitespace-pre-line font-sans text-sm text-slate-400">{job.description}</p>
-                    <p className="mt-2 font-sans text-xs text-slate-500">
+                    <p className="mt-2 whitespace-pre-line font-sans text-sm text-ink-1">{job.description}</p>
+                    <p className="mt-2 font-sans text-xs text-ink-2">
                       Acceptance: {job.acceptanceCriteria}
                     </p>
-                    <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 font-mono text-[11px] text-slate-500">
+                    <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 font-mono text-[11px] text-ink-2">
                       <span>
                         {job.budgetAmount} {job.budgetAsset}
                       </span>
                       <span>deadline {fmtTs(job.deadlineTs)}</span>
-                      <span className="text-amber-300/80">{job.contactEmail}</span>
+                      <span className="text-phase-proof/80">{job.contactEmail}</span>
                       {job.buyerWallet && <span>{job.buyerWallet}</span>}
                     </div>
                     <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -257,7 +257,7 @@ export default function AdminConsole() {
                             call(`/jobs/${encodeURIComponent(job.id)}/approve`, { method: 'POST' }),
                           )
                         }
-                        className={cn(btnCls, 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:border-emerald-400')}
+                        className={cn(btnCls, 'border-phase-settled/40 bg-phase-settled/10 text-phase-settled hover:border-phase-settled')}
                       >
                         <Check className="h-3.5 w-3.5" />
                         Approve + freeze spec
@@ -279,7 +279,7 @@ export default function AdminConsole() {
                             }),
                           )
                         }
-                        className={cn(btnCls, 'border-rose-500/40 bg-rose-500/10 text-rose-300 hover:border-rose-400')}
+                        className={cn(btnCls, 'border-phase-fault/40 bg-phase-fault/10 text-phase-fault hover:border-phase-fault')}
                       >
                         <X className="h-3.5 w-3.5" />
                         Reject
@@ -288,37 +288,37 @@ export default function AdminConsole() {
                   </div>
                 ))}
                 {queue && queue.length === 0 && (
-                  <p className="font-mono text-xs text-slate-500">Queue is empty.</p>
+                  <p className="font-mono text-xs text-ink-2">Queue is empty.</p>
                 )}
               </div>
             </div>
 
             {/* ── Providers ── */}
-            <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.02] p-6">
-              <h2 className="font-mono text-sm font-bold text-slate-100">
+            <div className="mt-6 rounded-xl border border-line-base bg-surface-1 p-6">
+              <h2 className="font-mono text-sm font-bold text-ink-0">
                 Providers ({providers?.length ?? '…'})
               </h2>
               <div className="mt-4 space-y-3">
                 {providers?.map((p) => (
                   <div
                     key={p.id}
-                    className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/20 p-4"
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line-base bg-surface-inset p-4"
                   >
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-sm font-bold text-slate-100">{p.name}</span>
+                        <span className="font-mono text-sm font-bold text-ink-0">{p.name}</span>
                         <span
                           className={cn(
                             'rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase',
                             p.status === 'active'
-                              ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300'
-                              : 'border-slate-500/40 bg-slate-500/10 text-slate-400',
+                              ? 'border-phase-settled/40 bg-phase-settled/10 text-phase-settled'
+                              : 'border-line-base bg-white/[0.02] text-ink-2',
                           )}
                         >
                           {p.status}
                         </span>
                       </div>
-                      <p className="mt-1 font-mono text-[11px] text-slate-500">
+                      <p className="mt-1 font-mono text-[11px] text-ink-2">
                         {p.wallet} · {p.skills.join(', ')}
                       </p>
                     </div>
@@ -341,7 +341,7 @@ export default function AdminConsole() {
                             }),
                           )
                         }
-                        className={cn(btnCls, 'border-white/10 text-slate-400 hover:border-white/30 hover:text-white')}
+                        className={cn(btnCls, 'border-line-base text-ink-1 hover:border-line-strong hover:text-white')}
                       >
                         {p.status === 'active' ? 'Pause' : 'Activate'}
                       </button>
@@ -353,7 +353,7 @@ export default function AdminConsole() {
                             call(`/providers/${encodeURIComponent(p.id)}`, { method: 'DELETE' }),
                           )
                         }
-                        className={cn(btnCls, 'border-rose-500/40 text-rose-300 hover:border-rose-400')}
+                        className={cn(btnCls, 'border-phase-fault/40 text-phase-fault hover:border-phase-fault')}
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
@@ -362,7 +362,7 @@ export default function AdminConsole() {
                 ))}
               </div>
 
-              <form onSubmit={createProvider} className="mt-5 grid gap-3 rounded-xl border border-white/10 bg-black/20 p-4 sm:grid-cols-2">
+              <form onSubmit={createProvider} className="mt-5 grid gap-3 rounded-xl border border-line-base bg-surface-inset p-4 sm:grid-cols-2">
                 <input
                   className={inputCls}
                   placeholder="name"
@@ -397,7 +397,7 @@ export default function AdminConsole() {
                   <button
                     type="submit"
                     disabled={busy !== null}
-                    className={cn(btnCls, 'border-purple-500/40 bg-purple-500/15 text-purple-200 hover:border-purple-400')}
+                    className={cn(btnCls, 'border-phase-active/40 bg-phase-active/15 text-phase-active hover:border-phase-active')}
                   >
                     <UserPlus className="h-3.5 w-3.5" />
                     Add provider

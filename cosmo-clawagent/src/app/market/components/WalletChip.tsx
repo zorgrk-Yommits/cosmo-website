@@ -30,29 +30,29 @@ export default function WalletChip({
   return (
     <div className="flex flex-col items-end gap-1">
       {wallet ? (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/20 px-2.5 py-1 font-mono text-[10px] text-slate-300">
-          <Wallet className="h-3 w-3 text-purple-300" />
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-line-base bg-surface-inset px-2.5 py-1 font-mono text-[10px] text-ink-1">
+          <Wallet className="h-3 w-3 text-phase-active" />
           {short(wallet)}
           {providerMatch && (
-            <span className="rounded-full bg-amber-500/15 px-1.5 py-0.5 text-amber-300">
+            <span className="rounded-full bg-phase-proof/15 px-1.5 py-0.5 text-phase-proof">
               provider wallet: {providerMatch.name}
             </span>
           )}
           {isBuyer && !providerMatch && (
-            <span className="rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-emerald-300">buyer wallet</span>
+            <span className="rounded-full bg-phase-settled/15 px-1.5 py-0.5 text-phase-settled">buyer wallet</span>
           )}
         </span>
       ) : (
         <button
           type="button"
           onClick={onConnect}
-          className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-black/20 px-2.5 py-1 font-mono text-[10px] text-slate-300 transition-colors hover:border-purple-500/40 hover:text-slate-100"
+          className="inline-flex items-center gap-1.5 rounded-full border border-line-base bg-surface-inset px-2.5 py-1 font-mono text-[10px] text-ink-1 transition-colors hover:border-phase-active/40 hover:text-ink-0"
         >
-          <Wallet className="h-3 w-3 text-purple-300" />
+          <Wallet className="h-3 w-3 text-phase-active" />
           Connect wallet
         </button>
       )}
-      <span className="font-mono text-[10px] text-slate-500">
+      <span className="font-mono text-[10px] text-ink-2">
         To use a different account, switch it inside the StarKey browser extension, then reload.
       </span>
     </div>

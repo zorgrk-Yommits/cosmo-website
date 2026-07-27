@@ -13,8 +13,8 @@ import { fmtRel, fmtTs } from '../lib/marketStatus';
 export function Fact({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <dt className="font-mono text-[10px] uppercase tracking-wider text-slate-500">{label}</dt>
-      <dd className="mt-0.5 font-mono text-xs text-slate-300">{children}</dd>
+      <dt className="font-mono text-[10px] uppercase tracking-wider text-ink-2">{label}</dt>
+      <dd className="mt-0.5 font-mono text-xs text-ink-1">{children}</dd>
     </div>
   );
 }
@@ -40,7 +40,7 @@ export function TxRecord({ txRefs }: { txRefs: TxRefs }) {
             href={`${EXPLORER_TX}${txRefs[key]}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sky-400 hover:text-sky-300"
+            className="text-phase-proof hover:text-phase-proof"
           >
             view transaction
           </a>
@@ -52,19 +52,19 @@ export function TxRecord({ txRefs }: { txRefs: TxRefs }) {
 
 export function JobFactsCard({ job, nowSec }: { job: MarketJob; nowSec: number }) {
   return (
-    <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-6">
+    <div className="mt-4 rounded-xl border border-line-base bg-surface-1 p-6">
       <div className="mb-4 flex items-center gap-2">
-        <ListChecks className="h-4 w-4 text-purple-300" />
-        <h2 className="font-mono text-sm font-bold text-slate-100">Job</h2>
+        <ListChecks className="h-4 w-4 text-phase-active" />
+        <h2 className="font-mono text-sm font-bold text-ink-0">Job</h2>
       </div>
-      <p className="whitespace-pre-line font-sans text-sm leading-relaxed text-slate-300">
+      <p className="whitespace-pre-line font-sans text-sm leading-relaxed text-ink-1">
         {job.description}
       </p>
-      <div className="mt-4 rounded-lg border border-white/10 bg-black/20 p-4">
-        <p className="font-mono text-[10px] uppercase tracking-wider text-slate-500">
+      <div className="mt-4 rounded-lg border border-line-base bg-surface-inset p-4">
+        <p className="font-mono text-[10px] uppercase tracking-wider text-ink-2">
           Acceptance criteria
         </p>
-        <p className="mt-1.5 whitespace-pre-line font-sans text-sm leading-relaxed text-slate-300">
+        <p className="mt-1.5 whitespace-pre-line font-sans text-sm leading-relaxed text-ink-1">
           {job.acceptanceCriteria}
         </p>
       </div>
@@ -74,7 +74,7 @@ export function JobFactsCard({ job, nowSec }: { job: MarketJob; nowSec: number }
         </Fact>
         <Fact label="Deadline">
           {fmtTs(job.deadlineTs)}{' '}
-          <span className="text-slate-500">({fmtRel(job.deadlineTs, nowSec)})</span>
+          <span className="text-ink-2">({fmtRel(job.deadlineTs, nowSec)})</span>
         </Fact>
         <Fact label="Posted">{fmtTs(job.createdAt)}</Fact>
       </dl>
@@ -85,12 +85,12 @@ export function JobFactsCard({ job, nowSec }: { job: MarketJob; nowSec: number }
 export function FrozenSpecCard({ job }: { job: MarketJob }) {
   if (!job.specHash) return null;
   return (
-    <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-6">
+    <div className="mt-4 rounded-xl border border-line-base bg-surface-1 p-6">
       <div className="mb-3 flex items-center gap-2">
-        <Fingerprint className="h-4 w-4 text-purple-300" />
-        <h2 className="font-mono text-sm font-bold text-slate-100">Frozen specification</h2>
+        <Fingerprint className="h-4 w-4 text-phase-active" />
+        <h2 className="font-mono text-sm font-bold text-ink-0">Frozen specification</h2>
       </div>
-      <p className="font-sans text-sm leading-relaxed text-slate-400">
+      <p className="font-sans text-sm leading-relaxed text-ink-1">
         On approval this job&apos;s specification was frozen to an immutable canonical
         document. The on-chain contract stores its SHA3-256 hash, so the specification
         cannot change after funding.
@@ -104,7 +104,7 @@ export function FrozenSpecCard({ job }: { job: MarketJob }) {
             href={specUrl(job.id)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-sky-400 hover:text-sky-300"
+            className="inline-flex items-center gap-1.5 text-phase-proof hover:text-phase-proof"
           >
             <FileJson className="h-3 w-3" />
             {specUrl(job.id)}

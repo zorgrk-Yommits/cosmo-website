@@ -35,8 +35,8 @@ export default function TurnStatusLine({
   return (
     <div className="mt-6 flex flex-wrap items-center justify-between gap-2">
       {doc ? (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-slate-400">
-          <Radio className="h-3 w-3 text-emerald-300" />
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-line-base bg-surface-inset px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-ink-1">
+          <Radio className="h-3 w-3 text-phase-settled" />
           {turnLabel(ownRole, doc.turn)}
         </span>
       ) : (

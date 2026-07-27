@@ -20,16 +20,16 @@ export default function ProvidersView() {
       <section className="relative z-10 mx-auto max-w-5xl px-6 pt-24 pb-8">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 font-mono text-xs text-slate-400 transition-colors hover:text-white"
+          className="inline-flex items-center gap-1.5 font-mono text-xs text-ink-1 transition-colors hover:text-white"
         >
           <ArrowLeft className="h-3 w-3" />
           All jobs
         </Link>
 
-        <h1 className="mt-6 font-mono text-3xl font-bold tracking-tight text-slate-100 md:text-4xl">
+        <h1 className="mt-6 font-mono text-3xl font-bold tracking-tight text-ink-0 md:text-4xl">
           Curated pilot providers
         </h1>
-        <p className="mt-3 max-w-2xl font-sans text-base leading-relaxed text-slate-300">
+        <p className="mt-3 max-w-2xl font-sans text-base leading-relaxed text-ink-1">
           Providers in this pilot are hand-picked by the operator. Each one works from a named
           Supra wallet and posts a security deposit on-chain before taking jobs — skin in the
           game, verifiable on the explorer.
@@ -37,13 +37,13 @@ export default function ProvidersView() {
       </section>
 
       <section className="relative z-10 mx-auto max-w-5xl px-6 py-4">
-        <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
+        <div className="rounded-xl border border-line-base bg-surface-1 p-6">
           <div className="mb-4 flex items-center gap-2">
-            <Users className="h-4 w-4 text-purple-300" />
-            <h2 className="font-mono text-sm font-bold text-slate-100">Active roster</h2>
+            <Users className="h-4 w-4 text-phase-active" />
+            <h2 className="font-mono text-sm font-bold text-ink-0">Active roster</h2>
           </div>
           {section.error && (
-            <div className="mb-4 rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 font-mono text-xs text-rose-300">
+            <div className="mb-4 rounded-lg border border-phase-fault/30 bg-phase-fault/10 px-4 py-2.5 font-mono text-xs text-phase-fault">
               Live data unavailable: {section.error}
             </div>
           )}
@@ -51,26 +51,26 @@ export default function ProvidersView() {
             providers.length > 0 ? (
               <div className="grid gap-3 sm:grid-cols-2">
                 {providers.map((p) => (
-                  <div key={p.id} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+                  <div key={p.id} className="rounded-xl border border-line-base bg-surface-1 p-4">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-mono text-sm font-bold text-slate-100">{p.name}</span>
+                      <span className="font-mono text-sm font-bold text-ink-0">{p.name}</span>
                       <a
                         href={`${EXPLORER_ADDR}${p.wallet}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-mono text-xs text-sky-400 hover:text-sky-300"
+                        className="font-mono text-xs text-phase-proof hover:text-phase-proof"
                       >
                         {shortAddr(p.wallet)}
                       </a>
                     </div>
                     {p.bio && (
-                      <p className="mt-2 font-sans text-sm leading-relaxed text-slate-400">{p.bio}</p>
+                      <p className="mt-2 font-sans text-sm leading-relaxed text-ink-1">{p.bio}</p>
                     )}
                     <div className="mt-3 flex flex-wrap gap-1.5">
                       {p.skills.map((skill) => (
                         <span
                           key={skill}
-                          className="rounded-full border border-white/10 bg-white/[0.03] px-2 py-0.5 font-mono text-[10px] text-slate-400"
+                          className="rounded-full border border-line-base bg-surface-1 px-2 py-0.5 font-mono text-[10px] text-ink-1"
                         >
                           {skill}
                         </span>
@@ -84,7 +84,7 @@ export default function ProvidersView() {
                             href={link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 font-mono text-[11px] text-sky-400 hover:text-sky-300"
+                            className="inline-flex items-center gap-1 font-mono text-[11px] text-phase-proof hover:text-phase-proof"
                           >
                             <ExternalLink className="h-3 w-3" />
                             {new URL(link).hostname}
@@ -96,31 +96,31 @@ export default function ProvidersView() {
                 ))}
               </div>
             ) : (
-              <p className="font-mono text-xs text-slate-500">
+              <p className="font-mono text-xs text-ink-2">
                 The pilot roster is being onboarded — first named providers appear here shortly.
               </p>
             )
           ) : (
-            <div className="h-24 w-full animate-pulse rounded bg-white/5" />
+            <div className="h-24 w-full animate-pulse rounded bg-surface-2" />
           )}
         </div>
       </section>
 
       {/* ── Roadmap box ── */}
       <section className="relative z-10 mx-auto max-w-5xl px-6 py-4">
-        <div className="rounded-xl border border-sky-500/20 bg-sky-500/[0.04] p-5">
+        <div className="rounded-xl border border-phase-proof/20 bg-phase-proof/[0.04] p-5">
           <div className="mb-2 flex items-center gap-2">
-            <Map className="h-4 w-4 text-sky-300" />
-            <h3 className="font-mono text-sm text-slate-100">Want to become a provider?</h3>
+            <Map className="h-4 w-4 text-phase-proof" />
+            <h3 className="font-mono text-sm text-ink-0">Want to become a provider?</h3>
           </div>
-          <p className="font-sans text-sm leading-relaxed text-slate-400">
+          <p className="font-sans text-sm leading-relaxed text-ink-1">
             Open, permissionless provider registration is on the roadmap — it requires reputation
             and self-service bonding tooling that this pilot deliberately does not claim to have
             yet. Today the operator onboards providers individually: if you run an agent or offer
             digital services and want in,{' '}
             {/* plain <a>, not next/link: cross-route #hash links don't reliably
                 navigate via the client router in this static export */}
-            <a href="/compute/#journey" className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300">
+            <a href="/compute/#journey" className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof">
               see how providers get onboarded
             </a>{' '}
             — deposit, personal onboarding and the proposal template are all there.

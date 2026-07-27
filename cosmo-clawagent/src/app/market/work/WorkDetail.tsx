@@ -68,16 +68,16 @@ export default function WorkDetail() {
       <section className="relative z-10 mx-auto max-w-5xl px-6 pt-24 pb-8">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 font-mono text-xs text-slate-400 transition-colors hover:text-white"
+          className="inline-flex items-center gap-1.5 font-mono text-xs text-ink-1 transition-colors hover:text-white"
         >
           <ArrowLeft className="h-3 w-3" />
           All jobs
         </Link>
 
         {!id && (
-          <p className="mt-8 font-mono text-sm text-slate-400">
+          <p className="mt-8 font-mono text-sm text-ink-1">
             No job selected — pick one from{' '}
-            <Link href="/" className="text-sky-400 hover:text-sky-300">
+            <Link href="/" className="text-phase-proof hover:text-phase-proof">
               the job board
             </Link>
             .
@@ -85,24 +85,24 @@ export default function WorkDetail() {
         )}
 
         {id && !!section.error && !job && (
-          <p className="mt-8 font-mono text-sm text-slate-400">
+          <p className="mt-8 font-mono text-sm text-ink-1">
             This job is not publicly visible ({section.error}). It may still be in moderation —
             check back later.
           </p>
         )}
 
         {id && !section.error && !job && (
-          <div className="mt-8 h-24 w-full animate-pulse rounded bg-white/5" />
+          <div className="mt-8 h-24 w-full animate-pulse rounded bg-surface-2" />
         )}
 
         {job && nowSec !== null && (
           <>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <p className="font-mono text-[10px] uppercase tracking-wider text-purple-300">
+                <p className="font-mono text-[10px] uppercase tracking-wider text-phase-active">
                   Provider view
                 </p>
-                <h1 className="mt-1 font-mono text-2xl font-bold tracking-tight text-slate-100 md:text-3xl">
+                <h1 className="mt-1 font-mono text-2xl font-bold tracking-tight text-ink-0 md:text-3xl">
                   {job.title}
                 </h1>
               </div>
@@ -119,7 +119,7 @@ export default function WorkDetail() {
                   type="button"
                   onClick={() => void refresh()}
                   disabled={refreshing}
-                  className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-3 py-1.5 font-mono text-[11px] text-slate-400 transition-all hover:border-white/30 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-lg border border-line-base px-3 py-1.5 font-mono text-[11px] text-ink-1 transition-all hover:border-line-strong hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <RefreshCw className={cn('h-3 w-3', refreshing && 'animate-spin')} />
                   Refresh
@@ -137,17 +137,17 @@ export default function WorkDetail() {
               onConnect={() => void connect()}
             />
             {connectError && (
-              <p className="mt-2 font-mono text-xs text-amber-300">{connectError}</p>
+              <p className="mt-2 font-mono text-xs text-phase-proof">{connectError}</p>
             )}
 
             {/* ── Provider next step ── */}
             {showOfferForm ? (
-              <div className="mt-4 rounded-xl border border-purple-500/25 bg-purple-500/[0.04] p-6">
+              <div className="mt-4 rounded-xl border border-phase-active/25 bg-phase-active/[0.04] p-6">
                 <div className="mb-3 flex items-center gap-2">
-                  <Wallet className="h-4 w-4 text-purple-300" />
-                  <h2 className="font-mono text-sm font-bold text-slate-100">Your next step</h2>
+                  <Wallet className="h-4 w-4 text-phase-active" />
+                  <h2 className="font-mono text-sm font-bold text-ink-0">Your next step</h2>
                 </div>
-                <p className="mb-4 font-sans text-sm leading-relaxed text-slate-300">
+                <p className="mb-4 font-sans text-sm leading-relaxed text-ink-1">
                   This job is open for offers. Sign your offer terms with your provider wallet —
                   the buyer selects among the offers on their side.
                 </p>
@@ -173,8 +173,8 @@ export default function WorkDetail() {
                 />
               </div>
             ) : (
-              <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-6">
-                <p className="font-sans text-sm leading-relaxed text-slate-300">
+              <div className="mt-4 rounded-xl border border-line-base bg-surface-1 p-6">
+                <p className="font-sans text-sm leading-relaxed text-ink-1">
                   {providerBlock?.headline ?? 'Nothing for providers to do on this job right now.'}
                 </p>
                 {providerBlock && providerBlock.blockers.length > 0 && (
@@ -186,10 +186,10 @@ export default function WorkDetail() {
             )}
 
             {/* ── Your steps (provider-only rail) ── */}
-            <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-6">
+            <div className="mt-4 rounded-xl border border-line-base bg-surface-1 p-6">
               <div className="mb-4 flex items-center gap-2">
-                <Route className="h-4 w-4 text-purple-300" />
-                <h2 className="font-mono text-sm font-bold text-slate-100">Your steps</h2>
+                <Route className="h-4 w-4 text-phase-active" />
+                <h2 className="font-mono text-sm font-bold text-ink-0">Your steps</h2>
               </div>
               <FlowRail steps={buildProviderSteps(job)} txRefs={job.txRefs} />
               <TxRecord txRefs={job.txRefs} />
@@ -199,21 +199,21 @@ export default function WorkDetail() {
             <FrozenSpecCard job={job} />
 
             {/* ── Machine-readable footer + cross-link ── */}
-            <p className="mt-6 font-mono text-xs text-slate-500">
+            <p className="mt-6 font-mono text-xs text-ink-2">
               Agents: this job is machine-readable at{' '}
               <a
                 href={`/api/market/jobs/${encodeURIComponent(job.id)}/next-steps`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sky-400 hover:text-sky-300"
+                className="text-phase-proof hover:text-phase-proof"
               >
                 /next-steps
               </a>{' '}
               — the same document that drives this page.
             </p>
-            <p className="mt-2 font-mono text-xs text-slate-500">
+            <p className="mt-2 font-mono text-xs text-ink-2">
               Are you the buyer? Selection, funding and approval live on the{' '}
-              <Link href={buyerUrl} className="text-sky-400 hover:text-sky-300">
+              <Link href={buyerUrl} className="text-phase-proof hover:text-phase-proof">
                 buyer view →
               </Link>
             </p>

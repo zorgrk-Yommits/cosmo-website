@@ -57,16 +57,16 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="font-mono text-[11px] uppercase tracking-wider text-slate-400">{label}</span>
-      {hint && <span className="mt-0.5 block font-sans text-xs text-slate-500">{hint}</span>}
+      <span className="font-mono text-[11px] uppercase tracking-wider text-ink-1">{label}</span>
+      {hint && <span className="mt-0.5 block font-sans text-xs text-ink-2">{hint}</span>}
       <div className="mt-1.5">{children}</div>
-      {error && <span className="mt-1 block font-mono text-xs text-rose-300">{error}</span>}
+      {error && <span className="mt-1 block font-mono text-xs text-phase-fault">{error}</span>}
     </label>
   );
 }
 
 const inputCls =
-  'w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 font-mono text-sm text-slate-200 placeholder:text-slate-600 focus:border-purple-500/50 focus:outline-none';
+  'w-full rounded-lg border border-line-base bg-surface-inset px-3 py-2 font-mono text-sm text-ink-0 placeholder:text-ink-2 focus:border-phase-active/50 focus:outline-none';
 
 export default function PostJobForm() {
   const router = useRouter();
@@ -157,37 +157,37 @@ export default function PostJobForm() {
       <section className="relative z-10 mx-auto max-w-3xl px-6 pt-24 pb-8">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 font-mono text-xs text-slate-400 transition-colors hover:text-white"
+          className="inline-flex items-center gap-1.5 font-mono text-xs text-ink-1 transition-colors hover:text-white"
         >
           <ArrowLeft className="h-3 w-3" />
           All jobs
         </Link>
 
-        <h1 className="mt-6 font-mono text-3xl font-bold tracking-tight text-slate-100 md:text-4xl">
+        <h1 className="mt-6 font-mono text-3xl font-bold tracking-tight text-ink-0 md:text-4xl">
           Post a job
         </h1>
-        <p className="mt-3 font-sans text-base leading-relaxed text-slate-300">
+        <p className="mt-3 font-sans text-base leading-relaxed text-ink-1">
           Describe the digital work you need done. Submissions go through a moderation queue;
           once approved, the job is listed publicly and curated pilot providers can make offers.
         </p>
 
         {submitted ? (
-          <div className="mt-8 rounded-xl border border-emerald-500/30 bg-emerald-500/[0.06] p-6">
+          <div className="mt-8 rounded-xl border border-phase-settled/30 bg-phase-settled/[0.06] p-6">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5 text-emerald-300" />
-              <h2 className="font-mono text-sm font-bold text-slate-100">Submission received</h2>
+              <CheckCircle2 className="h-5 w-5 text-phase-settled" />
+              <h2 className="font-mono text-sm font-bold text-ink-0">Submission received</h2>
             </div>
-            <p className="mt-2 font-sans text-sm leading-relaxed text-slate-300">
+            <p className="mt-2 font-sans text-sm leading-relaxed text-ink-1">
               Taking you to your job page… If nothing happens,{' '}
               <Link
                 href={`/market/job/?id=${encodeURIComponent(submitted.id)}`}
-                className="text-sky-400 hover:text-sky-300"
+                className="text-phase-proof hover:text-phase-proof"
               >
                 open it here
               </Link>
               .
             </p>
-            <p className="mt-3 break-all rounded-lg border border-white/10 bg-black/30 px-3 py-2 font-mono text-sm text-emerald-300">
+            <p className="mt-3 break-all rounded-lg border border-line-base bg-surface-inset px-3 py-2 font-mono text-sm text-phase-settled">
               {submitted.id}
             </p>
           </div>
@@ -296,7 +296,7 @@ export default function PostJobForm() {
             </div>
 
             {serverError && (
-              <div className="rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 font-mono text-xs text-rose-300">
+              <div className="rounded-lg border border-phase-fault/30 bg-phase-fault/10 px-4 py-2.5 font-mono text-xs text-phase-fault">
                 {serverError}
               </div>
             )}
@@ -304,13 +304,13 @@ export default function PostJobForm() {
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex items-center gap-2 rounded-lg border border-purple-500/40 bg-purple-500/15 px-5 py-2.5 font-mono text-sm text-purple-200 transition-all hover:border-purple-400 hover:bg-purple-500/25 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-lg border border-phase-active/40 bg-phase-active/15 px-5 py-2.5 font-mono text-sm text-phase-active transition-all hover:border-phase-active hover:bg-phase-active/25 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Send className="h-4 w-4" />
               {submitting ? 'Submitting…' : 'Submit for review'}
             </button>
 
-            <p className="flex items-start gap-2 font-sans text-xs leading-relaxed text-slate-500">
+            <p className="flex items-start gap-2 font-sans text-xs leading-relaxed text-ink-2">
               <ShieldQuestion className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               Payment happens later and on-chain: after approval you select an offer and fund
               the job from your own wallet — the money is held on-chain and refunded if the job

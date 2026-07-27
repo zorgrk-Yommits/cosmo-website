@@ -23,7 +23,7 @@ const DELIVERY_OPTIONS: { label: string; secs: number }[] = [
 ];
 
 const inputCls =
-  'w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 font-mono text-sm text-slate-200 placeholder:text-slate-600 focus:border-purple-500/50 focus:outline-none';
+  'w-full rounded-lg border border-line-base bg-surface-inset px-3 py-2 font-mono text-sm text-ink-0 placeholder:text-ink-2 focus:border-phase-active/50 focus:outline-none';
 
 export default function OfferForm({
   jobId,
@@ -86,12 +86,12 @@ export default function OfferForm({
 
   if (phase === 'done') {
     return (
-      <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/[0.06] p-4">
+      <div className="rounded-xl border border-phase-settled/30 bg-phase-settled/[0.06] p-4">
         <div className="flex items-center gap-2">
-          <BadgeCheck className="h-4 w-4 text-emerald-300" />
-          <p className="font-mono text-sm text-slate-100">Offer submitted and signature verified.</p>
+          <BadgeCheck className="h-4 w-4 text-phase-settled" />
+          <p className="font-mono text-sm text-ink-0">Offer submitted and signature verified.</p>
         </div>
-        <p className="mt-1.5 font-sans text-sm text-slate-400">
+        <p className="mt-1.5 font-sans text-sm text-ink-1">
           Your wallet-signed offer is now listed on this job. Submitting again replaces it.
         </p>
       </div>
@@ -99,21 +99,21 @@ export default function OfferForm({
   }
 
   return (
-    <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+    <div className="rounded-xl border border-line-base bg-surface-inset p-4">
       <div className="mb-3 flex items-center gap-2">
-        <PenLine className="h-4 w-4 text-purple-300" />
-        <h3 className="font-mono text-sm font-bold text-slate-100">Make an offer</h3>
-        <span className="rounded-full border border-slate-500/40 bg-slate-500/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-slate-400">
+        <PenLine className="h-4 w-4 text-phase-active" />
+        <h3 className="font-mono text-sm font-bold text-ink-0">Make an offer</h3>
+        <span className="rounded-full border border-line-base bg-white/[0.02] px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-1">
           pilot providers only
         </span>
       </div>
 
       {!wallet && (
         <div>
-          <p className="font-sans text-sm leading-relaxed text-slate-400">
+          <p className="font-sans text-sm leading-relaxed text-ink-1">
             Offers are signed with the provider&apos;s registered Supra wallet. Connect StarKey to
             continue — only wallets on the{' '}
-            <Link href="/market/providers/" className="text-sky-400 hover:text-sky-300">
+            <Link href="/market/providers/" className="text-phase-proof hover:text-phase-proof">
               curated pilot roster
             </Link>{' '}
             can submit.
@@ -121,7 +121,7 @@ export default function OfferForm({
           <button
             type="button"
             onClick={() => void onConnect()}
-            className="mt-3 inline-flex items-center gap-2 rounded-lg border border-purple-500/40 bg-purple-500/15 px-4 py-2 font-mono text-sm text-purple-200 transition-all hover:border-purple-400 hover:bg-purple-500/25"
+            className="mt-3 inline-flex items-center gap-2 rounded-lg border border-phase-active/40 bg-phase-active/15 px-4 py-2 font-mono text-sm text-phase-active transition-all hover:border-phase-active hover:bg-phase-active/25"
           >
             <Wallet className="h-4 w-4" />
             Connect StarKey
@@ -130,13 +130,13 @@ export default function OfferForm({
       )}
 
       {wallet && !provider && (
-        <p className="font-sans text-sm leading-relaxed text-slate-400">
+        <p className="font-sans text-sm leading-relaxed text-ink-1">
           The connected wallet{' '}
-          <span className="font-mono text-xs text-slate-300">
+          <span className="font-mono text-xs text-ink-1">
             {wallet.slice(0, 10)}…{wallet.slice(-6)}
           </span>{' '}
           is not on the curated pilot roster, so it cannot submit offers. Want in? See{' '}
-          <Link href="/market/providers/" className="text-sky-400 hover:text-sky-300">
+          <Link href="/market/providers/" className="text-phase-proof hover:text-phase-proof">
             how providers are onboarded
           </Link>
           .
@@ -145,15 +145,15 @@ export default function OfferForm({
 
       {wallet && provider && (
         <form onSubmit={onSubmit} className="space-y-4">
-          <p className="font-sans text-sm text-slate-400">
-            Signing as <span className="font-mono text-slate-200">{provider.name}</span>{' '}
-            <span className="font-mono text-xs text-slate-500">
+          <p className="font-sans text-sm text-ink-1">
+            Signing as <span className="font-mono text-ink-0">{provider.name}</span>{' '}
+            <span className="font-mono text-xs text-ink-2">
               ({wallet.slice(0, 10)}…{wallet.slice(-6)})
             </span>
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block">
-              <span className="font-mono text-[11px] uppercase tracking-wider text-slate-400">
+              <span className="font-mono text-[11px] uppercase tracking-wider text-ink-1">
                 Price ({budgetAsset})
               </span>
               <input
@@ -165,7 +165,7 @@ export default function OfferForm({
               />
             </label>
             <label className="block">
-              <span className="font-mono text-[11px] uppercase tracking-wider text-slate-400">
+              <span className="font-mono text-[11px] uppercase tracking-wider text-ink-1">
                 Delivery time
               </span>
               <select
@@ -182,7 +182,7 @@ export default function OfferForm({
             </label>
           </div>
           <label className="block">
-            <span className="font-mono text-[11px] uppercase tracking-wider text-slate-400">
+            <span className="font-mono text-[11px] uppercase tracking-wider text-ink-1">
               Note (optional)
             </span>
             <textarea
@@ -196,12 +196,12 @@ export default function OfferForm({
           <button
             type="submit"
             disabled={phase === 'signing'}
-            className="inline-flex items-center gap-2 rounded-lg border border-purple-500/40 bg-purple-500/15 px-4 py-2 font-mono text-sm text-purple-200 transition-all hover:border-purple-400 hover:bg-purple-500/25 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-lg border border-phase-active/40 bg-phase-active/15 px-4 py-2 font-mono text-sm text-phase-active transition-all hover:border-phase-active hover:bg-phase-active/25 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <PenLine className="h-4 w-4" />
             {phase === 'signing' ? 'Waiting for wallet signature…' : 'Sign offer with StarKey'}
           </button>
-          <p className="font-sans text-xs leading-relaxed text-slate-500">
+          <p className="font-sans text-xs leading-relaxed text-ink-2">
             StarKey will ask you to approve a signature over the exact offer terms (job, price,
             delivery, one-time nonce). Nothing is broadcast on-chain at this step.
           </p>
@@ -209,7 +209,7 @@ export default function OfferForm({
       )}
 
       {error && (
-        <div className="mt-3 rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 font-mono text-xs text-rose-300">
+        <div className="mt-3 rounded-lg border border-phase-fault/30 bg-phase-fault/10 px-4 py-2.5 font-mono text-xs text-phase-fault">
           {error}
         </div>
       )}

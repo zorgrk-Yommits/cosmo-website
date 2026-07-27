@@ -13,9 +13,9 @@ import type { TxRefs } from '../lib/marketApi';
 import type { RoleStep, StepState } from '../lib/marketStatus';
 
 const STATE_STYLE: Record<StepState, { dot: string; text: string }> = {
-  done: { dot: 'border-emerald-500/60 bg-emerald-500/15 text-emerald-300', text: 'text-slate-300' },
-  active: { dot: 'border-purple-400 bg-purple-500/20 text-purple-300', text: 'text-slate-100' },
-  pending: { dot: 'border-white/15 bg-black/30 text-slate-600', text: 'text-slate-600' },
+  done: { dot: 'border-phase-settled/60 bg-phase-settled/15 text-phase-settled', text: 'text-ink-1' },
+  active: { dot: 'border-phase-active bg-phase-active/20 text-phase-active', text: 'text-ink-0' },
+  pending: { dot: 'border-line-base bg-surface-inset text-ink-2', text: 'text-ink-2' },
 };
 
 export default function FlowRail({ steps, txRefs }: { steps: RoleStep[]; txRefs: TxRefs }) {
@@ -40,7 +40,7 @@ export default function FlowRail({ steps, txRefs }: { steps: RoleStep[]; txRefs:
               )}
               <span className="flex flex-col items-center gap-1.5">
                 {isOwn ? (
-                  <span className="font-mono text-[9px] uppercase tracking-wider text-purple-300">
+                  <span className="font-mono text-[9px] uppercase tracking-wider text-phase-active">
                     you
                   </span>
                 ) : (
@@ -51,11 +51,11 @@ export default function FlowRail({ steps, txRefs }: { steps: RoleStep[]; txRefs:
                     'relative inline-flex shrink-0 items-center justify-center rounded-full border',
                     isOwn ? 'h-8 w-8 font-mono text-xs font-bold' : 'h-6 w-6',
                     s.dot,
-                    isOwn && step.state === 'active' && 'ring-2 ring-purple-500/30',
+                    isOwn && step.state === 'active' && 'ring-2 ring-phase-active/30',
                   )}
                 >
                   {step.state === 'active' && (
-                    <span className="absolute inset-0 animate-ping rounded-full border border-purple-400/50" />
+                    <span className="absolute inset-0 animate-ping rounded-full border border-phase-active/50" />
                   )}
                   {step.state === 'done' ? (
                     <Check className={isOwn ? 'h-4 w-4' : 'h-3 w-3'} />
@@ -78,8 +78,8 @@ export default function FlowRail({ steps, txRefs }: { steps: RoleStep[]; txRefs:
                   className={cn(
                     'inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider',
                     step.onchain
-                      ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300'
-                      : 'border-slate-500/40 bg-slate-500/10 text-slate-400',
+                      ? 'border-phase-settled/40 bg-phase-settled/10 text-phase-settled'
+                      : 'border-line-base bg-white/[0.02] text-ink-2',
                   )}
                 >
                   {step.onchain ? <Link2 className="h-2.5 w-2.5" /> : <Server className="h-2.5 w-2.5" />}
@@ -90,7 +90,7 @@ export default function FlowRail({ steps, txRefs }: { steps: RoleStep[]; txRefs:
                     href={`${EXPLORER_TX}${tx}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-mono text-[9px] text-sky-400 hover:text-sky-300"
+                    className="font-mono text-[9px] text-phase-proof hover:text-phase-proof"
                   >
                     view tx
                   </a>

@@ -43,12 +43,12 @@ export function BlockerCards({ blockers }: { blockers: NextBlocker[] }) {
   return (
     <div className="space-y-2">
       {blockers.map((b) => (
-        <div key={b.code} className="rounded-lg border border-amber-500/30 bg-amber-500/[0.06] p-3">
-          <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-amber-300">
+        <div key={b.code} className="rounded-lg border border-phase-proof/30 bg-phase-proof/[0.06] p-3">
+          <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-phase-proof">
             <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
             {b.cause}
           </p>
-          <p className="mt-1 pl-5 font-sans text-xs leading-relaxed text-slate-400">{b.remedy}</p>
+          <p className="mt-1 pl-5 font-sans text-xs leading-relaxed text-ink-1">{b.remedy}</p>
         </div>
       ))}
     </div>
@@ -95,28 +95,28 @@ function OfferPicker({
               className={cn(
                 'flex cursor-pointer items-center justify-between gap-3 rounded-lg border px-4 py-3 transition-all',
                 picked
-                  ? 'border-purple-400/60 bg-purple-500/10'
-                  : 'border-white/10 bg-black/20 hover:border-white/25',
+                  ? 'border-phase-active/60 bg-phase-active/10'
+                  : 'border-line-base bg-surface-inset hover:border-line-strong',
               )}
             >
               <span className="flex items-center gap-3">
                 <input type="radio" name="pick-offer" checked={picked} onChange={() => onPick(o.id)} />
-                <span className="font-mono text-sm text-slate-200">{prov?.name ?? o.providerId}</span>
+                <span className="font-mono text-sm text-ink-0">{prov?.name ?? o.providerId}</span>
                 {!ready && (
-                  <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-amber-300">
+                  <span className="rounded-full border border-phase-proof/40 bg-phase-proof/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-phase-proof">
                     not ready
                   </span>
                 )}
               </span>
-              <span className="font-mono text-xs text-slate-400">
-                <span className="font-bold text-slate-200">
+              <span className="font-mono text-xs text-ink-1">
+                <span className="font-bold text-ink-0">
                   {o.price} {budgetAsset}
                 </span>{' '}
                 · {fmtDelivery(o.deliverySecs)}
               </span>
             </label>
             {ownWallet && (
-              <p className="mt-1 flex items-start gap-1.5 pl-1 font-mono text-xs text-amber-300">
+              <p className="mt-1 flex items-start gap-1.5 pl-1 font-mono text-xs text-phase-proof">
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                 This is the wallet you are connected with — you cannot buy from yourself.
               </p>
@@ -285,14 +285,14 @@ export default function NextStepPanel({
   const pickedIsOwnWallet = !!(f.wallet && pickedProviderWallet && sameWallet(f.wallet, pickedProviderWallet));
 
   return (
-    <div className="rounded-xl border border-purple-500/25 bg-purple-500/[0.04] p-6">
+    <div className="rounded-xl border border-phase-active/25 bg-phase-active/[0.04] p-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Wallet className="h-4 w-4 text-purple-300" />
-          <h2 className="font-mono text-sm font-bold text-slate-100">Your next step</h2>
+          <Wallet className="h-4 w-4 text-phase-active" />
+          <h2 className="font-mono text-sm font-bold text-ink-0">Your next step</h2>
         </div>
         {stepNo && (
-          <span className="rounded-full border border-purple-500/40 bg-purple-500/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-purple-300">
+          <span className="rounded-full border border-phase-active/40 bg-phase-active/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-phase-active">
             Step {stepNo} of 4
           </span>
         )}
@@ -300,7 +300,7 @@ export default function NextStepPanel({
 
       <div className="mt-4">
         {stage === 'loading' && (
-          <div className="flex items-center gap-2 font-mono text-xs text-slate-400">
+          <div className="flex items-center gap-2 font-mono text-xs text-ink-1">
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
             Loading flow state…
           </div>
@@ -308,9 +308,9 @@ export default function NextStepPanel({
 
         {stage === 'moderation' && (
           <div className="flex items-start gap-3">
-            <span className="mt-1 inline-flex h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-slate-400" />
-            <p className="font-sans text-sm leading-relaxed text-slate-300">
-              Your job is <span className="font-bold text-slate-100">in review</span>. Once
+            <span className="mt-1 inline-flex h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-ink-2" />
+            <p className="font-sans text-sm leading-relaxed text-ink-1">
+              Your job is <span className="font-bold text-ink-0">in review</span>. Once
               approved it opens for offers from curated pilot providers — we also reach out by
               email. Nothing to do right now.
             </p>
@@ -318,9 +318,9 @@ export default function NextStepPanel({
         )}
 
         {stage === 'rejected' && (
-          <p className="font-sans text-sm leading-relaxed text-slate-300">
+          <p className="font-sans text-sm leading-relaxed text-ink-1">
             This job was not approved for the pilot board.{' '}
-            <Link href="/market/post/" className="text-sky-400 hover:text-sky-300">
+            <Link href="/market/post/" className="text-phase-proof hover:text-phase-proof">
               Post a new job
             </Link>{' '}
             if you want to try a different scope.
@@ -329,9 +329,9 @@ export default function NextStepPanel({
 
         {stage === 'awaiting-offers' && (
           <div className="flex items-start gap-3">
-            <span className="mt-1 inline-flex h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-purple-400" />
-            <p className="font-sans text-sm leading-relaxed text-slate-300">
-              <span className="font-bold text-slate-100">Open for offers</span> — curated pilot
+            <span className="mt-1 inline-flex h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-phase-active" />
+            <p className="font-sans text-sm leading-relaxed text-ink-1">
+              <span className="font-bold text-ink-0">Open for offers</span> — curated pilot
               providers have been notified. As soon as the first offer arrives, you pick one here
               and take the job on-chain. Nothing to do right now.
             </p>
@@ -340,7 +340,7 @@ export default function NextStepPanel({
 
         {stage === 'backend-down' && (
           <div className="space-y-3">
-            <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-amber-300/90">
+            <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-phase-proof/90">
               <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               Market service is unreachable — the flow is paused. Your on-chain state is safe;
               nothing is lost.
@@ -354,7 +354,7 @@ export default function NextStepPanel({
 
         {stage === 'select' && (
           <div className="space-y-4">
-            <p className="font-sans text-sm leading-relaxed text-slate-300">
+            <p className="font-sans text-sm leading-relaxed text-ink-1">
               Pick the offer you want. Your selection is signed with your StarKey wallet and
               binds it as the buyer wallet for this job.
             </p>
@@ -386,9 +386,9 @@ export default function NextStepPanel({
         {stage === 'escrow' && flow && (
           <div className="space-y-4">
             {selectedOffer && (
-              <p className="font-sans text-sm leading-relaxed text-slate-300">
+              <p className="font-sans text-sm leading-relaxed text-ink-1">
                 Selected:{' '}
-                <span className="font-bold text-slate-100">
+                <span className="font-bold text-ink-0">
                   {selectedProvider?.name ?? selectedOffer.providerId}
                 </span>{' '}
                 — {selectedOffer.price} {job.budgetAsset} ·{' '}
@@ -396,9 +396,9 @@ export default function NextStepPanel({
               </p>
             )}
             {flow.escrowParams ? (
-              <p className="font-sans text-sm leading-relaxed text-slate-300">
+              <p className="font-sans text-sm leading-relaxed text-ink-1">
                 Funding the job locks{' '}
-                <span className="font-bold text-slate-100">
+                <span className="font-bold text-ink-0">
                   {fmtQuants(flow.escrowParams.maxPriceQuants, flow.escrowParams.assetDecimals)}{' '}
                   {flow.escrowParams.assetSymbol}
                 </span>{' '}
@@ -406,13 +406,13 @@ export default function NextStepPanel({
                 contract — not by us and not by the provider. Any unused part comes back to you
                 when you confirm, and you can cancel and get everything back at any time before
                 you confirm. Need {flow.escrowParams.assetSymbol}? See the{' '}
-                <a href="/wcosmo/" className="text-sky-400 hover:text-sky-300">
+                <a href="/wcosmo/" className="text-phase-proof hover:text-phase-proof">
                   conversion guide
                 </a>
                 .
               </p>
             ) : (
-              <p className="font-mono text-xs text-amber-300">
+              <p className="font-mono text-xs text-phase-proof">
                 Funding details are not available yet — refresh in a moment.
               </p>
             )}
@@ -430,7 +430,7 @@ export default function NextStepPanel({
               )}
               Fund the job with StarKey
             </button>
-            <p className="font-mono text-[11px] text-slate-500">
+            <p className="font-mono text-[11px] text-ink-2">
               Held on-chain, refunded if the job does not go ahead. After this signature
               everything is prepared automatically — your next action is Confirm &amp; start; your
               last step, approving the delivery, comes once the provider delivers.
@@ -438,9 +438,9 @@ export default function NextStepPanel({
             {/* B7 escape hatch: a blocked funding stage is never a dead end
                 while nothing is on-chain — the buyer can re-select here. */}
             {escrowBlocked && requestId == null && offers.length > 0 && (
-              <div className="border-t border-white/10 pt-4">
-                <h3 className="font-mono text-xs font-bold text-slate-100">Change selection</h3>
-                <p className="mt-1 mb-3 font-sans text-sm leading-relaxed text-slate-300">
+              <div className="border-t border-line-base pt-4">
+                <h3 className="font-mono text-xs font-bold text-ink-0">Change selection</h3>
+                <p className="mt-1 mb-3 font-sans text-sm leading-relaxed text-ink-1">
                   You can pick a different offer — nothing is locked yet. Selecting again also
                   re-binds the buyer wallet to the account you sign with.
                 </p>
@@ -473,9 +473,9 @@ export default function NextStepPanel({
 
         {stage === 'preparing' && (
           <div className="flex items-start gap-3">
-            <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-purple-300" />
-            <p className="font-sans text-sm leading-relaxed text-slate-300">
-              <span className="font-bold text-slate-100">Preparing the final step…</span> We
+            <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-phase-active" />
+            <p className="font-sans text-sm leading-relaxed text-ink-1">
+              <span className="font-bold text-ink-0">Preparing the final step…</span> We
               verify your funding on-chain and set up the provider&apos;s offer for
               confirmation. No action needed from you — the Confirm &amp; start button appears
               here in a moment.
@@ -485,12 +485,12 @@ export default function NextStepPanel({
 
         {stage === 'accept' && (
           <div className="space-y-4">
-            <p className="font-sans text-sm leading-relaxed text-slate-300">
+            <p className="font-sans text-sm leading-relaxed text-ink-1">
               The provider&apos;s offer is ready on-chain
               {f.quote && flow?.escrowParams && (
                 <>
                   :{' '}
-                  <span className="font-bold text-slate-100">
+                  <span className="font-bold text-ink-0">
                     {fmtQuants(f.quote.price, flow.escrowParams.assetDecimals)}{' '}
                     {flow.escrowParams.assetSymbol}
                   </span>{' '}
@@ -503,12 +503,12 @@ export default function NextStepPanel({
             </p>
             <div className="flex items-center gap-2 font-mono text-sm">
               <Clock3
-                className={cn('h-4 w-4', secsLeft < 60 ? 'text-amber-300' : 'text-emerald-300')}
+                className={cn('h-4 w-4', secsLeft < 60 ? 'text-phase-proof' : 'text-phase-settled')}
               />
-              <span className={cn(secsLeft < 60 ? 'text-amber-300' : 'text-emerald-300')}>
+              <span className={cn(secsLeft < 60 ? 'text-phase-proof' : 'text-phase-settled')}>
                 Offer valid {fmtCountdown(secsLeft)}
               </span>
-              <span className="text-[11px] text-slate-500">— renews automatically</span>
+              <span className="text-[11px] text-ink-2">— renews automatically</span>
             </div>
             <button
               type="button"
@@ -528,13 +528,13 @@ export default function NextStepPanel({
 
         {stage === 'arm-failed' && (
           <div className="space-y-4">
-            <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-rose-300">
+            <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-phase-fault">
               <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               Preparing the final step failed. Your funds are safe in the on-chain contract —
               you can retry below at no cost.
             </p>
             {f.armError && (
-              <p className="font-mono text-[11px] text-slate-500">
+              <p className="font-mono text-[11px] text-ink-2">
                 Technical detail: {f.armError}
               </p>
             )}
@@ -552,8 +552,8 @@ export default function NextStepPanel({
 
         {stage === 'expired-manual' && (
           <div className="space-y-4">
-            <p className="flex items-start gap-1.5 font-sans text-sm leading-relaxed text-slate-300">
-              <Hourglass className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
+            <p className="flex items-start gap-1.5 font-sans text-sm leading-relaxed text-ink-1">
+              <Hourglass className="mt-0.5 h-4 w-4 shrink-0 text-phase-proof" />
               The offer&apos;s validity window ran out. Get a fresh one — it is free and needs
               no wallet signature.
             </p>
@@ -572,9 +572,9 @@ export default function NextStepPanel({
         {stage === 'active' && (
           <div className="space-y-3">
             <div className="flex items-start gap-3">
-              <Hourglass className="mt-0.5 h-5 w-5 shrink-0 text-purple-300" />
-              <p className="font-sans text-sm leading-relaxed text-slate-300">
-                <span className="font-bold text-slate-100">
+              <Hourglass className="mt-0.5 h-5 w-5 shrink-0 text-phase-active" />
+              <p className="font-sans text-sm leading-relaxed text-ink-1">
+                <span className="font-bold text-ink-0">
                   On-chain job #{jobIdOnchain} is active — the provider is working.
                 </span>{' '}
                 Nothing to do right now; the approval button appears here once the result is
@@ -586,7 +586,7 @@ export default function NextStepPanel({
                       href={`${EXPLORER_TX}${txAccept}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sky-400 hover:text-sky-300"
+                      className="text-phase-proof hover:text-phase-proof"
                     >
                       View the accept transaction
                     </a>
@@ -596,14 +596,14 @@ export default function NextStepPanel({
               </p>
             </div>
             {oj && nowSec <= oj.jobDeadlineSecs && (
-              <p className="flex items-center gap-2 font-mono text-xs text-slate-400">
-                <Clock3 className="h-3.5 w-3.5 text-emerald-300" />
+              <p className="flex items-center gap-2 font-mono text-xs text-ink-1">
+                <Clock3 className="h-3.5 w-3.5 text-phase-settled" />
                 Delivery due {fmtTs(oj.jobDeadlineSecs)}{' '}
-                <span className="text-slate-500">({fmtRel(oj.jobDeadlineSecs, nowSec)})</span>
+                <span className="text-ink-2">({fmtRel(oj.jobDeadlineSecs, nowSec)})</span>
               </p>
             )}
             {oj && oj.status === JOB_ONCHAIN_STATUS.ACTIVE && nowSec > oj.jobDeadlineSecs && (
-              <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-amber-300">
+              <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-phase-proof">
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                 The delivery deadline has passed without a result. Delivery is no longer possible
                 on-chain, and you can get your locked funds back. Contact us and we will guide
@@ -615,36 +615,36 @@ export default function NextStepPanel({
 
         {stage === 'approve' && (
           <div className="space-y-4">
-            <p className="font-sans text-sm leading-relaxed text-slate-300">
+            <p className="font-sans text-sm leading-relaxed text-ink-1">
               The provider delivered a result. The chain stores a fingerprint (SHA3-256 hash) of
               this attestation document, so the document cannot be changed afterwards:
             </p>
-            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+            <div className="rounded-lg border border-line-base bg-surface-inset p-4">
               <a
                 href={flow?.deliver?.attestationUri ?? attestationUrl(job.id)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 font-mono text-xs text-sky-400 hover:text-sky-300"
+                className="inline-flex items-center gap-1.5 font-mono text-xs text-phase-proof hover:text-phase-proof"
               >
                 <FileJson className="h-3.5 w-3.5" />
                 View the attestation document
               </a>
               {(job.attestationHash ?? flow?.deliver?.attestationHash) && (
-                <p className="mt-2 break-all font-mono text-[11px] text-slate-400">
+                <p className="mt-2 break-all font-mono text-[11px] text-ink-1">
                   SHA3-256: {job.attestationHash ?? flow?.deliver?.attestationHash}
-                  <span className="text-slate-500"> — the hash on-chain equals the SHA3-256 of that document.</span>
+                  <span className="text-ink-2"> — the hash on-chain equals the SHA3-256 of that document.</span>
                 </p>
               )}
             </div>
             {oj && oj.deliveredAt > 0 && (
-              <p className="flex items-center gap-2 font-mono text-xs text-slate-400">
-                <Clock3 className="h-3.5 w-3.5 text-amber-300" />
+              <p className="flex items-center gap-2 font-mono text-xs text-ink-1">
+                <Clock3 className="h-3.5 w-3.5 text-phase-proof" />
                 Review window until {fmtTs(oj.deliveredAt + oj.reviewWindowSecs)} — it is your
                 turn to approve. After that time, settlement can be triggered by anyone, without
                 your signature.
               </p>
             )}
-            <p className="font-mono text-[11px] leading-relaxed text-slate-500">
+            <p className="font-mono text-[11px] leading-relaxed text-ink-2">
               Something wrong with the result? You can dispute it on-chain — contact us before
               the review window ends and do not approve.
             </p>
@@ -661,7 +661,7 @@ export default function NextStepPanel({
               )}
               Approve delivery with StarKey
             </button>
-            <p className="font-mono text-[11px] text-slate-500">
+            <p className="font-mono text-[11px] text-ink-2">
               Approval settles everything in one transaction: the provider is paid and their
               security deposit is released.
             </p>
@@ -670,16 +670,16 @@ export default function NextStepPanel({
 
         {stage === 'blocked' && buyerBlock && (
           <div className="space-y-4">
-            <p className="font-sans text-sm leading-relaxed text-slate-300">{buyerBlock.headline}</p>
+            <p className="font-sans text-sm leading-relaxed text-ink-1">{buyerBlock.headline}</p>
             <BlockerCards blockers={buyerBlock.blockers} />
           </div>
         )}
 
         {stage === 'settled' && (
           <div className="flex items-start gap-3">
-            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-300" />
-            <p className="font-sans text-sm leading-relaxed text-slate-300">
-              <span className="font-bold text-emerald-300">Job settled on-chain.</span>{' '}
+            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-phase-settled" />
+            <p className="font-sans text-sm leading-relaxed text-ink-1">
+              <span className="font-bold text-phase-settled">Job settled on-chain.</span>{' '}
               {selectedOffer ? `${selectedOffer.price} ${job.budgetAsset}` : 'The payment'} was
               paid out to the provider and their security deposit was released. This job is
               complete — nothing more to do.
@@ -690,7 +690,7 @@ export default function NextStepPanel({
                     href={`${EXPLORER_TX}${txRefs.deliver}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sky-400 hover:text-sky-300"
+                    className="text-phase-proof hover:text-phase-proof"
                   >
                     Delivery transaction
                   </a>
@@ -703,7 +703,7 @@ export default function NextStepPanel({
                     href={`${EXPLORER_TX}${txRefs.settle}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sky-400 hover:text-sky-300"
+                    className="text-phase-proof hover:text-phase-proof"
                   >
                     Settlement transaction
                   </a>
@@ -716,15 +716,15 @@ export default function NextStepPanel({
       </div>
 
       {f.error && (
-        <p className="mt-4 flex items-start gap-1.5 font-mono text-[11px] text-rose-300">
+        <p className="mt-4 flex items-start gap-1.5 font-mono text-[11px] text-phase-fault">
           <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
           {f.error}
         </p>
       )}
-      {f.info && !f.error && <p className="mt-4 font-mono text-[11px] text-emerald-300">{f.info}</p>}
+      {f.info && !f.error && <p className="mt-4 font-mono text-[11px] text-phase-settled">{f.info}</p>}
 
       {WALLET_STAGES.has(stage) && (
-        <p className="mt-4 border-t border-white/5 pt-3 font-mono text-[11px] text-slate-500">
+        <p className="mt-4 border-t border-line-subtle pt-3 font-mono text-[11px] text-ink-2">
           You sign with your own StarKey wallet; this site never holds funds or keys. Every
           on-chain step is a verifiable Supra Mainnet transaction.
         </p>

@@ -177,18 +177,18 @@ export default function DeliverPanel({
   const deadlinePassed = oj !== null && nowSec > oj.jobDeadlineSecs;
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
+    <div className="rounded-xl border border-line-base bg-surface-1 p-6">
       <div className="mb-1 flex items-center gap-2">
-        <Package className="h-4 w-4 text-purple-300" />
-        <h2 className="font-mono text-sm font-bold text-slate-100">Provider: deliver the result</h2>
+        <Package className="h-4 w-4 text-phase-active" />
+        <h2 className="font-mono text-sm font-bold text-ink-0">Provider: deliver the result</h2>
       </div>
-      <p className="mb-4 font-sans text-xs leading-relaxed text-slate-400">
+      <p className="mb-4 font-sans text-xs leading-relaxed text-ink-1">
         {block?.headline ??
           `The assigned provider${solverName ? ` (${solverName})` : ''} delivers by committing the result hash on-chain.`}
       </p>
 
       {oj === null && (
-        <p className="flex items-center gap-2 font-mono text-xs text-slate-400">
+        <p className="flex items-center gap-2 font-mono text-xs text-ink-1">
           <Loader2 className="h-3.5 w-3.5 animate-spin" />
           Reading on-chain job state…
         </p>
@@ -199,12 +199,12 @@ export default function DeliverPanel({
           {block && block.blockers.length > 0 && <BlockerCards blockers={block.blockers} />}
 
           {needsRegistration && (
-            <div className="space-y-3 rounded-lg border border-white/10 bg-black/20 p-4">
-              <p className="font-mono text-[10px] uppercase tracking-wider text-purple-300">
+            <div className="space-y-3 rounded-lg border border-line-base bg-surface-inset p-4">
+              <p className="font-mono text-[10px] uppercase tracking-wider text-phase-active">
                 Step 1: register your artifact result (wallet signature, no gas)
               </p>
               <label className="block">
-                <span className="font-mono text-[11px] text-slate-400">
+                <span className="font-mono text-[11px] text-ink-1">
                   SHA3-256 of the exact artifact bytes (0x + 64 hex)
                 </span>
                 <input
@@ -212,11 +212,11 @@ export default function DeliverPanel({
                   value={regHash}
                   onChange={(e) => setRegHash(e.target.value)}
                   placeholder="0x…"
-                  className="mt-1 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 font-mono text-xs text-slate-200 placeholder:text-slate-600"
+                  className="mt-1 w-full rounded-lg border border-line-base bg-surface-inset px-3 py-2 font-mono text-xs text-ink-0 placeholder:text-ink-2"
                 />
               </label>
               <label className="block">
-                <span className="font-mono text-[11px] text-slate-400">
+                <span className="font-mono text-[11px] text-ink-1">
                   Result URI (where the artifact bytes will be served)
                 </span>
                 <input
@@ -224,7 +224,7 @@ export default function DeliverPanel({
                   value={regUri}
                   onChange={(e) => setRegUri(e.target.value)}
                   placeholder="https://…"
-                  className="mt-1 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 font-mono text-xs text-slate-200 placeholder:text-slate-600"
+                  className="mt-1 w-full rounded-lg border border-line-base bg-surface-inset px-3 py-2 font-mono text-xs text-ink-0 placeholder:text-ink-2"
                 />
               </label>
               <button
@@ -236,7 +236,7 @@ export default function DeliverPanel({
                 {regBusy ? <Loader2 className="h-5 w-5 animate-spin" /> : <Wallet className="h-5 w-5" />}
                 Register result with StarKey
               </button>
-              <p className="font-mono text-[11px] leading-relaxed text-slate-500">
+              <p className="font-mono text-[11px] leading-relaxed text-ink-2">
                 Only the solver wallet can register. The deliver step unlocks afterwards and will
                 commit exactly the hash you register here — nothing else.
               </p>
@@ -244,21 +244,21 @@ export default function DeliverPanel({
           )}
 
           {hashToCommit && resultUri && (
-            <div className="rounded-lg border border-rose-500/25 bg-rose-500/[0.04] p-4">
-              <p className="font-mono text-[10px] uppercase tracking-wider text-rose-300">
+            <div className="rounded-lg border border-phase-fault/25 bg-phase-fault/[0.04] p-4">
+              <p className="font-mono text-[10px] uppercase tracking-wider text-phase-fault">
                 This exact hash will be committed on-chain — irreversibly
               </p>
-              <p className="mt-2 break-all font-mono text-[11px] text-slate-300">{hashToCommit}</p>
+              <p className="mt-2 break-all font-mono text-[11px] text-ink-1">{hashToCommit}</p>
               <a
                 href={resultUri}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-2 inline-flex items-center gap-1.5 font-mono text-xs text-sky-400 hover:text-sky-300"
+                className="mt-2 inline-flex items-center gap-1.5 font-mono text-xs text-phase-proof hover:text-phase-proof"
               >
                 <FileJson className="h-3.5 w-3.5" />
                 Open the document behind it (result_uri)
               </a>
-              <label className="mt-3 flex cursor-pointer items-start gap-2 font-mono text-[11px] text-slate-300">
+              <label className="mt-3 flex cursor-pointer items-start gap-2 font-mono text-[11px] text-ink-1">
                 <input
                   type="checkbox"
                   checked={hashConfirmed}
@@ -273,15 +273,15 @@ export default function DeliverPanel({
 
           {!deadlinePassed && (
             <p className="flex items-center gap-2 font-mono text-xs">
-              <Clock3 className={cn('h-3.5 w-3.5', deadlineLeft < 3600 ? 'text-amber-300' : 'text-emerald-300')} />
-              <span className={cn(deadlineLeft < 3600 ? 'text-amber-300' : 'text-slate-400')}>
+              <Clock3 className={cn('h-3.5 w-3.5', deadlineLeft < 3600 ? 'text-phase-proof' : 'text-phase-settled')} />
+              <span className={cn(deadlineLeft < 3600 ? 'text-phase-proof' : 'text-ink-1')}>
                 Deliver before {new Date(oj.jobDeadlineSecs * 1000).toISOString().slice(0, 16).replace('T', ' ')} UTC
                 — {fmtCountdown(deadlineLeft)} left
               </span>
             </p>
           )}
           {deadlinePassed && (
-            <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-amber-300">
+            <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-phase-proof">
               <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               The delivery deadline has passed — the on-chain rail no longer accepts a delivery
               for this job.
@@ -294,7 +294,7 @@ export default function DeliverPanel({
               Connect StarKey (solver wallet)
             </button>
           ) : !isSolver ? (
-            <p className="font-mono text-xs text-slate-500">
+            <p className="font-mono text-xs text-ink-2">
               Only the solver wallet ({oj.solver.slice(0, 10)}…) can deliver this job. Switch
               accounts in StarKey and reconnect.
             </p>
@@ -313,7 +313,7 @@ export default function DeliverPanel({
       )}
 
       {oj !== null && oj.status === JOB_ONCHAIN_STATUS.DELIVERED && (
-        <p className="flex items-start gap-2 font-mono text-xs text-emerald-300">
+        <p className="flex items-start gap-2 font-mono text-xs text-phase-settled">
           <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           Result delivered — waiting for the buyer&apos;s approval.
           {job.txRefs.deliver && (
@@ -321,7 +321,7 @@ export default function DeliverPanel({
               href={`${EXPLORER_TX}${job.txRefs.deliver}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sky-400 hover:text-sky-300"
+              className="text-phase-proof hover:text-phase-proof"
             >
               view transaction
             </a>
@@ -330,7 +330,7 @@ export default function DeliverPanel({
       )}
 
       {oj !== null && oj.status === JOB_ONCHAIN_STATUS.SETTLED && (
-        <p className="flex items-start gap-2 font-mono text-xs text-emerald-300">
+        <p className="flex items-start gap-2 font-mono text-xs text-phase-settled">
           <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           Job settled — payout received.
         </p>
@@ -340,14 +340,14 @@ export default function DeliverPanel({
         oj.status !== JOB_ONCHAIN_STATUS.ACTIVE &&
         oj.status !== JOB_ONCHAIN_STATUS.DELIVERED &&
         oj.status !== JOB_ONCHAIN_STATUS.SETTLED && (
-          <p className="font-mono text-xs text-amber-300">
+          <p className="font-mono text-xs text-phase-proof">
             The on-chain job is in state {oj.status} (slashed/disputed/refunded) — delivery is not
             possible.
           </p>
         )}
 
       {error && (
-        <p className="mt-4 flex items-start gap-1.5 font-mono text-[11px] text-rose-300">
+        <p className="mt-4 flex items-start gap-1.5 font-mono text-[11px] text-phase-fault">
           <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
           {error}
         </p>
