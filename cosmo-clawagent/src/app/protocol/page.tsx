@@ -57,15 +57,15 @@ export default function ProtocolArchivePage() {
         <div className="relative z-10 mx-auto max-w-3xl px-5 py-16 md:py-24">
           <header className="max-w-2xl">
             <div className="mb-5 flex flex-wrap items-center gap-3">
-              <span className="inline-flex h-2 w-2 rounded-full bg-slate-500" />
-              <span className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+              <span className="inline-flex h-2 w-2 rounded-full bg-ink-2" />
+              <span className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
                 Protocol archive
               </span>
             </div>
             <h1 className="font-mono text-3xl font-bold text-white md:text-5xl">
               Protocol archive
             </h1>
-            <p className="mt-5 text-sm leading-relaxed text-slate-400">
+            <p className="mt-5 text-sm leading-relaxed text-ink-1">
               These pages document earlier stages of the COSMO protocol. They stay
               online as a record — every link keeps working — but they are not the
               current product surface. For that, use Market, Trust and Network in
@@ -77,24 +77,24 @@ export default function ProtocolArchivePage() {
             {ENTRIES.map((entry) => (
               <div
                 key={entry.href}
-                className="rounded-xl border border-white/10 bg-white/[0.02] p-5"
+                className="rounded-xl border border-line-base bg-surface-1 p-5"
               >
                 <div className="flex flex-wrap items-center gap-3">
                   <h2 className="font-mono text-sm font-bold text-white">
                     {entry.title}
                   </h2>
                   {entry.chip && (
-                    <span className="inline-flex items-center rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-amber-300">
+                    <span className="inline-flex items-center rounded-full border border-phase-warn/40 bg-phase-warn/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-phase-warn">
                       {entry.chip}
                     </span>
                   )}
                 </div>
-                <p className="mt-2 text-sm leading-relaxed text-slate-400">
+                <p className="mt-2 text-sm leading-relaxed text-ink-1">
                   {entry.description}
                 </p>
                 <Link
                   href={entry.href}
-                  className="mt-3 inline-block font-mono text-[11px] text-purple-300 hover:text-purple-200"
+                  className="mt-3 inline-block font-mono text-[11px] text-phase-active hover:text-phase-active"
                 >
                   Open →
                 </Link>

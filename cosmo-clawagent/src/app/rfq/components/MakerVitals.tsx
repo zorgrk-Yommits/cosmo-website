@@ -84,13 +84,13 @@ export default function MakerVitals({
           sub="derived from live requests"
         />
       </div>
-      <p className="mt-2 font-mono text-[10px] text-slate-600">
+      <p className="mt-2 font-mono text-[10px] text-ink-2">
         Operator wallet on the explorer:{' '}
         <a
           href={`${EXPLORER_ADDR}${K1_ADDR}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-slate-500 underline hover:text-slate-300"
+          className="text-ink-2 underline hover:text-ink-1"
         >
           {shortAddr(K1_ADDR)}
         </a>

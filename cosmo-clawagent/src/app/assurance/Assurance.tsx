@@ -206,19 +206,19 @@ const RESULTS = [
 
 const RESULT_TONE = {
   emerald: {
-    wrap: 'border-emerald-500/30 bg-emerald-500/[0.05]',
-    pill: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300',
-    dot: 'bg-emerald-400',
+    wrap: 'border-phase-settled/30 bg-phase-settled/[0.05]',
+    pill: 'border-phase-settled/40 bg-phase-settled/10 text-phase-settled',
+    dot: 'bg-phase-settled',
   },
   amber: {
-    wrap: 'border-amber-500/30 bg-amber-500/[0.05]',
-    pill: 'border-amber-500/40 bg-amber-500/10 text-amber-300',
-    dot: 'bg-amber-400',
+    wrap: 'border-phase-warn/30 bg-phase-warn/[0.05]',
+    pill: 'border-phase-warn/40 bg-phase-warn/10 text-phase-warn',
+    dot: 'bg-phase-warn',
   },
   rose: {
-    wrap: 'border-rose-500/30 bg-rose-500/[0.05]',
-    pill: 'border-rose-500/40 bg-rose-500/10 text-rose-300',
-    dot: 'bg-rose-400',
+    wrap: 'border-phase-fault/30 bg-phase-fault/[0.05]',
+    pill: 'border-phase-fault/40 bg-phase-fault/10 text-phase-fault',
+    dot: 'bg-phase-fault',
   },
 } as const;
 
@@ -265,26 +265,26 @@ export default function Assurance() {
           {/* ── Trust hero ───────────────────────────────────────────────── */}
           <header className="max-w-3xl">
             <div className="mb-5 flex flex-wrap items-center gap-3">
-              <span className="inline-flex h-2 w-2 rounded-full bg-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.8)]" />
-              <span className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+              <span className="inline-flex h-2 w-2 rounded-full bg-phase-proof shadow-[0_0_10px_rgba(56,189,248,0.8)]" />
+              <span className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
                 COSMO Trust
               </span>
             </div>
 
-            <h1 className="font-mono text-3xl font-bold tracking-tight text-slate-100 md:text-5xl">
+            <h1 className="font-mono text-3xl font-bold tracking-tight text-ink-0 md:text-5xl">
               Every claim links to a transaction or a hash.
             </h1>
 
             <div className="mt-5 flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-slate-300">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-line-base bg-surface-2 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-ink-1">
                 4 settled proofs · Supra Mainnet
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/40 bg-sky-500/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-sky-300">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-phase-proof/40 bg-phase-proof/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-phase-proof">
                 Show, don&apos;t claim
               </span>
             </div>
 
-            <p className="mt-5 font-sans text-base leading-relaxed text-slate-300 md:text-lg">
+            <p className="mt-5 font-sans text-base leading-relaxed text-ink-1 md:text-lg">
               This page collects what has actually settled on Supra Mainnet, the honesty rules
               this site holds itself to, and the Price Integrity Guard — a read-only research
               module. Facts and roadmap are kept separate; limits are stated next to the claims
@@ -294,14 +294,14 @@ export default function Assurance() {
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <a
                 href="#evidence"
-                className="inline-flex items-center gap-2 rounded-xl border border-purple-500/40 bg-purple-500/10 px-6 py-3 font-mono text-sm text-purple-200 transition-all hover:border-purple-400 hover:bg-purple-500/15"
+                className="inline-flex items-center gap-2 rounded-xl border border-phase-active/40 bg-phase-active/10 px-6 py-3 font-mono text-sm text-phase-active transition-all hover:border-phase-active hover:bg-phase-active/15"
               >
                 View the evidence
                 <ArrowDown className="h-4 w-4" />
               </a>
               <a
                 href="#principles"
-                className="inline-flex items-center gap-2 rounded-xl border border-white/15 px-6 py-3 font-mono text-sm text-slate-300 transition-all hover:border-white/30 hover:text-white"
+                className="inline-flex items-center gap-2 rounded-xl border border-line-base px-6 py-3 font-mono text-sm text-ink-1 transition-all hover:border-line-strong hover:text-white"
               >
                 <ScrollText className="h-4 w-4" />
                 Honesty principles
@@ -312,12 +312,12 @@ export default function Assurance() {
           {/* ── Evidence index — settled proofs ──────────────────────────── */}
           <section id="evidence" className="mt-14 scroll-mt-24">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-slate-400" />
-              <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+              <ShieldCheck className="h-4 w-4 text-ink-1" />
+              <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
                 Settled proofs
               </h2>
             </div>
-            <p className="mt-3 font-sans text-sm leading-relaxed text-slate-300">
+            <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
               Four jobs settled on Supra Mainnet, each independently checkable. Newest first.
             </p>
 
@@ -325,21 +325,21 @@ export default function Assurance() {
               {PROOFS.map((p) => (
                 <article
                   key={p.id}
-                  className="flex flex-col rounded-xl border border-white/10 bg-white/[0.02] p-5"
+                  className="flex flex-col rounded-xl border border-line-base bg-surface-1 p-5"
                 >
                   <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="font-mono text-sm font-semibold text-slate-100">{p.title}</h3>
+                    <h3 className="font-mono text-sm font-semibold text-ink-0">{p.title}</h3>
                   </div>
                   <div className="mt-2 flex flex-wrap items-center gap-2">
-                    <span className="rounded-full border border-white/15 bg-white/[0.04] px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-slate-300">
+                    <span className="rounded-full border border-line-base bg-surface-2 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-1">
                       {p.date}
                     </span>
-                    <span className="rounded-full border border-purple-500/40 bg-purple-500/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-purple-300">
+                    <span className="rounded-full border border-phase-active/40 bg-phase-active/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-phase-active">
                       {p.price}
                     </span>
                   </div>
-                  <p className="mt-3 font-sans text-sm leading-relaxed text-slate-300">{p.text}</p>
-                  <div className="mt-3 space-y-0.5 font-mono text-[11px] leading-relaxed text-slate-400">
+                  <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">{p.text}</p>
+                  <div className="mt-3 space-y-0.5 font-mono text-[11px] leading-relaxed text-ink-1">
                     {p.hashes.map((h) => (
                       <p key={h.label}>
                         {h.label} {short(h.value)}
@@ -354,7 +354,7 @@ export default function Assurance() {
                           href={l.href}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-purple-300 hover:text-purple-200"
+                          className="text-phase-active hover:text-phase-active"
                         >
                           {l.label} ↗
                         </a>
@@ -362,7 +362,7 @@ export default function Assurance() {
                         <a
                           key={l.label}
                           href={l.href}
-                          className="text-purple-300 hover:text-purple-200"
+                          className="text-phase-active hover:text-phase-active"
                         >
                           {l.label} →
                         </a>
@@ -373,21 +373,21 @@ export default function Assurance() {
               ))}
             </div>
 
-            <p className="mt-4 font-mono text-[11px] leading-relaxed text-slate-400">
+            <p className="mt-4 font-mono text-[11px] leading-relaxed text-ink-1">
               Buyer and provider on JOB-001, ATTEST-001 and PATCH-001 are operating-team
               accounts, disclosed on their detail pages. PILOT-001 settled through the public
               marketplace flow.
             </p>
 
-            <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px] leading-relaxed text-slate-400">
-              <Archive className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden="true" />
+            <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px] leading-relaxed text-ink-1">
+              <Archive className="h-3.5 w-3.5 shrink-0 text-ink-2" aria-hidden="true" />
               <span>
                 Earlier milestones: the{' '}
-                <a href="/rfq/" className="text-purple-300 hover:text-purple-200">
+                <a href="/rfq/" className="text-phase-active hover:text-phase-active">
                   first autonomous RFQ trade
                 </a>{' '}
                 and the{' '}
-                <a href="/demo/" className="text-purple-300 hover:text-purple-200">
+                <a href="/demo/" className="text-phase-active hover:text-phase-active">
                   full demo round-trip
                 </a>{' '}
                 are preserved in the archive.
@@ -398,12 +398,12 @@ export default function Assurance() {
           {/* ── Honesty principles ───────────────────────────────────────── */}
           <section id="principles" className="mt-14 scroll-mt-24">
             <div className="flex items-center gap-2">
-              <ScrollText className="h-4 w-4 text-slate-400" />
-              <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+              <ScrollText className="h-4 w-4 text-ink-1" />
+              <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
                 Honesty principles
               </h2>
             </div>
-            <p className="mt-3 font-sans text-sm leading-relaxed text-slate-300">
+            <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
               These rules apply to every page. They are not centralized here — each page carries
               its own honesty box next to the claims it qualifies. This section only states the
               rules.
@@ -412,13 +412,13 @@ export default function Assurance() {
               {PRINCIPLES.map((pr) => (
                 <div
                   key={pr.title}
-                  className="rounded-xl border border-white/10 bg-white/[0.02] p-5"
+                  className="rounded-xl border border-line-base bg-surface-1 p-5"
                 >
-                  <h3 className="font-mono text-sm font-semibold text-slate-100">{pr.title}</h3>
-                  <p className="mt-2 font-sans text-sm leading-relaxed text-slate-300">
+                  <h3 className="font-mono text-sm font-semibold text-ink-0">{pr.title}</h3>
+                  <p className="mt-2 font-sans text-sm leading-relaxed text-ink-1">
                     {pr.text}
                   </p>
-                  <p className="mt-3 font-mono text-[11px] leading-relaxed text-slate-400">
+                  <p className="mt-3 font-mono text-[11px] leading-relaxed text-ink-1">
                     {pr.applied}
                   </p>
                 </div>
@@ -429,8 +429,8 @@ export default function Assurance() {
           {/* ── Assurance module 01 — Price Integrity Guard ──────────────── */}
           <section id="price-guard" className="mt-16 scroll-mt-24">
             <div className="flex items-center gap-2">
-              <span className="inline-flex h-2 w-2 rounded-full bg-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.8)]" />
-              <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+              <span className="inline-flex h-2 w-2 rounded-full bg-phase-proof shadow-[0_0_10px_rgba(56,189,248,0.8)]" />
+              <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
                 Assurance module 01 — Price Integrity Guard
               </h2>
             </div>
@@ -442,19 +442,19 @@ export default function Assurance() {
             {/* Status stays with the module it describes, not buried: this is the first
                 thing a reader must take away, before any capability claim below. */}
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/40 bg-sky-500/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-sky-300">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-phase-proof/40 bg-phase-proof/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-phase-proof">
                 <FlaskConical className="h-3 w-3" />
                 Research Prototype
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-slate-300">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-line-base bg-surface-2 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-ink-1">
                 Read-only
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-amber-300">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-phase-warn/40 bg-phase-warn/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-phase-warn">
                 Not Live Protection
               </span>
             </div>
 
-            <p className="mt-4 font-sans text-base leading-relaxed text-slate-300">
+            <p className="mt-4 font-sans text-base leading-relaxed text-ink-1">
               A valid oracle update can prove authenticity under its verification model. It does
               not by itself guarantee that acting on the resulting value is economically safe.
               COSMO independently evaluates whether critical numerical inputs are plausible enough
@@ -464,10 +464,10 @@ export default function Assurance() {
             {/* Anchors into this page, not out to the repository: the source is not
                 public, and a CTA that 404s for every visitor is worse than no CTA. */}
             <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[12px]">
-              <a href="#price-guard-cases" className="text-purple-300 hover:text-purple-200">
+              <a href="#price-guard-cases" className="text-phase-active hover:text-phase-active">
                 Case studies →
               </a>
-              <a href="#technical-baseline" className="text-purple-300 hover:text-purple-200">
+              <a href="#technical-baseline" className="text-phase-active hover:text-phase-active">
                 <FileCode2 className="mr-1 inline h-3.5 w-3.5" aria-hidden="true" />
                 Technical baseline →
               </a>
@@ -476,7 +476,7 @@ export default function Assurance() {
 
           {/* ── What the Guard evaluates ─────────────────────────────────── */}
           <section className="mt-14">
-            <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+            <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
               What the Guard evaluates
             </h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -485,15 +485,15 @@ export default function Assurance() {
                 return (
                   <div
                     key={d.id}
-                    className="rounded-xl border border-white/10 bg-white/[0.02] p-5"
+                    className="rounded-xl border border-line-base bg-surface-1 p-5"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-purple-500/15 text-purple-300">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-phase-active/15 text-phase-active">
                         <Icon className="h-3.5 w-3.5" strokeWidth={2.2} />
                       </span>
-                      <h3 className="font-mono text-sm font-semibold text-slate-100">{d.title}</h3>
+                      <h3 className="font-mono text-sm font-semibold text-ink-0">{d.title}</h3>
                     </div>
-                    <p className="mt-3 font-sans text-sm leading-relaxed text-slate-300">
+                    <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
                       {d.question}
                     </p>
                   </div>
@@ -503,10 +503,10 @@ export default function Assurance() {
 
             {/* The principle. This is the load-bearing sentence of the whole page — an
                 absent input must never read as a clean result. */}
-            <div className="mt-6 rounded-xl border border-purple-500/30 bg-purple-500/[0.06] p-6">
+            <div className="mt-6 rounded-xl border border-phase-active/30 bg-phase-active/[0.06] p-6">
               <div className="flex items-center gap-2">
-                <ShieldQuestion className="h-4 w-4 text-purple-300" />
-                <span className="font-mono text-xs uppercase tracking-[0.25em] text-purple-300/80">
+                <ShieldQuestion className="h-4 w-4 text-phase-active" />
+                <span className="font-mono text-xs uppercase tracking-[0.25em] text-phase-active/80">
                   The principle
                 </span>
               </div>
@@ -515,7 +515,7 @@ export default function Assurance() {
                 <br />
                 No evidence is UNKNOWN.
               </p>
-              <p className="mt-4 font-sans text-sm leading-relaxed text-slate-300">
+              <p className="mt-4 font-sans text-sm leading-relaxed text-ink-1">
                 COSMO does not issue a clean result for a check that had no supporting input.
               </p>
             </div>
@@ -523,7 +523,7 @@ export default function Assurance() {
 
           {/* ── Results ──────────────────────────────────────────────────── */}
           <section className="mt-12">
-            <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+            <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
               Results
             </h2>
             <div className="mt-4 space-y-3">
@@ -537,14 +537,14 @@ export default function Assurance() {
                       <span className={`h-1.5 w-1.5 rounded-full ${tone.dot}`} />
                       {r.id}
                     </span>
-                    <p className="mt-3 font-sans text-sm leading-relaxed text-slate-300">
+                    <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
                       {r.text}
                     </p>
                   </div>
                 );
               })}
             </div>
-            <p className="mt-4 rounded-lg border border-white/10 bg-black/20 px-4 py-3 font-sans text-sm leading-relaxed text-slate-300">
+            <p className="mt-4 rounded-lg border border-line-base bg-surface-inset px-4 py-3 font-sans text-sm leading-relaxed text-ink-1">
               These are read-only recommendations. COSMO does not currently pause or control the
               evaluated protocols.
             </p>
@@ -552,24 +552,24 @@ export default function Assurance() {
 
           {/* ── Case studies ─────────────────────────────────────────────── */}
           <section id="price-guard-cases" className="mt-14 scroll-mt-24">
-            <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+            <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
               Case studies
             </h2>
 
             {/* Case study 1 — Bonzo / Hedera */}
-            <article className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-5 md:p-6">
+            <article className="mt-4 rounded-xl border border-line-base bg-surface-1 p-5 md:p-6">
               <div className="flex flex-wrap items-center gap-2">
-                <h3 className="font-mono text-base font-semibold text-slate-100">
+                <h3 className="font-mono text-base font-semibold text-ink-0">
                   Bonzo SAUCE/wHBAR exploit replay
                 </h3>
-                <span className="rounded-full border border-white/15 bg-white/[0.04] px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-slate-300">
+                <span className="rounded-full border border-line-base bg-surface-2 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-1">
                   Retrospective detection
                 </span>
-                <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-amber-300">
+                <span className="rounded-full border border-phase-warn/40 bg-phase-warn/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-phase-warn">
                   Not prevention
                 </span>
               </div>
-              <div className="mt-4 space-y-3 font-sans text-sm leading-relaxed text-slate-300">
+              <div className="mt-4 space-y-3 font-sans text-sm leading-relaxed text-ink-1">
                 <p>
                   COSMO reconstructed the manipulated SAUCE/wHBAR oracle value from frozen public
                   evidence.
@@ -583,26 +583,26 @@ export default function Assurance() {
                   orders of magnitude.
                 </p>
               </div>
-              <p className="mt-4 rounded-lg border border-white/5 bg-black/20 px-4 py-3 font-mono text-[11px] leading-relaxed text-slate-400">
+              <p className="mt-4 rounded-lg border border-line-subtle bg-surface-inset px-4 py-3 font-mono text-[11px] leading-relaxed text-ink-1">
                 The replay proves what the Guard would have recommended from the frozen evidence. It
                 does not claim that COSMO was operating during the incident.
               </p>
             </article>
 
             {/* Case study 2 — Solido / Supra */}
-            <article className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-5 md:p-6">
+            <article className="mt-4 rounded-xl border border-line-base bg-surface-1 p-5 md:p-6">
               <div className="flex flex-wrap items-center gap-2">
-                <h3 className="font-mono text-base font-semibold text-slate-100">
+                <h3 className="font-mono text-base font-semibold text-ink-0">
                   Solido collateral snapshot
                 </h3>
-                <span className="rounded-full border border-white/15 bg-white/[0.04] px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-slate-300">
+                <span className="rounded-full border border-line-base bg-surface-2 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-1">
                   Single read-only snapshot
                 </span>
-                <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-amber-300">
+                <span className="rounded-full border border-phase-warn/40 bg-phase-warn/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-phase-warn">
                   Not continuous monitoring
                 </span>
               </div>
-              <div className="mt-4 space-y-3 font-sans text-sm leading-relaxed text-slate-300">
+              <div className="mt-4 space-y-3 font-sans text-sm leading-relaxed text-ink-1">
                 <p>
                   COSMO compared Solido&apos;s SUPRA collateral value with an independent market
                   reference and separately checked the internal stSUPRA-to-SUPRA conversion
@@ -615,7 +615,7 @@ export default function Assurance() {
                   passed.
                 </p>
               </div>
-              <p className="mt-4 rounded-lg border border-white/5 bg-black/20 px-4 py-3 font-mono text-[11px] leading-relaxed text-slate-400">
+              <p className="mt-4 rounded-lg border border-line-subtle bg-surface-inset px-4 py-3 font-mono text-[11px] leading-relaxed text-ink-1">
                 Only the SUPRA market comparison used an independent external reference. The stSUPRA
                 check was an internal consistency check, not an independent oracle validation.
               </p>
@@ -625,8 +625,8 @@ export default function Assurance() {
           {/* ── Architecture ─────────────────────────────────────────────── */}
           <section className="mt-14">
             <div className="flex items-center gap-2">
-              <Layers className="h-4 w-4 text-slate-400" />
-              <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+              <Layers className="h-4 w-4 text-ink-1" />
+              <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
                 Reusable logic. Explicit integrations.
               </h2>
             </div>
@@ -642,24 +642,24 @@ export default function Assurance() {
                   <div key={step.id} className="flex flex-col items-stretch gap-1">
                     <div
                       className={`flex flex-col items-center gap-1 rounded-xl border bg-[rgba(15,15,35,0.7)] px-4 py-3 text-center backdrop-blur ${
-                        verdict ? 'border-emerald-400/50' : 'border-purple-500/40'
+                        verdict ? 'border-phase-settled/50' : 'border-phase-active/40'
                       }`}
                     >
                       <span
                         className={`font-mono text-[13px] font-bold leading-tight ${
-                          verdict ? 'text-emerald-200' : 'text-white'
+                          verdict ? 'text-phase-settled' : 'text-white'
                         }`}
                       >
                         {step.title}
                       </span>
-                      <span className="font-mono text-[11px] leading-tight text-slate-400">
+                      <span className="font-mono text-[11px] leading-tight text-ink-1">
                         {step.note}
                       </span>
                     </div>
                     {i < PIPELINE.length - 1 && (
                       <span
                         aria-hidden="true"
-                        className="self-center font-mono text-sm text-purple-400/70"
+                        className="self-center font-mono text-sm text-phase-active/70"
                       >
                         ↓
                       </span>
@@ -669,16 +669,16 @@ export default function Assurance() {
               })}
             </div>
 
-            <p className="mt-5 font-sans text-sm leading-relaxed text-slate-300">
+            <p className="mt-5 font-sans text-sm leading-relaxed text-ink-1">
               The evaluation engine is chain-agnostic and oracle-agnostic. Each concrete
               integration remains explicitly registered, tested and reviewed.
             </p>
             {/* Guardrail: a new integration is a code change with tests, a pinned policy and a
                 review — never a config toggle. Do not soften this line. */}
-            {/* slate-400, not slate-500: at 11px the dimmer token measures 4.23:1 and misses
-                AA (same finding the homepage documents). This line is the guardrail against
-                reading integrations as a config toggle — dimming it defeats it. */}
-            <p className="mt-2 font-mono text-[11px] leading-relaxed text-slate-400">
+            {/* ink-1, not ink-2: at 11px ink-1 measures 9.1:1 and ink-2 only 4.8:1. This
+                line is the guardrail against reading integrations as a config toggle —
+                dimming it defeats it. */}
+            <p className="mt-2 font-mono text-[11px] leading-relaxed text-ink-1">
               Adding an integration is not a configuration change. It requires new code, new tests,
               a separately pinned policy and a review.
             </p>
@@ -686,11 +686,11 @@ export default function Assurance() {
 
           {/* ── Technical baseline (collapsible, native <details> — no JS) ── */}
           <section id="technical-baseline" className="mt-12 scroll-mt-24">
-            <details className="group rounded-xl border border-white/10 bg-white/[0.02] p-5 open:bg-white/[0.03]">
-              <summary className="flex cursor-pointer list-none items-center gap-2 font-mono text-xs uppercase tracking-[0.25em] text-slate-400 outline-none focus-visible:ring-2 focus-visible:ring-purple-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#030712]">
+            <details className="group rounded-xl border border-line-base bg-surface-1 p-5 open:bg-surface-1">
+              <summary className="flex cursor-pointer list-none items-center gap-2 font-mono text-xs uppercase tracking-[0.25em] text-ink-1 outline-none focus-visible:ring-2 focus-visible:ring-phase-active/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#08090B]">
                 <span
                   aria-hidden="true"
-                  className="text-purple-400/70 transition-transform group-open:rotate-90"
+                  className="text-phase-active/70 transition-transform group-open:rotate-90"
                 >
                   ›
                 </span>
@@ -701,29 +701,29 @@ export default function Assurance() {
                 {BASELINE.map((b) => (
                   <div
                     key={b.k}
-                    className="rounded-lg border border-white/5 bg-black/20 px-4 py-2.5 sm:flex sm:items-baseline sm:gap-4"
+                    className="rounded-lg border border-line-subtle bg-surface-inset px-4 py-2.5 sm:flex sm:items-baseline sm:gap-4"
                   >
-                    <dt className="font-mono text-[11px] uppercase tracking-wider text-slate-400 sm:w-40 sm:shrink-0">
+                    <dt className="font-mono text-[11px] uppercase tracking-wider text-ink-1 sm:w-40 sm:shrink-0">
                       {b.k}
                     </dt>
-                    <dd className="mt-0.5 font-mono text-[12px] leading-relaxed text-slate-200 sm:mt-0">
+                    <dd className="mt-0.5 font-mono text-[12px] leading-relaxed text-ink-0 sm:mt-0">
                       {b.v}
                     </dd>
                   </div>
                 ))}
               </dl>
 
-              <p className="mt-3 font-mono text-[11px] leading-relaxed text-slate-500">
+              <p className="mt-3 font-mono text-[11px] leading-relaxed text-ink-2">
                 Provenance, honestly: these identifiers reference a private repository, so
                 you cannot verify them from this page today. Verification materials are
                 available on request; publishing the repository is under consideration.
               </p>
 
-              <div className="mt-4 rounded-lg border border-purple-500/25 bg-purple-500/[0.05] px-4 py-3">
-                <p className="font-mono text-[12px] font-bold leading-relaxed text-purple-200">
+              <div className="mt-4 rounded-lg border border-phase-active/25 bg-phase-active/[0.05] px-4 py-3">
+                <p className="font-mono text-[12px] font-bold leading-relaxed text-phase-active">
                   A guard that no test holds is not a guard.
                 </p>
-                <p className="mt-1 font-mono text-[11px] leading-relaxed text-slate-400">
+                <p className="mt-1 font-mono text-[11px] leading-relaxed text-ink-1">
                   Comments claim coverage. Mutations demonstrate it.
                 </p>
               </div>
@@ -732,14 +732,14 @@ export default function Assurance() {
 
           {/* ── Limitations ──────────────────────────────────────────────── */}
           <section className="mt-8">
-            <aside className="rounded-xl border border-amber-500/30 bg-amber-500/[0.06] p-5">
+            <aside className="rounded-xl border border-phase-warn/30 bg-phase-warn/[0.06] p-5">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-amber-300" />
-                <h2 className="font-mono text-sm font-semibold text-amber-200">
+                <AlertTriangle className="h-4 w-4 text-phase-warn" />
+                <h2 className="font-mono text-sm font-semibold text-phase-warn">
                   Current limitations
                 </h2>
               </div>
-              <ul className="mt-3 space-y-1.5 font-mono text-[12px] leading-relaxed text-slate-300">
+              <ul className="mt-3 space-y-1.5 font-mono text-[12px] leading-relaxed text-ink-1">
                 {LIMITATIONS.map((l) => (
                   <li key={l}>· {l}</li>
                 ))}
@@ -748,18 +748,18 @@ export default function Assurance() {
           </section>
 
           {/* ── Closing ──────────────────────────────────────────────────── */}
-          <section className="mt-14 rounded-2xl border border-purple-500/20 bg-white/[0.02] p-6 md:p-8">
+          <section className="mt-14 rounded-2xl border border-phase-active/20 bg-surface-1 p-6 md:p-8">
             <h2 className="max-w-2xl font-mono text-xl font-bold leading-snug text-white md:text-2xl">
               Economic safety needs a second line of verification.
             </h2>
-            <p className="mt-4 max-w-2xl font-sans text-sm leading-relaxed text-slate-300 md:text-base">
+            <p className="mt-4 max-w-2xl font-sans text-sm leading-relaxed text-ink-1 md:text-base">
               COSMO publishes settled proofs instead of projections. Assurance explores how
               protocols and autonomous agents can verify not only whether data is authentic, but
               whether acting on it is safe.
             </p>
             <Link
               href="/compute/"
-              className="mt-6 inline-flex items-center gap-2 rounded-xl border border-purple-500/40 bg-purple-500/10 px-6 py-3 font-mono text-sm text-purple-200 transition-all hover:border-purple-400 hover:bg-purple-500/15"
+              className="mt-6 inline-flex items-center gap-2 rounded-xl border border-phase-active/40 bg-phase-active/10 px-6 py-3 font-mono text-sm text-phase-active transition-all hover:border-phase-active hover:bg-phase-active/15"
             >
               Explore COSMO
               <ArrowRight className="h-4 w-4" />
@@ -767,9 +767,9 @@ export default function Assurance() {
           </section>
 
           {/* footer honesty line — same pattern as /maker-capital */}
-          {/* slate-400: slate-600 at 11px measures 2.65:1. This line states the page's scope —
-              it has to be readable. */}
-          <p className="mt-10 font-mono text-[11px] leading-relaxed text-slate-400">
+          {/* ink-1 (9.1:1), not a dimmer token. This line states the page's scope — it has
+              to be readable. */}
+          <p className="mt-10 font-mono text-[11px] leading-relaxed text-ink-1">
             Static research content. No wallet actions and no on-chain interaction on this page.
             The evidence index links settled mainnet transactions and frozen artifacts; the Price
             Integrity Guard is the first module under COSMO Assurance — it reads public data and

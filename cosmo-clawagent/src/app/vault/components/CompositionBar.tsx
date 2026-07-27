@@ -34,7 +34,7 @@ export default function CompositionBar({
         className="flex h-6 w-full gap-[2px] overflow-hidden rounded"
       >
         {visible.length === 0 ? (
-          <div className="h-full w-full rounded bg-white/5" />
+          <div className="h-full w-full rounded bg-surface-2" />
         ) : (
           visible.map((s, i) => (
             <div
@@ -60,8 +60,8 @@ export default function CompositionBar({
               className="inline-flex h-2.5 w-2.5 shrink-0 rounded-sm"
               style={{ backgroundColor: s.color }}
             />
-            <span className="font-mono text-[11px] text-slate-500">{s.label}</span>
-            <span className="font-mono text-xs text-slate-300">{format(s.value)}</span>
+            <span className="font-mono text-[11px] text-ink-2">{s.label}</span>
+            <span className="font-mono text-xs text-ink-1">{format(s.value)}</span>
           </div>
         ))}
       </div>

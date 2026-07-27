@@ -6,7 +6,7 @@ import { AlertTriangle, ArrowRight, ExternalLink, RefreshCw } from 'lucide-react
 import { cn } from '@/lib/utils';
 import SectionHeader from '@/components/cosmo/SectionHeader';
 import Surface from '@/components/cosmo/Surface';
-import Chip from '@/components/cosmo/Chip';
+import Chip, { type ChipTone } from '@/components/cosmo/Chip';
 import { CtaLink } from '@/components/cosmo/Cta';
 import { useMarketJobs } from '@/app/market/useMarketData';
 import { STATUS_BADGE, fmtRel, fmtTs } from '@/app/market/lib/marketStatus';
@@ -21,13 +21,13 @@ import { deriveMarketSummary } from '../lib/marketSummary';
 // instead of showing a number. A "0" on this page would be a claim about
 // the market, and we only make claims we can back.
 
-const TONE: Record<string, 'active' | 'proof' | 'settled' | 'idle' | 'fault'> = {
+const TONE: Record<string, ChipTone> = {
   submitted: 'idle',
   approved: 'active',
   rejected: 'idle',
   selected: 'active',
   onchain: 'active',
-  delivered: 'proof',
+  delivered: 'warn',
   settled: 'settled',
 };
 

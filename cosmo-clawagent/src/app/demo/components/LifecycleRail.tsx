@@ -22,7 +22,7 @@ export default function LifecycleRail({ steps, activeId, onSelect }: LifecycleRa
       <div className="pointer-events-none absolute left-0 right-0 top-[44px] hidden h-px bg-white/10 md:block" />
       {/* progress connector (desktop) */}
       <motion.div
-        className="pointer-events-none absolute left-0 top-[44px] hidden h-px bg-gradient-to-r from-purple-500/0 via-purple-400/70 to-cyan-300/70 md:block"
+        className="pointer-events-none absolute left-0 top-[44px] hidden h-px bg-gradient-to-r from-phase-active/0 via-phase-active/70 to-phase-proof/70 md:block"
         initial={false}
         animate={{
           width: steps.length > 1 ? `${(activeIndex / (steps.length - 1)) * 100}%` : '0%',

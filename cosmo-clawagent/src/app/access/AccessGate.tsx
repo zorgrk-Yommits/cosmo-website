@@ -105,15 +105,15 @@ export default function AccessGate() {
           {/* ── header ── */}
           <header className="max-w-2xl">
             <div className="mb-5 flex items-center gap-3">
-              <span className="inline-flex h-2 w-2 rounded-full bg-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.8)]" />
-              <span className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+              <span className="inline-flex h-2 w-2 rounded-full bg-phase-active shadow-[0_0_10px_rgba(168,85,247,0.8)]" />
+              <span className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
                 Holder access · Stage 1
               </span>
             </div>
-            <h1 className="font-mono text-3xl font-bold tracking-tight text-slate-100 md:text-5xl">
+            <h1 className="font-mono text-3xl font-bold tracking-tight text-ink-0 md:text-5xl">
               COSMO Holder Access
             </h1>
-            <p className="mt-4 font-sans text-lg text-slate-300">
+            <p className="mt-4 font-sans text-lg text-ink-1">
               Connect your wallet to verify access.
             </p>
           </header>
@@ -125,7 +125,7 @@ export default function AccessGate() {
                 type="button"
                 onClick={connect}
                 disabled={connecting}
-                className="inline-flex items-center gap-2 rounded-lg border border-purple-500/50 bg-purple-600/20 px-5 py-3 font-mono text-sm text-purple-100 transition-all hover:border-purple-400 hover:bg-purple-600/30 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-lg border border-phase-active/50 bg-phase-active/20 px-5 py-3 font-mono text-sm text-phase-active transition-all hover:border-phase-active hover:bg-phase-active/30 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {connecting ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -138,13 +138,13 @@ export default function AccessGate() {
               <button
                 type="button"
                 onClick={disconnect}
-                className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 font-mono text-xs text-slate-400 transition-all hover:border-white/30 hover:text-white"
+                className="inline-flex items-center gap-2 rounded-lg border border-line-base px-4 py-2 font-mono text-xs text-ink-1 transition-all hover:border-line-strong hover:text-white"
               >
                 Disconnect
               </button>
             )}
             {notFound && (
-              <p className="mt-3 font-mono text-xs text-amber-400">
+              <p className="mt-3 font-mono text-xs text-phase-warn">
                 StarKey wallet not detected. Install the StarKey extension and reload.
               </p>
             )}
@@ -179,17 +179,17 @@ export default function AccessGate() {
               className={cn(
                 'mt-6 rounded-xl border p-5',
                 eligible
-                  ? 'border-emerald-500/30 bg-emerald-500/[0.06]'
-                  : 'border-rose-500/30 bg-rose-500/[0.06]',
+                  ? 'border-phase-settled/30 bg-phase-settled/[0.06]'
+                  : 'border-phase-fault/30 bg-phase-fault/[0.06]',
               )}
             >
               <div className="flex items-start gap-3">
                 {eligible ? (
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-300" />
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-phase-settled" />
                 ) : (
-                  <XCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-rose-300" />
+                  <XCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-phase-fault" />
                 )}
-                <p className="font-sans text-sm leading-relaxed text-slate-200">
+                <p className="font-sans text-sm leading-relaxed text-ink-0">
                   {eligible
                     ? 'Access granted. This wallet is recognized as a COSMO NFT holder.'
                     : 'This wallet is not currently recognized as a COSMO NFT holder.'}
@@ -199,12 +199,12 @@ export default function AccessGate() {
           )}
 
           {/* ── caveat ── */}
-          <aside className="mt-8 rounded-xl border border-amber-500/30 bg-amber-500/[0.06] p-5">
-            <p className="font-sans text-sm leading-relaxed text-slate-300">
+          <aside className="mt-8 rounded-xl border border-phase-warn/30 bg-phase-warn/[0.06] p-5">
+            <p className="font-sans text-sm leading-relaxed text-ink-1">
               This gate verifies holder access only. It does not execute trades or grant
               permissionless Maker access.
             </p>
-            <p className="mt-2 font-mono text-[11px] leading-relaxed text-slate-500">
+            <p className="mt-2 font-mono text-[11px] leading-relaxed text-ink-2">
               {ALLOWLIST_STAGE} — eligibility is checked against a static, public holder allowlist.
               No signature, no on-chain transaction, no live RPC.
             </p>
@@ -229,10 +229,10 @@ function StatusCard({
   mono?: boolean;
 }) {
   const toneCls =
-    tone === 'ok' ? 'text-emerald-300' : tone === 'bad' ? 'text-rose-300' : 'text-slate-400';
+    tone === 'ok' ? 'text-phase-settled' : tone === 'bad' ? 'text-phase-fault' : 'text-ink-1';
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
-      <div className="flex items-center gap-2 text-slate-500">
+    <div className="rounded-xl border border-line-base bg-surface-1 p-4">
+      <div className="flex items-center gap-2 text-ink-2">
         {icon}
         <span className="font-mono text-[11px] uppercase tracking-wider">{label}</span>
       </div>

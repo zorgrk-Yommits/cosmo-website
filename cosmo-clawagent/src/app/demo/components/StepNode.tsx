@@ -20,30 +20,30 @@ interface StepNodeProps {
 const KIND_STYLE = {
   onchain: {
     icon: Link2,
-    ring: 'border-purple-500/40',
-    ringActive: 'border-purple-400',
-    dot: 'bg-purple-400',
+    ring: 'border-phase-active/40',
+    ringActive: 'border-phase-active',
+    dot: 'bg-phase-active',
     glow: 'shadow-[0_0_22px_rgba(139,92,246,0.45)]',
-    text: 'text-purple-200',
-    tag: 'text-purple-300/70',
+    text: 'text-phase-active',
+    tag: 'text-phase-active/70',
   },
   offchain: {
     icon: PenLine,
-    ring: 'border-cyan-500/40',
-    ringActive: 'border-cyan-300',
-    dot: 'bg-cyan-300',
+    ring: 'border-phase-proof/40',
+    ringActive: 'border-phase-proof',
+    dot: 'bg-phase-proof',
     glow: 'shadow-[0_0_22px_rgba(6,182,212,0.45)]',
-    text: 'text-cyan-200',
-    tag: 'text-cyan-300/70',
+    text: 'text-phase-proof',
+    tag: 'text-phase-proof/70',
   },
   setup: {
     icon: Layers,
-    ring: 'border-white/10',
-    ringActive: 'border-slate-400',
-    dot: 'bg-slate-500',
+    ring: 'border-line-base',
+    ringActive: 'border-line-strong',
+    dot: 'bg-ink-2',
     glow: 'shadow-[0_0_16px_rgba(148,163,184,0.25)]',
-    text: 'text-slate-300',
-    tag: 'text-slate-500',
+    text: 'text-ink-1',
+    tag: 'text-ink-2',
   },
 } as const;
 
@@ -60,9 +60,9 @@ export default function StepNode({ step, index, active, done, onSelect }: StepNo
       transition={{ duration: 0.4, delay: 0.04 * index }}
       className={cn(
         'group relative flex shrink-0 flex-col items-center gap-2 rounded-xl border bg-[rgba(15,15,35,0.7)] px-4 py-3 backdrop-blur transition-all',
-        'w-[148px] text-center cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#030712]',
-        active ? cn(s.ringActive, s.glow) : cn(s.ring, 'hover:border-white/25'),
-        step.isSettlement && active && 'border-emerald-400 shadow-[0_0_28px_rgba(16,185,129,0.5)]',
+        'w-[148px] text-center cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#08090B]',
+        active ? cn(s.ringActive, s.glow) : cn(s.ring, 'hover:border-line-strong'),
+        step.isSettlement && active && 'border-phase-settled shadow-[0_0_28px_rgba(16,185,129,0.5)]',
       )}
       aria-current={active ? 'step' : undefined}
       aria-label={`${step.title} — ${step.kind} step`}
@@ -70,18 +70,18 @@ export default function StepNode({ step, index, active, done, onSelect }: StepNo
       <span
         className={cn(
           'flex h-9 w-9 items-center justify-center rounded-lg border transition-colors',
-          active ? 'border-current' : 'border-white/10',
-          step.isSettlement && active ? 'text-emerald-300' : s.text,
+          active ? 'border-current' : 'border-line-base',
+          step.isSettlement && active ? 'text-phase-settled' : s.text,
         )}
       >
         <Icon className="h-4 w-4" strokeWidth={2.2} />
       </span>
 
-      <span className="font-mono text-[10px] uppercase tracking-wider text-slate-500">
+      <span className="font-mono text-[10px] uppercase tracking-wider text-ink-2">
         {step.id}
       </span>
 
-      <span className={cn('font-mono text-xs leading-tight', active ? 'text-slate-100' : 'text-slate-400')}>
+      <span className={cn('font-mono text-xs leading-tight', active ? 'text-ink-0' : 'text-ink-1')}>
         {step.title}
       </span>
 

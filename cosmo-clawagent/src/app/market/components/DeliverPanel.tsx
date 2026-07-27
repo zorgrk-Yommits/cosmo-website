@@ -273,15 +273,15 @@ export default function DeliverPanel({
 
           {!deadlinePassed && (
             <p className="flex items-center gap-2 font-mono text-xs">
-              <Clock3 className={cn('h-3.5 w-3.5', deadlineLeft < 3600 ? 'text-phase-proof' : 'text-phase-settled')} />
-              <span className={cn(deadlineLeft < 3600 ? 'text-phase-proof' : 'text-ink-1')}>
+              <Clock3 className={cn('h-3.5 w-3.5', deadlineLeft < 3600 ? 'text-phase-warn' : 'text-phase-settled')} />
+              <span className={cn(deadlineLeft < 3600 ? 'text-phase-warn' : 'text-ink-1')}>
                 Deliver before {new Date(oj.jobDeadlineSecs * 1000).toISOString().slice(0, 16).replace('T', ' ')} UTC
                 — {fmtCountdown(deadlineLeft)} left
               </span>
             </p>
           )}
           {deadlinePassed && (
-            <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-phase-proof">
+            <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-phase-warn">
               <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               The delivery deadline has passed — the on-chain rail no longer accepts a delivery
               for this job.
@@ -340,7 +340,7 @@ export default function DeliverPanel({
         oj.status !== JOB_ONCHAIN_STATUS.ACTIVE &&
         oj.status !== JOB_ONCHAIN_STATUS.DELIVERED &&
         oj.status !== JOB_ONCHAIN_STATUS.SETTLED && (
-          <p className="font-mono text-xs text-phase-proof">
+          <p className="font-mono text-xs text-phase-warn">
             The on-chain job is in state {oj.status} (slashed/disputed/refunded) — delivery is not
             possible.
           </p>

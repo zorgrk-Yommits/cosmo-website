@@ -21,30 +21,30 @@ export default function LayerStack() {
       {LAYERS.map((layer) => (
         <div
           key={layer.name}
-          className="flex flex-col gap-0.5 rounded-lg border border-white/10 bg-white/[0.02] px-4 py-3 sm:flex-row sm:items-baseline sm:gap-4"
+          className="flex flex-col gap-0.5 rounded-lg border border-line-base bg-surface-1 px-4 py-3 sm:flex-row sm:items-baseline sm:gap-4"
         >
-          <span className="font-mono text-sm font-bold text-slate-300 sm:w-28 sm:shrink-0">
+          <span className="font-mono text-sm font-bold text-ink-1 sm:w-28 sm:shrink-0">
             {layer.name}
           </span>
-          <span className="font-mono text-xs text-slate-400">{layer.role}</span>
+          <span className="font-mono text-xs text-ink-1">{layer.role}</span>
         </div>
       ))}
 
       {/* COSMO — the layer this page is about. Same grammar as the featured node in
-          IntelligenceLoop: #7B2FBE border + purple glow. */}
+          IntelligenceLoop: #6E8BFF border + purple glow. */}
       <div
-        className="flex flex-col gap-0.5 rounded-lg bg-purple-500/[0.06] px-4 py-3 sm:flex-row sm:items-baseline sm:gap-4"
+        className="flex flex-col gap-0.5 rounded-lg bg-phase-active/[0.06] px-4 py-3 sm:flex-row sm:items-baseline sm:gap-4"
         style={{
           borderStyle: 'solid',
           borderWidth: '1.5px',
-          borderColor: '#7B2FBE',
+          borderColor: '#6E8BFF',
           boxShadow: '0 0 12px rgba(123,47,190,0.4)',
         }}
       >
         <span className="font-mono text-sm font-bold text-white sm:w-28 sm:shrink-0">COSMO</span>
-        <span className="font-mono text-xs text-purple-200">
+        <span className="font-mono text-xs text-phase-active">
           execution &amp; accountability
-          <span className="text-purple-300/60">
+          <span className="text-phase-active/60">
             {' '}
             — no trusted operator in the settlement path
           </span>

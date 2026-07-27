@@ -456,34 +456,34 @@ export default function M2BondHelper() {
           {/* header */}
           <header className="max-w-2xl">
             <div className="mb-5 flex items-center gap-3">
-              <span className="inline-flex h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.8)]" />
-              <span className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+              <span className="inline-flex h-2 w-2 rounded-full bg-phase-warn shadow-[0_0_10px_rgba(251,191,36,0.8)]" />
+              <span className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
                 Maker onboarding · M2 · Mainnet (chain 8)
               </span>
             </div>
-            <h1 className="font-mono text-3xl font-bold tracking-tight text-slate-100 md:text-5xl">
+            <h1 className="font-mono text-3xl font-bold tracking-tight text-ink-0 md:text-5xl">
               M2 Operator Bond
             </h1>
-            <p className="mt-4 font-sans text-lg text-slate-300">
+            <p className="mt-4 font-sans text-lg text-ink-1">
               Zwei fixe Transaktionen: 100 $COSMO wrappen, dann 100 wCOSMO als Operator-Bond
               einzahlen. Signatur ausschliesslich in StarKey.
             </p>
           </header>
 
           {/* warning banner */}
-          <aside className="mt-8 rounded-xl border border-amber-500/40 bg-amber-500/[0.08] p-5">
+          <aside className="mt-8 rounded-xl border border-phase-warn/40 bg-phase-warn/[0.08] p-5">
             <div className="flex items-start gap-3">
-              <ShieldAlert className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-300" />
+              <ShieldAlert className="mt-0.5 h-5 w-5 flex-shrink-0 text-phase-warn" />
               <div>
-                <p className="font-sans text-sm font-semibold leading-relaxed text-amber-200">
+                <p className="font-sans text-sm font-semibold leading-relaxed text-phase-warn">
                   Nur fuer die M2 Maker Wallet.
                 </p>
-                <p className="mt-1 font-sans text-sm leading-relaxed text-slate-300">
+                <p className="mt-1 font-sans text-sm leading-relaxed text-ink-1">
                   Alle anderen Wallets werden abgewiesen. Function-IDs und Betrag sind fest
                   verdrahtet — keine freien Eingaben. Diese Seite fragt niemals nach Seed oder
                   Private Key.
                 </p>
-                <p className="mt-2 font-mono text-[11px] leading-relaxed text-slate-500">
+                <p className="mt-2 font-mono text-[11px] leading-relaxed text-ink-2">
                   Erwartete Adresse: {M2_ADDR}
                 </p>
               </div>
@@ -497,14 +497,14 @@ export default function M2BondHelper() {
                 type="button"
                 onClick={connect}
                 disabled={connecting}
-                className="inline-flex items-center gap-2 rounded-lg border border-purple-500/50 bg-purple-600/20 px-5 py-3 font-mono text-sm text-purple-100 transition-all hover:border-purple-400 hover:bg-purple-600/30 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-lg border border-phase-active/50 bg-phase-active/20 px-5 py-3 font-mono text-sm text-phase-active transition-all hover:border-phase-active hover:bg-phase-active/30 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {connecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plug className="h-4 w-4" />}
                 {connecting ? 'Verbinde …' : 'StarKey verbinden'}
               </button>
             ) : null}
             {notFound && (
-              <p className="mt-3 font-mono text-xs text-amber-400">
+              <p className="mt-3 font-mono text-xs text-phase-warn">
                 StarKey nicht gefunden. Extension installieren (starkey.app) und neu laden.
               </p>
             )}
@@ -534,16 +534,16 @@ export default function M2BondHelper() {
           </div>
 
           {/* on-chain status */}
-          <section className="mt-6 rounded-xl border border-white/10 bg-white/[0.02] p-5">
+          <section className="mt-6 rounded-xl border border-line-base bg-surface-1 p-5">
             <div className="flex items-center justify-between">
-              <h2 className="font-mono text-xs uppercase tracking-wider text-slate-500">
+              <h2 className="font-mono text-xs uppercase tracking-wider text-ink-2">
                 Status (read-only, on-chain)
               </h2>
               <button
                 type="button"
                 onClick={() => void refreshStatus()}
                 disabled={refreshing}
-                className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-3 py-1.5 font-mono text-[11px] text-slate-400 transition-all hover:border-white/30 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-lg border border-line-base px-3 py-1.5 font-mono text-[11px] text-ink-1 transition-all hover:border-line-strong hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <RefreshCw className={cn('h-3 w-3', refreshing && 'animate-spin')} />
                 Aktualisieren
@@ -563,19 +563,19 @@ export default function M2BondHelper() {
                 tone={status ? (status.gate ? 'ok' : 'bad') : undefined}
               />
             </dl>
-            {statusErr && <p className="mt-3 font-mono text-xs text-rose-400">{statusErr}</p>}
+            {statusErr && <p className="mt-3 font-mono text-xs text-phase-fault">{statusErr}</p>}
           </section>
 
           {/* DONE state */}
           {done && (
-            <div className="mt-6 rounded-xl border border-emerald-500/30 bg-emerald-500/[0.06] p-5">
+            <div className="mt-6 rounded-xl border border-phase-settled/30 bg-phase-settled/[0.06] p-5">
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-300" />
+                <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-phase-settled" />
                 <div>
-                  <p className="font-mono text-sm font-bold uppercase tracking-wider text-emerald-300">
+                  <p className="font-mono text-sm font-bold uppercase tracking-wider text-phase-settled">
                     DONE
                   </p>
-                  <p className="mt-1 font-sans text-sm leading-relaxed text-slate-200">
+                  <p className="mt-1 font-sans text-sm leading-relaxed text-ink-0">
                     Operator-Bond ist eingezahlt bzw. M2 ist quote-eligible. Es gibt hier nichts
                     mehr zu tun — beide Transaktions-Buttons sind gesperrt.
                   </p>
@@ -591,20 +591,20 @@ export default function M2BondHelper() {
               className={cn(
                 'mt-6 rounded-xl border p-5',
                 done || (step.n === 1 && balOk)
-                  ? 'border-emerald-500/30 bg-emerald-500/[0.04]'
-                  : 'border-white/10 bg-white/[0.02]',
+                  ? 'border-phase-settled/30 bg-phase-settled/[0.04]'
+                  : 'border-line-base bg-surface-1',
               )}
             >
-              <h2 className="font-sans text-sm font-semibold text-slate-200">
+              <h2 className="font-sans text-sm font-semibold text-ink-0">
                 {step.n === 1
                   ? 'Schritt 1 · wrap — 100 $COSMO → 100 wCOSMO'
                   : 'Schritt 2 · Operator-Bond einzahlen — 100 wCOSMO'}
               </h2>
-              <p className="mt-1 font-mono text-xs text-slate-400">
+              <p className="mt-1 font-mono text-xs text-ink-1">
                 {step.modName}::{step.fnName}(u64:{AMOUNT})
               </p>
               {step.n === 2 && !done && (
-                <p className="mt-1 font-sans text-xs text-slate-500">
+                <p className="mt-1 font-sans text-xs text-ink-2">
                   Wird erst freigeschaltet, wenn M2 mindestens 100 wCOSMO haelt und das
                   Deposit-Gate offen ist.
                 </p>
@@ -614,7 +614,7 @@ export default function M2BondHelper() {
                   type="button"
                   onClick={() => void prepare(step)}
                   disabled={!prepEnabled(step.n)}
-                  className="inline-flex items-center gap-2 rounded-lg border border-sky-500/50 bg-sky-600/20 px-4 py-2 font-mono text-xs text-sky-100 transition-all hover:border-sky-400 hover:bg-sky-600/30 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex items-center gap-2 rounded-lg border border-phase-proof/50 bg-phase-proof/20 px-4 py-2 font-mono text-xs text-phase-proof transition-all hover:border-phase-proof hover:bg-phase-proof/30 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {steps[step.n].busy && !steps[step.n].signReady ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -625,25 +625,25 @@ export default function M2BondHelper() {
                   type="button"
                   onClick={() => void sign(step)}
                   disabled={!signEnabled(step.n)}
-                  className="inline-flex items-center gap-2 rounded-lg border border-amber-500/50 bg-amber-600/20 px-4 py-2 font-mono text-xs text-amber-100 transition-all hover:border-amber-400 hover:bg-amber-600/30 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex items-center gap-2 rounded-lg border border-phase-warn/50 bg-phase-warn/20 px-4 py-2 font-mono text-xs text-phase-warn transition-all hover:border-phase-warn hover:bg-phase-warn/30 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {done ? <Lock className="h-3.5 w-3.5" /> : null}
                   In StarKey signieren
                 </button>
               </div>
               {steps[step.n].payloadText && (
-                <pre className="mt-4 overflow-x-auto whitespace-pre-wrap break-all rounded-lg border border-dashed border-slate-600 bg-black/40 p-4 font-mono text-[11px] leading-relaxed text-slate-300">
+                <pre className="mt-4 overflow-x-auto whitespace-pre-wrap break-all rounded-lg border border-dashed border-line-strong bg-surface-inset p-4 font-mono text-[11px] leading-relaxed text-ink-1">
                   {steps[step.n].payloadText}
                 </pre>
               )}
               {steps[step.n].txHash && (
-                <p className="mt-3 break-all font-mono text-xs text-slate-400">
+                <p className="mt-3 break-all font-mono text-xs text-ink-1">
                   TX-Hash:{' '}
                   <a
                     href={`${EXPLORER_TX}${steps[step.n].txHash}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300"
+                    className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof"
                   >
                     {steps[step.n].txHash}
                   </a>
@@ -657,25 +657,25 @@ export default function M2BondHelper() {
             className={cn(
               'mt-6 rounded-xl border p-5',
               topupReady
-                ? 'border-emerald-500/30 bg-emerald-500/[0.04]'
-                : 'border-white/10 bg-white/[0.02]',
+                ? 'border-phase-settled/30 bg-phase-settled/[0.04]'
+                : 'border-line-base bg-surface-1',
             )}
           >
-            <h2 className="font-sans text-sm font-semibold text-slate-200">
+            <h2 className="font-sans text-sm font-semibold text-ink-0">
               Phase 6 — Roundtrip wCOSMO Top-up
             </h2>
-            <p className="mt-1 font-mono text-xs text-slate-400">
+            <p className="mt-1 font-mono text-xs text-ink-1">
               wcosmo::wrap(u64:{TOPUP_AMOUNT})
             </p>
-            <p className="mt-1 font-sans text-xs text-slate-500">
+            <p className="mt-1 font-sans text-xs text-ink-2">
               Wrappt genau 1 $COSMO zu 1 wCOSMO als Quote-Escrow fuer den Roundtrip-Test
               (Preflight: freie wCOSMO &gt;= 0,997). Der Bond bleibt unberuehrt. Erst
               freigeschaltet, wenn der Operator-Bond eingezahlt und M2 quote-eligible ist.
             </p>
             {topupReady && (
               <div className="mt-3 flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-emerald-300" />
-                <p className="font-mono text-xs font-bold uppercase tracking-wider text-emerald-300">
+                <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-phase-settled" />
+                <p className="font-mono text-xs font-bold uppercase tracking-wider text-phase-settled">
                   Roundtrip top-up ready
                 </p>
               </div>
@@ -685,7 +685,7 @@ export default function M2BondHelper() {
                 type="button"
                 onClick={() => void prepareTopup()}
                 disabled={!topupPrepEnabled}
-                className="inline-flex items-center gap-2 rounded-lg border border-sky-500/50 bg-sky-600/20 px-4 py-2 font-mono text-xs text-sky-100 transition-all hover:border-sky-400 hover:bg-sky-600/30 disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex items-center gap-2 rounded-lg border border-phase-proof/50 bg-phase-proof/20 px-4 py-2 font-mono text-xs text-phase-proof transition-all hover:border-phase-proof hover:bg-phase-proof/30 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {topup.busy && !topup.signReady ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -696,25 +696,25 @@ export default function M2BondHelper() {
                 type="button"
                 onClick={() => void signTopup()}
                 disabled={!topupSignEnabled}
-                className="inline-flex items-center gap-2 rounded-lg border border-amber-500/50 bg-amber-600/20 px-4 py-2 font-mono text-xs text-amber-100 transition-all hover:border-amber-400 hover:bg-amber-600/30 disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex items-center gap-2 rounded-lg border border-phase-warn/50 bg-phase-warn/20 px-4 py-2 font-mono text-xs text-phase-warn transition-all hover:border-phase-warn hover:bg-phase-warn/30 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {topupReady ? <Lock className="h-3.5 w-3.5" /> : null}
                 In StarKey signieren
               </button>
             </div>
             {topup.payloadText && (
-              <pre className="mt-4 overflow-x-auto whitespace-pre-wrap break-all rounded-lg border border-dashed border-slate-600 bg-black/40 p-4 font-mono text-[11px] leading-relaxed text-slate-300">
+              <pre className="mt-4 overflow-x-auto whitespace-pre-wrap break-all rounded-lg border border-dashed border-line-strong bg-surface-inset p-4 font-mono text-[11px] leading-relaxed text-ink-1">
                 {topup.payloadText}
               </pre>
             )}
             {topup.txHash && (
-              <p className="mt-3 break-all font-mono text-xs text-slate-400">
+              <p className="mt-3 break-all font-mono text-xs text-ink-1">
                 TX-Hash:{' '}
                 <a
                   href={`${EXPLORER_TX}${topup.txHash}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300"
+                  className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof"
                 >
                   {topup.txHash}
                 </a>
@@ -727,10 +727,10 @@ export default function M2BondHelper() {
             <p
               className={cn(
                 'mt-6 font-mono text-xs',
-                log.tone === 'ok' && 'text-emerald-400',
-                log.tone === 'bad' && 'text-rose-400',
-                log.tone === 'warn' && 'text-amber-400',
-                log.tone === 'info' && 'text-slate-400',
+                log.tone === 'ok' && 'text-phase-settled',
+                log.tone === 'bad' && 'text-phase-fault',
+                log.tone === 'warn' && 'text-phase-warn',
+                log.tone === 'info' && 'text-ink-1',
               )}
             >
               {log.text}
@@ -738,7 +738,7 @@ export default function M2BondHelper() {
           )}
 
           {/* footer note */}
-          <p className="mt-10 font-mono text-[11px] leading-relaxed text-slate-600">
+          <p className="mt-10 font-mono text-[11px] leading-relaxed text-ink-2">
             Keine Secrets, keine Server-Signer, keine Admin-/Multisig-Funktionen. Read-only-Status
             via {RPC}. Diese Seite ist noindex und nicht in der Navigation verlinkt.
           </p>
@@ -762,10 +762,10 @@ function StatusCard({
   mono?: boolean;
 }) {
   const toneCls =
-    tone === 'ok' ? 'text-emerald-300' : tone === 'bad' ? 'text-rose-300' : 'text-slate-400';
+    tone === 'ok' ? 'text-phase-settled' : tone === 'bad' ? 'text-phase-fault' : 'text-ink-1';
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
-      <div className="flex items-center gap-2 text-slate-500">
+    <div className="rounded-xl border border-line-base bg-surface-1 p-4">
+      <div className="flex items-center gap-2 text-ink-2">
         {icon}
         <span className="font-mono text-[11px] uppercase tracking-wider">{label}</span>
       </div>
@@ -779,15 +779,15 @@ function StatusCard({
 function StatusRow({ k, v, tone }: { k: string; v: string; tone?: 'ok' | 'bad' | 'warn' }) {
   const toneCls =
     tone === 'ok'
-      ? 'text-emerald-300'
+      ? 'text-phase-settled'
       : tone === 'bad'
-        ? 'text-rose-300'
+        ? 'text-phase-fault'
         : tone === 'warn'
-          ? 'text-amber-300'
-          : 'text-slate-200';
+          ? 'text-phase-warn'
+          : 'text-ink-0';
   return (
-    <div className="flex items-baseline justify-between gap-4 rounded-lg border border-white/5 bg-black/20 px-3 py-2">
-      <span className="text-[11px] uppercase tracking-wider text-slate-500">{k}</span>
+    <div className="flex items-baseline justify-between gap-4 rounded-lg border border-line-subtle bg-surface-inset px-3 py-2">
+      <span className="text-[11px] uppercase tracking-wider text-ink-2">{k}</span>
       <span className={cn('text-right text-xs', toneCls)}>{v}</span>
     </div>
   );

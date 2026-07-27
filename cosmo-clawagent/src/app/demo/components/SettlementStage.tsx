@@ -37,7 +37,7 @@ export default function SettlementStage({ armed }: SettlementStageProps) {
   const animate = armed && !reduce;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-emerald-500/30 bg-[rgba(8,20,16,0.6)] p-6 backdrop-blur">
+    <div className="relative overflow-hidden rounded-2xl border border-phase-settled/30 bg-[rgba(8,20,16,0.6)] p-6 backdrop-blur">
       {/* atmosphere */}
       <div
         className="pointer-events-none absolute inset-0 opacity-60"
@@ -49,10 +49,10 @@ export default function SettlementStage({ armed }: SettlementStageProps) {
 
       <div className="relative">
         <div className="mb-5 flex items-center justify-between">
-          <span className="font-mono text-xs uppercase tracking-[0.2em] text-emerald-300/80">
+          <span className="font-mono text-xs uppercase tracking-[0.2em] text-phase-settled/80">
             Atomic settlement
           </span>
-          <span className="font-mono text-[11px] text-slate-500">{settlementEventName}</span>
+          <span className="font-mono text-[11px] text-ink-2">{settlementEventName}</span>
         </div>
 
         {/* the two crossing legs */}
@@ -62,16 +62,16 @@ export default function SettlementStage({ armed }: SettlementStageProps) {
             initial={false}
             animate={animate ? { x: [-18, 0], opacity: [0.4, 1] } : { x: 0, opacity: 1 }}
             transition={{ duration: 1.1, ease: 'easeInOut' }}
-            className="rounded-xl border border-purple-500/30 bg-purple-500/[0.06] p-4"
+            className="rounded-xl border border-phase-active/30 bg-phase-active/[0.06] p-4"
           >
-            <div className="font-mono text-[10px] uppercase tracking-wider text-purple-300/70">
+            <div className="font-mono text-[10px] uppercase tracking-wider text-phase-active/70">
               Taker sends
             </div>
-            <div className="mt-1 font-mono text-2xl font-bold tabular-nums text-purple-100">
+            <div className="mt-1 font-mono text-2xl font-bold tabular-nums text-phase-active">
               {formatToken(amountIn)}{' '}
-              <span className="text-sm font-normal text-purple-300/70">{TOKEN_IN_SYMBOL}</span>
+              <span className="text-sm font-normal text-phase-active/70">{TOKEN_IN_SYMBOL}</span>
             </div>
-            <div className="font-mono text-[11px] text-slate-500">token_in · {truncateHex(TOKEN_IN_ADDR)}</div>
+            <div className="font-mono text-[11px] text-ink-2">token_in · {truncateHex(TOKEN_IN_ADDR)}</div>
           </motion.div>
 
           {/* simultaneity marker */}
@@ -84,7 +84,7 @@ export default function SettlementStage({ armed }: SettlementStageProps) {
                   : { scale: 1, opacity: 1 }
               }
               transition={{ duration: 1.1, times: [0, 0.6, 1], ease: 'easeOut' }}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-400/60 bg-emerald-400/10 text-emerald-300 shadow-[0_0_24px_rgba(16,185,129,0.5)]"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-phase-settled/60 bg-phase-settled/10 text-phase-settled shadow-[0_0_24px_rgba(16,185,129,0.5)]"
               aria-hidden
             >
               <ArrowRight className="h-5 w-5" />
@@ -96,16 +96,16 @@ export default function SettlementStage({ armed }: SettlementStageProps) {
             initial={false}
             animate={animate ? { x: [18, 0], opacity: [0.4, 1] } : { x: 0, opacity: 1 }}
             transition={{ duration: 1.1, ease: 'easeInOut' }}
-            className="rounded-xl border border-cyan-500/30 bg-cyan-500/[0.06] p-4 text-right md:text-left"
+            className="rounded-xl border border-phase-proof/30 bg-phase-proof/[0.06] p-4 text-right md:text-left"
           >
-            <div className="font-mono text-[10px] uppercase tracking-wider text-cyan-300/70">
+            <div className="font-mono text-[10px] uppercase tracking-wider text-phase-proof/70">
               Taker receives
             </div>
-            <div className="mt-1 font-mono text-2xl font-bold tabular-nums text-cyan-100">
+            <div className="mt-1 font-mono text-2xl font-bold tabular-nums text-phase-proof">
               {formatToken(amountOut)}{' '}
-              <span className="text-sm font-normal text-cyan-300/70">{TOKEN_OUT_SYMBOL}</span>
+              <span className="text-sm font-normal text-phase-proof/70">{TOKEN_OUT_SYMBOL}</span>
             </div>
-            <div className="font-mono text-[11px] text-slate-500">token_out · {truncateHex(TOKEN_OUT_ADDR)}</div>
+            <div className="font-mono text-[11px] text-ink-2">token_out · {truncateHex(TOKEN_OUT_ADDR)}</div>
           </motion.div>
         </div>
 
@@ -150,7 +150,7 @@ export default function SettlementStage({ armed }: SettlementStageProps) {
           </div>
         )}
 
-        <p className="mt-4 font-mono text-[11px] leading-relaxed text-slate-500">
+        <p className="mt-4 font-mono text-[11px] leading-relaxed text-ink-2">
           Both legs are recorded in one settlement transaction. 30 bps is not a stored field — it is
           derived: (amount_in − amount_out) / amount_in.
         </p>
@@ -170,12 +170,12 @@ function Metric({
   sub: string;
   accent: 'emerald' | 'slate';
 }) {
-  const valueColor = accent === 'emerald' ? 'text-emerald-200' : 'text-slate-200';
+  const valueColor = accent === 'emerald' ? 'text-phase-settled' : 'text-ink-0';
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
-      <div className="font-mono text-[10px] uppercase tracking-wider text-slate-500">{label}</div>
+    <div className="rounded-lg border border-line-base bg-surface-1 p-3">
+      <div className="font-mono text-[10px] uppercase tracking-wider text-ink-2">{label}</div>
       <div className={`mt-1 font-mono text-lg font-bold tabular-nums ${valueColor}`}>{value}</div>
-      <div className="font-mono text-[10px] text-slate-600">{sub}</div>
+      <div className="font-mono text-[10px] text-ink-2">{sub}</div>
     </div>
   );
 }

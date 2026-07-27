@@ -28,7 +28,7 @@ const wc = (v: bigint) => `${fmtAmt(v)} wCOSMO`;
 
 function ErrorStrip({ msg }: { msg: string }) {
   return (
-    <div className="rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 font-mono text-xs text-rose-300">
+    <div className="rounded-lg border border-phase-fault/30 bg-phase-fault/10 px-4 py-2.5 font-mono text-xs text-phase-fault">
       Live data unavailable: {msg} — figures below may be stale.
     </div>
   );
@@ -52,17 +52,17 @@ function SectionHeader({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
           {index && (
-            <span className="inline-flex h-5 w-5 items-center justify-center rounded border border-white/15 bg-black/30 font-mono text-[11px] text-slate-300">
+            <span className="inline-flex h-5 w-5 items-center justify-center rounded border border-line-base bg-surface-inset font-mono text-[11px] text-ink-1">
               {index}
             </span>
           )}
-          <Icon className="h-4 w-4 text-purple-300" />
-          <h2 className="font-mono text-sm font-bold text-slate-100">{title}</h2>
+          <Icon className="h-4 w-4 text-phase-active" />
+          <h2 className="font-mono text-sm font-bold text-ink-0">{title}</h2>
         </div>
         {children}
       </div>
       {subtitle && (
-        <p className="mt-1.5 font-sans text-xs leading-relaxed text-slate-500">{subtitle}</p>
+        <p className="mt-1.5 font-sans text-xs leading-relaxed text-ink-2">{subtitle}</p>
       )}
     </div>
   );
@@ -84,12 +84,12 @@ function PairBars({
         return (
           <div key={r.label}>
             <div className="mb-1 flex items-baseline justify-between">
-              <span className="font-mono text-[11px] text-slate-500">{r.label}</span>
-              <span className="font-mono text-xs text-slate-300">{format(r.value)}</span>
+              <span className="font-mono text-[11px] text-ink-2">{r.label}</span>
+              <span className="font-mono text-xs text-ink-1">{format(r.value)}</span>
             </div>
-            <div className="h-3 w-full rounded bg-purple-500/15">
+            <div className="h-3 w-full rounded bg-phase-active/15">
               <div
-                className="h-full rounded bg-purple-500 transition-[width] duration-500"
+                className="h-full rounded bg-phase-active transition-[width] duration-500"
                 style={{ width: `${pct}%` }}
               />
             </div>
@@ -171,7 +171,7 @@ export default function VaultDashboard() {
         key: op.key,
         label: op.label,
         value: v,
-        color: SERIES[op.key as keyof typeof SERIES] ?? '#64748b',
+        color: SERIES[op.key as keyof typeof SERIES] ?? '#757E8C',
       });
     }
     const rest = m.custodyBalance - attributed;
@@ -180,7 +180,7 @@ export default function VaultDashboard() {
         key: 'rest',
         label: 'Unattributed / penalty remainder',
         value: rest,
-        color: '#475569',
+        color: '#4A5260',
       });
     }
   }
@@ -191,25 +191,25 @@ export default function VaultDashboard() {
 
       {/* ── Hero ── */}
       <section className="relative z-10 mx-auto max-w-6xl px-6 pt-24 pb-8">
-        <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-purple-500/25 bg-purple-500/10 px-3 py-1.5">
-          <span className="inline-flex h-2 w-2 rounded-full bg-purple-400" />
-          <span className="font-mono text-xs uppercase tracking-[0.2em] text-slate-300">
+        <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-phase-active/25 bg-phase-active/10 px-3 py-1.5">
+          <span className="inline-flex h-2 w-2 rounded-full bg-phase-active" />
+          <span className="font-mono text-xs uppercase tracking-[0.2em] text-ink-1">
             Vault · Supra Mainnet (chain 8)
           </span>
         </div>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h1 className="font-mono text-4xl font-bold tracking-tight text-slate-100 md:text-5xl">
+            <h1 className="font-mono text-4xl font-bold tracking-tight text-ink-0 md:text-5xl">
               Custody, verifiable.
             </h1>
-            <p className="mt-4 max-w-2xl font-sans text-lg leading-relaxed text-slate-300">
+            <p className="mt-4 max-w-2xl font-sans text-lg leading-relaxed text-ink-1">
               Every security deposit, every limit, every peg — read live from mainnet view
               functions, in three clearly separated sections.
             </p>
           </div>
           <div className="flex items-center gap-3">
             {lastUpdated && (
-              <span className="font-mono text-[11px] text-slate-500">
+              <span className="font-mono text-[11px] text-ink-2">
                 Updated {new Date(lastUpdated).toLocaleTimeString('en-US')}
               </span>
             )}
@@ -217,7 +217,7 @@ export default function VaultDashboard() {
               type="button"
               onClick={() => void refresh()}
               disabled={refreshing}
-              className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-3 py-1.5 font-mono text-[11px] text-slate-400 transition-all hover:border-white/30 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-lg border border-line-base px-3 py-1.5 font-mono text-[11px] text-ink-1 transition-all hover:border-line-strong hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
             >
               <RefreshCw className={cn('h-3 w-3', refreshing && 'animate-spin')} />
               Refresh
@@ -228,7 +228,7 @@ export default function VaultDashboard() {
 
       {/* ── 1 · Maker vault ── */}
       <section className="relative z-10 mx-auto max-w-6xl px-6 py-6">
-        <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
+        <div className="rounded-xl border border-line-base bg-surface-1 p-6">
           <SectionHeader
             icon={Landmark}
             index="1"
@@ -248,12 +248,12 @@ export default function VaultDashboard() {
               operators={m?.operators ?? null}
             />
           </div>
-          <p className="mb-5 font-sans text-sm leading-relaxed text-slate-400">
+          <p className="mb-5 font-sans text-sm leading-relaxed text-ink-1">
             The bar is the live wCOSMO held in the vault, split by which operator deposited it.
             Operator K1 runs autonomously —{' '}
             <Link
               href="/rfq/"
-              className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300"
+              className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof"
             >
               see its live quoting activity
             </Link>
@@ -269,14 +269,14 @@ export default function VaultDashboard() {
                 .join(', ')}`}
             />
           ) : (
-            <div className="h-6 w-full animate-pulse rounded bg-white/5" />
+            <div className="h-6 w-full animate-pulse rounded bg-surface-2" />
           )}
           <div className="mt-6 grid gap-4 md:grid-cols-2">
             {(m?.operators ?? []).map((op) => (
               <OperatorCard
                 key={op.key}
                 op={op}
-                color={SERIES[op.key as keyof typeof SERIES] ?? '#64748b'}
+                color={SERIES[op.key as keyof typeof SERIES] ?? '#757E8C'}
               />
             ))}
           </div>
@@ -285,7 +285,7 @@ export default function VaultDashboard() {
 
       {/* ── Provider vault ── */}
       <section className="relative z-10 mx-auto max-w-6xl px-6 py-6">
-        <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
+        <div className="rounded-xl border border-line-base bg-surface-1 p-6">
           <SectionHeader
             icon={Server}
             index="2"
@@ -349,11 +349,11 @@ export default function VaultDashboard() {
               </div>
             </>
           ) : (
-            <div className="h-3 w-full animate-pulse rounded bg-white/5" />
+            <div className="h-3 w-full animate-pulse rounded bg-surface-2" />
           )}
           <Link
             href="/compute/bond/"
-            className="mt-5 inline-flex items-center gap-1 font-mono text-xs text-sky-400 hover:text-sky-300"
+            className="mt-5 inline-flex items-center gap-1 font-mono text-xs text-phase-proof hover:text-phase-proof"
           >
             Place your security deposit <ArrowRight className="h-3 w-3" />
           </Link>
@@ -362,7 +362,7 @@ export default function VaultDashboard() {
 
       {/* ── wCOSMO peg ── */}
       <section className="relative z-10 mx-auto max-w-6xl px-6 py-6">
-        <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
+        <div className="rounded-xl border border-line-base bg-surface-1 p-6">
           <SectionHeader
             icon={Scale}
             index="3"
@@ -390,18 +390,18 @@ export default function VaultDashboard() {
               format={wc}
             />
           ) : (
-            <div className="h-3 w-full animate-pulse rounded bg-white/5" />
+            <div className="h-3 w-full animate-pulse rounded bg-surface-2" />
           )}
           <div className="mt-5 flex flex-wrap gap-4">
             <Link
               href="/wcosmo/"
-              className="inline-flex items-center gap-1 font-mono text-xs text-sky-400 hover:text-sky-300"
+              className="inline-flex items-center gap-1 font-mono text-xs text-phase-proof hover:text-phase-proof"
             >
               About wCOSMO <ArrowRight className="h-3 w-3" />
             </Link>
             <Link
               href="/buy/"
-              className="inline-flex items-center gap-1 font-mono text-xs text-sky-400 hover:text-sky-300"
+              className="inline-flex items-center gap-1 font-mono text-xs text-phase-proof hover:text-phase-proof"
             >
               Buy wCOSMO (capped pilot) <ArrowRight className="h-3 w-3" />
             </Link>
@@ -411,16 +411,16 @@ export default function VaultDashboard() {
 
       {/* ── Address footer ── */}
       <section className="relative z-10 mx-auto max-w-6xl px-6 py-6 pb-24">
-        <div className="rounded-xl border border-dashed border-slate-700 bg-black/40 p-5">
-          <p className="mb-3 font-sans text-sm leading-relaxed text-slate-400">
+        <div className="rounded-xl border border-dashed border-line-base bg-surface-inset p-5">
+          <p className="mb-3 font-sans text-sm leading-relaxed text-ink-1">
             No private key exists for either custody account; movements are only possible through
             the vaults&apos; entry functions.
           </p>
-          <dl className="space-y-1.5 font-mono text-[11px] text-slate-500">
-            <div className="text-slate-400">Maker vault (section 1):</div>
+          <dl className="space-y-1.5 font-mono text-[11px] text-ink-2">
+            <div className="text-ink-1">Maker vault (section 1):</div>
             <div className="break-all pl-3">Module: {COSMOCLAW_ADDR}::maker_vault</div>
             <div className="break-all pl-3">Custody account: {MAKER_VAULT_RESOURCE_ADDR}</div>
-            <div className="mt-2 text-slate-400">Provider vault (section 2):</div>
+            <div className="mt-2 text-ink-1">Provider vault (section 2):</div>
             <div className="break-all pl-3">Module: {COMPUTE_PKG_ADDR}::provider_vault</div>
             <div className="break-all pl-3">Custody account: {PROVIDER_VAULT_RESOURCE_ADDR}</div>
             <div className="mt-2 break-all">wCOSMO FA: {WCOSMO_META}</div>

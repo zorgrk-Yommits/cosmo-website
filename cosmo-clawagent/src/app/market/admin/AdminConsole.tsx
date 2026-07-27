@@ -245,7 +245,7 @@ export default function AdminConsole() {
                         {job.budgetAmount} {job.budgetAsset}
                       </span>
                       <span>deadline {fmtTs(job.deadlineTs)}</span>
-                      <span className="text-phase-proof/80">{job.contactEmail}</span>
+                      <span className="text-phase-warn/80">{job.contactEmail}</span>
                       {job.buyerWallet && <span>{job.buyerWallet}</span>}
                     </div>
                     <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -312,7 +312,7 @@ export default function AdminConsole() {
                             'rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase',
                             p.status === 'active'
                               ? 'border-phase-settled/40 bg-phase-settled/10 text-phase-settled'
-                              : 'border-line-base bg-white/[0.02] text-ink-2',
+                              : 'border-line-base bg-white/[0.02] text-ink-1',
                           )}
                         >
                           {p.status}

@@ -21,7 +21,7 @@ export default function DeployDrawer({ steps, open, activeId, onToggle, onSelect
   // rather than showing an empty "0 steps" shell.
   if (steps.length === 0) return null;
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur">
+    <div className="rounded-xl border border-line-base bg-surface-1 backdrop-blur">
       <button
         type="button"
         onClick={onToggle}
@@ -29,13 +29,13 @@ export default function DeployDrawer({ steps, open, activeId, onToggle, onSelect
         aria-expanded={open}
       >
         <ChevronRight
-          className={cn('h-4 w-4 text-slate-500 transition-transform', open && 'rotate-90')}
+          className={cn('h-4 w-4 text-ink-2 transition-transform', open && 'rotate-90')}
         />
-        <Layers className="h-4 w-4 text-slate-500" />
-        <span className="font-mono text-xs uppercase tracking-wider text-slate-400">
+        <Layers className="h-4 w-4 text-ink-2" />
+        <span className="font-mono text-xs uppercase tracking-wider text-ink-1">
           Deploy phase (one-time)
         </span>
-        <span className="font-mono text-[10px] text-slate-600">
+        <span className="font-mono text-[10px] text-ink-2">
           {steps.length} steps · already live
         </span>
       </button>
@@ -58,11 +58,11 @@ export default function DeployDrawer({ steps, open, activeId, onToggle, onSelect
                   className={cn(
                     'rounded-md border px-3 py-1.5 font-mono text-[11px] transition-colors',
                     activeId === s.id
-                      ? 'border-slate-400 text-slate-100'
-                      : 'border-white/10 text-slate-500 hover:border-white/25 hover:text-slate-300',
+                      ? 'border-line-strong text-ink-0'
+                      : 'border-line-base text-ink-2 hover:border-line-strong hover:text-ink-1',
                   )}
                 >
-                  <span className="text-slate-600">{s.id}</span> {s.title}
+                  <span className="text-ink-2">{s.id}</span> {s.title}
                 </button>
               ))}
             </div>

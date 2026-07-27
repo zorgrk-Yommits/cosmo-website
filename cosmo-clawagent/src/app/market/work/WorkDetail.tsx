@@ -137,7 +137,7 @@ export default function WorkDetail() {
               onConnect={() => void connect()}
             />
             {connectError && (
-              <p className="mt-2 font-mono text-xs text-phase-proof">{connectError}</p>
+              <p className="mt-2 font-mono text-xs text-phase-warn">{connectError}</p>
             )}
 
             {/* ── Provider next step ── */}

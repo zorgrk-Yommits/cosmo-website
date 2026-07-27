@@ -57,18 +57,18 @@ function shortHash(h: string): string {
 
 export default function CommunityMakerProof() {
   return (
-    <section className="mt-10 rounded-2xl border border-emerald-500/25 bg-emerald-500/[0.04] p-6 md:p-8">
+    <section className="mt-10 rounded-2xl border border-phase-settled/25 bg-phase-settled/[0.04] p-6 md:p-8">
       {/* header */}
       <div className="flex items-center gap-3">
         <span className="relative flex h-2.5 w-2.5">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-phase-settled opacity-60" />
+          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-phase-settled" />
         </span>
-        <h2 className="font-mono text-lg font-bold tracking-tight text-slate-100 md:text-2xl">
+        <h2 className="font-mono text-lg font-bold tracking-tight text-ink-0 md:text-2xl">
           Community Maker Proof — Live on Supra Mainnet
         </h2>
       </div>
-      <p className="mt-3 max-w-3xl font-sans text-sm leading-relaxed text-slate-300 md:text-base">
+      <p className="mt-3 max-w-3xl font-sans text-sm leading-relaxed text-ink-1 md:text-base">
         On 2026-07-04 the first community maker (M2, Slot 1) quoted, funded and settled a
         complete agent-native RFQ settlement on Supra Mainnet — running on COSMO&apos;s bonded
         execution infrastructure, inside the hard 60-second quote window. The
@@ -80,7 +80,7 @@ export default function CommunityMakerProof() {
         {PILLS.map((p) => (
           <span
             key={p}
-            className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-emerald-200"
+            className="inline-flex items-center gap-1.5 rounded-full border border-phase-settled/40 bg-phase-settled/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-phase-settled"
           >
             <ShieldCheck className="h-3 w-3" />
             {p}
@@ -89,38 +89,38 @@ export default function CommunityMakerProof() {
       </div>
 
       {/* 5/5 lifecycle legs */}
-      <div className="mt-6 rounded-xl border border-white/10 bg-black/20 p-4">
+      <div className="mt-6 rounded-xl border border-line-base bg-surface-inset p-4">
         <div className="flex items-baseline justify-between gap-3">
-          <h3 className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+          <h3 className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
             Lifecycle — 5/5 legs successful
           </h3>
-          <span className="font-mono text-[11px] text-emerald-300">req #3 · quote #2 · settled</span>
+          <span className="font-mono text-[11px] text-phase-settled">req #3 · quote #2 · settled</span>
         </div>
         <ol className="mt-3 space-y-2">
           {LEGS.map((leg, i) => (
             <li
               key={leg.name}
-              className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2"
+              className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-line-subtle bg-surface-1 px-3 py-2"
             >
-              <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-emerald-300" />
-              <span className="font-mono text-xs text-slate-200">
+              <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-phase-settled" />
+              <span className="font-mono text-xs text-ink-0">
                 {i + 1}. {leg.name}
               </span>
-              <span className="font-mono text-[10px] uppercase tracking-wider text-slate-500">
+              <span className="font-mono text-[10px] uppercase tracking-wider text-ink-2">
                 {leg.signer}
               </span>
               <a
                 href={`${EXPLORER_TX}${leg.hash}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="ml-auto break-all font-mono text-[10px] text-sky-400 underline decoration-sky-400/30 hover:text-sky-300"
+                className="ml-auto break-all font-mono text-[10px] text-phase-proof underline decoration-phase-proof/30 hover:text-phase-proof"
               >
                 {shortHash(leg.hash)}
               </a>
             </li>
           ))}
         </ol>
-        <p className="mt-3 font-mono text-[11px] leading-relaxed text-slate-500">
+        <p className="mt-3 font-mono text-[11px] leading-relaxed text-ink-2">
           Post-verify accounting exact: taker −1.0 tINTEST / +0.997 wCOSMO · M2 +1.0 tINTEST /
           −0.997 wCOSMO. Operator bonds untouched (200M total / 100M available to M2). Peg
           invariant holds. Quote-server gate enforced before signature.
@@ -128,13 +128,13 @@ export default function CommunityMakerProof() {
       </div>
 
       {/* maker slots table */}
-      <div className="mt-6 overflow-x-auto rounded-xl border border-white/10 bg-black/20 p-4">
-        <h3 className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+      <div className="mt-6 overflow-x-auto rounded-xl border border-line-base bg-surface-inset p-4">
+        <h3 className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
           Maker slots
         </h3>
         <table className="mt-3 w-full min-w-[480px] border-separate border-spacing-y-1.5 text-left">
           <thead>
-            <tr className="font-mono text-[10px] uppercase tracking-wider text-slate-500">
+            <tr className="font-mono text-[10px] uppercase tracking-wider text-ink-2">
               <th className="px-3 py-1 font-medium">Slot</th>
               <th className="px-3 py-1 font-medium">Status</th>
               <th className="px-3 py-1 font-medium">Note</th>
@@ -142,21 +142,21 @@ export default function CommunityMakerProof() {
           </thead>
           <tbody>
             {SLOTS.map((s) => (
-              <tr key={s.slot} className="rounded-lg bg-white/[0.02]">
-                <td className="rounded-l-lg px-3 py-2 font-mono text-xs text-slate-200">{s.slot}</td>
+              <tr key={s.slot} className="rounded-lg bg-surface-1">
+                <td className="rounded-l-lg px-3 py-2 font-mono text-xs text-ink-0">{s.slot}</td>
                 <td className="px-3 py-2">
                   <span
                     className={cn(
                       'rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider',
                       s.tone === 'ok'
-                        ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300'
-                        : 'border-slate-500/40 bg-slate-500/10 text-slate-400',
+                        ? 'border-phase-settled/40 bg-phase-settled/10 text-phase-settled'
+                        : 'border-line-base bg-white/[0.02] text-ink-1',
                     )}
                   >
                     {s.status}
                   </span>
                 </td>
-                <td className="rounded-r-lg px-3 py-2 font-sans text-xs text-slate-400">{s.note}</td>
+                <td className="rounded-r-lg px-3 py-2 font-sans text-xs text-ink-1">{s.note}</td>
               </tr>
             ))}
           </tbody>
@@ -164,18 +164,18 @@ export default function CommunityMakerProof() {
       </div>
 
       {/* phase 7 observation card — completed 2026-07-07 */}
-      <div className="mt-6 rounded-xl border border-emerald-500/30 bg-emerald-500/[0.06] p-4">
+      <div className="mt-6 rounded-xl border border-phase-settled/30 bg-phase-settled/[0.06] p-4">
         <div className="flex items-center gap-2">
-          <Timer className="h-4 w-4 text-emerald-300" />
-          <h3 className="font-mono text-sm font-semibold text-emerald-200">
+          <Timer className="h-4 w-4 text-phase-settled" />
+          <h3 className="font-mono text-sm font-semibold text-phase-settled">
             Phase 7 — observation window
           </h3>
-          <span className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-emerald-300">
+          <span className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-phase-settled/40 bg-phase-settled/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-phase-settled">
             <CheckCircle2 className="h-3 w-3" />
             Passed
           </span>
         </div>
-        <ul className="mt-3 space-y-1.5 font-sans text-xs leading-relaxed text-slate-300">
+        <ul className="mt-3 space-y-1.5 font-sans text-xs leading-relaxed text-ink-1">
           <li>Completed 2026-07-07 without incident — 72 hours of daily read-only checks on peg, bonds and gate logs.</li>
           <li>Decision taken (one variable at a time): an anti-spam request fee is now active on the RFQ engine.</li>
           <li>
@@ -186,7 +186,7 @@ export default function CommunityMakerProof() {
       </div>
 
       {/* honesty line */}
-      <p className="mt-5 font-mono text-[11px] leading-relaxed text-slate-500">
+      <p className="mt-5 font-mono text-[11px] leading-relaxed text-ink-2">
         Static snapshot of on-chain results (chain 8; capture 2026-07-04). Controlled slot under
         bond caps and an off-chain quote gate — a maker-execution primitive, not a permissionless
         market.

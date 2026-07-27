@@ -73,19 +73,19 @@ export default function MakerCapital() {
           {/* header */}
           <header className="max-w-3xl">
             <div className="mb-5 flex flex-wrap items-center gap-3">
-              <span className="inline-flex h-2 w-2 rounded-full bg-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.8)]" />
-              <span className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+              <span className="inline-flex h-2 w-2 rounded-full bg-phase-proof shadow-[0_0_10px_rgba(56,189,248,0.8)]" />
+              <span className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
                 Future research direction
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-500/40 bg-sky-500/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-sky-300">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-phase-proof/40 bg-phase-proof/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-phase-proof">
                 <FlaskConical className="h-3 w-3" />
                 Research Draft — Not Live
               </span>
             </div>
-            <h1 className="font-mono text-3xl font-bold tracking-tight text-slate-100 md:text-5xl">
+            <h1 className="font-mono text-3xl font-bold tracking-tight text-ink-0 md:text-5xl">
               Community Maker Capital
             </h1>
-            <div className="mt-5 space-y-3 font-sans text-base leading-relaxed text-slate-300 md:text-lg">
+            <div className="mt-5 space-y-3 font-sans text-base leading-relaxed text-ink-1 md:text-lg">
               <p>The current Maker Vault is a security vault.</p>
               <p>
                 Bonded $COSMO provides accountability, aligned incentives, and slashable collateral
@@ -101,30 +101,30 @@ export default function MakerCapital() {
 
           {/* core distinction */}
           <section className="mt-10 grid gap-4 md:grid-cols-2">
-            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/[0.05] p-5">
+            <div className="rounded-xl border border-phase-settled/30 bg-phase-settled/[0.05] p-5">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-emerald-300" />
-                <h2 className="font-mono text-sm font-semibold text-slate-100">Maker Vault</h2>
-                <span className="ml-auto rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-emerald-300">
+                <ShieldCheck className="h-4 w-4 text-phase-settled" />
+                <h2 className="font-mono text-sm font-semibold text-ink-0">Maker Vault</h2>
+                <span className="ml-auto rounded-full border border-phase-settled/40 bg-phase-settled/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-phase-settled">
                   Live today
                 </span>
               </div>
-              <p className="mt-3 font-sans text-sm leading-relaxed text-slate-300">
+              <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
                 Security collateral. Bonded $COSMO that makes maker behavior accountable and
                 slashable. Proven on Supra Mainnet through the community-maker settlement.
               </p>
             </div>
-            <div className="rounded-xl border border-sky-500/30 bg-sky-500/[0.05] p-5">
+            <div className="rounded-xl border border-phase-proof/30 bg-phase-proof/[0.05] p-5">
               <div className="flex items-center gap-2">
-                <FlaskConical className="h-4 w-4 text-sky-300" />
-                <h2 className="font-mono text-sm font-semibold text-slate-100">
+                <FlaskConical className="h-4 w-4 text-phase-proof" />
+                <h2 className="font-mono text-sm font-semibold text-ink-0">
                   Community Maker Capital
                 </h2>
-                <span className="ml-auto rounded-full border border-sky-500/40 bg-sky-500/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-sky-300">
+                <span className="ml-auto rounded-full border border-phase-proof/40 bg-phase-proof/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-phase-proof">
                   Research
                 </span>
               </div>
-              <p className="mt-3 font-sans text-sm leading-relaxed text-slate-300">
+              <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
                 Possible future maker inventory. Community-provided capital operating under
                 transparent, restrictive rules — strictly separated from the security bond.
               </p>
@@ -132,10 +132,10 @@ export default function MakerCapital() {
           </section>
 
           {/* risk split */}
-          <section className="mt-8 rounded-xl border border-white/10 bg-white/[0.02] p-5">
+          <section className="mt-8 rounded-xl border border-line-base bg-surface-1 p-5">
             <div className="flex items-center gap-2">
-              <Scale className="h-4 w-4 text-slate-400" />
-              <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+              <Scale className="h-4 w-4 text-ink-1" />
+              <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
                 Risk split
               </h2>
             </div>
@@ -143,56 +143,56 @@ export default function MakerCapital() {
               {RISK_SPLIT.map((r) => (
                 <div
                   key={r.who}
-                  className="rounded-lg border border-white/5 bg-black/20 px-4 py-3"
+                  className="rounded-lg border border-line-subtle bg-surface-inset px-4 py-3"
                 >
                   <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    <span className="font-mono text-sm text-slate-100">{r.who}</span>
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-sky-300">
+                    <span className="font-mono text-sm text-ink-0">{r.who}</span>
+                    <span className="font-mono text-[11px] uppercase tracking-wider text-phase-proof">
                       {r.takes}
                     </span>
                   </div>
-                  <p className="mt-1 font-sans text-xs leading-relaxed text-slate-400">{r.note}</p>
+                  <p className="mt-1 font-sans text-xs leading-relaxed text-ink-1">{r.note}</p>
                 </div>
               ))}
             </div>
           </section>
 
           {/* why this matters */}
-          <section className="mt-8 rounded-xl border border-white/10 bg-white/[0.02] p-5">
-            <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+          <section className="mt-8 rounded-xl border border-line-base bg-surface-1 p-5">
+            <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
               Why this matters
             </h2>
-            <p className="mt-3 font-sans text-sm leading-relaxed text-slate-300">
+            <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
               The next wave of DeFi market making may be agent-managed and vault-based. Before
               community capital can safely participate, the system needs clear risk separation:
             </p>
-            <ul className="mt-3 space-y-1.5 font-sans text-sm leading-relaxed text-slate-300">
+            <ul className="mt-3 space-y-1.5 font-sans text-sm leading-relaxed text-ink-1">
               <li>· capital providers supply inventory</li>
               <li>· operators provide slashable accountability</li>
               <li>· policy envelopes constrain what agents are allowed to do</li>
               <li>· settlement proves the outcome on-chain</li>
             </ul>
-            <p className="mt-3 font-sans text-sm leading-relaxed text-slate-300">
+            <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
               Community Maker Capital is COSMO&apos;s research direction for that future.
             </p>
           </section>
 
           {/* policy envelope */}
-          <section className="mt-8 rounded-xl border border-white/10 bg-white/[0.02] p-5">
+          <section className="mt-8 rounded-xl border border-line-base bg-surface-1 p-5">
             <div className="flex items-center gap-2">
-              <SlidersHorizontal className="h-4 w-4 text-slate-400" />
-              <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+              <SlidersHorizontal className="h-4 w-4 text-ink-1" />
+              <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
                 Policy-envelope concept
               </h2>
             </div>
-            <p className="mt-3 font-sans text-sm leading-relaxed text-slate-300">
+            <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
               A future version could restrict maker activity through:
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               {ENVELOPE.map((e) => (
                 <span
                   key={e}
-                  className="rounded-full border border-white/15 bg-white/[0.04] px-3 py-1 font-mono text-[11px] text-slate-300"
+                  className="rounded-full border border-line-base bg-surface-2 px-3 py-1 font-mono text-[11px] text-ink-1"
                 >
                   {e}
                 </span>
@@ -201,10 +201,10 @@ export default function MakerCapital() {
           </section>
 
           {/* design questions */}
-          <section className="mt-8 rounded-xl border border-white/10 bg-white/[0.02] p-5">
+          <section className="mt-8 rounded-xl border border-line-base bg-surface-1 p-5">
             <div className="flex items-center gap-2">
-              <HelpCircle className="h-4 w-4 text-slate-400" />
-              <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+              <HelpCircle className="h-4 w-4 text-ink-1" />
+              <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
                 Important design questions
               </h2>
             </div>
@@ -212,25 +212,25 @@ export default function MakerCapital() {
               {QUESTIONS.map((q) => (
                 <li
                   key={q}
-                  className="rounded-lg border border-white/5 bg-black/20 px-3 py-2 font-sans text-xs leading-relaxed text-slate-300"
+                  className="rounded-lg border border-line-subtle bg-surface-inset px-3 py-2 font-sans text-xs leading-relaxed text-ink-1"
                 >
                   {q}
                 </li>
               ))}
             </ul>
-            <p className="mt-4 font-mono text-[11px] leading-relaxed text-slate-500">
+            <p className="mt-4 font-mono text-[11px] leading-relaxed text-ink-2">
               These questions are structured as decision points in an ADR draft
               (adr-community-maker-capital-DRAFT-2026-07-04). None of them are decided.
             </p>
           </section>
 
           {/* hard disclaimers */}
-          <aside className="mt-8 rounded-xl border border-amber-500/30 bg-amber-500/[0.06] p-5">
+          <aside className="mt-8 rounded-xl border border-phase-warn/30 bg-phase-warn/[0.06] p-5">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-amber-300" />
-              <h2 className="font-mono text-sm font-semibold text-amber-200">Hard boundaries</h2>
+              <AlertTriangle className="h-4 w-4 text-phase-warn" />
+              <h2 className="font-mono text-sm font-semibold text-phase-warn">Hard boundaries</h2>
             </div>
-            <ul className="mt-3 grid gap-x-6 gap-y-1.5 font-mono text-[12px] text-slate-300 sm:grid-cols-2">
+            <ul className="mt-3 grid gap-x-6 gap-y-1.5 font-mono text-[12px] text-ink-1 sm:grid-cols-2">
               {DISCLAIMERS.map((d) => (
                 <li key={d}>· {d}</li>
               ))}
@@ -238,7 +238,7 @@ export default function MakerCapital() {
           </aside>
 
           {/* footer honesty line */}
-          <p className="mt-10 font-mono text-[11px] leading-relaxed text-slate-600">
+          <p className="mt-10 font-mono text-[11px] leading-relaxed text-ink-2">
             Static research content. No wallet actions, no deposits, no on-chain interaction on
             this page. The live system today is the bonded security vault and the settled
             community-maker proof — nothing on this page changes that.

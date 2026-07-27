@@ -179,20 +179,20 @@ export default function CommunityRfq() {
           {/* ── header ── */}
           <header className="max-w-2xl">
             <div className="mb-5 flex items-center gap-3">
-              <span className="inline-flex h-2 w-2 rounded-full bg-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.8)]" />
-              <span className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+              <span className="inline-flex h-2 w-2 rounded-full bg-phase-active shadow-[0_0_10px_rgba(168,85,247,0.8)]" />
+              <span className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
                 Controlled Community Experiment · Stage 1
               </span>
             </div>
-            <h1 className="font-mono text-3xl font-bold tracking-tight text-slate-100 md:text-5xl">
+            <h1 className="font-mono text-3xl font-bold tracking-tight text-ink-0 md:text-5xl">
               Controlled Community Experiment
             </h1>
-            <p className="mt-4 font-sans text-lg text-slate-300">
+            <p className="mt-4 font-sans text-lg text-ink-1">
               An early experiment in machine-to-machine commerce. An allowlisted wallet can preview a
               small supUSDC → wCOSMO request, Kahless can quote, and COSMO can settle the selected
               request atomically on Supra Mainnet. This is not a public market or a permissionless RFQ venue.
             </p>
-            <p className="mt-2 font-mono text-sm text-amber-300">
+            <p className="mt-2 font-mono text-sm text-phase-warn">
               Intent-only preview. No funds move.
             </p>
           </header>
@@ -204,7 +204,7 @@ export default function CommunityRfq() {
                 type="button"
                 onClick={connect}
                 disabled={connecting}
-                className="inline-flex items-center gap-2 rounded-lg border border-purple-500/50 bg-purple-600/20 px-5 py-3 font-mono text-sm text-purple-100 transition-all hover:border-purple-400 hover:bg-purple-600/30 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-lg border border-phase-active/50 bg-phase-active/20 px-5 py-3 font-mono text-sm text-phase-active transition-all hover:border-phase-active hover:bg-phase-active/30 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {connecting ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -217,13 +217,13 @@ export default function CommunityRfq() {
               <button
                 type="button"
                 onClick={disconnect}
-                className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 font-mono text-xs text-slate-400 transition-all hover:border-white/30 hover:text-white"
+                className="inline-flex items-center gap-2 rounded-lg border border-line-base px-4 py-2 font-mono text-xs text-ink-1 transition-all hover:border-line-strong hover:text-white"
               >
                 Disconnect
               </button>
             )}
             {notFound && (
-              <p className="mt-3 font-mono text-xs text-amber-400">
+              <p className="mt-3 font-mono text-xs text-phase-warn">
                 StarKey wallet not detected. Install the StarKey extension and reload.
               </p>
             )}
@@ -253,8 +253,8 @@ export default function CommunityRfq() {
           </div>
 
           {/* ── intent builder (fixed pair) ── */}
-          <section className="mt-8 rounded-xl border border-white/10 bg-white/[0.02] p-5">
-            <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+          <section className="mt-8 rounded-xl border border-line-base bg-surface-1 p-5">
+            <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
               Build RFQ intent
             </h2>
 
@@ -269,7 +269,7 @@ export default function CommunityRfq() {
                 accent="cyan"
               />
               <div className="flex items-center justify-center">
-                <ArrowRight className="h-5 w-5 rotate-90 text-slate-600 md:rotate-0" />
+                <ArrowRight className="h-5 w-5 rotate-90 text-ink-2 md:rotate-0" />
               </div>
               <TokenLeg
                 role="Kahless quotes"
@@ -305,17 +305,17 @@ export default function CommunityRfq() {
               type="button"
               onClick={captureIntent}
               disabled={!connected || !eligible || !amountsValid}
-              className="mt-6 inline-flex items-center gap-2 rounded-lg border border-cyan-500/40 bg-cyan-500/10 px-5 py-3 font-mono text-sm text-cyan-100 transition-all hover:border-cyan-400 hover:bg-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-40"
+              className="mt-6 inline-flex items-center gap-2 rounded-lg border border-phase-proof/40 bg-phase-proof/10 px-5 py-3 font-mono text-sm text-phase-proof transition-all hover:border-phase-proof hover:bg-phase-proof/20 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <FileText className="h-4 w-4" />
               Preview intent
             </button>
             {!connected ? (
-              <p className="mt-3 font-mono text-[11px] text-slate-500">
+              <p className="mt-3 font-mono text-[11px] text-ink-2">
                 Connect a wallet to build an intent preview.
               </p>
             ) : !eligible ? (
-              <p className="mt-3 font-mono text-[11px] text-amber-400">
+              <p className="mt-3 font-mono text-[11px] text-phase-warn">
                 Intent preview is limited to allowlisted COSMO holder wallets. This wallet is not on
                 the allowlist — you can read the page, but cannot generate an intent.
               </p>
@@ -324,10 +324,10 @@ export default function CommunityRfq() {
 
           {/* ── intent preview ── */}
           {intent && (
-            <section className="mt-6 rounded-xl border border-emerald-500/30 bg-emerald-500/[0.06] p-5">
+            <section className="mt-6 rounded-xl border border-phase-settled/30 bg-phase-settled/[0.06] p-5">
               <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4 text-emerald-300" />
-                <h3 className="font-mono text-sm text-slate-100">RFQ intent — preview only</h3>
+                <FileText className="h-4 w-4 text-phase-settled" />
+                <h3 className="font-mono text-sm text-ink-0">RFQ intent — preview only</h3>
               </div>
               <dl className="mt-4 grid gap-3 font-mono text-xs sm:grid-cols-2">
                 <PreviewRow k="requester" v={shortAddr(intent.requester)} />
@@ -349,7 +349,7 @@ export default function CommunityRfq() {
                   v={`${minAmountOut} ${PAIR.tokenOut.symbol}  ·  ${intent.minAmountOutBase} base`}
                 />
               </dl>
-              <p className="mt-4 font-sans text-sm leading-relaxed text-slate-300">
+              <p className="mt-4 font-sans text-sm leading-relaxed text-ink-1">
                 This is an intent preview only. No request was created, no quote was requested, and
                 no funds moved. No on-chain transaction was sent.
               </p>
@@ -357,17 +357,17 @@ export default function CommunityRfq() {
           )}
 
           {/* ── Stage 2 — locked ── */}
-          <section className="mt-8 rounded-xl border border-slate-600/40 bg-slate-500/[0.04] p-5 opacity-90">
+          <section className="mt-8 rounded-xl border border-line-base bg-white/[0.03] p-5 opacity-90">
             <div className="flex items-center gap-2">
-              <Lock className="h-4 w-4 text-slate-400" />
-              <h3 className="font-mono text-sm text-slate-200">
+              <Lock className="h-4 w-4 text-ink-1" />
+              <h3 className="font-mono text-sm text-ink-0">
                 Stage 2 — Controlled on-chain RFQ
               </h3>
-              <span className="ml-auto rounded-full border border-slate-500/40 bg-slate-500/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-slate-400">
+              <span className="ml-auto rounded-full border border-line-base bg-white/[0.02] px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-1">
                 Locked
               </span>
             </div>
-            <p className="mt-3 font-sans text-sm text-slate-400">
+            <p className="mt-3 font-sans text-sm text-ink-1">
               A real, controlled on-chain round-trip is gated. It requires:
             </p>
             <ul className="mt-3 space-y-2">
@@ -377,18 +377,18 @@ export default function CommunityRfq() {
                 'Manual, targeted K1 quote — no automatic open maker response',
                 'A separate explicit GO before any Mainnet transaction',
               ].map((req) => (
-                <li key={req} className="flex items-start gap-2 font-mono text-[12px] text-slate-400">
-                  <Lock className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-slate-500" />
+                <li key={req} className="flex items-start gap-2 font-mono text-[12px] text-ink-1">
+                  <Lock className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-ink-2" />
                   {req}
                 </li>
               ))}
             </ul>
-            <p className="mt-4 font-sans text-sm text-slate-400">
+            <p className="mt-4 font-sans text-sm text-ink-1">
               Meanwhile, on the guarded test pair, an autonomous maker is already quoting this
               market on mainnet —{' '}
               <Link
                 href="/rfq/"
-                className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300"
+                className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof"
               >
                 watch it live
               </Link>
@@ -400,12 +400,12 @@ export default function CommunityRfq() {
           <MakerWatchlist />
 
           {/* ── caveat ── */}
-          <aside className="mt-8 rounded-xl border border-amber-500/30 bg-amber-500/[0.06] p-5">
-            <p className="font-sans text-sm leading-relaxed text-slate-300">
+          <aside className="mt-8 rounded-xl border border-phase-warn/30 bg-phase-warn/[0.06] p-5">
+            <p className="font-sans text-sm leading-relaxed text-ink-1">
               This is a controlled demo, not a permissionless market. It uses allowlisted wallets,
               pre-checked assets and small limits.
             </p>
-            <p className="mt-2 font-mono text-[11px] leading-relaxed text-slate-500">
+            <p className="mt-2 font-mono text-[11px] leading-relaxed text-ink-2">
               {ALLOWLIST_STAGE} — Stage 1 is intent-only: no signature, no token movement, no
               on-chain transaction, no live RPC. The only network action is the StarKey connect.
             </p>
@@ -442,12 +442,12 @@ function MakerWatchlist() {
   }, []);
 
   return (
-    <section className="mt-8 rounded-xl border border-purple-500/30 bg-purple-500/[0.05] p-5">
+    <section className="mt-8 rounded-xl border border-phase-active/30 bg-phase-active/[0.05] p-5">
       <div className="flex items-center gap-2">
-        <Users className="h-4 w-4 text-purple-300" />
-        <h3 className="font-mono text-sm text-slate-100">Maker Watchlist — express interest</h3>
+        <Users className="h-4 w-4 text-phase-active" />
+        <h3 className="font-mono text-sm text-ink-0">Maker Watchlist — express interest</h3>
       </div>
-      <p className="mt-3 font-sans text-sm leading-relaxed text-slate-300">
+      <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
         COSMO&apos;s maker-execution primitive opens slots one at a time, under hard bond caps.
         Slot 1 (M2) settled its first agent-native RFQ round-trip on Supra Mainnet on 2026-07-04
         and passed its 72-hour observation window without incident. The next slot does not open
@@ -456,12 +456,12 @@ function MakerWatchlist() {
         infrastructure — controlled RFQ participation, your own keys, your own bond — put
         yourself on the watchlist.
       </p>
-      <ul className="mt-3 space-y-1.5 font-mono text-[12px] text-slate-400">
+      <ul className="mt-3 space-y-1.5 font-mono text-[12px] text-ink-1">
         <li>· current v1 assumption: 100 wCOSMO operator bond, one agent, quote-server allowlist</li>
         <li>· onboarding is manual and capped — no open signup, no automatic approval</li>
       </ul>
-      <p className="mt-3 rounded-lg border border-white/5 bg-black/20 px-3 py-2 font-sans text-[12px] leading-relaxed text-slate-400">
-        <span className="font-mono text-slate-300">Need wCOSMO?</span> wCOSMO is wrapped COSMO
+      <p className="mt-3 rounded-lg border border-line-subtle bg-surface-inset px-3 py-2 font-sans text-[12px] leading-relaxed text-ink-1">
+        <span className="font-mono text-ink-1">Need wCOSMO?</span> wCOSMO is wrapped COSMO
         used by the maker vault as operator bond collateral. Wrapping does not grant maker
         access. Maker onboarding remains manual, capped and allowlisted. If a new slot is
         approved, the operator receives the exact wrap and bond instructions during onboarding.
@@ -470,16 +470,16 @@ function MakerWatchlist() {
         <button
           type="button"
           onClick={() => void copyTemplate()}
-          className="inline-flex items-center gap-2 rounded-lg border border-purple-500/50 bg-purple-600/20 px-4 py-2 font-mono text-xs text-purple-100 transition-all hover:border-purple-400 hover:bg-purple-600/30"
+          className="inline-flex items-center gap-2 rounded-lg border border-phase-active/50 bg-phase-active/20 px-4 py-2 font-mono text-xs text-phase-active transition-all hover:border-phase-active hover:bg-phase-active/30"
         >
           {copied ? <Check className="h-3.5 w-3.5" /> : <ClipboardCopy className="h-3.5 w-3.5" />}
           {copied ? 'Copied' : 'Copy interest template'}
         </button>
-        <span className="font-mono text-[11px] text-slate-500">
+        <span className="font-mono text-[11px] text-ink-2">
           Send it via the COSMO community channel.
         </span>
       </div>
-      <pre className="mt-4 overflow-x-auto whitespace-pre-wrap rounded-lg border border-dashed border-slate-600 bg-black/40 p-4 font-mono text-[11px] leading-relaxed text-slate-400">
+      <pre className="mt-4 overflow-x-auto whitespace-pre-wrap rounded-lg border border-dashed border-line-strong bg-surface-inset p-4 font-mono text-[11px] leading-relaxed text-ink-1">
         {INTEREST_TEMPLATE}
       </pre>
     </section>
@@ -500,10 +500,10 @@ function StatusCard({
   mono?: boolean;
 }) {
   const toneCls =
-    tone === 'ok' ? 'text-emerald-300' : tone === 'bad' ? 'text-rose-300' : 'text-slate-400';
+    tone === 'ok' ? 'text-phase-settled' : tone === 'bad' ? 'text-phase-fault' : 'text-ink-1';
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
-      <div className="flex items-center gap-2 text-slate-500">
+    <div className="rounded-xl border border-line-base bg-surface-1 p-4">
+      <div className="flex items-center gap-2 text-ink-2">
         {icon}
         <span className="font-mono text-[11px] uppercase tracking-wider">{label}</span>
       </div>
@@ -529,15 +529,15 @@ function TokenLeg({
   decimals: number;
   accent: 'cyan' | 'purple';
 }) {
-  const ring = accent === 'cyan' ? 'border-cyan-500/30' : 'border-purple-500/30';
-  const text = accent === 'cyan' ? 'text-cyan-200' : 'text-purple-200';
+  const ring = accent === 'cyan' ? 'border-phase-proof/30' : 'border-phase-active/30';
+  const text = accent === 'cyan' ? 'text-phase-proof' : 'text-phase-active';
   return (
-    <div className={cn('rounded-xl border bg-white/[0.02] p-4', ring)}>
-      <div className="font-mono text-[10px] uppercase tracking-wider text-slate-500">{role}</div>
+    <div className={cn('rounded-xl border bg-surface-1 p-4', ring)}>
+      <div className="font-mono text-[10px] uppercase tracking-wider text-ink-2">{role}</div>
       <div className={cn('mt-1 font-mono text-lg', text)}>{symbol}</div>
-      <div className="font-sans text-xs text-slate-400">{name}</div>
-      <div className="mt-2 break-all font-mono text-[10px] text-slate-600">{metadata}</div>
-      <div className="font-mono text-[10px] text-slate-600">{decimals} decimals · non-dispatchable</div>
+      <div className="font-sans text-xs text-ink-1">{name}</div>
+      <div className="mt-2 break-all font-mono text-[10px] text-ink-2">{metadata}</div>
+      <div className="font-mono text-[10px] text-ink-2">{decimals} decimals · non-dispatchable</div>
     </div>
   );
 }
@@ -560,7 +560,7 @@ function AmountField({
   const invalid = value.trim() !== '' && base === null;
   return (
     <label className="block">
-      <span className="font-mono text-[11px] uppercase tracking-wider text-slate-500">{label}</span>
+      <span className="font-mono text-[11px] uppercase tracking-wider text-ink-2">{label}</span>
       <input
         type="text"
         inputMode="decimal"
@@ -568,11 +568,11 @@ function AmountField({
         disabled={disabled}
         onChange={(e) => onChange(e.target.value)}
         className={cn(
-          'mt-2 w-full rounded-lg border bg-black/30 px-3 py-2 font-mono text-sm text-slate-100 outline-none transition-colors disabled:opacity-40',
-          invalid ? 'border-rose-500/50' : 'border-white/10 focus:border-cyan-500/50',
+          'mt-2 w-full rounded-lg border bg-surface-inset px-3 py-2 font-mono text-sm text-ink-0 outline-none transition-colors disabled:opacity-40',
+          invalid ? 'border-phase-fault/50' : 'border-line-base focus:border-phase-proof/50',
         )}
       />
-      <span className={cn('mt-1 block font-mono text-[10px]', invalid ? 'text-rose-400' : 'text-slate-600')}>
+      <span className={cn('mt-1 block font-mono text-[10px]', invalid ? 'text-phase-fault' : 'text-ink-2')}>
         {invalid ? `Enter a number > 0 and ≤ ${MAX_AMOUNT}` : base !== null ? `${hint} · ${base} base units` : hint}
       </span>
     </label>
@@ -581,9 +581,9 @@ function AmountField({
 
 function PreviewRow({ k, v }: { k: string; v: string }) {
   return (
-    <div className="rounded-lg border border-white/5 bg-black/20 px-3 py-2">
-      <div className="text-[10px] uppercase tracking-wider text-slate-500">{k}</div>
-      <div className="mt-0.5 break-all text-slate-200">{v}</div>
+    <div className="rounded-lg border border-line-subtle bg-surface-inset px-3 py-2">
+      <div className="text-[10px] uppercase tracking-wider text-ink-2">{k}</div>
+      <div className="mt-0.5 break-all text-ink-0">{v}</div>
     </div>
   );
 }

@@ -200,9 +200,9 @@ export default function JobDetail() {
 
             {/* ── Provider-wallet hint (never a redirect) ── */}
             {walletIsProvider && (
-              <div className="mt-3 rounded-lg border border-phase-proof/30 bg-phase-proof/[0.06] p-3">
-                <p className="flex items-start gap-1.5 font-sans text-sm leading-relaxed text-phase-proof">
-                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-phase-proof" />
+              <div className="mt-3 rounded-lg border border-phase-warn/30 bg-phase-warn/[0.06] p-3">
+                <p className="flex items-start gap-1.5 font-sans text-sm leading-relaxed text-phase-warn">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-phase-warn" />
                   <span>
                     You are connected with a provider wallet for this job. This page is the
                     buyer&apos;s view — offers and delivery happen on the provider view.{' '}

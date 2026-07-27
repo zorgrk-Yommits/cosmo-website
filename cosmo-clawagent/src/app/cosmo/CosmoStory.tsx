@@ -116,25 +116,25 @@ const agents = [
 
 const accentMap = {
   green: {
-    border: 'border-emerald-500/30',
-    bg: 'bg-emerald-500/10',
-    text: 'text-emerald-400',
-    dot: 'bg-emerald-400',
-    badge: 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30',
+    border: 'border-phase-settled/30',
+    bg: 'bg-phase-settled/10',
+    text: 'text-phase-settled',
+    dot: 'bg-phase-settled',
+    badge: 'bg-phase-settled/15 text-phase-settled border border-phase-settled/30',
   },
   cyan: {
-    border: 'border-cyan-500/30',
-    bg: 'bg-cyan-500/10',
-    text: 'text-cyan-400',
-    dot: 'bg-cyan-400',
-    badge: 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30',
+    border: 'border-phase-proof/30',
+    bg: 'bg-phase-proof/10',
+    text: 'text-phase-proof',
+    dot: 'bg-phase-proof',
+    badge: 'bg-phase-proof/15 text-phase-proof border border-phase-proof/30',
   },
   purple: {
-    border: 'border-purple-500/30',
-    bg: 'bg-purple-500/10',
-    text: 'text-purple-400',
-    dot: 'bg-purple-400',
-    badge: 'bg-purple-500/15 text-purple-300 border border-purple-500/30',
+    border: 'border-phase-active/30',
+    bg: 'bg-phase-active/10',
+    text: 'text-phase-active',
+    dot: 'bg-phase-active',
+    badge: 'bg-phase-active/15 text-phase-active border border-phase-active/30',
   },
 };
 
@@ -150,9 +150,9 @@ export default function CosmoStory() {
           {/* Left: Text block */}
           <div className="flex-1 pl-4 lg:pl-8">
             <div className="flex flex-wrap items-center gap-2 mb-8">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/25">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="font-mono text-xs text-purple-300 tracking-widest uppercase">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-phase-active/10 border border-phase-active/25">
+                <span className="w-2 h-2 rounded-full bg-phase-settled animate-pulse" />
+                <span className="font-mono text-xs text-phase-active tracking-widest uppercase">
                   COSMO live on Supra Mainnet
                 </span>
               </div>
@@ -160,17 +160,17 @@ export default function CosmoStory() {
 
             <h1 className="text-5xl md:text-7xl font-mono font-bold tracking-tight mb-6 text-left">
               <span className="neon-text-purple">COSMO</span>
-              <span className="block text-2xl md:text-3xl text-slate-400 font-normal mt-2 tracking-wide">
+              <span className="block text-2xl md:text-3xl text-ink-1 font-normal mt-2 tracking-wide">
                 Execution &amp; Accountability Layer for the Agent Economy
               </span>
             </h1>
 
-            <p className="text-slate-200 text-xl leading-relaxed mb-6 font-mono max-w-xl">
+            <p className="text-ink-0 text-xl leading-relaxed mb-6 font-mono max-w-xl">
               COSMO turns agent intent into accountable on-chain execution — bonded commitments,
               capabilities, and atomic settlement that either completes in full or reverts.
             </p>
 
-            <p className="text-slate-400 text-lg leading-relaxed mb-10 font-sans max-w-xl">
+            <p className="text-ink-1 text-lg leading-relaxed mb-10 font-sans max-w-xl">
               COSMO is the execution layer of the agent stack on Supra: SupraOS coordinates
               agents, SupraFX moves markets and liquidity, COSMO settles the work — bonded,
               atomic, accountable. Live on Supra Mainnet today; the proofs on this page link
@@ -180,7 +180,7 @@ export default function CosmoStory() {
             <div className="flex flex-wrap items-center justify-start gap-4">
               <Link
                 href="/demo/"
-                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-mono font-semibold transition-all hover:shadow-[0_0_30px_rgba(139,92,246,0.5)]"
+                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-phase-active hover:bg-phase-active text-white font-mono font-semibold transition-all hover:shadow-[0_0_30px_rgba(139,92,246,0.5)]"
               >
                 <Activity className="w-4 h-4" />
                 See the proof — live Mainnet round-trip
@@ -188,7 +188,7 @@ export default function CosmoStory() {
               <a
                 href="/COSMO_Manifesto_v4.0.pdf"
                 download
-                className="flex items-center gap-2 px-6 py-3 rounded-xl border border-purple-500/30 text-purple-300 hover:border-purple-400 hover:text-purple-200 font-mono transition-all"
+                className="flex items-center gap-2 px-6 py-3 rounded-xl border border-phase-active/30 text-phase-active hover:border-phase-active hover:text-phase-active font-mono transition-all"
               >
                 Read the Manifesto — v4.0
                 <ArrowRight className="w-4 h-4" />
@@ -219,10 +219,10 @@ export default function CosmoStory() {
           ].map((stat) => (
             <div
               key={stat.label}
-              className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 text-center backdrop-blur"
+              className="bg-surface-1 border border-white/[0.08] rounded-xl p-4 text-center backdrop-blur"
             >
               <div className="font-mono text-xl font-bold text-white">{stat.value}</div>
-              <div className="font-mono text-xs text-slate-500 mt-1 uppercase tracking-wider">
+              <div className="font-mono text-xs text-ink-2 mt-1 uppercase tracking-wider">
                 {stat.label}
               </div>
             </div>
@@ -235,10 +235,10 @@ export default function CosmoStory() {
           itself. Honest limits are bundled into the amber box instead of dampening every
           paragraph. */}
       <section className="relative z-10 max-w-7xl mx-auto px-6 pb-8">
-        <div className="rounded-2xl border border-purple-500/20 bg-white/[0.02] p-8 md:p-10 backdrop-blur">
+        <div className="rounded-2xl border border-phase-active/20 bg-surface-1 p-8 md:p-10 backdrop-blur">
           <div className="flex items-center gap-2 mb-5">
-            <span className="w-2 h-2 rounded-full bg-purple-400" />
-            <span className="font-mono text-xs uppercase tracking-[0.2em] text-purple-300/80">
+            <span className="w-2 h-2 rounded-full bg-phase-active" />
+            <span className="font-mono text-xs uppercase tracking-[0.2em] text-phase-active/80">
               The primitive
             </span>
           </div>
@@ -257,28 +257,29 @@ export default function CosmoStory() {
 
           {/* The chain claims LIVE; this line is what backs it. Keep it as evidence with
               links, never as an adjective. */}
-          {/* slate-400, not slate-500: at 11px the dimmer token lands at 4.23:1 and misses AA.
-              This line is the evidence for the chain's LIVE badges — dimming it defeats it. */}
-          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[11px] text-slate-400">
-            <span className="text-slate-300">Proven on Supra Mainnet:</span>
-            <Link href="/demo/" className="text-purple-300/80 underline-offset-4 hover:underline">
+          {/* ink-1, not ink-2: at 11px ink-1 measures 9.1:1 against the page ground while
+              ink-2 only just clears AA at 4.8:1. This line is the evidence for the chain's
+              LIVE badges — dimming it defeats it. */}
+          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[11px] text-ink-1">
+            <span className="text-ink-1">Proven on Supra Mainnet:</span>
+            <Link href="/demo/" className="text-phase-active/80 underline-offset-4 hover:underline">
               RFQ round-trip settled
             </Link>
-            <Link href="/compute/" className="text-purple-300/80 underline-offset-4 hover:underline">
+            <Link href="/compute/" className="text-phase-active/80 underline-offset-4 hover:underline">
               3 outcome-based compute jobs settled
             </Link>
             <span>all three license gates fired and passed</span>
           </div>
 
           {/* Honest limits, bundled and visible — same pattern as /compute's honesty box. */}
-          <div className="mt-10 rounded-xl border border-amber-500/20 bg-amber-500/[0.04] p-5">
+          <div className="mt-10 rounded-xl border border-phase-warn/20 bg-phase-warn/[0.04] p-5">
             <div className="flex items-center gap-2 mb-2">
-              <Lock className="h-4 w-4 text-amber-300" />
-              <h3 className="font-mono text-sm text-slate-100">
+              <Lock className="h-4 w-4 text-phase-warn" />
+              <h3 className="font-mono text-sm text-ink-0">
                 Guarded v1 — what is deliberately small
               </h3>
             </div>
-            <p className="font-sans text-sm leading-relaxed text-slate-400">
+            <p className="font-sans text-sm leading-relaxed text-ink-1">
               The primitive is proven end-to-end on Mainnet; the access to it is not open. Quotes
               flow through a signed quote path we operate — a quality gate, not a permissionless
               market. The outcome-based compute market runs one active job per provider on
@@ -288,10 +289,10 @@ export default function CosmoStory() {
               signed outputs, API responses — is where the primitive is built to extend next, and
               it is not built yet.
             </p>
-            <p className="mt-3 font-sans text-sm leading-relaxed text-slate-400">
+            <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
               Want to hold the token? A small, capped direct sale of wCOSMO against SUPRA is
               live as a pilot —{' '}
-              <a href="/buy/" className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300">
+              <a href="/buy/" className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof">
                 buy wCOSMO
               </a>{' '}
               (hard on-chain caps, floor-protected price, no buy-back commitment; every caveat
@@ -310,15 +311,15 @@ export default function CosmoStory() {
           <h2 className="font-mono text-3xl font-bold text-white mb-2">
             {'>'} The EOM Swarm
           </h2>
-          <p className="text-slate-300 font-mono text-sm max-w-3xl mx-auto leading-relaxed">
+          <p className="text-ink-1 font-mono text-sm max-w-3xl mx-auto leading-relaxed">
             An agent swarm doesn&apos;t need another chat layer. It needs a way to make commitments
             enforceable. COSMO gives agents that primitive:{' '}
-            <span className="text-slate-100">
+            <span className="text-ink-0">
               request, quote, bond, capability, atomic settlement, accountability.
             </span>
             <span className="blinking-cursor" />
           </p>
-          <p className="mt-4 text-slate-500 font-mono text-xs max-w-3xl mx-auto leading-relaxed">
+          <p className="mt-4 text-ink-2 font-mono text-xs max-w-3xl mx-auto leading-relaxed">
             The eight agents below are the user-facing story, expressed in SupraOS Bot Builder
             syntax: WHEN, GET, THINK, FLOW, ACT, TRANSACT. The swarm sits on top; COSMO is the
             execution and accountability layer underneath it. Only one agent runs today — COSMO,
@@ -351,7 +352,7 @@ export default function CosmoStory() {
                 </div>
 
                 {/* Agent ID */}
-                <div className="font-mono text-xs text-slate-500 mb-1">[{agent.id}]</div>
+                <div className="font-mono text-xs text-ink-2 mb-1">[{agent.id}]</div>
                 <h3 className={`font-mono text-xl font-bold mb-2 ${featured ? 'neon-text-purple' : 'text-white'}`}>
                   {agent.name}
                 </h3>
@@ -359,24 +360,24 @@ export default function CosmoStory() {
                   <span className={`tier-badge ${colors.badge}`}>
                     {agent.type}
                   </span>
-                  <span className="font-mono text-xs text-slate-500">{agent.role}</span>
+                  <span className="font-mono text-xs text-ink-2">{agent.role}</span>
                   {featured ? (
-                    <span className="ml-auto inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Live
+                    <span className="ml-auto inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-phase-settled/15 text-phase-settled border border-phase-settled/30">
+                      <span className="w-1.5 h-1.5 rounded-full bg-phase-settled animate-pulse" /> Live
                     </span>
                   ) : (
-                    <span className="ml-auto font-mono text-[10px] uppercase tracking-wider text-slate-600">planned</span>
+                    <span className="ml-auto font-mono text-[10px] uppercase tracking-wider text-ink-2">planned</span>
                   )}
                 </div>
 
-                <p className="text-slate-400 text-sm leading-relaxed font-sans">
+                <p className="text-ink-1 text-sm leading-relaxed font-sans">
                   {agent.description}
                 </p>
 
                 {featured && (
                   <Link
                     href="/demo/"
-                    className="mt-3 inline-flex items-center gap-1 font-mono text-xs text-emerald-300 hover:text-emerald-200 transition-colors"
+                    className="mt-3 inline-flex items-center gap-1 font-mono text-xs text-phase-settled hover:text-phase-settled transition-colors"
                   >
                     See the live round-trip
                     <ArrowRight className="w-3 h-3" />
@@ -393,7 +394,7 @@ export default function CosmoStory() {
                 <h3 className="font-mono text-2xl font-bold text-white mb-2">
                   {'>'} BIND TO THE SWARM
                 </h3>
-                <p className="text-slate-400 font-sans text-sm max-w-lg">
+                <p className="text-ink-1 font-sans text-sm max-w-lg">
                   Stake $COSMO to secure the execution layer, earn protocol rewards, and participate in
                   the future of autonomous DeFi governance under the Imperium Protocol.
                 </p>
@@ -403,13 +404,13 @@ export default function CosmoStory() {
                   href="https://www.tadfi.online/community-tokens/COSMO"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-5 py-2.5 rounded-xl border border-purple-500/30 text-purple-300 font-mono text-sm hover:border-purple-400 transition-all"
+                  className="px-5 py-2.5 rounded-xl border border-phase-active/30 text-phase-active font-mono text-sm hover:border-phase-active transition-all"
                 >
                   Tokenomics
                 </a>
                 <Link
                   href="/demo/"
-                  className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-mono text-sm font-semibold transition-all hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]"
+                  className="px-5 py-2.5 rounded-xl bg-phase-active hover:bg-phase-active text-white font-mono text-sm font-semibold transition-all hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]"
                 >
                   Walk through the round-trip →
                 </Link>
@@ -425,7 +426,7 @@ export default function CosmoStory() {
           <h2 className="font-mono text-3xl font-bold text-white mb-2">
             {'>'} The Operator License
           </h2>
-          <p className="text-slate-400 font-mono text-sm max-w-3xl mx-auto leading-relaxed">
+          <p className="text-ink-1 font-mono text-sm max-w-3xl mx-auto leading-relaxed">
             COSMO settles for no one by default. Every quote is bound to a COSMO Operator License —
             an on-chain operator credential. Not a collectible: today it decides, on-chain, who may
             settle and how large a trade may be.
@@ -434,31 +435,31 @@ export default function CosmoStory() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Enforced today */}
-          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/[0.04] p-6">
+          <div className="rounded-2xl border border-phase-settled/30 bg-phase-settled/[0.04] p-6">
             <div className="flex items-center gap-2 mb-5">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="font-mono text-xs uppercase tracking-[0.2em] text-emerald-300/80">
+              <span className="w-2 h-2 rounded-full bg-phase-settled animate-pulse" />
+              <span className="font-mono text-xs uppercase tracking-[0.2em] text-phase-settled/80">
                 Enforced on Supra Mainnet today
               </span>
             </div>
             <ul className="space-y-4">
               <li>
                 <div className="font-mono text-sm font-bold text-white">Operator identity</div>
-                <p className="text-slate-400 text-sm font-sans leading-relaxed">
+                <p className="text-ink-1 text-sm font-sans leading-relaxed">
                   Only the agent&apos;s designated operator can have its quote accepted. A quote whose
                   operator does not match the license is rejected on-chain.
                 </p>
               </li>
               <li>
                 <div className="font-mono text-sm font-bold text-white">Active &amp; pausable</div>
-                <p className="text-slate-400 text-sm font-sans leading-relaxed">
+                <p className="text-ink-1 text-sm font-sans leading-relaxed">
                   An inactive or guardian-paused agent can neither quote nor settle. The check runs
                   again at acceptance, so a pause mid-flight stops the trade.
                 </p>
               </li>
               <li>
                 <div className="font-mono text-sm font-bold text-white">Trade-size cap</div>
-                <p className="text-slate-400 text-sm font-sans leading-relaxed">
+                <p className="text-ink-1 text-sm font-sans leading-relaxed">
                   Every trade is checked against the agent&apos;s notional ceiling before it can be
                   accepted — over-cap quotes abort.
                 </p>
@@ -466,7 +467,7 @@ export default function CosmoStory() {
             </ul>
             <Link
               href="/demo/"
-              className="mt-5 inline-flex items-center gap-1 font-mono text-xs text-emerald-300 hover:text-emerald-200 transition-colors"
+              className="mt-5 inline-flex items-center gap-1 font-mono text-xs text-phase-settled hover:text-phase-settled transition-colors"
             >
               All three gates fired and passed in the live round-trip
               <ArrowRight className="w-3 h-3" />
@@ -474,17 +475,17 @@ export default function CosmoStory() {
           </div>
 
           {/* By design — roadmap */}
-          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
+          <div className="rounded-2xl border border-line-base bg-surface-1 p-6">
             <div className="flex items-center gap-2 mb-5">
-              <span className="font-mono text-xs uppercase tracking-[0.2em] text-slate-500">
+              <span className="font-mono text-xs uppercase tracking-[0.2em] text-ink-2">
                 By design — roadmap
               </span>
-              <span className="ml-auto font-mono text-[10px] uppercase tracking-wider text-slate-600">planned</span>
+              <span className="ml-auto font-mono text-[10px] uppercase tracking-wider text-ink-2">planned</span>
             </div>
             <ul className="space-y-4">
               <li>
-                <div className="font-mono text-sm font-bold text-slate-300">History &amp; reputation</div>
-                <p className="text-slate-500 text-sm font-sans leading-relaxed">
+                <div className="font-mono text-sm font-bold text-ink-1">History &amp; reputation</div>
+                <p className="text-ink-2 text-sm font-sans leading-relaxed">
                   The license is built to accumulate a settled-trade count, missed-deadline tracking
                   and a reputation score. The fields live on-chain; wiring them into settlement is the
                   next step — today the trade record lives in the transaction events, not yet on the
@@ -492,8 +493,8 @@ export default function CosmoStory() {
                 </p>
               </li>
               <li>
-                <div className="font-mono text-sm font-bold text-slate-300">Stake &amp; slashing</div>
-                <p className="text-slate-500 text-sm font-sans leading-relaxed">
+                <div className="font-mono text-sm font-bold text-ink-1">Stake &amp; slashing</div>
+                <p className="text-ink-2 text-sm font-sans leading-relaxed">
                   Tiered notional limits and slashable stake are designed into the license; tier
                   magnitudes are still illustrative and staking is Phase-2 scope.
                 </p>
@@ -502,13 +503,13 @@ export default function CosmoStory() {
           </div>
         </div>
 
-        <p className="mt-6 text-center font-mono text-[11px] text-slate-600">
+        <p className="mt-6 text-center font-mono text-[11px] text-ink-2">
           Agent #0 ·{' '}
           <a
             href="https://suprascan.io/account/0xabd7c1df1767a626c213ffb6942c4d39158f7c2f75dbd5669b25dd6e9bd06084?network=mainnet"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-slate-500 hover:text-slate-300 transition-colors"
+            className="text-ink-2 hover:text-ink-1 transition-colors"
           >
             0xabd7c1df…6084
           </a>{' '}
@@ -520,25 +521,25 @@ export default function CosmoStory() {
           and explicitly labelled research/read-only: it must not read as a live product
           card next to the Mainnet claims above. */}
       <section className="relative z-10 max-w-7xl mx-auto px-6 pb-24">
-        <div className="rounded-2xl border border-sky-500/25 bg-sky-500/[0.03] p-6 md:p-8">
+        <div className="rounded-2xl border border-phase-proof/25 bg-phase-proof/[0.03] p-6 md:p-8">
           <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
             <div className="max-w-2xl">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-500/15 text-sky-300">
+                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-phase-proof/15 text-phase-proof">
                   <Radar className="h-3.5 w-3.5" strokeWidth={2.2} />
                 </span>
                 <h2 className="font-mono text-lg font-bold text-white">COSMO Assurance</h2>
-                <span className="rounded-full border border-sky-500/40 bg-sky-500/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-sky-300">
+                <span className="rounded-full border border-phase-proof/40 bg-phase-proof/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-phase-proof">
                   Research prototype · Read-only
                 </span>
               </div>
-              <p className="mt-3 font-sans text-sm leading-relaxed text-slate-400">
+              <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
                 Independent checks for economically critical data.
               </p>
             </div>
             <Link
               href="/assurance/"
-              className="inline-flex shrink-0 items-center gap-2 self-start rounded-xl border border-sky-500/40 bg-sky-500/10 px-5 py-2.5 font-mono text-sm text-sky-200 transition-all hover:border-sky-400 hover:bg-sky-500/15 md:self-auto"
+              className="inline-flex shrink-0 items-center gap-2 self-start rounded-xl border border-phase-proof/40 bg-phase-proof/10 px-5 py-2.5 font-mono text-sm text-phase-proof transition-all hover:border-phase-proof hover:bg-phase-proof/15 md:self-auto"
             >
               Explore Assurance
               <ArrowRight className="h-4 w-4" />

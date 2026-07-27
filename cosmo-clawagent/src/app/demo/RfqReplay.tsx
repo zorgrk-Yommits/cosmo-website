@@ -131,21 +131,21 @@ export default function RfqReplay() {
               </ControlButton>
             </div>
 
-            <div className="ml-auto flex items-center gap-4 font-mono text-xs text-slate-500">
+            <div className="ml-auto flex items-center gap-4 font-mono text-xs text-ink-2">
               <span>
                 core step{' '}
-                <span className="text-slate-200">{coreIndex + 1}</span> / {CORE_STEPS.length}
+                <span className="text-ink-0">{coreIndex + 1}</span> / {CORE_STEPS.length}
               </span>
               <span className="hidden sm:inline">
-                req <span className="text-slate-300">#{META.requestId}</span> · quote{' '}
-                <span className="text-slate-300">#{META.quoteId}</span>
+                req <span className="text-ink-1">#{META.requestId}</span> · quote{' '}
+                <span className="text-ink-1">#{META.quoteId}</span>
               </span>
             </div>
           </div>
 
           {/* hint when viewing a setup step off the core path */}
           {!onCorePosition && (
-            <p className="mt-3 font-mono text-[11px] text-slate-500">
+            <p className="mt-3 font-mono text-[11px] text-ink-2">
               Viewing a deploy-phase step. Use the controls or click a rail node to return to the
               core loop.
             </p>
@@ -187,10 +187,10 @@ export default function RfqReplay() {
           <Roles />
 
           {/* footer honesty line */}
-          <p className="mt-10 font-mono text-[11px] leading-relaxed text-slate-600">
+          <p className="mt-10 font-mono text-[11px] leading-relaxed text-ink-2">
             Pure data visualisation from a static snapshot ({META.runDate}, {META.network},
             chain {META.chainId}). No wallet, no live RPC. Package{' '}
-            <span className="text-slate-500">{META.packageAddr.slice(0, 10)}…{META.packageAddr.slice(-6)}</span>.
+            <span className="text-ink-2">{META.packageAddr.slice(0, 10)}…{META.packageAddr.slice(-6)}</span>.
           </p>
         </div>
       </div>
@@ -222,8 +222,8 @@ function ControlButton({
         'flex h-10 w-10 items-center justify-center rounded-lg border font-mono transition-all',
         'disabled:cursor-not-allowed disabled:opacity-30',
         primary
-          ? 'border-purple-500/50 bg-purple-600/20 text-purple-100 hover:border-purple-400 hover:bg-purple-600/30 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]'
-          : 'border-white/10 text-slate-300 hover:border-white/30 hover:text-white',
+          ? 'border-phase-active/50 bg-phase-active/20 text-phase-active hover:border-phase-active hover:bg-phase-active/30 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]'
+          : 'border-line-base text-ink-1 hover:border-line-strong hover:text-white',
       )}
     >
       {children}

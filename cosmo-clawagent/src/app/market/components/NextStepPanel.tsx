@@ -43,8 +43,8 @@ export function BlockerCards({ blockers }: { blockers: NextBlocker[] }) {
   return (
     <div className="space-y-2">
       {blockers.map((b) => (
-        <div key={b.code} className="rounded-lg border border-phase-proof/30 bg-phase-proof/[0.06] p-3">
-          <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-phase-proof">
+        <div key={b.code} className="rounded-lg border border-phase-warn/30 bg-phase-warn/[0.06] p-3">
+          <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-phase-warn">
             <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
             {b.cause}
           </p>
@@ -103,7 +103,7 @@ function OfferPicker({
                 <input type="radio" name="pick-offer" checked={picked} onChange={() => onPick(o.id)} />
                 <span className="font-mono text-sm text-ink-0">{prov?.name ?? o.providerId}</span>
                 {!ready && (
-                  <span className="rounded-full border border-phase-proof/40 bg-phase-proof/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-phase-proof">
+                  <span className="rounded-full border border-phase-warn/40 bg-phase-warn/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-phase-warn">
                     not ready
                   </span>
                 )}
@@ -116,7 +116,7 @@ function OfferPicker({
               </span>
             </label>
             {ownWallet && (
-              <p className="mt-1 flex items-start gap-1.5 pl-1 font-mono text-xs text-phase-proof">
+              <p className="mt-1 flex items-start gap-1.5 pl-1 font-mono text-xs text-phase-warn">
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                 This is the wallet you are connected with — you cannot buy from yourself.
               </p>
@@ -340,7 +340,7 @@ export default function NextStepPanel({
 
         {stage === 'backend-down' && (
           <div className="space-y-3">
-            <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-phase-proof/90">
+            <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-phase-warn/90">
               <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               Market service is unreachable — the flow is paused. Your on-chain state is safe;
               nothing is lost.
@@ -412,7 +412,7 @@ export default function NextStepPanel({
                 .
               </p>
             ) : (
-              <p className="font-mono text-xs text-phase-proof">
+              <p className="font-mono text-xs text-phase-warn">
                 Funding details are not available yet — refresh in a moment.
               </p>
             )}
@@ -503,9 +503,9 @@ export default function NextStepPanel({
             </p>
             <div className="flex items-center gap-2 font-mono text-sm">
               <Clock3
-                className={cn('h-4 w-4', secsLeft < 60 ? 'text-phase-proof' : 'text-phase-settled')}
+                className={cn('h-4 w-4', secsLeft < 60 ? 'text-phase-warn' : 'text-phase-settled')}
               />
-              <span className={cn(secsLeft < 60 ? 'text-phase-proof' : 'text-phase-settled')}>
+              <span className={cn(secsLeft < 60 ? 'text-phase-warn' : 'text-phase-settled')}>
                 Offer valid {fmtCountdown(secsLeft)}
               </span>
               <span className="text-[11px] text-ink-2">— renews automatically</span>
@@ -553,7 +553,7 @@ export default function NextStepPanel({
         {stage === 'expired-manual' && (
           <div className="space-y-4">
             <p className="flex items-start gap-1.5 font-sans text-sm leading-relaxed text-ink-1">
-              <Hourglass className="mt-0.5 h-4 w-4 shrink-0 text-phase-proof" />
+              <Hourglass className="mt-0.5 h-4 w-4 shrink-0 text-phase-warn" />
               The offer&apos;s validity window ran out. Get a fresh one — it is free and needs
               no wallet signature.
             </p>
@@ -603,7 +603,7 @@ export default function NextStepPanel({
               </p>
             )}
             {oj && oj.status === JOB_ONCHAIN_STATUS.ACTIVE && nowSec > oj.jobDeadlineSecs && (
-              <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-phase-proof">
+              <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-phase-warn">
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                 The delivery deadline has passed without a result. Delivery is no longer possible
                 on-chain, and you can get your locked funds back. Contact us and we will guide
@@ -638,7 +638,7 @@ export default function NextStepPanel({
             </div>
             {oj && oj.deliveredAt > 0 && (
               <p className="flex items-center gap-2 font-mono text-xs text-ink-1">
-                <Clock3 className="h-3.5 w-3.5 text-phase-proof" />
+                <Clock3 className="h-3.5 w-3.5 text-phase-warn" />
                 Review window until {fmtTs(oj.deliveredAt + oj.reviewWindowSecs)} — it is your
                 turn to approve. After that time, settlement can be triggered by anyone, without
                 your signature.

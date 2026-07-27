@@ -37,6 +37,7 @@
   --color-phase-active: var(--phase-active);
   --color-phase-proof: var(--phase-proof);
   --color-phase-settled: var(--phase-settled);
+  --color-phase-warn: var(--phase-warn);
   --color-phase-fault: var(--phase-fault);
 
   /* shadcn bridge (kept so existing primitives keep compiling) */
@@ -104,6 +105,7 @@
   --phase-active: #6e8bff;
   --phase-proof: #4fd3d9;
   --phase-settled: #46d6a0;
+  --phase-warn: #e0a458;
   --phase-fault: #ff6b7e;
 
   /* -- shadcn light (unused: the app is dark-locked) ----------------- */

@@ -42,7 +42,7 @@ function Field({
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`rounded border border-zinc-700 bg-zinc-900 px-2 py-1.5 text-sm text-zinc-100 outline-none focus:border-emerald-500 ${
+        className={`rounded border border-zinc-700 bg-zinc-900 px-2 py-1.5 text-sm text-zinc-100 outline-none focus:border-phase-settled ${
           mono ? "font-mono" : ""
         }`}
       />
@@ -60,7 +60,7 @@ function TxLink({ label, hash }: { label: string; hash?: string }) {
         href={`${explorer}/${hash}`}
         target="_blank"
         rel="noreferrer"
-        className="font-mono text-emerald-400 hover:underline"
+        className="font-mono text-phase-settled hover:underline"
       >
         {hash.slice(0, 18)}…
       </a>
@@ -97,12 +97,12 @@ export default function FounderCockpit({ walletAddress }: { walletAddress: strin
         <span className="font-mono text-zinc-400">{walletAddress}</span>
         <span className="text-zinc-500">
           phase: <span className="text-zinc-200">{flow.phase}</span>
-          {flow.busy && <span className="ml-2 text-emerald-400">working…</span>}
+          {flow.busy && <span className="ml-2 text-phase-settled">working…</span>}
         </span>
       </div>
 
       {flow.error && (
-        <p className="rounded border border-rose-800/60 bg-rose-950/30 px-3 py-2 text-xs text-rose-300">
+        <p className="rounded border border-phase-fault/60 bg-phase-fault/30 px-3 py-2 text-xs text-phase-fault">
           {flow.error}
         </p>
       )}
@@ -125,7 +125,7 @@ export default function FounderCockpit({ walletAddress }: { walletAddress: strin
           <button
             disabled={!canCreate || flow.busy}
             onClick={() => flow.createRequest(form)}
-            className="rounded-md bg-emerald-500 px-4 py-2 text-sm font-medium text-black hover:bg-emerald-400 disabled:opacity-40"
+            className="rounded-md bg-phase-settled px-4 py-2 text-sm font-medium text-black hover:bg-phase-settled disabled:opacity-40"
           >
             Sign & create_request
           </button>
@@ -136,7 +136,7 @@ export default function FounderCockpit({ walletAddress }: { walletAddress: strin
             <button
               disabled={!flow.requestId || flow.busy}
               onClick={flow.refreshQuote}
-              className="mt-5 rounded-md border border-zinc-600 px-3 py-1.5 text-sm text-zinc-200 hover:border-emerald-500 disabled:opacity-40"
+              className="mt-5 rounded-md border border-zinc-600 px-3 py-1.5 text-sm text-zinc-200 hover:border-phase-settled disabled:opacity-40"
             >
               Refresh quote
             </button>
@@ -151,7 +151,7 @@ export default function FounderCockpit({ walletAddress }: { walletAddress: strin
                 <span className="font-mono">{flow.quote.settlementDeadlineSecs ?? "—"}</span>
               </div>
               {ttlRemaining != null && (
-                <div className={ttlRemaining > 0 ? "text-emerald-400" : "text-rose-400"}>
+                <div className={ttlRemaining > 0 ? "text-phase-settled" : "text-phase-fault"}>
                   TTL: {ttlRemaining > 0 ? `${ttlRemaining}s left` : "expired — quote stale"}
                 </div>
               )}
@@ -160,7 +160,7 @@ export default function FounderCockpit({ walletAddress }: { walletAddress: strin
           <button
             disabled={!flow.quote?.amountOut || flow.busy || (ttlRemaining != null && ttlRemaining <= 0)}
             onClick={() => flow.acceptQuote(form.capId)}
-            className="rounded-md bg-emerald-500 px-4 py-2 text-sm font-medium text-black hover:bg-emerald-400 disabled:opacity-40"
+            className="rounded-md bg-phase-settled px-4 py-2 text-sm font-medium text-black hover:bg-phase-settled disabled:opacity-40"
           >
             Sign & accept_quote
           </button>
@@ -171,7 +171,7 @@ export default function FounderCockpit({ walletAddress }: { walletAddress: strin
             <button
               disabled={!flow.quoteId || flow.busy}
               onClick={flow.settle}
-              className="mt-5 rounded-md bg-emerald-500 px-3 py-1.5 text-sm font-medium text-black hover:bg-emerald-400 disabled:opacity-40"
+              className="mt-5 rounded-md bg-phase-settled px-3 py-1.5 text-sm font-medium text-black hover:bg-phase-settled disabled:opacity-40"
             >
               Sign & execute_settlement
             </button>
@@ -183,14 +183,14 @@ export default function FounderCockpit({ walletAddress }: { walletAddress: strin
               <button
                 disabled={!flow.requestId || flow.busy}
                 onClick={flow.cancel}
-                className="rounded border border-zinc-700 px-3 py-1.5 text-zinc-300 hover:border-amber-500 disabled:opacity-40"
+                className="rounded border border-zinc-700 px-3 py-1.5 text-zinc-300 hover:border-phase-warn disabled:opacity-40"
               >
                 cancel_request
               </button>
               <button
                 disabled={!flow.quoteId || flow.busy}
                 onClick={flow.claimUnwind}
-                className="rounded border border-zinc-700 px-3 py-1.5 text-zinc-300 hover:border-amber-500 disabled:opacity-40"
+                className="rounded border border-zinc-700 px-3 py-1.5 text-zinc-300 hover:border-phase-warn disabled:opacity-40"
               >
                 claim_unwind
               </button>

@@ -168,20 +168,20 @@ export default function UnwrapHelper() {
   }, [account, wcosmoBal]);
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-      <h3 className="font-mono text-sm text-slate-100">Unwrap here (self-service)</h3>
-      <p className="mt-2 font-sans text-xs leading-relaxed text-slate-400">
+    <div className="rounded-xl border border-line-base bg-surface-1 p-5">
+      <h3 className="font-mono text-sm text-ink-0">Unwrap here (self-service)</h3>
+      <p className="mt-2 font-sans text-xs leading-relaxed text-ink-1">
         Burns wCOSMO 1:1 and releases $COSMO to your wallet. Permissionless — works for
         any holder at any time, as long as the wCOSMO is not held in a vault.
       </p>
 
       <div className="mt-4">
         {account ? (
-          <p className="flex items-center gap-2 font-mono text-xs text-slate-300">
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+          <p className="flex items-center gap-2 font-mono text-xs text-ink-1">
+            <CheckCircle2 className="h-3.5 w-3.5 text-phase-settled" />
             Connected: {shortAddr(account)}
             {wcosmoBal !== null && (
-              <span className="text-slate-500">· {fmtAmt(wcosmoBal)} wCOSMO held</span>
+              <span className="text-ink-2">· {fmtAmt(wcosmoBal)} wCOSMO held</span>
             )}
           </p>
         ) : (
@@ -189,22 +189,22 @@ export default function UnwrapHelper() {
             type="button"
             disabled={connecting}
             onClick={() => void connect()}
-            className="inline-flex items-center gap-2 rounded-lg border border-purple-500/50 bg-purple-500/10 px-4 py-2 font-mono text-xs text-purple-200 hover:bg-purple-500/20"
+            className="inline-flex items-center gap-2 rounded-lg border border-phase-active/50 bg-phase-active/10 px-4 py-2 font-mono text-xs text-phase-active hover:bg-phase-active/20"
           >
             {connecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plug className="h-4 w-4" />}
             Connect StarKey
           </button>
         )}
         {notFound && (
-          <p className="mt-2 font-mono text-xs text-amber-300">
+          <p className="mt-2 font-mono text-xs text-phase-warn">
             StarKey not found —{' '}
-            <a href="https://starkey.app" target="_blank" rel="noopener noreferrer" className="text-sky-400">
+            <a href="https://starkey.app" target="_blank" rel="noopener noreferrer" className="text-phase-proof">
               install it
             </a>{' '}
             and reload.
           </p>
         )}
-        {chainMsg && <p className="mt-2 font-mono text-xs text-amber-300">{chainMsg}</p>}
+        {chainMsg && <p className="mt-2 font-mono text-xs text-phase-warn">{chainMsg}</p>}
       </div>
 
       {account && (
@@ -214,7 +214,7 @@ export default function UnwrapHelper() {
             onChange={(e) => setAmountInput(e.target.value)}
             placeholder="Amount (wCOSMO)"
             inputMode="decimal"
-            className="w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 font-mono text-sm text-slate-200 placeholder:text-slate-600 focus:border-purple-500/50 focus:outline-none"
+            className="w-full rounded-lg border border-line-base bg-surface-inset px-3 py-2 font-mono text-sm text-ink-0 placeholder:text-ink-2 focus:border-phase-active/50 focus:outline-none"
           />
           <button
             type="button"
@@ -223,8 +223,8 @@ export default function UnwrapHelper() {
             className={cn(
               'shrink-0 inline-flex items-center gap-2 rounded-lg border px-4 py-2 font-mono text-xs',
               amountValid && busy === null
-                ? 'border-purple-500/50 bg-purple-500/10 text-purple-200 hover:bg-purple-500/20'
-                : 'cursor-not-allowed border-white/10 bg-black/20 text-slate-600',
+                ? 'border-phase-active/50 bg-phase-active/10 text-phase-active hover:bg-phase-active/20'
+                : 'cursor-not-allowed border-line-base bg-surface-inset text-ink-2',
             )}
           >
             {busy === 'prepare' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wallet className="h-4 w-4" />}
@@ -233,21 +233,21 @@ export default function UnwrapHelper() {
         </div>
       )}
       {account && amountInput !== '' && !amountValid && (
-        <p className="mt-1.5 font-mono text-[11px] text-amber-300">
+        <p className="mt-1.5 font-mono text-[11px] text-phase-warn">
           Positive number, max 6 fraction digits, not above your wCOSMO balance.
         </p>
       )}
 
       {payloadText && (
         <div className="mt-4 space-y-3">
-          <pre className="overflow-x-auto whitespace-pre-wrap rounded-lg border border-dashed border-slate-700 bg-black/40 p-4 font-mono text-[11px] leading-relaxed text-slate-400">
+          <pre className="overflow-x-auto whitespace-pre-wrap rounded-lg border border-dashed border-line-base bg-surface-inset p-4 font-mono text-[11px] leading-relaxed text-ink-1">
             {payloadText}
           </pre>
           <button
             type="button"
             disabled={busy !== null}
             onClick={() => void sign()}
-            className="inline-flex items-center gap-2 rounded-lg border border-emerald-500/50 bg-emerald-500/10 px-4 py-2 font-mono text-xs text-emerald-200 hover:bg-emerald-500/20"
+            className="inline-flex items-center gap-2 rounded-lg border border-phase-settled/50 bg-phase-settled/10 px-4 py-2 font-mono text-xs text-phase-settled hover:bg-phase-settled/20"
           >
             {busy === 'sign' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Lock className="h-4 w-4" />}
             Sign with StarKey
@@ -256,13 +256,13 @@ export default function UnwrapHelper() {
       )}
 
       {txHash && (
-        <p className="mt-4 font-mono text-xs text-slate-300">
+        <p className="mt-4 font-mono text-xs text-ink-1">
           TX:{' '}
           <a
             href={`${EXPLORER_TX}${txHash}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sky-400 hover:text-sky-300"
+            className="text-phase-proof hover:text-phase-proof"
           >
             {shortAddr(txHash)}
           </a>
@@ -272,9 +272,9 @@ export default function UnwrapHelper() {
         <p
           className={cn(
             'mt-4 font-mono text-xs',
-            log.tone === 'ok' && 'text-emerald-300',
-            log.tone === 'info' && 'text-slate-400',
-            log.tone === 'bad' && 'text-rose-300',
+            log.tone === 'ok' && 'text-phase-settled',
+            log.tone === 'info' && 'text-ink-1',
+            log.tone === 'bad' && 'text-phase-fault',
           )}
         >
           {log.text}

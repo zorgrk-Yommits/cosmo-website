@@ -34,7 +34,7 @@ export default function WalletChip({
           <Wallet className="h-3 w-3 text-phase-active" />
           {short(wallet)}
           {providerMatch && (
-            <span className="rounded-full bg-phase-proof/15 px-1.5 py-0.5 text-phase-proof">
+            <span className="rounded-full bg-phase-warn/15 px-1.5 py-0.5 text-phase-warn">
               provider wallet: {providerMatch.name}
             </span>
           )}

@@ -41,7 +41,7 @@ export const STATUS_TONE: Record<string, ChipTone> = {
   rejected: 'idle',
   selected: 'active',
   onchain: 'active',
-  delivered: 'proof',
+  delivered: 'warn',
   settled: 'settled',
 };
 

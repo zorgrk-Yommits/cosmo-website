@@ -12,12 +12,12 @@ import { ArrowDownToLine, KeyRound, Lock, Scissors } from 'lucide-react';
 import { fmtAmt, shortAddr, MAKER_VAULT_RESOURCE_ADDR, COSMOCLAW_ADDR } from '@/lib/mainnetOnchain';
 import type { OperatorState } from '../lib/vaultData';
 
-// Series colors — validated against #030712 (dataviz six checks, ALL PASS)
-export const SERIES = { M2: '#8b5cf6', K1: '#0891b2' } as const;
+// Series colors — validated against #08090B (dataviz six checks, ALL PASS)
+export const SERIES = { M2: '#6E8BFF', K1: '#4FD3D9' } as const;
 
-const EXIT_WITHDRAW = '#34d399';
-const EXIT_SLASH = '#fbbf24';
-const AUTHORITY = '#64748b';
+const EXIT_WITHDRAW = '#46D6A0';
+const EXIT_SLASH = '#E0A458';
+const AUTHORITY = '#757E8C';
 
 type Props = {
   custodyBalance: bigint | null;
@@ -93,7 +93,7 @@ export default function CustodyFlowDiagram({ custodyBalance, operators }: Props)
     >
       <defs>
         <marker id="vault-arrow" markerWidth="7" markerHeight="7" refX="5.5" refY="3.5" orient="auto">
-          <path d="M 0 0 L 7 3.5 L 0 7 z" fill="#475569" />
+          <path d="M 0 0 L 7 3.5 L 0 7 z" fill="#4A5260" />
         </marker>
       </defs>
 
@@ -148,7 +148,7 @@ export default function CustodyFlowDiagram({ custodyBalance, operators }: Props)
 
   const opCard = (op: OperatorState | null, fallbackLabel: string, color: string) => (
     <div
-      className="rounded-md border bg-black/60 p-3 backdrop-blur-sm"
+      className="rounded-md border bg-surface-0/80 p-3 backdrop-blur-sm"
       style={{ borderColor: `${color}66`, borderWidth: 1 }}
     >
       <div className="font-mono text-[10px] font-bold uppercase tracking-widest" style={{ color }}>
@@ -157,7 +157,7 @@ export default function CustodyFlowDiagram({ custodyBalance, operators }: Props)
       <div className="font-mono text-[13px] font-bold leading-tight text-white">
         {op?.label ?? fallbackLabel}
       </div>
-      <div className="mt-0.5 font-mono text-[11px] leading-tight text-slate-400">
+      <div className="mt-0.5 font-mono text-[11px] leading-tight text-ink-1">
         {op ? `${shortAddr(op.addr)} · ${amt(op.bond?.amount ?? null)} wCOSMO` : '—'}
       </div>
     </div>
@@ -165,24 +165,24 @@ export default function CustodyFlowDiagram({ custodyBalance, operators }: Props)
 
   const custodyCard = (
     <div
-      className="rounded-md border-[1.5px] border-purple-500 bg-black/70 p-3.5 text-center backdrop-blur-sm"
+      className="rounded-md border-[1.5px] border-phase-active bg-surface-0/85 p-3.5 text-center backdrop-blur-sm"
       style={{ boxShadow: '0 0 16px rgba(139,92,246,0.35)' }}
     >
-      <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-purple-300">
+      <div className="font-mono text-[10px] font-bold uppercase tracking-widest text-phase-active">
         Held in the vault
       </div>
       <div className="font-mono text-[14px] font-bold leading-tight text-white">
         Resource Account
       </div>
-      <div className="mt-0.5 font-mono text-[11px] text-slate-400">
+      <div className="mt-0.5 font-mono text-[11px] text-ink-1">
         {shortAddr(MAKER_VAULT_RESOURCE_ADDR)}
       </div>
-      <div className="mt-1 font-mono text-lg font-bold text-slate-100">
-        {amt(custodyBalance)} <span className="text-[11px] font-normal text-slate-400">wCOSMO</span>
+      <div className="mt-1 font-mono text-lg font-bold text-ink-0">
+        {amt(custodyBalance)} <span className="text-[11px] font-normal text-ink-1">wCOSMO</span>
       </div>
-      <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5">
-        <Lock className="h-3 w-3 text-slate-400" />
-        <span className="font-mono text-[9.5px] uppercase tracking-wider text-slate-400">
+      <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full border border-line-base bg-surface-2 px-2 py-0.5">
+        <Lock className="h-3 w-3 text-ink-1" />
+        <span className="font-mono text-[9.5px] uppercase tracking-wider text-ink-1">
           No private key — SignerCapability only
         </span>
       </div>
@@ -190,36 +190,36 @@ export default function CustodyFlowDiagram({ custodyBalance, operators }: Props)
   );
 
   const registryCard = (
-    <div className="rounded-md border border-white/15 bg-black/60 p-2.5 text-center backdrop-blur-sm">
+    <div className="rounded-md border border-line-base bg-surface-0/80 p-2.5 text-center backdrop-blur-sm">
       <div className="flex items-center justify-center gap-1.5">
-        <KeyRound className="h-3 w-3 text-slate-400" />
-        <span className="font-mono text-[12px] font-bold text-slate-200">VaultRegistry</span>
+        <KeyRound className="h-3 w-3 text-ink-1" />
+        <span className="font-mono text-[12px] font-bold text-ink-0">VaultRegistry</span>
       </div>
-      <div className="mt-0.5 font-mono text-[10px] text-slate-500">
+      <div className="mt-0.5 font-mono text-[10px] text-ink-2">
         @ {shortAddr(COSMOCLAW_ADDR)} · holds SignerCapability
       </div>
     </div>
   );
 
   const withdrawCard = (
-    <div className="rounded-md border border-emerald-500/40 bg-black/60 p-3 backdrop-blur-sm">
+    <div className="rounded-md border border-phase-settled/40 bg-surface-0/80 p-3 backdrop-blur-sm">
       <div className="flex items-center gap-1.5">
-        <ArrowDownToLine className="h-3.5 w-3.5 text-emerald-300" />
+        <ArrowDownToLine className="h-3.5 w-3.5 text-phase-settled" />
         <span className="font-mono text-[13px] font-bold text-white">Withdraw</span>
       </div>
-      <div className="mt-0.5 font-mono text-[11px] leading-tight text-slate-400">
+      <div className="mt-0.5 font-mono text-[11px] leading-tight text-ink-1">
         back to operator, after lock
       </div>
     </div>
   );
 
   const slashCard = (
-    <div className="rounded-md border border-amber-500/40 bg-black/60 p-3 backdrop-blur-sm">
+    <div className="rounded-md border border-phase-warn/40 bg-surface-0/80 p-3 backdrop-blur-sm">
       <div className="flex items-center gap-1.5">
-        <Scissors className="h-3.5 w-3.5 text-amber-300" />
+        <Scissors className="h-3.5 w-3.5 text-phase-warn" />
         <span className="font-mono text-[13px] font-bold text-white">Penalty deduction</span>
       </div>
-      <div className="mt-0.5 font-mono text-[11px] leading-tight text-slate-400">
+      <div className="mt-0.5 font-mono text-[11px] leading-tight text-ink-1">
         misbehavior → penalty pool
       </div>
     </div>
@@ -233,11 +233,11 @@ export default function CustodyFlowDiagram({ custodyBalance, operators }: Props)
 
   return (
     <div
-      className="relative rounded-xl border border-white/10 bg-black/40 p-4 md:p-6"
+      className="relative rounded-xl border border-line-base bg-surface-inset p-4 md:p-6"
       role="img"
       aria-label="Maker vault flow: operator security deposits go into the maker vault resource account, which has no private key; funds only leave through withdraw after the lock period or through a penalty deduction."
     >
-      <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-slate-500">
+      <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-ink-2">
         Maker vault only — compute provider deposits live in a separate vault (section 2)
       </p>
       {/* Desktop graph */}
@@ -266,16 +266,16 @@ export default function CustodyFlowDiagram({ custodyBalance, operators }: Props)
       {/* Mobile: simplified vertical flow */}
       <div className="flex flex-col gap-2.5 md:hidden">
         {registryCard}
-        <div className="text-center font-mono text-[10px] tracking-widest text-slate-500">
+        <div className="text-center font-mono text-[10px] tracking-widest text-ink-2">
           ⇣ signer_cap
         </div>
         <div className="grid grid-cols-2 gap-2.5">
           {opCard(m2, 'Operator M2', SERIES.M2)}
           {opCard(k1, 'Operator K1', SERIES.K1)}
         </div>
-        <div className="text-center font-mono text-xs text-purple-400/70">↓ deposit</div>
+        <div className="text-center font-mono text-xs text-phase-active/70">↓ deposit</div>
         {custodyCard}
-        <div className="text-center font-mono text-xs text-purple-400/70">↓ exit paths</div>
+        <div className="text-center font-mono text-xs text-phase-active/70">↓ exit paths</div>
         <div className="grid grid-cols-2 gap-2.5">
           {withdrawCard}
           {slashCard}

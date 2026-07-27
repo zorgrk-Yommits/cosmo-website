@@ -54,12 +54,12 @@ export default function PrimitiveChain() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.04 * i }}
               className={`flex flex-1 flex-col items-center gap-2 rounded-xl border bg-[rgba(15,15,35,0.7)] px-3 py-3 text-center backdrop-blur ${
-                settle ? 'border-emerald-400/50' : 'border-purple-500/40'
+                settle ? 'border-phase-settled/50' : 'border-phase-active/40'
               }`}
             >
               <span
                 className={`flex h-8 w-8 items-center justify-center rounded-lg ${
-                  settle ? 'bg-emerald-500/15 text-emerald-300' : 'bg-purple-500/15 text-purple-300'
+                  settle ? 'bg-phase-settled/15 text-phase-settled' : 'bg-phase-active/15 text-phase-active'
                 }`}
               >
                 <Icon className="h-4 w-4" strokeWidth={2.2} />
@@ -67,9 +67,9 @@ export default function PrimitiveChain() {
               <span className="font-mono text-[13px] font-bold leading-tight text-white">
                 {link.title}
               </span>
-              <span className="font-mono text-[11px] leading-tight text-slate-400">{link.note}</span>
-              <span className="mt-0.5 inline-flex items-center gap-1 rounded border border-emerald-500/30 bg-emerald-500/15 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-emerald-300">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              <span className="font-mono text-[11px] leading-tight text-ink-1">{link.note}</span>
+              <span className="mt-0.5 inline-flex items-center gap-1 rounded border border-phase-settled/30 bg-phase-settled/15 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-phase-settled">
+                <span className="h-1.5 w-1.5 rounded-full bg-phase-settled" />
                 Live
               </span>
             </motion.div>
@@ -80,7 +80,7 @@ export default function PrimitiveChain() {
             {i < LINKS.length - 1 && (
               <span
                 aria-hidden="true"
-                className="shrink-0 self-center py-0.5 font-mono text-sm text-purple-400/70 md:px-1.5 md:py-0"
+                className="shrink-0 self-center py-0.5 font-mono text-sm text-phase-active/70 md:px-1.5 md:py-0"
               >
                 <span className="md:hidden">↓</span>
                 <span className="hidden md:inline">→</span>

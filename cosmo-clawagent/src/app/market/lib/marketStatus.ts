@@ -12,7 +12,7 @@ export interface StatusBadge {
 export const STATUS_BADGE: Record<JobStatus, StatusBadge> = {
   submitted: {
     label: 'In moderation',
-    cls: 'border-line-base bg-white/[0.02] text-ink-2',
+    cls: 'border-line-base bg-white/[0.02] text-ink-1',
   },
   approved: {
     label: 'Open for offers',
@@ -20,7 +20,7 @@ export const STATUS_BADGE: Record<JobStatus, StatusBadge> = {
   },
   rejected: {
     label: 'Rejected',
-    cls: 'border-line-base bg-white/[0.02] text-ink-2',
+    cls: 'border-line-base bg-white/[0.02] text-ink-1',
   },
   selected: {
     label: 'Offer selected — buyer funds next',
@@ -32,7 +32,7 @@ export const STATUS_BADGE: Record<JobStatus, StatusBadge> = {
   },
   delivered: {
     label: 'Delivered — buyer approval next',
-    cls: 'border-phase-proof/40 bg-phase-proof/10 text-phase-proof',
+    cls: 'border-phase-warn/40 bg-phase-warn/10 text-phase-warn',
   },
   settled: {
     label: 'Settled',

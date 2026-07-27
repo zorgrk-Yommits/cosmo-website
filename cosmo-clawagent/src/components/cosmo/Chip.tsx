@@ -14,6 +14,7 @@ const TONE: Record<ChipTone, string> = {
   active: 'border-phase-active/35 bg-phase-active/10 text-phase-active',
   proof: 'border-phase-proof/35 bg-phase-proof/10 text-phase-proof',
   settled: 'border-phase-settled/35 bg-phase-settled/10 text-phase-settled',
+  warn: 'border-phase-warn/35 bg-phase-warn/10 text-phase-warn',
   fault: 'border-phase-fault/35 bg-phase-fault/10 text-phase-fault',
 };
 

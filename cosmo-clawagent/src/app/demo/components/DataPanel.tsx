@@ -22,7 +22,7 @@ interface DataPanelProps {
 // SupraScan link appears ONLY for steps with a tx_hash. No fake liveness.
 export default function DataPanel({ step }: DataPanelProps) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-[rgba(15,15,35,0.7)] p-5 backdrop-blur">
+    <div className="rounded-2xl border border-line-base bg-[rgba(15,15,35,0.7)] p-5 backdrop-blur">
       <AnimatePresence mode="wait">
         <motion.div
           key={step.id}
@@ -34,11 +34,11 @@ export default function DataPanel({ step }: DataPanelProps) {
           {/* header row */}
           <div className="mb-4 flex flex-wrap items-center gap-3">
             <KindBadge step={step} />
-            <span className="font-mono text-sm text-slate-200">
-              <span className="text-slate-500">{step.id}</span> {step.title}
+            <span className="font-mono text-sm text-ink-0">
+              <span className="text-ink-2">{step.id}</span> {step.title}
             </span>
-            <span className="ml-auto font-mono text-[11px] text-slate-500">
-              sender: <span className="text-slate-300">{step.sender}</span>
+            <span className="ml-auto font-mono text-[11px] text-ink-2">
+              sender: <span className="text-ink-1">{step.sender}</span>
             </span>
           </div>
 
@@ -54,20 +54,20 @@ export default function DataPanel({ step }: DataPanelProps) {
 
               {/* events */}
               {step.events.map((ev, i) => (
-                <div key={i} className="rounded-lg border border-purple-500/20 bg-purple-500/[0.04] p-3">
-                  <div className="mb-2 font-mono text-[11px] uppercase tracking-wider text-purple-300/80">
+                <div key={i} className="rounded-lg border border-phase-active/20 bg-phase-active/[0.04] p-3">
+                  <div className="mb-2 font-mono text-[11px] uppercase tracking-wider text-phase-active/80">
                     event · {ev.name}
                   </div>
                   <dl className="grid grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
                     {Object.entries(ev.data).map(([k, v]) => (
-                      <div key={k} className="flex items-baseline justify-between gap-3 border-b border-white/5 py-1">
-                        <dt className="font-mono text-[11px] text-slate-500">{k}</dt>
-                        <dd className="font-mono text-[11px] tabular-nums text-slate-300 text-right break-all">
+                      <div key={k} className="flex items-baseline justify-between gap-3 border-b border-line-subtle py-1">
+                        <dt className="font-mono text-[11px] text-ink-2">{k}</dt>
+                        <dd className="font-mono text-[11px] tabular-nums text-ink-1 text-right break-all">
                           {formatValue(v)}
                           {AMOUNT_FIELDS.has(k) &&
                             /^\d+$/.test(String(v)) &&
                             amountSymbol(ev.name, k) && (
-                              <span className="ml-1 text-slate-500">
+                              <span className="ml-1 text-ink-2">
                                 ({formatToken(Number(v))} {amountSymbol(ev.name, k)})
                               </span>
                             )}
@@ -84,23 +84,23 @@ export default function DataPanel({ step }: DataPanelProps) {
                 {META.ephemeral ? (
                   <span
                     title={META.ephemeralReason ?? undefined}
-                    className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-2 font-mono text-xs text-slate-400"
+                    className="inline-flex items-center gap-2 rounded-lg border border-line-base px-3 py-2 font-mono text-xs text-ink-1"
                   >
                     {truncateHex(step.txHash, 10, 8)}
-                    <span className="text-slate-500">· ephemeral — not a live link</span>
+                    <span className="text-ink-2">· ephemeral — not a live link</span>
                   </span>
                 ) : (
                   <a
                     href={supraScanTxUrl(step.txHash)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-lg border border-purple-500/40 px-3 py-2 font-mono text-xs text-purple-200 transition-colors hover:border-purple-400 hover:text-purple-100"
+                    className="inline-flex items-center gap-2 rounded-lg border border-phase-active/40 px-3 py-2 font-mono text-xs text-phase-active transition-colors hover:border-phase-active hover:text-phase-active"
                   >
                     View on SupraScan
                     <ExternalLink className="h-3.5 w-3.5" />
                   </a>
                 )}
-                <span className="font-mono text-[10px] leading-tight text-slate-500">
+                <span className="font-mono text-[10px] leading-tight text-ink-2">
                   {META.livenessLabel} — {META.capturedLabel}
                 </span>
               </div>
@@ -109,14 +109,14 @@ export default function DataPanel({ step }: DataPanelProps) {
 
           {/* off-chain by design */}
           {step.kind === 'offchain' && (
-            <div className="rounded-lg border border-cyan-500/30 bg-cyan-500/[0.05] p-4">
-              <div className="mb-1 font-mono text-xs uppercase tracking-wider text-cyan-300/80">
+            <div className="rounded-lg border border-phase-proof/30 bg-phase-proof/[0.05] p-4">
+              <div className="mb-1 font-mono text-xs uppercase tracking-wider text-phase-proof/80">
                 off-chain by design — quote-server signature
               </div>
-              <p className="font-mono text-[12px] leading-relaxed text-slate-300">
+              <p className="font-mono text-[12px] leading-relaxed text-ink-1">
                 The maker signs the quote off-chain and hands the signature to the taker. This step
                 has no transaction on purpose — the signature is verified on-chain when the quote is
-                submitted (see <span className="text-cyan-200">QuoteSubmitted · signature_blob</span>).
+                submitted (see <span className="text-phase-proof">QuoteSubmitted · signature_blob</span>).
                 Keeping the signing off-chain is the design, not a gap.
               </p>
             </div>
@@ -124,14 +124,14 @@ export default function DataPanel({ step }: DataPanelProps) {
 
           {/* setup / deploy */}
           {step.kind === 'setup' && (
-            <div className="rounded-lg border border-white/10 bg-white/[0.02] p-4">
-              <div className="mb-1 font-mono text-xs uppercase tracking-wider text-slate-400">
+            <div className="rounded-lg border border-line-base bg-surface-1 p-4">
+              <div className="mb-1 font-mono text-xs uppercase tracking-wider text-ink-1">
                 deploy phase · one-time
               </div>
-              <p className="font-mono text-[12px] leading-relaxed text-slate-400">
-                A one-time setup action (<span className="text-slate-200">{step.label}</span>). In this
+              <p className="font-mono text-[12px] leading-relaxed text-ink-1">
+                A one-time setup action (<span className="text-ink-0">{step.label}</span>). In this
                 snapshot the contracts were already live, so this step is marked{' '}
-                <span className="text-slate-300">skipped</span> — no transaction was re-issued. It is
+                <span className="text-ink-1">skipped</span> — no transaction was re-issued. It is
                 shown for completeness, outside the core RFQ loop.
               </p>
             </div>
@@ -144,9 +144,9 @@ export default function DataPanel({ step }: DataPanelProps) {
 
 function KindBadge({ step }: { step: LifecycleStep }) {
   const map = {
-    onchain: { icon: Radio, cls: 'border-purple-500/40 text-purple-200', text: 'on-chain' },
-    offchain: { icon: PenLine, cls: 'border-cyan-500/40 text-cyan-200', text: 'off-chain' },
-    setup: { icon: Layers, cls: 'border-white/15 text-slate-400', text: 'setup' },
+    onchain: { icon: Radio, cls: 'border-phase-active/40 text-phase-active', text: 'on-chain' },
+    offchain: { icon: PenLine, cls: 'border-phase-proof/40 text-phase-proof', text: 'off-chain' },
+    setup: { icon: Layers, cls: 'border-line-base text-ink-1', text: 'setup' },
   } as const;
   const m = map[step.kind];
   const Icon = m.icon;
@@ -172,13 +172,13 @@ function Field({
   accent?: 'emerald';
 }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02] p-3" title={full}>
-      <div className="font-mono text-[10px] uppercase tracking-wider text-slate-500">{label}</div>
+    <div className="rounded-lg border border-line-base bg-surface-1 p-3" title={full}>
+      <div className="font-mono text-[10px] uppercase tracking-wider text-ink-2">{label}</div>
       <div
         className={cn(
           'mt-1 break-all text-sm',
           mono && 'font-mono',
-          accent === 'emerald' ? 'text-emerald-200' : 'text-slate-200',
+          accent === 'emerald' ? 'text-phase-settled' : 'text-ink-0',
         )}
       >
         {value}

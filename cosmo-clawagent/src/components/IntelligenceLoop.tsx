@@ -5,23 +5,23 @@ import React from 'react';
 type NodeType = 'WHEN' | 'GET' | 'THINK' | 'ACT' | 'FLOW' | 'TRANSACT' | 'THINK+ACT';
 
 const TYPE_COLORS: Record<string, string> = {
-  WHEN: '#4ade80',
-  GET: '#60a5fa',
-  THINK: '#facc15',
-  ACT: '#fb923c',
-  FLOW: '#a78bfa',
-  TRANSACT: '#22d3ee',
-  'THINK+ACT': '#facc15',
+  WHEN: '#46D6A0',
+  GET: '#4FD3D9',
+  THINK: '#E0A458',
+  ACT: '#E0A458',
+  FLOW: '#6E8BFF',
+  TRANSACT: '#4FD3D9',
+  'THINK+ACT': '#E0A458',
 };
 
 const TYPE_TEXT_CLASS: Record<NodeType, string> = {
-  WHEN: 'text-green-400',
-  GET: 'text-blue-400',
-  THINK: 'text-yellow-400',
-  ACT: 'text-orange-400',
-  FLOW: 'text-purple-400',
-  TRANSACT: 'text-cyan-400',
-  'THINK+ACT': 'text-yellow-400',
+  WHEN: 'text-phase-settled',
+  GET: 'text-phase-proof',
+  THINK: 'text-phase-warn',
+  ACT: 'text-phase-warn',
+  FLOW: 'text-phase-active',
+  TRANSACT: 'text-phase-proof',
+  'THINK+ACT': 'text-phase-warn',
 };
 
 interface GraphNode {
@@ -51,13 +51,13 @@ const NODE_H = 78;
 
 function NodeCard({ node }: { node: GraphNode }) {
   const colorClass = TYPE_TEXT_CLASS[node.type];
-  const borderColor = node.featured ? '#7B2FBE' : `${TYPE_COLORS[node.type]}55`;
+  const borderColor = node.featured ? '#6E8BFF' : `${TYPE_COLORS[node.type]}55`;
   const featuredShadow = node.featured
     ? { boxShadow: '0 0 12px rgba(123,47,190,0.4)' }
     : {};
   return (
     <div
-      className="absolute -translate-x-1/2 -translate-y-1/2 bg-black/60 backdrop-blur-sm rounded-md p-3 text-center"
+      className="absolute -translate-x-1/2 -translate-y-1/2 bg-surface-0/80 backdrop-blur-sm rounded-md p-3 text-center"
       style={{
         left: `${node.x}%`,
         top: `${node.y}%`,
@@ -75,7 +75,7 @@ function NodeCard({ node }: { node: GraphNode }) {
       <div className="font-mono text-[14px] font-bold text-white leading-tight">
         {node.title}
       </div>
-      <div className="font-mono text-[11px] text-slate-400 mt-0.5 leading-tight">
+      <div className="font-mono text-[11px] text-ink-1 mt-0.5 leading-tight">
         {node.subtitle}
       </div>
     </div>
@@ -102,7 +102,7 @@ export default function IntelligenceLoop() {
         <h2 className="font-mono text-3xl font-bold text-white mb-2">
           {'>'} The EOM Intelligence Loop
         </h2>
-        <p className="text-slate-400 font-mono text-sm">
+        <p className="text-ink-1 font-mono text-sm">
           Eight agents. One execution layer. Built natively in SupraOS Bot Builder syntax.
           <span className="blinking-cursor" />
         </p>
@@ -120,12 +120,12 @@ export default function IntelligenceLoop() {
         {/* Header: Status (left) + Legend (right) */}
         <div className="flex flex-wrap items-center justify-between mb-8 gap-4">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-mono text-xs text-emerald-400 tracking-widest uppercase font-bold">
+            <span className="w-2 h-2 rounded-full bg-phase-settled animate-pulse" />
+            <span className="font-mono text-xs text-phase-settled tracking-widest uppercase font-bold">
               Active
             </span>
-            <span className="font-mono text-xs text-slate-600 mx-1">|</span>
-            <span className="font-mono text-xs text-slate-300 tracking-wide">
+            <span className="font-mono text-xs text-ink-2 mx-1">|</span>
+            <span className="font-mono text-xs text-ink-1 tracking-wide">
               EOM Intelligence Loop
             </span>
           </div>
@@ -136,7 +136,7 @@ export default function IntelligenceLoop() {
                   className="w-2.5 h-2.5 rounded-sm"
                   style={{ backgroundColor: TYPE_COLORS[t] }}
                 />
-                <span className="font-mono text-[10px] text-slate-400 tracking-widest uppercase">
+                <span className="font-mono text-[10px] text-ink-1 tracking-widest uppercase">
                   {t}
                 </span>
               </div>
@@ -159,13 +159,13 @@ export default function IntelligenceLoop() {
                 <path d="M 0 0 L 6 3 L 0 6 z" fill="#3a3a3a" />
               </marker>
               <marker id="arrow-active" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-                <path d="M 0 0 L 6 3 L 0 6 z" fill="#7B2FBE" />
+                <path d="M 0 0 L 6 3 L 0 6 z" fill="#6E8BFF" />
               </marker>
               <marker id="arrow-pass" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-                <path d="M 0 0 L 6 3 L 0 6 z" fill="#4ade80" />
+                <path d="M 0 0 L 6 3 L 0 6 z" fill="#46D6A0" />
               </marker>
               <marker id="arrow-fail" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-                <path d="M 0 0 L 6 3 L 0 6 z" fill="#ef4444" />
+                <path d="M 0 0 L 6 3 L 0 6 z" fill="#FF6B7E" />
               </marker>
             </defs>
 
@@ -177,35 +177,35 @@ export default function IntelligenceLoop() {
             {/* Strategist -> Decision (curve down-left, active path) */}
             <path
               d={`M ${p.strategist.x},${p.strategist.y + HY} C ${p.strategist.x},${p.decision.y - 30} ${p.decision.x + HX + 60},${p.decision.y} ${p.decision.x + HX},${p.decision.y}`}
-              stroke="#7B2FBE" strokeWidth="1.5" fill="none" markerEnd="url(#arrow-active)"
+              stroke="#6E8BFF" strokeWidth="1.5" fill="none" markerEnd="url(#arrow-active)"
             />
 
             {/* Decision -> Discard (FAIL branch) */}
             <path
               d={`M ${p.decision.x - HX},${p.decision.y} C ${(p.decision.x + p.discard.x) / 2},${p.decision.y + 40} ${p.discard.x},${p.decision.y + 40} ${p.discard.x},${p.discard.y - HY}`}
-              stroke="#ef4444" strokeWidth="1.2" fill="none" markerEnd="url(#arrow-fail)"
+              stroke="#FF6B7E" strokeWidth="1.2" fill="none" markerEnd="url(#arrow-fail)"
             />
             <text
               x={(p.decision.x - HX + p.discard.x) / 2 - 10}
               y={p.decision.y + 30}
-              fill="#ef4444" fontSize="10" fontFamily="monospace" fontWeight="bold" letterSpacing="1"
+              fill="#FF6B7E" fontSize="10" fontFamily="monospace" fontWeight="bold" letterSpacing="1"
             >FAIL</text>
 
             {/* Decision -> COSMO (PASS branch) */}
             <path
               d={`M ${p.decision.x + HX},${p.decision.y} C ${(p.decision.x + p.cosmo.x) / 2},${p.decision.y + 40} ${p.cosmo.x},${p.decision.y + 40} ${p.cosmo.x},${p.cosmo.y - HY}`}
-              stroke="#4ade80" strokeWidth="1.5" fill="none" markerEnd="url(#arrow-pass)"
+              stroke="#46D6A0" strokeWidth="1.5" fill="none" markerEnd="url(#arrow-pass)"
             />
             <text
               x={(p.decision.x + HX + p.cosmo.x) / 2 + 10}
               y={p.decision.y + 30}
-              fill="#4ade80" fontSize="10" fontFamily="monospace" fontWeight="bold" letterSpacing="1"
+              fill="#46D6A0" fontSize="10" fontFamily="monospace" fontWeight="bold" letterSpacing="1"
             >PASS</text>
 
             {/* COSMO -> Keeper (archive outcome) */}
             <path
               d={`M ${p.cosmo.x},${p.cosmo.y + HY} C ${p.cosmo.x},${(p.cosmo.y + p.keeper.y) / 2} ${p.keeper.x + 40},${(p.cosmo.y + p.keeper.y) / 2} ${p.keeper.x + 40},${p.keeper.y - HY}`}
-              stroke="#7B2FBE" strokeWidth="1.2" fill="none" markerEnd="url(#arrow-active)"
+              stroke="#6E8BFF" strokeWidth="1.2" fill="none" markerEnd="url(#arrow-active)"
             />
 
             {/* Keeper -> Liquidity (rebalance feed) */}
@@ -218,7 +218,7 @@ export default function IntelligenceLoop() {
             {/* Discard -> Arbiter (loopback, dashed muted) */}
             <path
               d={`M ${p.discard.x},${p.discard.y - HY} C ${p.discard.x - 60},${(p.discard.y + p.arbiter.y) / 2} ${p.arbiter.x - HX - 60},${p.arbiter.y + 30} ${p.arbiter.x - HX},${p.arbiter.y + 20}`}
-              stroke="#ef4444" strokeWidth="1" fill="none"
+              stroke="#FF6B7E" strokeWidth="1" fill="none"
               strokeDasharray="3 3" opacity="0.55"
               markerEnd="url(#arrow-fail)"
             />
@@ -226,14 +226,14 @@ export default function IntelligenceLoop() {
             {/* Karpathy Loop: Keeper -> Strategist (dashed feedback, long curve) */}
             <path
               d={`M ${p.keeper.x + HX},${p.keeper.y} C ${p.keeper.x + 220},${p.keeper.y} ${p.strategist.x + 80},${p.keeper.y} ${p.strategist.x + 80},${(p.strategist.y + p.keeper.y) / 2} S ${p.strategist.x + 30},${p.strategist.y} ${p.strategist.x},${p.strategist.y + HY}`}
-              stroke="#a78bfa" strokeWidth="1" fill="none"
+              stroke="#6E8BFF" strokeWidth="1" fill="none"
               strokeDasharray="4 4" opacity="0.7"
               markerEnd="url(#arrow-active)"
             />
             <text
               x={p.strategist.x + 20}
               y={(p.strategist.y + p.keeper.y) / 2 - 10}
-              fill="#a78bfa" fontSize="10" fontFamily="monospace" fontWeight="bold" letterSpacing="1.5"
+              fill="#6E8BFF" fontSize="10" fontFamily="monospace" fontWeight="bold" letterSpacing="1.5"
             >LEARNING FEEDBACK</text>
           </svg>
 
@@ -247,11 +247,11 @@ export default function IntelligenceLoop() {
           {nodes.map((n, i) => (
             <React.Fragment key={n.id}>
               <div
-                className="bg-black/60 rounded-md p-3"
+                className="bg-surface-0/80 rounded-md p-3"
                 style={{
                   borderStyle: 'solid',
                   borderWidth: n.featured ? '1.5px' : '1px',
-                  borderColor: n.featured ? '#7B2FBE' : `${TYPE_COLORS[n.type]}55`,
+                  borderColor: n.featured ? '#6E8BFF' : `${TYPE_COLORS[n.type]}55`,
                   ...(n.featured ? { boxShadow: '0 0 12px rgba(123,47,190,0.4)' } : {}),
                 }}
               >
@@ -259,14 +259,14 @@ export default function IntelligenceLoop() {
                   {n.type}
                 </div>
                 <div className="font-mono text-sm font-bold text-white leading-tight">{n.title}</div>
-                <div className="font-mono text-[11px] text-slate-400 mt-0.5 leading-tight">{n.subtitle}</div>
+                <div className="font-mono text-[11px] text-ink-1 mt-0.5 leading-tight">{n.subtitle}</div>
               </div>
               {i < nodes.length - 1 && (
-                <div className="text-center text-purple-400/60 font-mono text-xs">↓</div>
+                <div className="text-center text-phase-active/60 font-mono text-xs">↓</div>
               )}
             </React.Fragment>
           ))}
-          <div className="text-center text-purple-400/60 font-mono text-[10px] tracking-widest uppercase mt-2 pt-3 border-t border-white/5">
+          <div className="text-center text-phase-active/60 font-mono text-[10px] tracking-widest uppercase mt-2 pt-3 border-t border-line-subtle">
             Karpathy Loop · Keeper → Strategist · Learning Feedback
           </div>
         </div>
@@ -293,7 +293,7 @@ export default function IntelligenceLoop() {
             }}
           >
             <div className="font-mono text-2xl font-bold text-white leading-tight">{m.value}</div>
-            <div className="font-mono text-[10px] text-slate-500 mt-1 uppercase tracking-wider leading-snug">
+            <div className="font-mono text-[10px] text-ink-2 mt-1 uppercase tracking-wider leading-snug">
               {m.label}
             </div>
           </div>

@@ -27,12 +27,18 @@ export const LINE = {
 
 // Process state. `idle` = not reached yet, `active` = in flight, `proof` =
 // a hash / signature / attestation exists, `settled` = value has moved,
-// `fault` = dispute or slash. Nothing else earns colour.
+// `warn` = something needs a human before it can continue, `fault` = dispute,
+// slash or a hard failure. Nothing else earns colour.
+//
+// `warn` and `fault` are deliberately distinct: a deadline running short or a
+// blocker the buyer can clear is not the same event as a slashed deposit, and
+// collapsing them would make the louder colour meaningless.
 export const PHASE = {
   idle: '#4A5260',
   active: '#6E8BFF',
   proof: '#4FD3D9',
   settled: '#46D6A0',
+  warn: '#E0A458',
   fault: '#FF6B7E',
 } as const;
 
@@ -46,6 +52,7 @@ export const PHASE_INT: Record<PhaseTone, number> = {
   active: hexToInt(PHASE.active),
   proof: hexToInt(PHASE.proof),
   settled: hexToInt(PHASE.settled),
+  warn: hexToInt(PHASE.warn),
   fault: hexToInt(PHASE.fault),
 };
 

@@ -32,13 +32,13 @@ const TERMINAL_ICONS: Record<string, LucideIcon> = {
 };
 
 const STATE_STYLE: Record<PhaseNodeState, { dot: string; text: string }> = {
-  done: { dot: 'border-emerald-500/60 bg-emerald-500/15 text-emerald-300', text: 'text-slate-300' },
-  active: { dot: 'border-purple-400 bg-purple-500/20 text-purple-300', text: 'text-slate-100' },
-  pending: { dot: 'border-white/15 bg-black/30 text-slate-600', text: 'text-slate-600' },
-  'terminal-bad': { dot: 'border-rose-500/60 bg-rose-500/15 text-rose-300', text: 'text-rose-300' },
+  done: { dot: 'border-phase-settled/60 bg-phase-settled/15 text-phase-settled', text: 'text-ink-1' },
+  active: { dot: 'border-phase-active bg-phase-active/20 text-phase-active', text: 'text-ink-0' },
+  pending: { dot: 'border-line-base bg-surface-inset text-ink-2', text: 'text-ink-2' },
+  'terminal-bad': { dot: 'border-phase-fault/60 bg-phase-fault/15 text-phase-fault', text: 'text-phase-fault' },
   'terminal-neutral': {
-    dot: 'border-slate-500/50 bg-slate-500/10 text-slate-400',
-    text: 'text-slate-400',
+    dot: 'border-line-base bg-ink-2/10 text-ink-1',
+    text: 'text-ink-1',
   },
 };
 
@@ -74,7 +74,7 @@ export default function PhaseRail({ nodes }: { nodes: PhaseNode[] }) {
                   )}
                 >
                   {node.state === 'active' && (
-                    <span className="absolute inset-0 animate-ping rounded-full border border-purple-400/50" />
+                    <span className="absolute inset-0 animate-ping rounded-full border border-phase-active/50" />
                   )}
                   <NodeIcon node={node} />
                 </span>

@@ -32,7 +32,7 @@ export default function FounderPage() {
   if (notFound) {
     return (
       <Shell>
-        <p className="text-sm text-amber-400">
+        <p className="text-sm text-phase-warn">
           StarKey wallet not detected. Install the StarKey extension and reload.
         </p>
       </Shell>
@@ -44,7 +44,7 @@ export default function FounderPage() {
       <Shell>
         <button
           onClick={connect}
-          className="rounded-md bg-emerald-500 px-4 py-2 text-sm font-medium text-black hover:bg-emerald-400"
+          className="rounded-md bg-phase-settled px-4 py-2 text-sm font-medium text-black hover:bg-phase-settled"
         >
           Connect StarKey
         </button>
@@ -65,7 +65,7 @@ export default function FounderPage() {
   if (!isNFTHolder && !nftCheckFailed) {
     return (
       <Shell>
-        <p className="text-sm text-rose-400">
+        <p className="text-sm text-phase-fault">
           This wallet holds no COSMO operator NFT. Founder cockpit is gated to holders.
         </p>
         <p className="mt-2 font-mono text-xs text-zinc-500">{address}</p>
@@ -76,12 +76,12 @@ export default function FounderPage() {
   return (
     <Shell>
       {nftCheckFailed && (
-        <p className="mb-4 rounded border border-amber-700/50 bg-amber-950/30 px-3 py-2 text-xs text-amber-400">
+        <p className="mb-4 rounded border border-phase-warn/50 bg-phase-warn/30 px-3 py-2 text-xs text-phase-warn">
           NFT eligibility check failed (indexer unreachable) — proceeding on connected wallet.
         </p>
       )}
       {!RFQ_MODULE_ADDR && (
-        <p className="mb-4 rounded border border-amber-700/50 bg-amber-950/30 px-3 py-2 text-xs text-amber-400">
+        <p className="mb-4 rounded border border-phase-warn/50 bg-phase-warn/30 px-3 py-2 text-xs text-phase-warn">
           No rfq_engine module address configured for target “{RFQ_TARGET}”. Set
           NEXT_PUBLIC_RFQ_MODULE_ADDR (testnet has no default deploy yet).
         </p>

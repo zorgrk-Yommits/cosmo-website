@@ -412,15 +412,15 @@ export default function ProviderBondHelper() {
           {/* header */}
           <header className="max-w-2xl">
             <div className="mb-5 flex items-center gap-3">
-              <span className="inline-flex h-2 w-2 rounded-full bg-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.8)]" />
-              <span className="font-mono text-xs uppercase tracking-[0.25em] text-slate-400">
+              <span className="inline-flex h-2 w-2 rounded-full bg-phase-active shadow-[0_0_10px_rgba(168,85,247,0.8)]" />
+              <span className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
                 Compute provider onboarding · Mainnet (chain 8) · guarded v1
               </span>
             </div>
-            <h1 className="font-mono text-3xl font-bold tracking-tight text-slate-100 md:text-5xl">
+            <h1 className="font-mono text-3xl font-bold tracking-tight text-ink-0 md:text-5xl">
               Compute Provider Security Deposit
             </h1>
-            <p className="mt-4 font-sans text-lg text-slate-300">
+            <p className="mt-4 font-sans text-lg text-ink-1">
               To take compute jobs you place a refundable security deposit in wCOSMO. If a job
               is not delivered, a penalty deduction of 10% of the required deposit goes to the
               buyer. Setting it up takes two separate transactions: first convert $COSMO into
@@ -430,18 +430,18 @@ export default function ProviderBondHelper() {
           </header>
 
           {/* prerequisites */}
-          <aside className="mt-8 rounded-xl border border-white/10 bg-white/[0.02] p-5">
-            <h2 className="font-mono text-xs uppercase tracking-wider text-slate-500">
+          <aside className="mt-8 rounded-xl border border-line-base bg-surface-1 p-5">
+            <h2 className="font-mono text-xs uppercase tracking-wider text-ink-2">
               Prerequisites
             </h2>
-            <ul className="mt-3 space-y-1.5 font-sans text-sm text-slate-300">
+            <ul className="mt-3 space-y-1.5 font-sans text-sm text-ink-1">
               <li>
                 · StarKey wallet extension (
                 <a
                   href="https://starkey.app"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300"
+                  className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof"
                 >
                   starkey.app
                 </a>
@@ -452,14 +452,14 @@ export default function ProviderBondHelper() {
                 · $COSMO or wCOSMO in the wallet — a small capped{' '}
                 <Link
                   href="/buy/"
-                  className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300"
+                  className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof"
                 >
                   direct sale
                 </Link>{' '}
                 is live (pilot); for larger amounts see the{' '}
                 <Link
                   href="/wcosmo/"
-                  className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300"
+                  className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof"
                 >
                   wCOSMO guide
                 </Link>{' '}
@@ -469,14 +469,14 @@ export default function ProviderBondHelper() {
           </aside>
 
           {/* security block */}
-          <aside className="mt-4 rounded-xl border border-amber-500/40 bg-amber-500/[0.08] p-5">
+          <aside className="mt-4 rounded-xl border border-phase-warn/40 bg-phase-warn/[0.08] p-5">
             <div className="flex items-start gap-3">
-              <ShieldAlert className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-300" />
+              <ShieldAlert className="mt-0.5 h-5 w-5 flex-shrink-0 text-phase-warn" />
               <div>
-                <p className="font-sans text-sm font-semibold leading-relaxed text-amber-200">
+                <p className="font-sans text-sm font-semibold leading-relaxed text-phase-warn">
                   Security model of this page
                 </p>
-                <p className="mt-1 font-sans text-sm leading-relaxed text-slate-300">
+                <p className="mt-1 font-sans text-sm leading-relaxed text-ink-1">
                   This page never asks for a seed or private key and runs no server-side signers.
                   Function-IDs are fixed; the only free input is the amount. Every payload is
                   shown in full before you sign it in the StarKey popup.
@@ -492,14 +492,14 @@ export default function ProviderBondHelper() {
                 type="button"
                 onClick={connect}
                 disabled={connecting}
-                className="inline-flex items-center gap-2 rounded-lg border border-purple-500/50 bg-purple-600/20 px-5 py-3 font-mono text-sm text-purple-100 transition-all hover:border-purple-400 hover:bg-purple-600/30 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-lg border border-phase-active/50 bg-phase-active/20 px-5 py-3 font-mono text-sm text-phase-active transition-all hover:border-phase-active hover:bg-phase-active/30 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {connecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plug className="h-4 w-4" />}
                 {connecting ? 'Connecting …' : 'Connect StarKey'}
               </button>
             ) : null}
             {notFound && (
-              <p className="mt-3 font-mono text-xs text-amber-400">
+              <p className="mt-3 font-mono text-xs text-phase-warn">
                 StarKey not found. Install the extension (starkey.app) and reload.
               </p>
             )}
@@ -532,9 +532,9 @@ export default function ProviderBondHelper() {
           />
 
           {/* all remaining on-chain parameters, collapsed by default */}
-          <section className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-5">
+          <section className="mt-4 rounded-xl border border-line-base bg-surface-1 p-5">
             <details>
-              <summary className="cursor-pointer font-mono text-xs uppercase tracking-wider text-slate-500 hover:text-slate-300">
+              <summary className="cursor-pointer font-mono text-xs uppercase tracking-wider text-ink-2 hover:text-ink-1">
                 All on-chain parameters (read-only)
               </summary>
               <dl className="mt-4 grid gap-3 font-mono text-sm sm:grid-cols-2">
@@ -573,32 +573,32 @@ export default function ProviderBondHelper() {
               </dl>
             </details>
             {global?.paused && (
-              <p className="mt-3 font-sans text-xs leading-relaxed text-amber-300/90">
+              <p className="mt-3 font-sans text-xs leading-relaxed text-phase-warn/90">
                 Onboarding is currently paused: you can still place a security deposit, but
                 buyers cannot assign jobs to new providers until it is unpaused.
               </p>
             )}
             {misconfigured && (
-              <p className="mt-3 font-mono text-xs text-rose-400">
+              <p className="mt-3 font-mono text-xs text-phase-fault">
                 WARNING: on-chain payment asset ≠ wCOSMO. All transaction buttons are disabled.
               </p>
             )}
-            {statusErr && <p className="mt-3 font-mono text-xs text-rose-400">{statusErr}</p>}
+            {statusErr && <p className="mt-3 font-mono text-xs text-phase-fault">{statusErr}</p>}
           </section>
 
           {/* eligible / next steps */}
           {eligible && (
-            <div className="mt-6 rounded-xl border border-emerald-500/30 bg-emerald-500/[0.06] p-5">
+            <div className="mt-6 rounded-xl border border-phase-settled/30 bg-phase-settled/[0.06] p-5">
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-300" />
+                <CheckCircle2 className="mt-0.5 h-5 w-5 flex-shrink-0 text-phase-settled" />
                 <div>
-                  <p className="font-mono text-sm font-bold uppercase tracking-wider text-emerald-300">
+                  <p className="font-mono text-sm font-bold uppercase tracking-wider text-phase-settled">
                     Eligible for compute jobs
                   </p>
-                  <p className="mt-1 font-sans text-sm leading-relaxed text-slate-200">
+                  <p className="mt-1 font-sans text-sm leading-relaxed text-ink-0">
                     Your security deposit meets the required minimum. Next step: reach out with
                     the provider pilot template on{' '}
-                    <Link href="/compute/" className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300">
+                    <Link href="/compute/" className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof">
                       /compute
                     </Link>{' '}
                     — quotes flow through the signed quote path operated by the COSMO team
@@ -611,9 +611,9 @@ export default function ProviderBondHelper() {
           )}
 
           {/* amount input */}
-          <section className="mt-6 rounded-xl border border-white/10 bg-white/[0.02] p-5">
-            <h2 className="font-sans text-sm font-semibold text-slate-200">Deposit amount</h2>
-            <p className="mt-1 font-sans text-xs text-slate-500">
+          <section className="mt-6 rounded-xl border border-line-base bg-surface-1 p-5">
+            <h2 className="font-sans text-sm font-semibold text-ink-0">Deposit amount</h2>
+            <p className="mt-1 font-sans text-xs text-ink-2">
               Amount of wCOSMO to deposit as your provider security (default: the live required
               minimum).
             </p>
@@ -624,12 +624,12 @@ export default function ProviderBondHelper() {
                 value={amountInput}
                 onChange={(e) => setAmountInput(e.target.value)}
                 placeholder="100"
-                className="w-40 rounded-lg border border-white/15 bg-black/40 px-3 py-2 font-mono text-sm text-slate-100 outline-none transition-colors focus:border-purple-400/60"
+                className="w-40 rounded-lg border border-line-base bg-surface-inset px-3 py-2 font-mono text-sm text-ink-0 outline-none transition-colors focus:border-phase-active/60"
               />
-              <span className="font-mono text-xs text-slate-400">wCOSMO</span>
+              <span className="font-mono text-xs text-ink-1">wCOSMO</span>
             </div>
             {target !== null && wrapNeeded !== null && wallet && (
-              <p className="mt-2 font-mono text-[11px] text-slate-500">
+              <p className="mt-2 font-mono text-[11px] text-ink-2">
                 {wrapNeeded > ZERO
                   ? `Wallet holds ${fmtAmt(wcosmoBal)} wCOSMO → step 1 converts the missing ${fmtAmt(wrapNeeded)} $COSMO.`
                   : `Wallet already holds ${fmtAmt(wcosmoBal)} wCOSMO — the conversion step is skipped.`}
@@ -638,7 +638,7 @@ export default function ProviderBondHelper() {
             {validation.length > 0 && (
               <ul className="mt-3 space-y-1">
                 {validation.map((v) => (
-                  <li key={v} className="font-mono text-xs text-rose-400">
+                  <li key={v} className="font-mono text-xs text-phase-fault">
                     · {v}
                   </li>
                 ))}
@@ -661,33 +661,33 @@ export default function ProviderBondHelper() {
                 className={cn(
                   'mt-6 rounded-xl border p-5',
                   skipped || (step.n === 2 && eligible)
-                    ? 'border-emerald-500/30 bg-emerald-500/[0.04]'
-                    : 'border-white/10 bg-white/[0.02]',
+                    ? 'border-phase-settled/30 bg-phase-settled/[0.04]'
+                    : 'border-line-base bg-surface-1',
                 )}
               >
-                <h2 className="font-sans text-sm font-semibold text-slate-200">
+                <h2 className="font-sans text-sm font-semibold text-ink-0">
                   {step.n === 1
                     ? 'Step 1 of 2 — Convert $COSMO into wCOSMO (separate transaction)'
                     : 'Step 2 of 2 — Deposit wCOSMO as your security (separate transaction)'}
                 </h2>
-                <p className="mt-1 font-sans text-xs text-slate-400">
+                <p className="mt-1 font-sans text-xs text-ink-1">
                   {step.n === 1
                     ? 'Converts $COSMO into the same amount of wCOSMO in your wallet. Nothing is deposited yet.'
                     : 'Moves the wCOSMO from your wallet into the provider vault as your security deposit.'}
                 </p>
-                <p className="mt-1 font-mono text-xs text-slate-400">
+                <p className="mt-1 font-mono text-xs text-ink-1">
                   {step.modName}::{step.fnName}
                   {connected && amountsValid && stepAmount !== null && stepAmount > ZERO
                     ? `(u64:${stepAmount.toString()})`
                     : '(u64:<amount>)'}
                 </p>
                 {step.n === 1 && skipped && (
-                  <p className="mt-2 font-mono text-xs text-emerald-300">
+                  <p className="mt-2 font-mono text-xs text-phase-settled">
                     Skipped — wallet already holds enough wCOSMO for the chosen amount.
                   </p>
                 )}
                 {step.n === 2 && (
-                  <p className="mt-1 font-sans text-xs text-slate-500">
+                  <p className="mt-1 font-sans text-xs text-ink-2">
                     Enabled once the wallet holds at least the chosen amount in wCOSMO.
                   </p>
                 )}
@@ -696,7 +696,7 @@ export default function ProviderBondHelper() {
                     type="button"
                     onClick={() => void prepare(step)}
                     disabled={!prepEnabled(step.n)}
-                    className="inline-flex items-center gap-2 rounded-lg border border-sky-500/50 bg-sky-600/20 px-4 py-2 font-mono text-xs text-sky-100 transition-all hover:border-sky-400 hover:bg-sky-600/30 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="inline-flex items-center gap-2 rounded-lg border border-phase-proof/50 bg-phase-proof/20 px-4 py-2 font-mono text-xs text-phase-proof transition-all hover:border-phase-proof hover:bg-phase-proof/30 disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     {steps[step.n].busy && !steps[step.n].signReady ? (
                       <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -707,29 +707,29 @@ export default function ProviderBondHelper() {
                     type="button"
                     onClick={() => void sign(step)}
                     disabled={!signEnabled(step.n)}
-                    className="inline-flex items-center gap-2 rounded-lg border border-amber-500/50 bg-amber-600/20 px-4 py-2 font-mono text-xs text-amber-100 transition-all hover:border-amber-400 hover:bg-amber-600/30 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="inline-flex items-center gap-2 rounded-lg border border-phase-warn/50 bg-phase-warn/20 px-4 py-2 font-mono text-xs text-phase-warn transition-all hover:border-phase-warn hover:bg-phase-warn/30 disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     Sign in StarKey
                   </button>
                 </div>
                 {steps[step.n].payloadText && (
                   <details open className="mt-4">
-                    <summary className="cursor-pointer font-mono text-[11px] uppercase tracking-wider text-slate-500 hover:text-slate-300">
+                    <summary className="cursor-pointer font-mono text-[11px] uppercase tracking-wider text-ink-2 hover:text-ink-1">
                       Raw transaction payload (exactly what you will sign)
                     </summary>
-                    <pre className="mt-2 overflow-x-auto whitespace-pre-wrap break-all rounded-lg border border-dashed border-slate-600 bg-black/40 p-4 font-mono text-[11px] leading-relaxed text-slate-300">
+                    <pre className="mt-2 overflow-x-auto whitespace-pre-wrap break-all rounded-lg border border-dashed border-line-strong bg-surface-inset p-4 font-mono text-[11px] leading-relaxed text-ink-1">
                       {steps[step.n].payloadText}
                     </pre>
                   </details>
                 )}
                 {steps[step.n].txHash && (
-                  <p className="mt-3 break-all font-mono text-xs text-slate-400">
+                  <p className="mt-3 break-all font-mono text-xs text-ink-1">
                     TX hash:{' '}
                     <a
                       href={`${EXPLORER_TX}${steps[step.n].txHash}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sky-400 underline decoration-sky-400/40 hover:text-sky-300"
+                      className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof"
                     >
                       {steps[step.n].txHash}
                     </a>
@@ -740,17 +740,17 @@ export default function ProviderBondHelper() {
           })}
 
           {/* honesty box */}
-          <section className="mt-8 rounded-xl border border-amber-500/20 bg-amber-500/[0.04] p-5">
+          <section className="mt-8 rounded-xl border border-phase-warn/20 bg-phase-warn/[0.04] p-5">
             <div className="flex items-center gap-2 mb-2">
-              <Lock className="h-4 w-4 text-amber-300" />
-              <h3 className="font-mono text-sm text-slate-100">
+              <Lock className="h-4 w-4 text-phase-warn" />
+              <h3 className="font-mono text-sm text-ink-0">
                 Guarded v1 — what the security deposit does and does not do
               </h3>
             </div>
-            <ul className="space-y-1.5 font-sans text-sm leading-relaxed text-slate-400">
+            <ul className="space-y-1.5 font-sans text-sm leading-relaxed text-ink-1">
               <li>
                 · Placing a security deposit makes you{' '}
-                <span className="text-slate-200">eligible</span>; it does not assign you jobs.
+                <span className="text-ink-0">eligible</span>; it does not assign you jobs.
                 Jobs start when a buyer accepts a quote for you.
               </li>
               <li>
@@ -776,10 +776,10 @@ export default function ProviderBondHelper() {
             <p
               className={cn(
                 'mt-6 font-mono text-xs',
-                log.tone === 'ok' && 'text-emerald-400',
-                log.tone === 'bad' && 'text-rose-400',
-                log.tone === 'warn' && 'text-amber-400',
-                log.tone === 'info' && 'text-slate-400',
+                log.tone === 'ok' && 'text-phase-settled',
+                log.tone === 'bad' && 'text-phase-fault',
+                log.tone === 'warn' && 'text-phase-warn',
+                log.tone === 'info' && 'text-ink-1',
               )}
             >
               {log.text}
@@ -787,14 +787,14 @@ export default function ProviderBondHelper() {
           )}
 
           {/* footer note */}
-          <p className="mt-10 font-mono text-[11px] leading-relaxed text-slate-600">
+          <p className="mt-10 font-mono text-[11px] leading-relaxed text-ink-2">
             No secrets, no server signers, no admin/multisig functions. Read-only status via {RPC}.
             Built on Supra.{' '}
-            <Link href="/compute/" className="text-slate-500 underline hover:text-slate-300">
+            <Link href="/compute/" className="text-ink-2 underline hover:text-ink-1">
               /compute
             </Link>{' '}
             ·{' '}
-            <Link href="/wcosmo/" className="text-slate-500 underline hover:text-slate-300">
+            <Link href="/wcosmo/" className="text-ink-2 underline hover:text-ink-1">
               /wcosmo
             </Link>
           </p>
@@ -830,16 +830,16 @@ function DepositSummary({
   const eligible = wallet?.eligible === true;
 
   return (
-    <section className="mt-6 rounded-xl border border-purple-500/25 bg-purple-500/[0.04] p-5">
+    <section className="mt-6 rounded-xl border border-phase-active/25 bg-phase-active/[0.04] p-5">
       <div className="flex items-center justify-between">
-        <h2 className="font-mono text-xs uppercase tracking-wider text-purple-300">
+        <h2 className="font-mono text-xs uppercase tracking-wider text-phase-active">
           Your security deposit
         </h2>
         <button
           type="button"
           onClick={onRefresh}
           disabled={refreshing}
-          className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-3 py-1.5 font-mono text-[11px] text-slate-400 transition-all hover:border-white/30 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-lg border border-line-base px-3 py-1.5 font-mono text-[11px] text-ink-1 transition-all hover:border-line-strong hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
         >
           <RefreshCw className={cn('h-3 w-3', refreshing && 'animate-spin')} />
           Refresh
@@ -847,48 +847,48 @@ function DepositSummary({
       </div>
       <dl className="mt-4 space-y-2 font-mono text-sm">
         <div className="flex items-baseline justify-between gap-4">
-          <dt className="text-[12px] text-slate-500">Required minimum</dt>
-          <dd className="text-slate-100">{global ? `${fmtAmt(global.minBond)} wCOSMO` : '—'}</dd>
+          <dt className="text-[12px] text-ink-2">Required minimum</dt>
+          <dd className="text-ink-0">{global ? `${fmtAmt(global.minBond)} wCOSMO` : '—'}</dd>
         </div>
         <div className="flex items-baseline justify-between gap-4">
-          <dt className="text-[12px] text-slate-500">Deposited by you</dt>
-          <dd className="text-slate-100">
+          <dt className="text-[12px] text-ink-2">Deposited by you</dt>
+          <dd className="text-ink-0">
             {deposited !== null ? `${fmtAmt(deposited)} wCOSMO` : '— connect wallet'}
           </dd>
         </div>
         <div className="flex items-baseline justify-between gap-4">
-          <dt className="text-[12px] text-slate-500">Still missing</dt>
-          <dd className={missing === ZERO ? 'text-emerald-300' : 'text-slate-100'}>
+          <dt className="text-[12px] text-ink-2">Still missing</dt>
+          <dd className={missing === ZERO ? 'text-phase-settled' : 'text-ink-0'}>
             {missing !== null ? `${fmtAmt(missing)} wCOSMO` : '— connect wallet'}
           </dd>
         </div>
         <div className="flex items-baseline justify-between gap-4">
-          <dt className="text-[12px] text-slate-500">wCOSMO in your wallet</dt>
-          <dd className="text-slate-100">
+          <dt className="text-[12px] text-ink-2">wCOSMO in your wallet</dt>
+          <dd className="text-ink-0">
             {wallet ? `${fmtAmt(wallet.wcosmoBal)} wCOSMO` : '— connect wallet'}
           </dd>
         </div>
       </dl>
       <div className="mt-4">
         {!connected ? (
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-3 py-1.5 font-mono text-xs text-slate-400">
+          <span className="inline-flex items-center gap-2 rounded-full border border-line-base bg-surface-inset px-3 py-1.5 font-mono text-xs text-ink-1">
             <Plug className="h-3.5 w-3.5" />
             Connect your wallet to see your deposit status
           </span>
         ) : eligible ? (
-          <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/[0.08] px-3 py-1.5 font-mono text-xs text-emerald-300">
+          <span className="inline-flex items-center gap-2 rounded-full border border-phase-settled/40 bg-phase-settled/[0.08] px-3 py-1.5 font-mono text-xs text-phase-settled">
             <CheckCircle2 className="h-3.5 w-3.5" />
             Eligible for compute jobs
           </span>
         ) : (
-          <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/[0.08] px-3 py-1.5 font-mono text-xs text-amber-300">
+          <span className="inline-flex items-center gap-2 rounded-full border border-phase-warn/40 bg-phase-warn/[0.08] px-3 py-1.5 font-mono text-xs text-phase-warn">
             <Lock className="h-3.5 w-3.5" />
             Not yet eligible — deposit below the required minimum
           </span>
         )}
       </div>
       {global && deposited !== null && deposited > ZERO && missing !== null && missing > ZERO && (
-        <p className="mt-3 font-sans text-xs leading-relaxed text-amber-300/90">
+        <p className="mt-3 font-sans text-xs leading-relaxed text-phase-warn/90">
           Each single deposit must itself be at least the required minimum — the smallest valid
           top-up is {fmtAmt(global.minBond)} wCOSMO. Your existing deposit stays withdrawable in
           full.
@@ -920,30 +920,30 @@ function TransactionPlan({
     { label: 'Your security deposit', before: wallet.bondAmount, after: wallet.bondAmount + target },
   ];
   return (
-    <section className="mt-6 rounded-xl border border-sky-500/25 bg-sky-500/[0.04] p-5">
-      <h2 className="font-sans text-sm font-semibold text-slate-200">
+    <section className="mt-6 rounded-xl border border-phase-proof/25 bg-phase-proof/[0.04] p-5">
+      <h2 className="font-sans text-sm font-semibold text-ink-0">
         What will happen — {twoTx ? 'two separate transactions' : 'one transaction'}
       </h2>
       <ol className="mt-3 space-y-1.5 font-sans text-sm leading-relaxed">
-        <li className={twoTx ? 'text-slate-300' : 'text-slate-600'}>
+        <li className={twoTx ? 'text-ink-1' : 'text-ink-2'}>
           1.{' '}
           {twoTx
             ? `Convert ${fmtAmt(wrapNeeded)} $COSMO into ${fmtAmt(wrapNeeded)} wCOSMO (transaction 1).`
             : 'Convert — skipped, your wallet already holds enough wCOSMO.'}
         </li>
-        <li className="text-slate-300">
+        <li className="text-ink-1">
           2. Deposit {fmtAmt(target)} wCOSMO as your provider security deposit (transaction{' '}
           {twoTx ? 2 : 1}).
         </li>
       </ol>
-      <p className="mt-2 font-sans text-xs text-slate-500">
+      <p className="mt-2 font-sans text-xs text-ink-2">
         StarKey asks you to sign each transaction individually — nothing is sent until you
         confirm.
       </p>
       <div className="mt-4 overflow-x-auto">
         <table className="w-full font-mono text-xs">
           <thead>
-            <tr className="text-left text-[11px] uppercase tracking-wider text-slate-500">
+            <tr className="text-left text-[11px] uppercase tracking-wider text-ink-2">
               <th className="pb-2 pr-4 font-normal">&nbsp;</th>
               <th className="pb-2 pr-4 font-normal">Before</th>
               <th className="pb-2 font-normal">After</th>
@@ -951,16 +951,16 @@ function TransactionPlan({
           </thead>
           <tbody>
             {rows.map((r) => (
-              <tr key={r.label} className="border-t border-white/5">
-                <td className="py-1.5 pr-4 text-slate-500">{r.label}</td>
-                <td className="py-1.5 pr-4 text-slate-300">{fmtAmt(r.before)}</td>
-                <td className="py-1.5 text-slate-100">{fmtAmt(r.after)}</td>
+              <tr key={r.label} className="border-t border-line-subtle">
+                <td className="py-1.5 pr-4 text-ink-2">{r.label}</td>
+                <td className="py-1.5 pr-4 text-ink-1">{fmtAmt(r.before)}</td>
+                <td className="py-1.5 text-ink-0">{fmtAmt(r.after)}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <p className="mt-2 font-sans text-[11px] text-slate-600">
+      <p className="mt-2 font-sans text-[11px] text-ink-2">
         Projection assumes both transactions confirm; SUPRA gas not included.
       </p>
     </section>
@@ -989,10 +989,10 @@ function StatusCard({
   mono?: boolean;
 }) {
   const toneCls =
-    tone === 'ok' ? 'text-emerald-300' : tone === 'bad' ? 'text-rose-300' : 'text-slate-400';
+    tone === 'ok' ? 'text-phase-settled' : tone === 'bad' ? 'text-phase-fault' : 'text-ink-1';
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
-      <div className="flex items-center gap-2 text-slate-500">
+    <div className="rounded-xl border border-line-base bg-surface-1 p-4">
+      <div className="flex items-center gap-2 text-ink-2">
         {icon}
         <span className="font-mono text-[11px] uppercase tracking-wider">{label}</span>
       </div>
@@ -1006,15 +1006,15 @@ function StatusCard({
 function StatusRow({ k, v, tone }: { k: string; v: string; tone?: 'ok' | 'bad' | 'warn' }) {
   const toneCls =
     tone === 'ok'
-      ? 'text-emerald-300'
+      ? 'text-phase-settled'
       : tone === 'bad'
-        ? 'text-rose-300'
+        ? 'text-phase-fault'
         : tone === 'warn'
-          ? 'text-amber-300'
-          : 'text-slate-200';
+          ? 'text-phase-warn'
+          : 'text-ink-0';
   return (
-    <div className="flex items-baseline justify-between gap-4 rounded-lg border border-white/5 bg-black/20 px-3 py-2">
-      <span className="text-[11px] uppercase tracking-wider text-slate-500">{k}</span>
+    <div className="flex items-baseline justify-between gap-4 rounded-lg border border-line-subtle bg-surface-inset px-3 py-2">
+      <span className="text-[11px] uppercase tracking-wider text-ink-2">{k}</span>
       <span className={cn('text-right text-xs', toneCls)}>{v}</span>
     </div>
   );

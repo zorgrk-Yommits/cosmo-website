@@ -34,7 +34,7 @@ export default function OfferCard({
               'inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider',
               offer.source === 'wallet'
                 ? 'border-phase-settled/40 bg-phase-settled/10 text-phase-settled'
-                : 'border-line-base bg-white/[0.02] text-ink-2',
+                : 'border-line-base bg-white/[0.02] text-ink-1',
             )}
           >
             {offer.source === 'wallet' ? (
