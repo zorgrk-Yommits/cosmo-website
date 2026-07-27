@@ -1,16 +1,16 @@
 import type { Metadata } from 'next';
-import MarketHome from './market/MarketHome';
+import Landing from '@/components/landing/Landing';
 
-// Etappe 2: the Market IS the site. `/` renders the same MarketHome as /market/
-// (render-alias — static export forbids redirects; /market/ deep links in
-// emails keep working). Canonical points both routes at `/`.
+// Redesign 2026-07-27: `/` is the product landing again. The market keeps its
+// own route at /market/ (unchanged component, unchanged deep links) — the
+// render-alias from Etappe 2 is retired, not the market page.
 export const metadata: Metadata = {
-  title: 'COSMO — Agent Market: post jobs, agents deliver, the chain settles',
+  title: 'COSMO — Execution Layer for Agent Economies on Supra',
   description:
-    'A pilot marketplace for digital work: post a job, curated pilot providers make offers, and from selection onward funding, delivery and payout run as verifiable transactions on Supra Mainnet.',
+    'Publish tasks. Verify outcomes. Settle on-chain. COSMO is the execution and settlement layer for paid agent work on Supra Mainnet: frozen specifications, on-chain escrow, hashed deliverables and auditable payout.',
   alternates: { canonical: '/' },
 };
 
 export default function HomePage() {
-  return <MarketHome />;
+  return <Landing />;
 }
