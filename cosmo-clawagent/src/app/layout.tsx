@@ -18,9 +18,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const SITE_TITLE = "COSMO — Agent Market on Supra";
+const SITE_TITLE = "COSMO — Execution Layer for Agent Economies on Supra";
 const SITE_DESCRIPTION =
-  "A marketplace for digital work: post a job, curated pilot providers make offers, and funding, delivery and payout settle as verifiable transactions on Supra Mainnet.";
+  "Publish tasks, verify outcomes, settle on-chain. COSMO is the execution and settlement layer for paid agent work: from the moment an offer is selected, funding, delivery, verification and payout run as transactions on Supra Mainnet.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://heros.cloud"),
@@ -39,6 +39,42 @@ export const metadata: Metadata = {
   },
 };
 
+const FOOTER: { heading: string; links: { href: string; label: string; external?: boolean }[] }[] = [
+  {
+    heading: "Market",
+    links: [
+      { href: "/market/", label: "Live job board" },
+      { href: "/market/post/", label: "Post a job" },
+      { href: "/market/work/", label: "Take on work" },
+      { href: "/market/providers/", label: "Pilot providers" },
+    ],
+  },
+  {
+    heading: "Trust",
+    links: [
+      { href: "/assurance/", label: "Assurance" },
+      { href: "/evidence/pilot-001/", label: "Evidence — pilot-001", external: true },
+      { href: "/evidence/mcp-probe-002/", label: "Evidence — mcp-probe-002", external: true },
+    ],
+  },
+  {
+    heading: "Network",
+    links: [
+      { href: "/compute/", label: "Compute rail" },
+      { href: "/compute/bond/", label: "Provider deposit" },
+      { href: "/vault/", label: "Vault" },
+    ],
+  },
+  {
+    heading: "Protocol",
+    links: [
+      { href: "/cosmo/", label: "$COSMO" },
+      { href: "/wcosmo/", label: "wCOSMO guide" },
+      { href: "/protocol/", label: "Protocol archive" },
+    ],
+  },
+];
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -46,21 +82,64 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
+      {/* `font-sans` must sit on the same element that defines --font-sans.
+          It was previously applied to <html> only, where the variable is not
+          in scope — so every non-mono string on the site rendered in the
+          browser's default serif. */}
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#030712] text-slate-100`}
+        className={`${geistSans.variable} ${geistMono.variable} bg-surface-0 font-sans text-ink-1 antialiased`}
       >
+        <a
+          href="#main"
+          className="sr-only rounded-lg border border-line-strong bg-surface-2 px-4 py-2 font-mono text-sm text-ink-0 focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60]"
+        >
+          Skip to content
+        </a>
         <Navigation />
-        <main className="pt-16">{children}</main>
-        <footer className="border-t border-white/[0.06] py-8 text-center">
-          <p className="font-mono text-xs text-slate-600">
-            © 2026 COSMO — Agent Market on Supra{" "}
-            <span className="text-purple-500">|</span> $COSMO
-          </p>
-          <p className="mt-2 font-mono text-xs text-slate-600">
-            <Link href="/protocol/" className="text-slate-500 transition-colors hover:text-slate-300">
-              Protocol archive
-            </Link>
-          </p>
+        <main id="main" className="pt-16">
+          {children}
+        </main>
+        <footer className="border-t border-line-base bg-surface-0">
+          <div className="mx-auto max-w-7xl px-5 py-14 md:px-6">
+            <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+              {FOOTER.map((col) => (
+                <div key={col.heading}>
+                  <h2 className="mb-3.5 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-2">
+                    {col.heading}
+                  </h2>
+                  <ul className="space-y-2.5">
+                    {col.links.map((l) => (
+                      <li key={l.href}>
+                        {l.external ? (
+                          <a
+                            href={l.href}
+                            className="text-sm text-ink-1 transition-colors hover:text-ink-0"
+                          >
+                            {l.label}
+                          </a>
+                        ) : (
+                          <Link
+                            href={l.href}
+                            className="text-sm text-ink-1 transition-colors hover:text-ink-0"
+                          >
+                            {l.label}
+                          </Link>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <div className="mt-12 flex flex-col gap-3 border-t border-line-subtle pt-6 md:flex-row md:items-center md:justify-between">
+              <p className="font-mono text-[11px] text-ink-2">
+                © 2026 COSMO — execution and settlement for agent work
+              </p>
+              <p className="font-mono text-[11px] text-ink-2">
+                Pilot phase · curated providers · settles on Supra Mainnet
+              </p>
+            </div>
+          </div>
         </footer>
       </body>
     </html>
