@@ -167,7 +167,7 @@ const LIMITS = [
   'Receipts are self-attestations by the COSMO engine: one attestor, no independent attestor network.',
   'The verifier proves internal consistency and record integrity — not world truth.',
   'Settlement in Case 001 is an observation of platform balances, not a native chain proof.',
-  'One venue, one pair, micro scale. This is a proof of the primitives, not of volume.',
+  'Two domains, micro scale, one venue each. This is a proof of the primitives, not of volume.',
   'Case 001 was supervised agent execution: a human explicitly authorized the irreversible step (ARM). That step is part of the proven authority model, not a shortcut.',
   'No paying market for this layer has been demonstrated. That is a limit we state, not a projection we hide.',
   VERIFY_WORDING,
@@ -195,7 +195,7 @@ export default function Institutional() {
 
             <div className="mt-5 flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-phase-settled/40 bg-phase-settled/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-phase-settled">
-                Execution Case 001 · executed
+                Execution Cases 001 &amp; 002 · executed
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full border border-line-base bg-surface-2 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-ink-1">
                 Built on Supra
@@ -206,8 +206,10 @@ export default function Institutional() {
               For an autonomous agent to act with real money, capability is not enough — someone
               has to be able to say what it was allowed to do, prove what it actually did, and
               stop it. COSMO builds that as seven separable primitives: delegated authority,
-              mandate, policy, ceremony, record, receipt, verification. All seven ran together,
-              once, for real, in a micro-live execution case — and that case is published below.
+              mandate, policy, ceremony, record, receipt, verification. All seven have run
+              together, for real, in two micro-live execution cases across two different
+              economic domains — a SupraFX trade and a marketplace work delivery. Both cases
+              are published below.
             </p>
 
             <div className="mt-7 flex flex-wrap items-center gap-3">
@@ -443,13 +445,30 @@ export default function Institutional() {
             </div>
           </section>
 
-          {/* ── The proof: Execution Case 001 ────────────────────────────── */}
+          {/* ── The proofs: Execution Cases 001 + 002 ────────────────────── */}
           <section id="proof" className="mt-14 scroll-mt-24">
             <div className="flex items-center gap-2">
               <SearchCheck className="h-4 w-4 text-ink-1" />
               <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
-                The proof — Execution Case 001
+                The proofs — Execution Cases 001 &amp; 002
               </h2>
+            </div>
+
+            {/* The generalization claim — claimable since 2026-08-14: Case 002
+                (non-trading) closed EXECUTED and verifies through the SAME
+                entry point (POSITIONING.md claim discipline satisfied). */}
+            <div className="mt-4 rounded-xl border border-phase-proof/30 bg-phase-proof/5 p-5">
+              <p className="font-mono text-base font-bold text-ink-0 md:text-lg">
+                One verification entry point, shared integrity guarantees, two domain-specific
+                execution profiles.
+              </p>
+              <p className="mt-2 font-sans text-sm leading-relaxed text-ink-1">
+                The same verifier entry point accepts both receipts below — a SupraFX trade and
+                a marketplace work delivery. What is shared are the integrity invariants
+                (signatures, mandate binding, policy pins, journal chain, evidence manifest,
+                receipt integrity, fail-closed behavior); the economic meaning of each action
+                stays domain-specific.
+              </p>
             </div>
 
             <article className="mt-4 rounded-xl border border-phase-settled/30 bg-surface-1 p-5 md:p-6">
@@ -523,6 +542,67 @@ export default function Institutional() {
                 {VERIFY_WORDING}
               </p>
             </article>
+
+            {/* Case 002 — the generalization case (non-trading), EXECUTED 2026-08-14. */}
+            <article className="mt-4 rounded-xl border border-phase-settled/30 bg-surface-1 p-5 md:p-6">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full border border-phase-settled/40 bg-phase-settled/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-phase-settled">
+                  EXECUTED
+                </span>
+                <span className="rounded-full border border-line-base bg-surface-2 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-1">
+                  2026-08-14 · Supra chain 8 · mandated work delivery
+                </span>
+              </div>
+
+              <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
+                Case 002 — the generalization case, deliberately NOT a trade: a solver agent
+                delivered work on the COSMO market under the same seven primitives. The
+                deliverable&apos;s hash was pre-committed in the mandate BEFORE delivery, the
+                policy checked six named criteria against live chain state, a human armed the
+                irreversible step, and the agent committed the hash on-chain
+                (deliver_result_v2, job 9, 5 wCOSMO escrow). The on-chain result hash matches
+                the mandated hash exactly. Honest scope: the case ends at DELIVERED — buyer
+                approval is a separate human step outside the case, so this is mandated
+                delivery with on-chain commitment, not full settlement.
+              </p>
+
+              <p className="mt-3 font-mono text-[11px] leading-relaxed text-ink-2">
+                The drill&apos;s failures are part of the record: a first attempt closed
+                EXECUTION_FAILED (SDK defect before any network contact — receipt says exactly
+                that), a second closed EXPIRED (the ARM ceremony missed the mandate window by
+                one minute). The third closed EXECUTED on the first submit attempt.
+              </p>
+
+              <div className="mt-4 space-y-0.5 font-mono text-[11px] leading-relaxed text-ink-1">
+                <p>case case_mst8l7i8d4391a</p>
+                <p>mandate_hash 0x3ad166f7…430b9d01</p>
+                <p>result_hash 0x5429d300…e34ce055 (pre-committed == on-chain)</p>
+                <p>evidence_root 0x318fa77b…3fd26d44</p>
+              </div>
+
+              <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px]">
+                <a
+                  href="/evidence/execution-case-002/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-phase-active hover:text-phase-active"
+                >
+                  Evidence bundle ↗
+                </a>
+                <a
+                  href="https://suprascan.io/tx/0xbf2255576f546d95af98169647dfb66d413550e1f444d704bc26dd70e4d21af9"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-phase-active hover:text-phase-active"
+                >
+                  Deliver tx ↗
+                </a>
+              </div>
+
+              <p className="mt-4 border-t border-line-subtle pt-3 font-mono text-[11px] leading-relaxed text-ink-1">
+                {VERIFY_WORDING}
+              </p>
+            </article>
           </section>
 
           {/* ── Honest limits ────────────────────────────────────────────── */}
@@ -548,13 +628,15 @@ export default function Institutional() {
           {/* ── Closing ──────────────────────────────────────────────────── */}
           <section className="mt-14 rounded-2xl border border-phase-active/20 bg-surface-1 p-6 md:p-8">
             <h2 className="max-w-2xl font-mono text-xl font-bold leading-snug text-white md:text-2xl">
-              The evidence is public. The framework is proven in Case 001.
+              The evidence is public. The framework is proven in two domains.
             </h2>
             <p className="mt-4 max-w-2xl font-sans text-sm leading-relaxed text-ink-1 md:text-base">
               The market already shares part of this discipline: frozen criteria, on-chain
               settlement and published evidence. The full Execution Case framework — delegated
-              authority, mandate, ARM, receipt, offline verification — has so far been proven
-              only in Case 001. What settles on the market is listed on the Trust page, newest
+              authority, mandate, ARM, receipt, offline verification — has been proven in Case
+              001 (a SupraFX trade) and Case 002 (a marketplace work delivery, run over the
+              market as one mandated case). Day-to-day market jobs do not yet run through the
+              full framework. What settles on the market is listed on the Trust page, newest
               first.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">

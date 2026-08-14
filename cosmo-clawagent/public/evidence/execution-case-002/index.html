@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="index,follow">
+<title>EXECUTION-CASE-002 — Evidence Bundle</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin:0; background:#08090B; color:#F2F4F7; font:15px/1.6 ui-sans-serif,system-ui,sans-serif; }
+  main { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; }
+  h1,h2 { font-family: ui-monospace,Menlo,Consolas,monospace; letter-spacing:-0.01em; }
+  h1 { font-size: 1.7rem; margin: 0 0 6px; }
+  h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .22em; color:#A7B0BC; margin: 40px 0 12px; }
+  p { color:#A7B0BC; margin: 10px 0; }
+  .ink0 { color:#F2F4F7; }
+  code, .mono { font-family: ui-monospace,Menlo,Consolas,monospace; font-size: 12.5px; }
+  .chip { display:inline-block; border:1px solid rgba(70,214,160,.4); background:rgba(70,214,160,.1); color:#46D6A0; border-radius:999px; padding:3px 12px; font-family:ui-monospace,monospace; font-size:11px; text-transform:uppercase; letter-spacing:.08em; margin-right:8px; }
+  .chip.neutral { border-color:rgba(255,255,255,.14); background:rgba(255,255,255,.04); color:#A7B0BC; }
+  .panel { border:1px solid rgba(255,255,255,.1); background:#0D0F13; border-radius:12px; padding:16px 18px; margin:14px 0; overflow-x:auto; }
+  .well { border:1px solid rgba(255,255,255,.06); background:#050608; border-radius:10px; padding:12px 14px; margin:10px 0; overflow-x:auto; }
+  table { border-collapse: collapse; width:100%; font-family:ui-monospace,monospace; font-size:12px; }
+  td, th { text-align:left; padding:5px 14px 5px 0; vertical-align:top; white-space:nowrap; }
+  th { color:#757E8C; font-weight:600; text-transform:uppercase; font-size:10.5px; letter-spacing:.08em; }
+  td.hash { color:#757E8C; }
+  a { color:#6E8BFF; text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  ul { color:#A7B0BC; padding-left: 1.2em; } li { margin: 6px 0; }
+  .warnbox { border:1px solid rgba(224,164,88,.35); background:rgba(224,164,88,.06); border-radius:12px; padding:14px 18px; margin:14px 0; }
+  .warnbox p { color:#A7B0BC; margin:6px 0; }
+  .breakall { word-break: break-all; white-space: normal; }
+</style>
+</head>
+<body>
+<main>
+  <p class="mono" style="color:#757E8C; font-size:11px; text-transform:uppercase; letter-spacing:.2em;">COSMO · public evidence bundle</p>
+  <h1>EXECUTION-CASE-002</h1>
+  <p>
+    <span class="chip">EXECUTED</span>
+    <span class="chip neutral">case_mst8l7i8d4391a</span>
+    <span class="chip neutral">2026-08-14 · Supra chain 8 · micro-live · mandated work delivery</span>
+  </p>
+
+  <p class="ink0">
+    Scope of this proof: one mandated WORK DELIVERY — the solver agent registered and
+    irreversibly committed a pre-mandated result hash on-chain (compute_rfq::deliver_result_v2,
+    job 9, 5 wCOSMO escrow) under delegated provider authority, a one-shot signed mandate, a
+    hash-pinned policy and a human ARM ceremony. The case ends at on-chain DELIVERED — buyer
+    approval is a separate human step, deliberately outside the case. Together with
+    EXECUTION-CASE-001 this is the generalization proof: one verification entry point, shared
+    integrity guarantees, two domain-specific execution profiles.
+  </p>
+  <p>
+    Public evidence bundle. Offline verification currently requires the COSMO verifier,
+    whose implementation remains private.
+  </p>
+  <p><a href="/institutional/">← The institutional layer (context page)</a></p>
+
+  <h2>Anchors</h2>
+  <div class="panel"><table>
+    <tr><td>outcome</td><td class="hash">EXECUTED — action accepted; settlement observed (on-chain DELIVERED)</td></tr>
+    <tr><td>settlement</td><td class="hash">Supra chain 8 job 9: result_hash on-chain == mandated hash · delivered_at 1786729500 · height 51,594,475</td></tr>
+    <tr><td>deliver tx</td><td class="hash breakall"><a href="https://suprascan.io/tx/0xbf2255576f546d95af98169647dfb66d413550e1f444d704bc26dd70e4d21af9" rel="noopener noreferrer" target="_blank">0xbf2255576f546d95af98169647dfb66d413550e1f444d704bc26dd70e4d21af9 ↗</a></td></tr>
+    <tr><td>receipt_statement_hash</td><td class="hash breakall">0x4e227a3a74fe045aeeb997d4de4234d34ef86987221c439f018f002a0a696e4a</td></tr>
+    <tr><td>receipt_file_sha3</td><td class="hash breakall">a35b106848dd0ff2fe61ad646ace0581209c0a190f46784ad6acabc69385827e</td></tr>
+    <tr><td>evidence_root</td><td class="hash breakall">0x318fa77bdb67ccdea5d98c765b3d6c5cb804bb602ec737ade8463d6f3fd26d44</td></tr>
+    <tr><td>manifest_file_sha3</td><td class="hash breakall">ce8436040aacd642eef623c72f888626fdbf33199fdcf9cadc782edc7c37d6eb</td></tr>
+    <tr><td>mandate_hash</td><td class="hash breakall">0x3ad166f7be905febe8be67ae057d84a487182bf5fe0fb2f7f3f4b1dd430b9d01</td></tr>
+    <tr><td>result_hash (pre-committed)</td><td class="hash breakall">0x5429d3005db3382c8210d149e3bf0e77c2146b64d9ef263f2778f1f9e34ce055</td></tr>
+    <tr><td>spec_input_hash</td><td class="hash breakall">0x325f7a0685ecb8c92a9cc81885f3d5288d9092f61673d9dfda3fdfcbdc44b8c1 (frozen job spec, on-chain request 14)</td></tr>
+    <tr><td>execution_ref</td><td class="hash breakall">0x1dd4deb4b0b25b0ce1a64f3bf433c403c1d7d5bc0f8b194b1bd114f78907c2f4</td></tr>
+    <tr><td>attestor_pubkey</td><td class="hash breakall">f3b33df0f339536e91fa12b40f14fc9cda2ed93dcbb84f2864f68a80f654fbac (pinned — same attestor as Case 001)</td></tr>
+    <tr><td>solver (delegated)</td><td class="hash breakall">K1 0x11c1c2660dc3e764c6b5b12f084cbbb11028b74686aea7a762e09b2ca651da53 (curated provider, on-chain bond)</td></tr>
+  </table></div>
+
+  <p class="mono" style="font-size:12px;">
+    Two receipt hashes, both correct: <span class="ink0">the receipt statement hash is calculated
+    from the canonical JSON representation</span> of the signed receipt (sorted keys, no
+    whitespace — this is the value recorded in the journal&rsquo;s <code>case_closed</code>
+    entry). <span class="ink0">The published file hash is calculated from the exact downloadable
+    file bytes, including its final newline.</span>
+  </p>
+
+  <h2>Drill honesty — the failures are part of the record</h2>
+  <p>
+    A first attempt closed <span class="ink0">EXECUTION_FAILED</span> (an SDK argument-order
+    defect broke the send BEFORE any network contact; on-chain state and sequence untouched,
+    the receipt says exactly that, the one-shot mandate was consumed). A second attempt
+    closed <span class="ink0">EXPIRED</span> (the ARM ceremony missed the 20-minute mandate
+    window by one minute — the ceremony clock is real). This third case ran simulate-first
+    and closed EXECUTED on the first submit attempt.
+  </p>
+
+  <h2>Authority on record</h2>
+  <div class="panel"><table>
+    <tr><td>provider authority</td><td class="hash">K1 — curated roster provider with an on-chain security deposit; on-chain solver of job 9</td></tr>
+    <tr><td>mandate</td><td class="hash">one-shot, 60-min TTL, exposure 5,000,000 wCOSMO-quants (= the escrow), policy-hash-bound</td></tr>
+    <tr><td>ceremony</td><td class="hash">ARM by operator:zorg at 17:44:54 UTC, consumed once; submission human-gated</td></tr>
+  </table></div>
+
+  <h2>Files (byte-identical copies of the canonical case documents)</h2>
+  <p class="mono" style="font-size:12px;">Check integrity with: <code>openssl dgst -sha3-256 &lt;file&gt;</code></p>
+  <div class="panel"><table>
+    <tr><th>file</th><th>sha3-256</th></tr>
+    <tr><td><a href="receipt.json">receipt.json</a></td><td class="hash breakall">a35b106848dd0ff2fe61ad646ace0581209c0a190f46784ad6acabc69385827e</td></tr>
+    <tr><td><a href="MANIFEST.json">MANIFEST.json</a></td><td class="hash breakall">ce8436040aacd642eef623c72f888626fdbf33199fdcf9cadc782edc7c37d6eb</td></tr>
+    <tr><td><a href="journal.jsonl">journal.jsonl</a></td><td class="hash breakall">4b9836752fde8bbcba9ce9a92b3dbdd5e5049df8ce7f55a8c75532c823494597</td></tr>
+    <tr><td><a href="deliverable.json">deliverable.json</a></td><td class="hash breakall">5429d3005db3382c8210d149e3bf0e77c2146b64d9ef263f2778f1f9e34ce055</td></tr>
+    <tr><td><a href="intent.json">intent.json</a></td><td class="hash breakall">308d16e912a64bead9a2af9ec3408b5a164f4484658f75069d3c0ca96a7a20bc</td></tr>
+    <tr><td><a href="mandate.json">mandate.json</a></td><td class="hash breakall">c6925cc0a10de47ec840b3248a9904c8d98aafc5ec6ba78aa767b550a209989c</td></tr>
+    <tr><td><a href="mandate.sig.json">mandate.sig.json</a></td><td class="hash breakall">b6082f18ea7e396515256debea6fe8a40ffe74aa55f88a2eaa722bf46c81901e</td></tr>
+    <tr><td><a href="policy.json">policy.json</a></td><td class="hash breakall">d65abe359a3caec547504cd60594b3ad23d703656f41ad6594c6d3d4780bf4fd</td></tr>
+    <tr><td><a href="policy-decision.json">policy-decision.json</a></td><td class="hash breakall">e33e99069cd55590ec1ad7059307ed6e8408b4ac507a09f2ab4bbe3ee4098a37</td></tr>
+    <tr><td><a href="job-snapshot.json">job-snapshot.json</a></td><td class="hash breakall">0b88b6b34a275c909d0a6d6e6cd4bff7d1aa25ea76f6c94685e41cfabdb51688</td></tr>
+    <tr><td><a href="result-preimage.json">result-preimage.json</a></td><td class="hash breakall">b336e639cc8198d7925af3f9dd4d4250ecb28f6847de230007025f344cea3de7</td></tr>
+    <tr><td><a href="arm-consumed.json">arm-consumed.json</a></td><td class="hash breakall">a9cf85d655460ab0865e17f40cef07e616cd300db5e71f82fd30807c650007eb</td></tr>
+    <tr><td><a href="artifact.hex">artifact.hex</a></td><td class="hash breakall">c86f05a4c999a405dab0b4399aabef9c2ba03d4aa82401385e09e9d8899286d5</td></tr>
+    <tr><td><a href="artifact-verify.json">artifact-verify.json</a></td><td class="hash breakall">a99666058dfcc4bea75b19506752c6c2565dac8c0d3dc783e22506b7f005daa4</td></tr>
+    <tr><td><a href="submit-result.json">submit-result.json</a></td><td class="hash breakall">a87c4b925f14fa43c18d969096f5ea27d37db2425dc2adfc9b6b9dcab84af840</td></tr>
+    <tr><td><a href="settlement-observations.jsonl">settlement-observations.jsonl</a></td><td class="hash breakall">5cae983f6781dc23623d27d05b923b7fd01fa500b56add317e5a0b48962016c9</td></tr>
+    <tr><td><a href="errors.json">errors.json</a></td><td class="hash breakall">7b41ad4a50b29158e075c6463133761266adb475130b8e886f2f5649070031cf</td></tr>
+    <tr><td><a href="index.txt">index.txt</a></td><td class="hash">plain-text index of this bundle</td></tr>
+  </table></div>
+  <p class="mono" style="font-size:12px;">
+    The 13 evidence files (everything except receipt.json, MANIFEST.json, journal.jsonl,
+    deliverable.json and the indexes) match the 13 MANIFEST.json entries byte-for-byte;
+    MANIFEST is sealed into the receipt as <code>evidence_root</code>. deliverable.json is
+    the delivered artifact itself — its sha3 IS the mandated and on-chain result_hash.
+  </p>
+
+  <h2>What verification checks (K/S/T/P/M/V/J/E/D/O)</h2>
+  <ul class="mono" style="font-size:12.5px;">
+    <li><span class="ink0">K</span> — attestor key pin: the signing key is pinned in the trust store.</li>
+    <li><span class="ink0">S</span> — receipt signature: ed25519 over the canonical envelope + statement.</li>
+    <li><span class="ink0">T</span> — time bounds: attestation time within sane limits.</li>
+    <li><span class="ink0">P</span> — policy pin: the policy hash matches the pinned, active policy.</li>
+    <li><span class="ink0">M</span> — mandate integrity: recomputed hash, signature, case and policy binding.</li>
+    <li><span class="ink0">V</span> — evidence integrity: manifest vs. directory, exact set, per-file sha3.</li>
+    <li><span class="ink0">J</span> — journal chain: every entry hash-chained, opened first, closed last.</li>
+    <li><span class="ink0">E</span> — execution artifact: pure ed25519 deliver-order check (no SDK), sender/mandate/correlation binding.</li>
+    <li><span class="ink0">D</span> — derivation equality: the receipt statement re-derives byte-identically from the evidence.</li>
+    <li><span class="ink0">O</span> — outcome consistency: outcome matches the evidence the case actually produced.</li>
+  </ul>
+  <p class="mono" style="font-size:12px;">Result for this case: ACCEPT, 10/10 criteria, exit code 0 — a separate offline verification of internal consistency, run with the private COSMO verifier.</p>
+
+  <h2>Honest limits</h2>
+  <div class="warnbox">
+    <p>· This receipt is a self-attestation by the COSMO engine: one attestor, no independent attestor network.</p>
+    <p>· Verification proves internal consistency and record integrity — not world truth.</p>
+    <p>· The signed artifact is the deliver-order (pure ed25519, offline-verifiable without any SDK), not the raw chain tx bytes; the world anchor is the on-chain result_hash, which matches the mandated hash exactly.</p>
+    <p>· This case ends at DELIVERED. Buyer approval and escrow release are a separate human step outside the case.</p>
+    <p>· Supervised agent execution with explicit human authorization at the irreversible boundary — the human ARM step is part of the proven authority model, not a shortcut.</p>
+    <p>· Full 10/10 verification currently requires the private COSMO verifier.</p>
+  </div>
+
+  <p class="mono" style="color:#757E8C; font-size:11px; margin-top:36px;">
+    Frozen 2026-08-14. Signed originals are never modified after publication.
+    · <a href="/assurance/">All settled proofs</a> · <a href="/institutional/">Institutional layer</a>
+  </p>
+</main>
+</body>
+</html>

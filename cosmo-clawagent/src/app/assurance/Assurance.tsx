@@ -52,6 +52,23 @@ function quantsToWcosmo(q: number): number {
 // data JSONs so hashes and tx ids stay single-sourced.
 const PROOFS = [
   {
+    id: 'execution-case-002',
+    title: 'EXECUTION-CASE-002 — mandated work delivery',
+    date: '2026-08-14',
+    price: '5 wCOSMO escrow',
+    text: 'The generalization case, deliberately not a trade: a solver agent delivered marketplace work under the full execution-case framework — result hash pre-committed in a one-shot mandate, six policy criteria checked against live chain state, human ARM, on-chain commitment via deliver_result_v2 (job 9). On-chain hash == mandated hash exactly. Ends at DELIVERED (buyer approval is a separate human step). Ten-criteria offline consistency verification via the private COSMO verifier.',
+    hashes: [
+      { label: 'mandate_hash', value: '0x3ad166f7be905febe8be67ae057d84a487182bf5fe0fb2f7f3f4b1dd430b9d01' },
+      { label: 'result_hash', value: '0x5429d3005db3382c8210d149e3bf0e77c2146b64d9ef263f2778f1f9e34ce055' },
+      { label: 'evidence_root', value: '0x318fa77bdb67ccdea5d98c765b3d6c5cb804bb602ec737ade8463d6f3fd26d44' },
+    ],
+    links: [
+      { label: 'Evidence bundle', href: '/evidence/execution-case-002/', external: true },
+      { label: 'Deliver tx', href: 'https://suprascan.io/tx/0xbf2255576f546d95af98169647dfb66d413550e1f444d704bc26dd70e4d21af9', external: true },
+      { label: 'Institutional layer', href: '/institutional/', external: false },
+    ],
+  },
+  {
     id: 'execution-case-001',
     title: 'EXECUTION-CASE-001 — mandated execution case',
     date: '2026-08-14',
@@ -293,7 +310,7 @@ export default function Assurance() {
 
             <div className="mt-5 flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-line-base bg-surface-2 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-ink-1">
-                5 settled proofs · Supra Mainnet &amp; SupraFX
+                6 settled proofs · Supra Mainnet &amp; SupraFX
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full border border-phase-proof/40 bg-phase-proof/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-phase-proof">
                 Show, don&apos;t claim
@@ -334,11 +351,11 @@ export default function Assurance() {
               </h2>
             </div>
             <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
-              Five settled proofs, each backed by public evidence: four marketplace jobs on Supra
-              Mainnet and one mandated execution case on SupraFX Mainnet. Newest first.
-              Marketplace proofs can be checked against on-chain transactions and published
-              hashes. Full 10/10 verification of Execution Case 001 currently requires the
-              private COSMO verifier.
+              Six settled proofs, each backed by public evidence: four marketplace jobs on Supra
+              Mainnet and two mandated execution cases (a SupraFX trade and a marketplace work
+              delivery). Newest first. Marketplace proofs can be checked against on-chain
+              transactions and published hashes. Full 10/10 verification of the execution cases
+              currently requires the private COSMO verifier.
             </p>
 
             <div className="mt-4 grid gap-3 sm:grid-cols-2">

@@ -35,8 +35,9 @@ export default function Hero() {
         <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-ink-1 md:text-lg">
           COSMO&apos;s live market already settles task work on-chain: results are checked
           against criteria frozen before any money moved, and payment lands as a transaction
-          anyone can open in the explorer. Separately, Execution Case 001 proved the
-          bounded-authority model COSMO is developing into a general institutional layer.
+          anyone can open in the explorer. Separately, Execution Cases 001 and 002 proved the
+          bounded-authority model in two domains — a live trade and a mandated marketplace
+          work delivery — the core of COSMO&apos;s institutional layer.
         </p>
 
         <div className="mt-9 flex flex-wrap items-center gap-3">

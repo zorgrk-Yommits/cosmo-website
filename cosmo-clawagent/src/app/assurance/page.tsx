@@ -3,7 +3,7 @@ import Assurance from './Assurance';
 
 const TITLE = 'COSMO Trust — Evidence, Honesty Principles, Assurance';
 const DESCRIPTION =
-  'Five settled proofs — four marketplace jobs and one mandated execution case — the honesty rules this site holds itself to, and the Price Integrity Guard research module. Every claim links to a transaction or a hash.';
+  'Six settled proofs — four marketplace jobs and two mandated execution cases — the honesty rules this site holds itself to, and the Price Integrity Guard research module. Every claim links to a transaction or a hash.';
 
 export const metadata: Metadata = {
   title: TITLE,

@@ -36,35 +36,44 @@ never merged in copy. The separating sentence is canonical:
 6. **Receipt** — signed closing statement with the honest 8-outcome taxonomy.
 7. **Verification** — independent offline check of internal consistency.
 
-## Anchor proof
+## Anchor proofs
 
-**Execution Case 001** (SupraFX Mainnet, micro-live, 2026-08-14) is the first
-institutional proof: all seven primitives exercised in one real case, closed
-EXECUTED at exactly the mandated rate, receipt verified ACCEPT on ten criteria,
-delegated authority revoked on-chain afterwards. Public bundle:
-`public/evidence/execution-case-001/`; narrative page: `/institutional/`.
+**Execution Case 001** (SupraFX Mainnet, micro-live, 2026-08-14): all seven
+primitives in one real trade, EXECUTED at exactly the mandated rate, ACCEPT
+10/10, delegated authority revoked on-chain afterwards. Bundle:
+`public/evidence/execution-case-001/`.
+
+**Execution Case 002** (Supra chain 8, micro-live, 2026-08-14): the
+generalization case — mandated marketplace work delivery (deliver_result_v2,
+job 9, 5 wCOSMO escrow), result hash pre-committed in the mandate, on-chain
+hash == mandated hash, EXECUTED, ACCEPT 10/10 through the SAME verification
+entry point. Ends at DELIVERED (honest scope). Bundle:
+`public/evidence/execution-case-002/`. Narrative page: `/institutional/`.
 
 ## Claim discipline (binding)
 
-- **Generalization claim — FUTURE-ONLY, not yet claimable:** the exact wording
-  "One verification entry point, shared integrity guarantees, two
-  domain-specific execution profiles" may be used ONLY once a second,
-  non-trading case has actually been proven (GO-3). Until then the website
-  claims exactly one proven case (Case 001) and does not anticipate Case 002.
-  Never "one verifier, two domains" — the economic meaning of each action stays
-  domain-specific; what is shared are the integrity invariants (signatures,
-  mandate binding, policy pins, journal chain, evidence manifest, receipt
-  integrity, fail-closed behavior).
+- **Generalization claim — CLAIMABLE since 2026-08-14:** the condition (a
+  second, non-trading case actually proven) is met — Execution Case 002
+  (mandated marketplace work delivery, case_mst8l7i8d4391a) closed EXECUTED
+  and verifies ACCEPT 10/10 through the same entry point as Case 001. Exact
+  wording stays binding: "One verification entry point, shared integrity
+  guarantees, two domain-specific execution profiles." Never "one verifier,
+  two domains" — the economic meaning of each action stays domain-specific;
+  what is shared are the integrity invariants (signatures, mandate binding,
+  policy pins, journal chain, evidence manifest, receipt integrity,
+  fail-closed behavior). Case 002's honest scope: mandated work delivery with
+  on-chain commitment (ends at DELIVERED) — never described as settlement.
 - **Marketplace ≠ full Execution Case (binding separation):** the live market
   already shares part of the discipline — frozen criteria, on-chain settlement,
   published evidence — but does NOT run on the full Execution Case framework
   (delegated authority, mandate, ARM, receipt, offline verification). Approved
   wording: "The market already shares part of this discipline: frozen criteria,
   on-chain settlement and published evidence. The full Execution Case framework
-  has so far been proven only in Case 001." Landing wording: "COSMO's live
-  market already settles task work on-chain. Separately, Execution Case 001
-  proved the bounded-authority model COSMO is developing into a general
-  institutional layer."
+  has been proven in Case 001 (a SupraFX trade) and Case 002 (a marketplace
+  work delivery, run over the market as one mandated case). Day-to-day market
+  jobs do not yet run through the full framework." Landing wording: "COSMO's
+  live market already settles task work on-chain. Separately, Execution Cases
+  001 and 002 proved the bounded-authority model in two domains."
 - **Verification claim, exact wording while the verifier is private:** "Public
   evidence bundle. Offline verification currently requires the COSMO verifier,
   whose implementation remains private." Describe the check as "separate

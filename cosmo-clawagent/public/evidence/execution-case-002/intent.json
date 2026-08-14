@@ -1,0 +1,18 @@
+{
+  "schema": "cosmo.execution-case.intent.v2",
+  "mode": "micro_live",
+  "action": {
+    "kind": "market.deliver_result.v1",
+    "params": {
+      "job_ref": "job_mst62q4crh0hkl",
+      "job_id_onchain": "9",
+      "result_hash": "0x5429d3005db3382c8210d149e3bf0e77c2146b64d9ef263f2778f1f9e34ce055",
+      "result_uri": "https://heros.cloud/evidence/execution-case-002/deliverable.json",
+      "spec_input_hash": "0x325f7a0685ecb8c92a9cc81885f3d5288d9092f61673d9dfda3fdfcbdc44b8c1",
+      "escrow_exposure_quants": "5000000"
+    }
+  },
+  "ttl_ms": 3600000,
+  "principal_ref": "operator:zorg",
+  "agent_ref": "cosmo-execution-case:market-v1"
+}

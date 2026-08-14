@@ -54,6 +54,7 @@ const FOOTER: { heading: string; links: { href: string; label: string; external?
     links: [
       { href: "/assurance/", label: "Assurance" },
       { href: "/institutional/", label: "Institutional layer" },
+      { href: "/evidence/execution-case-002/", label: "Evidence — execution-case-002", external: true },
       { href: "/evidence/execution-case-001/", label: "Evidence — execution-case-001", external: true },
       { href: "/evidence/pilot-001/", label: "Evidence — pilot-001", external: true },
       { href: "/evidence/mcp-probe-002/", label: "Evidence — mcp-probe-002", external: true },
