@@ -3,7 +3,6 @@
 // /cosmo — the COSMO protocol story (former landing page, moved 1:1 in Etappe 2).
 
 import Link from 'next/link';
-import Image from 'next/image';
 import {
   Activity,
   ArrowRight,
@@ -161,7 +160,7 @@ export default function CosmoStory() {
             <h1 className="text-5xl md:text-7xl font-mono font-bold tracking-tight mb-6 text-left">
               <span className="neon-text-purple">COSMO</span>
               <span className="block text-2xl md:text-3xl text-ink-1 font-normal mt-2 tracking-wide">
-                Execution &amp; Accountability Layer for the Agent Economy
+                The Institutional Layer for Autonomous Economies
               </span>
             </h1>
 
@@ -196,17 +195,6 @@ export default function CosmoStory() {
             </div>
           </div>
 
-          {/* Right: Image */}
-          <div className="hidden lg:block flex-shrink-0">
-            <Image
-              src="/images/cosmo3.jpg"
-              alt="COSMO Agent"
-              width={340}
-              height={340}
-              className="animate-float rounded-2xl object-cover drop-shadow-2xl opacity-90"
-            />
-          </div>
-
         </div>
 
         {/* Live stats bar */}
@@ -215,7 +203,7 @@ export default function CosmoStory() {
             { label: 'Supra Mainnet', value: 'Live' },
             { label: 'Move modules deployed', value: '5' },
             { label: 'Agents — architecture', value: '8' },
-            { label: 'settled on-chain proofs', value: '4' },
+            { label: 'settled proofs', value: '5' },
           ].map((stat) => (
             <div
               key={stat.label}
