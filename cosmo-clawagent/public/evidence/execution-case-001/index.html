@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="index,follow">
+<title>EXECUTION-CASE-001 — Evidence Bundle</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin:0; background:#08090B; color:#F2F4F7; font:15px/1.6 ui-sans-serif,system-ui,sans-serif; }
+  main { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; }
+  h1,h2 { font-family: ui-monospace,Menlo,Consolas,monospace; letter-spacing:-0.01em; }
+  h1 { font-size: 1.7rem; margin: 0 0 6px; }
+  h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .22em; color:#A7B0BC; margin: 40px 0 12px; }
+  p { color:#A7B0BC; margin: 10px 0; }
+  .ink0 { color:#F2F4F7; }
+  code, .mono { font-family: ui-monospace,Menlo,Consolas,monospace; font-size: 12.5px; }
+  .chip { display:inline-block; border:1px solid rgba(70,214,160,.4); background:rgba(70,214,160,.1); color:#46D6A0; border-radius:999px; padding:3px 12px; font-family:ui-monospace,monospace; font-size:11px; text-transform:uppercase; letter-spacing:.08em; margin-right:8px; }
+  .chip.neutral { border-color:rgba(255,255,255,.14); background:rgba(255,255,255,.04); color:#A7B0BC; }
+  .panel { border:1px solid rgba(255,255,255,.1); background:#0D0F13; border-radius:12px; padding:16px 18px; margin:14px 0; overflow-x:auto; }
+  .well { border:1px solid rgba(255,255,255,.06); background:#050608; border-radius:10px; padding:12px 14px; margin:10px 0; overflow-x:auto; }
+  table { border-collapse: collapse; width:100%; font-family:ui-monospace,monospace; font-size:12px; }
+  td, th { text-align:left; padding:5px 14px 5px 0; vertical-align:top; white-space:nowrap; }
+  th { color:#757E8C; font-weight:600; text-transform:uppercase; font-size:10.5px; letter-spacing:.08em; }
+  td.hash { color:#757E8C; }
+  a { color:#6E8BFF; text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  ul { color:#A7B0BC; padding-left: 1.2em; } li { margin: 6px 0; }
+  .warnbox { border:1px solid rgba(224,164,88,.35); background:rgba(224,164,88,.06); border-radius:12px; padding:14px 18px; margin:14px 0; }
+  .warnbox p { color:#A7B0BC; margin:6px 0; }
+  .breakall { word-break: break-all; white-space: normal; }
+</style>
+</head>
+<body>
+<main>
+  <p class="mono" style="color:#757E8C; font-size:11px; text-transform:uppercase; letter-spacing:.2em;">COSMO · public evidence bundle</p>
+  <h1>EXECUTION-CASE-001</h1>
+  <p>
+    <span class="chip">EXECUTED</span>
+    <span class="chip neutral">case_msskp1gg956f8a</span>
+    <span class="chip neutral">2026-08-14 · SupraFX Mainnet · micro-live</span>
+  </p>
+
+  <p class="ink0">
+    Scope of this proof: one mandated micro-trade (sell 1 SUPRA against USDC, max notional
+    169 micro-USDC) executed by an agent under delegated authority, a one-shot signed mandate,
+    a hash-pinned policy and a human ARM ceremony — closed with a signed receipt whose
+    internal consistency verifies on ten criteria.
+  </p>
+  <p>
+    Public evidence bundle. Offline verification currently requires the COSMO verifier,
+    whose implementation remains private.
+  </p>
+  <p><a href="/institutional/">← The institutional layer (context page)</a></p>
+
+  <h2>Anchors</h2>
+  <div class="panel"><table>
+    <tr><td>outcome</td><td class="hash">EXECUTED — RFQ filled; settlement observed via platform balance delta</td></tr>
+    <tr><td>settlement</td><td class="hash">−1 SUPRA / +169 micro-USDC (normalized; see note below) · batch 9,647,777</td></tr>
+    <tr><td>receipt_statement_hash</td><td class="hash breakall">0x87c2c2dfd9afa20d32e5ebeb0e6f8b4098e7fc0383dca936ad4f1e9df8dccd5e</td></tr>
+    <tr><td>receipt_file_sha3</td><td class="hash breakall">42fc8eecc8753257f6012f120b50675aa2df682ab2db92d07155897f09bc49fe</td></tr>
+    <tr><td>evidence_root</td><td class="hash breakall">0x5799bf59c188f13948af107dd9cf0dbd654ed940dc02aaa59e8f64ea5b1b50c2</td></tr>
+    <tr><td>manifest_file_sha3</td><td class="hash breakall">a3c35961ac1ebe8e8ccd698cd03bcab4aeec2f1c0da198f1d24362cafee462dd</td></tr>
+    <tr><td>mandate_hash</td><td class="hash breakall">0xb0d3911a44b1a8e703394dd64bd23588b24b1430c77b955a02a65ccfa96bab11</td></tr>
+    <tr><td>policy_hash</td><td class="hash breakall">0x59f7c39fc7bbbe5acd15a92881cad314a284e54ee9dfbd014506f52dfa7dd75d</td></tr>
+    <tr><td>attestor_pubkey</td><td class="hash breakall">f3b33df0f339536e91fa12b40f14fc9cda2ed93dcbb84f2864f68a80f654fbac (pinned)</td></tr>
+    <tr><td>producer_commit</td><td class="hash breakall">070fbd1dace1ca682e9055be743533d813aec1b9</td></tr>
+    <tr><td>journal head</td><td class="hash breakall">{"case_id":"case_msskp1gg956f8a","event":"case_opened","prev_hash":"0x0000…0000","ts":1786689329057}</td></tr>
+  </table></div>
+
+  <p class="mono" style="font-size:12px;">
+    Two receipt hashes, both correct: <span class="ink0">the receipt statement hash is calculated
+    from the canonical JSON representation</span> of the signed receipt (sorted keys, no
+    whitespace — this is the value recorded in the journal&rsquo;s <code>case_closed</code>
+    entry). <span class="ink0">The published file hash is calculated from the exact downloadable
+    file bytes, including its final newline.</span>
+  </p>
+
+  <h2>Settlement amount — technical note</h2>
+  <p>
+    The platform API returned a JavaScript floating-point balance delta
+    (<code>0.00016899999999964166</code> in the raw observation). The normalized economic
+    amount is <span class="ink0">169 micro-USDC</span> — &ldquo;exactly the mandated
+    rate&rdquo; refers to this normalization. Future adapters should use integer micro-units
+    end-to-end; this fix has since landed in the COSMO engine.
+  </p>
+
+  <h2>Delegated authority on record</h2>
+  <div class="panel"><table>
+    <tr><td>created</td><td class="hash">SupraFX batch 9,559,624 (2026-08-12) · delegate c1add416…760fbc</td></tr>
+    <tr><td>scope &amp; caps</td><td class="hash">taker-only SUPRA/USDC · 1 SUPRA per trade · 2 SUPRA total · ~139d expiry</td></tr>
+    <tr><td>caps consumed</td><td class="hash">drill 1 batch 9,563,222 · drill 2 batch 9,647,777 (2/2 SUPRA)</td></tr>
+    <tr><td>revoked</td><td class="hash breakall">batch 9,649,339 (2026-08-14) · event 0xce7398f726e028a2abe8a9a74788d8a695c44158a2cef778b72c1d87c69f61de</td></tr>
+  </table></div>
+  <p class="mono" style="font-size:12px;">
+    Check it yourself: the principal&rsquo;s council event feed lists DelegatePolicyCreated
+    through DelegatePolicyRevoked —
+    <a href="https://suprafx.ai/api/council/events?user=0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb&amp;limit=50" rel="noopener noreferrer" target="_blank">council event feed ↗</a>
+  </p>
+
+  <h2>Files (byte-identical copies of the canonical case documents)</h2>
+  <p class="mono" style="font-size:12px;">Check integrity with: <code>openssl dgst -sha3-256 &lt;file&gt;</code></p>
+  <div class="panel"><table>
+    <tr><th>file</th><th>sha3-256</th></tr>
+    <tr><td><a href="receipt.json">receipt.json</a></td><td class="hash breakall">42fc8eecc8753257f6012f120b50675aa2df682ab2db92d07155897f09bc49fe</td></tr>
+    <tr><td><a href="MANIFEST.json">MANIFEST.json</a></td><td class="hash breakall">a3c35961ac1ebe8e8ccd698cd03bcab4aeec2f1c0da198f1d24362cafee462dd</td></tr>
+    <tr><td><a href="journal.jsonl">journal.jsonl</a></td><td class="hash breakall">2ed7a7ebb135f983149fef9932b944de776b6145354af77f7c2f4ce64b3c57ca</td></tr>
+    <tr><td><a href="intent.json">intent.json</a></td><td class="hash breakall">976ebd559677b4f51e94955d4606f8ae3bc31d7b004770e6882056692b5a700a</td></tr>
+    <tr><td><a href="mandate.json">mandate.json</a></td><td class="hash breakall">88f2cced5c5fb0b4f0cedd73ae5a26cc9fbccac76a3ae6d87cce8f3ebc5919f1</td></tr>
+    <tr><td><a href="mandate.sig.json">mandate.sig.json</a></td><td class="hash breakall">0c4cf536ba571444984a4b1dfdda97a6989ba77492ea04be163455e99c123f4c</td></tr>
+    <tr><td><a href="policy.json">policy.json</a></td><td class="hash breakall">16c78509edbf49788cf55fb7a733767980d95825fe1f2476cd768327358f37b7</td></tr>
+    <tr><td><a href="policy-decision.json">policy-decision.json</a></td><td class="hash breakall">41c0ab307905932596a96ad5f111f1e29de4c359d06318e1639d80f72e531247</td></tr>
+    <tr><td><a href="reference-price.json">reference-price.json</a></td><td class="hash breakall">374f7982f60494be68fa9494dc9f588d03e826723e91fd06be4a09a3bc2ae15d</td></tr>
+    <tr><td><a href="arm-consumed.json">arm-consumed.json</a></td><td class="hash breakall">f6869d8fc510880beee6239de38be569cefd547ae38dce99d60320bfd29f3f29</td></tr>
+    <tr><td><a href="envelope.hex">envelope.hex</a></td><td class="hash breakall">147317ab6dbf9844ca1421b9257e4a6b8f431f43ac39ac537ade6249c23484bd</td></tr>
+    <tr><td><a href="envelope-verify.json">envelope-verify.json</a></td><td class="hash breakall">5e8665fc20776ea60f40b950724efc59a5b974efeda7875856794f667a2b845c</td></tr>
+    <tr><td><a href="submit-result.json">submit-result.json</a></td><td class="hash breakall">2b42fce5f8c2274aa9998eee8dad91f5b1379763fce5c34521644757412302f2</td></tr>
+    <tr><td><a href="settlement-observations.jsonl">settlement-observations.jsonl</a></td><td class="hash breakall">b8b97ff259b6c67100c869034c356640121dc8c8a41e618bd06d028255317491</td></tr>
+    <tr><td><a href="errors.json">errors.json</a></td><td class="hash breakall">7b41ad4a50b29158e075c6463133761266adb475130b8e886f2f5649070031cf</td></tr>
+    <tr><td><a href="index.txt">index.txt</a></td><td class="hash">plain-text index of this bundle</td></tr>
+  </table></div>
+  <p class="mono" style="font-size:12px;">
+    The 12 evidence files (everything except receipt.json, MANIFEST.json, journal.jsonl and the
+    indexes) match the 12 MANIFEST.json entries byte-for-byte; MANIFEST is sealed into the
+    receipt as <code>evidence_root</code>.
+  </p>
+
+  <h2>What verification checks (K/S/T/P/M/V/J/E/D/O)</h2>
+  <ul class="mono" style="font-size:12.5px;">
+    <li><span class="ink0">K</span> — attestor key pin: the signing key is pinned in the trust store.</li>
+    <li><span class="ink0">S</span> — receipt signature: ed25519 over the canonical envelope + statement.</li>
+    <li><span class="ink0">T</span> — time bounds: attestation time within sane limits.</li>
+    <li><span class="ink0">P</span> — policy pin: the policy hash matches the pinned, active policy.</li>
+    <li><span class="ink0">M</span> — mandate integrity: recomputed hash, signature, case and policy binding.</li>
+    <li><span class="ink0">V</span> — evidence integrity: manifest vs. directory, exact set, per-file sha3.</li>
+    <li><span class="ink0">J</span> — journal chain: every entry hash-chained, opened first, closed last.</li>
+    <li><span class="ink0">E</span> — execution envelope: BCS decode, local signature verify, mandate linkage.</li>
+    <li><span class="ink0">D</span> — derivation equality: the receipt statement re-derives byte-identically from the evidence.</li>
+    <li><span class="ink0">O</span> — outcome consistency: outcome matches the evidence the case actually produced.</li>
+  </ul>
+  <p class="mono" style="font-size:12px;">Result for this case: ACCEPT, 10/10 criteria, exit code 0 — a separate offline verification of internal consistency, run with the private COSMO verifier.</p>
+
+  <h2>Honest limits</h2>
+  <div class="warnbox">
+    <p>· This receipt is a self-attestation by the COSMO engine: one attestor, no independent attestor network.</p>
+    <p>· Verification proves internal consistency and record integrity — not world truth.</p>
+    <p>· settlement_ref is an observation of platform balances, not a native chain proof.</p>
+    <p>· One venue, one pair, micro scale. Supervised agent execution with explicit human authorization at the irreversible boundary — the human ARM step is part of the proven authority model, not a shortcut.</p>
+    <p>· Full 10/10 verification currently requires the private COSMO verifier.</p>
+  </div>
+
+  <p class="mono" style="color:#757E8C; font-size:11px; margin-top:36px;">
+    Frozen 2026-08-14. Signed originals are never modified after publication.
+    · <a href="/assurance/">All settled proofs</a> · <a href="/institutional/">Institutional layer</a>
+  </p>
+</main>
+</body>
+</html>

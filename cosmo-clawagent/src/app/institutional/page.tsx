@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Institutional from './Institutional';
 
-const TITLE = 'COSMO — The Institutional Layer for Autonomous Economies';
+const TITLE = 'COSMO — Institutional Layer for Autonomous Economies on Supra';
 const DESCRIPTION =
   'Delegated authority, mandates, pinned policies, human arming, records, receipts, verification: the governance primitives that make autonomous action accountable — proven in a real micro-live execution case on SupraFX Mainnet.';
 

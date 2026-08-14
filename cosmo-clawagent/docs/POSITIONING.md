@@ -46,21 +46,51 @@ delegated authority revoked on-chain afterwards. Public bundle:
 
 ## Claim discipline (binding)
 
-- **Generalization claim, exact wording:** "One verification entry point, shared
-  integrity guarantees, two domain-specific execution profiles." Never "one
-  verifier, two domains" — the economic meaning of each action stays
+- **Generalization claim — FUTURE-ONLY, not yet claimable:** the exact wording
+  "One verification entry point, shared integrity guarantees, two
+  domain-specific execution profiles" may be used ONLY once a second,
+  non-trading case has actually been proven (GO-3). Until then the website
+  claims exactly one proven case (Case 001) and does not anticipate Case 002.
+  Never "one verifier, two domains" — the economic meaning of each action stays
   domain-specific; what is shared are the integrity invariants (signatures,
   mandate binding, policy pins, journal chain, evidence manifest, receipt
   integrity, fail-closed behavior).
+- **Marketplace ≠ full Execution Case (binding separation):** the live market
+  already shares part of the discipline — frozen criteria, on-chain settlement,
+  published evidence — but does NOT run on the full Execution Case framework
+  (delegated authority, mandate, ARM, receipt, offline verification). Approved
+  wording: "The market already shares part of this discipline: frozen criteria,
+  on-chain settlement and published evidence. The full Execution Case framework
+  has so far been proven only in Case 001." Landing wording: "COSMO's live
+  market already settles task work on-chain. Separately, Execution Case 001
+  proved the bounded-authority model COSMO is developing into a general
+  institutional layer."
 - **Verification claim, exact wording while the verifier is private:** "Public
   evidence bundle. Offline verification currently requires the COSMO verifier,
-  whose implementation remains private." Never "verifiable by anyone offline".
+  whose implementation remains private." Describe the check as "separate
+  offline consistency verification" or "offline verification of internal
+  consistency" — never "independent offline check" or anything suggesting
+  third-party attestation, and never "verifiable by anyone offline". Proof
+  lists say "backed by public evidence", not "independently checkable".
+- **Human trust anchor:** Case 001 was supervised agent execution with explicit
+  human authorization at the irreversible boundary (ARM). The human step is
+  part of the proven authority model, never described as a shortcoming or
+  contrasted dismissively with automation.
 - **"Institutional" scope:** governance primitives only — never custody,
   supervision, regulatory status, or an investment product. State the negative
   explicitly wherever the word carries weight.
 - Facts and roadmap never mix; honest limits (self-attestation, one attestor,
   consistency-not-world-truth, observation-based settlement, micro scale, no
   demonstrated paying market) are stated next to the claims they qualify.
+
+## Principal identifiers in public evidence (binding)
+
+Case 001's signed artifacts carry `principal_ref: "operator:rene"` and
+`armed_by: "rene"`. Signed originals are never modified after publication; this
+disclosure was consciously confirmed for Case 001. **Rule for all future public
+cases: choose a neutral principal identifier BEFORE execution** — e.g.
+`operator:zorg`, a wallet address, or a pseudonymous operator id. Personal
+first names do not appear in new public evidence.
 
 ## Language guardrails (unchanged from v4.0, in force verbatim)
 

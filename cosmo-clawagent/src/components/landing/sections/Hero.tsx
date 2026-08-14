@@ -33,11 +33,10 @@ export default function Hero() {
         </p>
 
         <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-ink-1 md:text-lg">
-          A task is published, a provider takes it on, the result is checked against criteria
-          that were frozen before any money moved — and payment settles as a transaction anyone
-          can open in the explorer. Underneath sits the discipline COSMO proved in a live
-          execution case: delegated authority, signed mandates, pinned policies, verifiable
-          receipts.
+          COSMO&apos;s live market already settles task work on-chain: results are checked
+          against criteria frozen before any money moved, and payment lands as a transaction
+          anyone can open in the explorer. Separately, Execution Case 001 proved the
+          bounded-authority model COSMO is developing into a general institutional layer.
         </p>
 
         <div className="mt-9 flex flex-wrap items-center gap-3">

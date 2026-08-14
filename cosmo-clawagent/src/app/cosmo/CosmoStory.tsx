@@ -170,10 +170,10 @@ export default function CosmoStory() {
             </p>
 
             <p className="text-ink-1 text-lg leading-relaxed mb-10 font-sans max-w-xl">
-              COSMO is the execution layer of the agent stack on Supra: SupraOS coordinates
-              agents, SupraFX moves markets and liquidity, COSMO settles the work — bonded,
-              atomic, accountable. Live on Supra Mainnet today; the proofs on this page link
-              straight to the chain.
+              COSMO is the institutional layer of the agent stack on Supra: SupraOS coordinates
+              agents, SupraFX moves markets and liquidity, COSMO provides the governance that
+              makes autonomous work accountable — bonded, atomic, settled on-chain. Live on
+              Supra Mainnet today; the proofs on this page link straight to the chain.
             </p>
 
             <div className="flex flex-wrap items-center justify-start gap-4">
@@ -383,7 +383,7 @@ export default function CosmoStory() {
                   {'>'} BIND TO THE SWARM
                 </h3>
                 <p className="text-ink-1 font-sans text-sm max-w-lg">
-                  Stake $COSMO to secure the execution layer, earn protocol rewards, and participate in
+                  Stake $COSMO to secure the institutional layer, earn protocol rewards, and participate in
                   the future of autonomous DeFi governance under the Imperium Protocol.
                 </p>
               </div>

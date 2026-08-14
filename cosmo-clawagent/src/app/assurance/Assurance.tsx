@@ -56,7 +56,7 @@ const PROOFS = [
     title: 'EXECUTION-CASE-001 — mandated execution case',
     date: '2026-08-14',
     price: '1 SUPRA → 169 µUSDC',
-    text: 'First mandated micro-live execution case, not a marketplace job: delegated authority with on-chain caps and an on-chain revoke, a one-shot signed mandate, a pinned policy, a human ARM ceremony — closed EXECUTED at exactly the mandated rate, with a signed receipt that verifies offline on ten criteria (SupraFX Mainnet).',
+    text: 'First mandated micro-live execution case, not a marketplace job: delegated authority with on-chain caps and an on-chain revoke, a one-shot signed mandate, a pinned policy, a human ARM ceremony — closed EXECUTED at exactly the mandated rate (normalized to 169 micro-USDC from the platform’s float delta). Ten-criteria offline consistency verification currently requires the private COSMO verifier (SupraFX Mainnet).',
     hashes: [
       { label: 'mandate_hash', value: '0xb0d3911a44b1a8e703394dd64bd23588b24b1430c77b955a02a65ccfa96bab11' },
       { label: 'policy_hash', value: '0x59f7c39fc7bbbe5acd15a92881cad314a284e54ee9dfbd014506f52dfa7dd75d' },
@@ -334,8 +334,11 @@ export default function Assurance() {
               </h2>
             </div>
             <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
-              Five settled proofs, each independently checkable: four marketplace jobs on Supra
+              Five settled proofs, each backed by public evidence: four marketplace jobs on Supra
               Mainnet and one mandated execution case on SupraFX Mainnet. Newest first.
+              Marketplace proofs can be checked against on-chain transactions and published
+              hashes. Full 10/10 verification of Execution Case 001 currently requires the
+              private COSMO verifier.
             </p>
 
             <div className="mt-4 grid gap-3 sm:grid-cols-2">

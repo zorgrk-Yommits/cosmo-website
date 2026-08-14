@@ -4,9 +4,9 @@ import CosmoStory from './CosmoStory';
 // The former landing page (protocol story). Carries the old site-default SEO
 // text; overrides openGraph/twitter so it does not inherit the buyer-first
 // layout defaults (Next merges metadata shallowly per top-level key).
-const TITLE = 'COSMO — Execution & Accountability Layer for the Agent Economy';
+const TITLE = 'COSMO — $COSMO and the Institutional Layer on Supra';
 const DESCRIPTION =
-  'COSMO is the execution layer of the agent stack on Supra: SupraOS coordinates agents, SupraFX moves markets and liquidity, COSMO settles the work — bonded, atomic, accountable on-chain execution. Live on Supra Mainnet with documented settlement proofs; guarded v1, not permissionless yet.';
+  'COSMO is the institutional layer for autonomous economies, built on Supra: SupraOS coordinates agents, SupraFX moves markets and liquidity, COSMO provides the delegated authority, mandates, policies and receipts that make autonomous work accountable. Live on Supra Mainnet with documented settlement proofs; guarded v1, not permissionless yet.';
 
 export const metadata: Metadata = {
   title: TITLE,

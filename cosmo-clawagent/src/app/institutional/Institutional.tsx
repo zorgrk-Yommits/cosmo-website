@@ -89,25 +89,38 @@ const PRIMITIVES = [
     id: 'verification',
     icon: SearchCheck,
     title: 'Verification',
-    what: 'An independent offline check of internal consistency: key pin, signatures, time bounds, policy pin, mandate binding, manifest, journal chain, envelope, statement re-derivation, outcome consistency.',
-    proved: 'Case 001: ACCEPT on all ten criteria, exit code 0.',
+    what: 'A separate offline verification of internal consistency: key pin, signatures, time bounds, policy pin, mandate binding, manifest, journal chain, envelope, statement re-derivation, outcome consistency. It is run apart from execution — not by an independent third party.',
+    proved: 'Case 001: ACCEPT on all ten criteria, exit code 0 — using the COSMO verifier, whose implementation remains private.',
   },
 ] as const;
 
-// The case lifecycle as it actually runs. Tones follow the site's process-state
-// tokens: warn = a human is required before it can continue, proof = an artifact
-// exists, settled = closed and checked.
-const LIFECYCLE = [
+// Two deliberately SEPARATE lifecycles (do not merge them): delegated
+// authority is the standing, bounded permission; the execution case runs
+// UNDER it. Tones follow the site's process-state tokens: warn = a human is
+// required before it can continue, proof = an artifact exists, settled =
+// closed and checked.
+const AUTHORITY_LIFECYCLE = [
+  { id: 'created', label: 'Delegate created', tone: 'active' },
+  { id: 'scoped', label: 'Scope & caps applied', tone: 'active' },
+  { id: 'granted', label: 'Case authority granted', tone: 'active' },
+  { id: 'consumed', label: 'Caps consumed', tone: 'idle' },
+  { id: 'revoked', label: 'Delegate revoked', tone: 'settled' },
+] as const;
+
+const CASE_LIFECYCLE = [
   { id: 'intent', label: 'Intent', tone: 'idle' },
   { id: 'mandate', label: 'Mandate', tone: 'active' },
   { id: 'policy', label: 'Policy', tone: 'active' },
   { id: 'arm', label: 'ARM', tone: 'warn' },
   { id: 'execute', label: 'Execute', tone: 'active' },
+  { id: 'record', label: 'Record', tone: 'proof' },
   { id: 'receipt', label: 'Receipt', tone: 'proof' },
   { id: 'verify', label: 'Verify', tone: 'settled' },
 ] as const;
 
-const TONE_BOX: Record<(typeof LIFECYCLE)[number]['tone'], string> = {
+type LifecycleTone = (typeof AUTHORITY_LIFECYCLE)[number]['tone'] | (typeof CASE_LIFECYCLE)[number]['tone'];
+
+const TONE_BOX: Record<LifecycleTone, string> = {
   idle: 'border-line-base text-ink-1',
   active: 'border-phase-active/45 text-phase-active',
   warn: 'border-phase-warn/50 text-phase-warn',
@@ -155,6 +168,7 @@ const LIMITS = [
   'The verifier proves internal consistency and record integrity — not world truth.',
   'Settlement in Case 001 is an observation of platform balances, not a native chain proof.',
   'One venue, one pair, micro scale. This is a proof of the primitives, not of volume.',
+  'Case 001 was supervised agent execution: a human explicitly authorized the irreversible step (ARM). That step is part of the proven authority model, not a shortcut.',
   'No paying market for this layer has been demonstrated. That is a limit we state, not a projection we hide.',
   VERIFY_WORDING,
 ] as const;
@@ -243,8 +257,9 @@ export default function Institutional() {
                 </h3>
                 <p className="mt-2 font-sans text-sm leading-relaxed text-ink-1">
                   Let an autonomous agent execute one real trade on SupraFX — one pair, one
-                  micro-sized order, real settlement. Not a demo, not a testnet, and not a
-                  human clicking buttons with the agent watching.
+                  micro-sized order, real settlement. Not a demo and not a testnet: supervised
+                  agent execution with explicit human authorization at the irreversible
+                  boundary.
                 </p>
               </article>
               <article className="rounded-xl border border-line-base bg-surface-1 p-5">
@@ -254,8 +269,9 @@ export default function Institutional() {
                 <p className="mt-2 font-sans text-sm leading-relaxed text-ink-1">
                   A key the agent could hold without holding the account. Limits the agent could
                   not exceed even if compromised. Rules decided before the action, not after. A
-                  human arming the irreversible step. A record that survives its author. A
-                  signed statement of what happened — including when what happened was failure.
+                  human arming the irreversible step. A record whose later modification becomes
+                  detectable. A signed statement of what happened — including when what happened
+                  was failure.
                 </p>
               </article>
               <article className="rounded-xl border border-line-base bg-surface-1 p-5">
@@ -328,27 +344,60 @@ export default function Institutional() {
             </div>
           </section>
 
-          {/* ── The lifecycle in one line ────────────────────────────────── */}
+          {/* ── Two lifecycles, deliberately separate ────────────────────── */}
           <section className="mt-14">
             <div className="flex items-center gap-2">
               <ListOrdered className="h-4 w-4 text-ink-1" />
               <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
-                One case, start to finish
+                Two lifecycles, deliberately separate
               </h2>
             </div>
+            <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
+              Delegated authority is not a property of the mandate — it is the standing, bounded
+              permission the case runs under. The two lifecycles are managed, and shown,
+              separately.
+            </p>
+
+            <h3 className="mt-5 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-2">
+              Authority lifecycle
+            </h3>
             <div
               role="img"
-              aria-label="Case lifecycle: intent, mandate, policy check, human ARM, execution, signed receipt, offline verification."
-              className="mt-4 flex flex-wrap items-center gap-2"
+              aria-label="Authority lifecycle: delegate created, scope and caps applied, case authority granted, caps consumed, delegate revoked."
+              className="mt-3 flex flex-wrap items-center gap-2"
             >
-              {LIFECYCLE.map((s, i) => (
+              {AUTHORITY_LIFECYCLE.map((s, i) => (
                 <div key={s.id} className="flex items-center gap-2">
                   <span
                     className={`rounded-lg border bg-surface-1 px-3 py-2 font-mono text-[12px] font-semibold ${TONE_BOX[s.tone]}`}
                   >
                     {s.label}
                   </span>
-                  {i < LIFECYCLE.length - 1 && (
+                  {i < AUTHORITY_LIFECYCLE.length - 1 && (
+                    <span aria-hidden="true" className="font-mono text-sm text-ink-2">
+                      →
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <h3 className="mt-6 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-2">
+              Execution case
+            </h3>
+            <div
+              role="img"
+              aria-label="Execution case lifecycle: intent, mandate, policy check, human ARM, execution, record, signed receipt, offline consistency verification."
+              className="mt-3 flex flex-wrap items-center gap-2"
+            >
+              {CASE_LIFECYCLE.map((s, i) => (
+                <div key={s.id} className="flex items-center gap-2">
+                  <span
+                    className={`rounded-lg border bg-surface-1 px-3 py-2 font-mono text-[12px] font-semibold ${TONE_BOX[s.tone]}`}
+                  >
+                    {s.label}
+                  </span>
+                  {i < CASE_LIFECYCLE.length - 1 && (
                     <span aria-hidden="true" className="font-mono text-sm text-ink-2">
                       →
                     </span>
@@ -372,9 +421,13 @@ export default function Institutional() {
             </div>
             <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
               Every case closes with exactly one of eight outcomes, and the receipt is signed
-              either way. The first live drill closed as EXECUTION_FAILED — that receipt exists,
-              verifies, and taught us a settlement-watch defect the second drill then disproved.
-              An institution that cannot name its failures cannot be audited.
+              either way. The first live drill exposed a mismatch between the external settlement
+              and COSMO&apos;s observation: the fault was in the observer, not the trade. The
+              receipt preserved the system&apos;s actual recorded state (EXECUTION_FAILED), the
+              verifier confirmed its internal consistency — which is not world truth — and the
+              system halted instead of silently relabelling the outcome. The second drill
+              validated the corrected settlement observer. An institution that cannot name its
+              failures cannot be audited.
             </p>
             <div className="mt-4 grid gap-2 sm:grid-cols-2">
               {OUTCOMES.map((o) => (
@@ -411,10 +464,18 @@ export default function Institutional() {
 
               <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
                 One mandated micro-trade, run through all seven primitives:{' '}
-                {CASE_001.settlement}, observed at batch {CASE_001.batch}. Offline verification:
-                ACCEPT, ten of ten criteria. The delegated authority behind it was created
-                on-chain with hard caps, fully consumed by two drills, and then revoked on-chain
-                by the principal — the complete lifecycle, including the ending.
+                {CASE_001.settlement}, observed at batch {CASE_001.batch}. Offline consistency
+                verification: ACCEPT, ten of ten criteria (COSMO verifier, implementation
+                private). The delegated authority behind it was created on-chain with hard caps,
+                fully consumed by two drills, and then revoked on-chain by the principal — the
+                complete lifecycle, including the ending.
+              </p>
+
+              <p className="mt-3 font-mono text-[11px] leading-relaxed text-ink-2">
+                Note on the amount: the platform API returned a JavaScript floating-point balance
+                delta. The normalized economic amount is 169 micro-USDC — &quot;exactly the
+                mandated rate&quot; refers to this normalization. Future adapters should use
+                integer micro-units end-to-end (this fix has since landed in the engine).
               </p>
 
               <div className="mt-4 space-y-0.5 font-mono text-[11px] leading-relaxed text-ink-1">
@@ -422,6 +483,26 @@ export default function Institutional() {
                 <p>mandate_hash {short(CASE_001.mandateHash)}</p>
                 <p>policy_hash {short(CASE_001.policyHash)}</p>
                 <p>evidence_root {short(CASE_001.evidenceRoot)}</p>
+              </div>
+
+              {/* Delegated authority on record — the revoke is a linked, checkable
+                  event, not a text claim (correction pass 2026-08-14, point 7). */}
+              <div className="mt-4 rounded-lg border border-line-subtle bg-surface-inset p-3 font-mono text-[11px] leading-relaxed text-ink-1">
+                <p className="uppercase tracking-wider text-ink-2">Delegated authority on record</p>
+                <p className="mt-1.5">created — SupraFX batch 9,559,624 (2026-08-12) · delegate c1add416…760fbc</p>
+                <p>scope &amp; caps — taker-only SUPRA/USDC · 1 SUPRA per trade · 2 SUPRA total</p>
+                <p>caps consumed — drill 1 batch 9,563,222 · drill 2 batch 9,647,777 (2/2 SUPRA)</p>
+                <p>revoked — batch 9,649,339 (2026-08-14) · event 0xce7398f7…c69f61de</p>
+                <p className="mt-1.5">
+                  <a
+                    href="https://suprafx.ai/api/council/events?user=0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb&limit=50"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-phase-active hover:text-phase-active"
+                  >
+                    Council event feed (DelegatePolicyCreated … DelegatePolicyRevoked) ↗
+                  </a>
+                </p>
               </div>
 
               <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px]">
@@ -467,12 +548,14 @@ export default function Institutional() {
           {/* ── Closing ──────────────────────────────────────────────────── */}
           <section className="mt-14 rounded-2xl border border-phase-active/20 bg-surface-1 p-6 md:p-8">
             <h2 className="max-w-2xl font-mono text-xl font-bold leading-snug text-white md:text-2xl">
-              The market runs on these primitives. The evidence is public.
+              The evidence is public. The framework is proven in Case 001.
             </h2>
             <p className="mt-4 max-w-2xl font-sans text-sm leading-relaxed text-ink-1 md:text-base">
-              The same discipline — frozen criteria, on-chain settlement, published evidence —
-              carries the COSMO market today. What settles there is listed on the Trust page,
-              newest first.
+              The market already shares part of this discipline: frozen criteria, on-chain
+              settlement and published evidence. The full Execution Case framework — delegated
+              authority, mandate, ARM, receipt, offline verification — has so far been proven
+              only in Case 001. What settles on the market is listed on the Trust page, newest
+              first.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <a

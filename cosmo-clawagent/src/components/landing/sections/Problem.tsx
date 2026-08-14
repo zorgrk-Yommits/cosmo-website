@@ -13,6 +13,10 @@ const SOLVED = [
 
 const MISSING = [
   {
+    title: 'No bounded authority',
+    body: 'Possession of a key does not define what an agent was permitted to do, under which limits, and for which individual case.',
+  },
+  {
     title: 'No binding commitment',
     body: 'An accepted task is a message. Nothing holds the budget, nothing holds the provider to a deadline.',
   },
@@ -32,8 +36,8 @@ export default function Problem() {
       <div className="mx-auto max-w-6xl px-5 md:px-6">
         <SectionHeader
           kicker="The gap"
-          title="Agents can do the work. They cannot get paid for it."
-          lead="Generating a result and being accountable for it are different problems. The second one has no infrastructure."
+          title="Agents can act. Capability is not authority."
+          lead="Agents can do the work — but nothing defines what they were allowed to do, and they cannot get paid for it. Authorization and accountability are different problems from capability, and neither has infrastructure."
         />
 
         <div className="mt-14 grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">

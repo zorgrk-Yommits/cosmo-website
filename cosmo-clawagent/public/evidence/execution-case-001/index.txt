@@ -3,13 +3,29 @@ EXECUTION-CASE-001 -- public evidence artifacts (SupraFX mainnet, micro-live exe
 Byte-identical copies of the canonical case documents. Check integrity with: openssl dgst -sha3-256 <file>
 
 Public evidence bundle. Offline verification currently requires the COSMO verifier,
-whose implementation remains private. The verifier checks ten criteria over this
-bundle: K attestor key pin, S receipt signature, T time bounds, P policy hash pin,
-M mandate recompute + signature + binding, V manifest vs. directory (exact set,
-per-file sha3), J journal hash chain, E execution envelope (BCS decode, local
-signature verify, mandate linkage), D receipt statement byte-equality against
-re-derivation from evidence, O outcome/evidence consistency.
+whose implementation remains private. It is a separate offline verification of
+internal consistency (not an independent third-party attestation), checking ten
+criteria over this bundle: K attestor key pin, S receipt signature, T time bounds,
+P policy hash pin, M mandate recompute + signature + binding, V manifest vs.
+directory (exact set, per-file sha3), J journal hash chain, E execution envelope
+(BCS decode, local signature verify, mandate linkage), D receipt statement
+byte-equality against re-derivation from evidence, O outcome/evidence consistency.
 Result for this case: ACCEPT, 10/10 criteria, exit code 0.
+
+Receipt hash convention (two values, both correct):
+receipt_statement_hash  0x87c2c2dfd9afa20d32e5ebeb0e6f8b4098e7fc0383dca936ad4f1e9df8dccd5e
+                        The receipt statement hash is calculated from the canonical JSON
+                        representation of the signed receipt (sorted keys, no whitespace);
+                        it is the value recorded in the journal's case_closed entry.
+receipt_file_sha3       42fc8eecc8753257f6012f120b50675aa2df682ab2db92d07155897f09bc49fe
+                        The published file hash is calculated from the exact downloadable
+                        file bytes, including its final newline.
+
+Settlement amount note: the platform API returned a JavaScript floating-point
+balance delta (0.00016899999999964166 in the raw observation). The normalized
+economic amount is 169 micro-USDC -- "exactly the mandated rate" refers to this
+normalization. Future adapters should use integer micro-units end-to-end; this
+fix has since landed in the COSMO engine.
 
 Files and sha3-256 hashes:
 
@@ -45,11 +61,14 @@ Delegated authority lifecycle (separate from the mandate -- capability is copyab
 
 created          SupraFX batch 9559624 (2026-08-12): delegate c1add416.., taker-only SUPRA/USDC, caps 1 SUPRA per trade / 2 SUPRA total
 used             two micro-live cases within caps (cap fully consumed, 2/2 SUPRA)
-revoked          SupraFX batch 9649339 (2026-08-14): DelegatePolicyRevoked, event_hash 0xce7398f7..9f61de, revoked by the master account; local delegate key file deleted
+revoked          SupraFX batch 9649339 (2026-08-14): DelegatePolicyRevoked, event_hash 0xce7398f726e028a2abe8a9a74788d8a695c44158a2cef778b72c1d87c69f61de, revoked by the master account; local delegate key file deleted
+check yourself   https://suprafx.ai/api/council/events?user=0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb&limit=50 (DelegatePolicyCreated .. DelegatePolicyRevoked)
 
 Honest limits, stated up front:
 
 - This receipt is a self-attestation by the COSMO engine (one attestor, no independent attestor network).
 - Verification proves internal consistency and integrity of this record, not world truth.
 - settlement_ref is an observation of platform balances, not a native chain proof.
-- One venue, one pair, micro scale.
+- One venue, one pair, micro scale. Supervised agent execution with explicit human
+  authorization at the irreversible boundary -- the human ARM step is part of the
+  proven authority model, not a shortcut.

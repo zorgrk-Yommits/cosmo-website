@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const SITE_TITLE = "COSMO — The Institutional Layer for Autonomous Economies";
+const SITE_TITLE = "COSMO — Institutional Layer for Autonomous Economies on Supra";
 const SITE_DESCRIPTION =
   "COSMO is the institutional layer for autonomous economies, built on Supra: delegated authority, signed mandates, pinned policies and verifiable receipts around paid agent work — funding, delivery, verification and payout settle as transactions on Supra Mainnet.";
 
