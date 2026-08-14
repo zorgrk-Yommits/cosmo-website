@@ -563,7 +563,10 @@ export default function Institutional() {
                 (deliver_result_v2, job 9, 5 wCOSMO escrow). The on-chain result hash matches
                 the mandated hash exactly. Honest scope: the case ends at DELIVERED — buyer
                 approval is a separate human step outside the case, so this is mandated
-                delivery with on-chain commitment, not full settlement.
+                delivery with on-chain commitment, not full settlement. That separate step has
+                since happened: the buyer approved and job 9 settled atomically on-chain
+                (escrow payout + deposit release) — as a direct human action, not yet as its
+                own mandated case.
               </p>
 
               <p className="mt-3 font-mono text-[11px] leading-relaxed text-ink-2">

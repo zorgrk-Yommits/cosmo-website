@@ -64,6 +64,13 @@ attestor pubkey      f3b33df0f339536e91fa12b40f14fc9cda2ed93dcbb84f2864f68a80f65
 solver (delegated)   K1 0x11c1c2660dc3e764c6b5b12f084cbbb11028b74686aea7a762e09b2ca651da53 (curated provider, on-chain bond)
 market job           job_mst62q4crh0hkl (5 wCOSMO escrow) -> on-chain job 9, request 14
 
+Subsequently settled (outside the case, as designed): after the case closed at
+DELIVERED, the buyer approved the delivery as a separate human step --
+approve_delivery_v2 tx 0xda138054fd4472901961906be7e06a7861780e44df3f3c68c0053cf2c1c39ad8
+settled job 9 atomically on-chain (escrow payout to the solver + deposit
+release). The approval leg ran as a direct human action, not yet as its own
+mandated case.
+
 Drill honesty (the failures are part of the record):
 - A first attempt closed EXECUTION_FAILED (case_mst7l2zp7b8fdd): an SDK argument-order
   defect broke the send BEFORE any network contact; on-chain state and sequence were

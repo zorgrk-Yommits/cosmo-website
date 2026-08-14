@@ -56,7 +56,7 @@ const PROOFS = [
     title: 'EXECUTION-CASE-002 — mandated work delivery',
     date: '2026-08-14',
     price: '5 wCOSMO escrow',
-    text: 'The generalization case, deliberately not a trade: a solver agent delivered marketplace work under the full execution-case framework — result hash pre-committed in a one-shot mandate, six policy criteria checked against live chain state, human ARM, on-chain commitment via deliver_result_v2 (job 9). On-chain hash == mandated hash exactly. Ends at DELIVERED (buyer approval is a separate human step). Ten-criteria offline consistency verification via the private COSMO verifier.',
+    text: 'The generalization case, deliberately not a trade: a solver agent delivered marketplace work under the full execution-case framework — result hash pre-committed in a one-shot mandate, six policy criteria checked against live chain state, human ARM, on-chain commitment via deliver_result_v2 (job 9). On-chain hash == mandated hash exactly. Ends at DELIVERED; the buyer subsequently approved as a separate human step and job 9 settled on-chain (escrow payout to the solver). Ten-criteria offline consistency verification via the private COSMO verifier.',
     hashes: [
       { label: 'mandate_hash', value: '0x3ad166f7be905febe8be67ae057d84a487182bf5fe0fb2f7f3f4b1dd430b9d01' },
       { label: 'result_hash', value: '0x5429d3005db3382c8210d149e3bf0e77c2146b64d9ef263f2778f1f9e34ce055' },
@@ -65,6 +65,7 @@ const PROOFS = [
     links: [
       { label: 'Evidence bundle', href: '/evidence/execution-case-002/', external: true },
       { label: 'Deliver tx', href: 'https://suprascan.io/tx/0xbf2255576f546d95af98169647dfb66d413550e1f444d704bc26dd70e4d21af9', external: true },
+      { label: 'Settle tx', href: 'https://suprascan.io/tx/0xda138054fd4472901961906be7e06a7861780e44df3f3c68c0053cf2c1c39ad8', external: true },
       { label: 'Institutional layer', href: '/institutional/', external: false },
     ],
   },
