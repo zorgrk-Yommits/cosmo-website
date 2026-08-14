@@ -1,0 +1,8 @@
+{"base_total":17037.54528107,"kind":"baseline","quote_total":2.000179,"rows":2,"ts":1786689591766}
+{"base_delta":"0","fill":false,"kind":"poll","quote_delta":"0","remaining_size":null,"rfq_found":false,"rfq_status":null,"ts":1786689591766}
+{"base_delta":"0","fill":false,"kind":"poll","quote_delta":"0","remaining_size":null,"rfq_found":false,"rfq_status":null,"ts":1786689597552}
+{"base_delta":"0","fill":false,"kind":"poll","quote_delta":"0","remaining_size":1,"rfq_found":true,"rfq_status":"open","ts":1786689603315}
+{"base_delta":"0","fill":false,"kind":"poll","quote_delta":"0","remaining_size":1,"rfq_found":true,"rfq_status":"open","ts":1786689609141}
+{"base_delta":"0","fill":false,"kind":"poll","quote_delta":"0","remaining_size":1,"rfq_found":true,"rfq_status":"open","ts":1786689614967}
+{"base_delta":"-1","fill":true,"kind":"poll","quote_delta":"0.00016899999999964166","remaining_size":0,"rfq_found":true,"rfq_status":"matched","ts":1786689620833}
+{"confirming":true,"kind":"confirm","settlement_ref":{"balance_delta":{"base":"-1","quote":"0.00016899999999964166"},"batch_height":9647777,"observed_at":1786689620833},"ts":1786689622017}

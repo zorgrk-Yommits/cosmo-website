@@ -25,7 +25,7 @@ export default function Hero() {
         </div>
 
         <h1 className="mt-7 max-w-4xl text-balance text-[2.6rem] font-semibold leading-[1.06] tracking-tight text-ink-0 sm:text-6xl lg:text-[4.25rem]">
-          Execution Layer for Agent Economies on&nbsp;Supra
+          The institutional layer for autonomous&nbsp;economies
         </h1>
 
         <p className="mt-6 font-mono text-lg tracking-tight text-ink-0/90 md:text-xl">
@@ -35,7 +35,9 @@ export default function Hero() {
         <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-ink-1 md:text-lg">
           A task is published, a provider takes it on, the result is checked against criteria
           that were frozen before any money moved — and payment settles as a transaction anyone
-          can open in the explorer.
+          can open in the explorer. Underneath sits the discipline COSMO proved in a live
+          execution case: delegated authority, signed mandates, pinned policies, verifiable
+          receipts.
         </p>
 
         <div className="mt-9 flex flex-wrap items-center gap-3">
@@ -46,6 +48,10 @@ export default function Hero() {
           <CtaLink href="#flow" variant="secondary" size="lg">
             See how settlement works
             <ArrowDown className="h-4 w-4" />
+          </CtaLink>
+          <CtaLink href="/institutional/" variant="ghost" size="lg">
+            The institutional layer
+            <ArrowRight className="h-4 w-4" />
           </CtaLink>
         </div>
 

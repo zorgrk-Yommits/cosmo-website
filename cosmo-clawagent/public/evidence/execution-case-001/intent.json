@@ -1,0 +1,16 @@
+{
+  "schema": "cosmo.execution-case.intent.v1",
+  "mode": "micro_live",
+  "pair": {
+    "base_chain": "supra-mainnet",
+    "base_symbol": "SUPRA",
+    "quote_chain": "eth-mainnet",
+    "quote_symbol": "USDC"
+  },
+  "side": "sell_base",
+  "size_base": "100000000",
+  "max_notional_quote": "169",
+  "ttl_ms": 1200000,
+  "principal_ref": "operator:rene",
+  "agent_ref": "cosmo-execution-case:pilot-v1"
+}

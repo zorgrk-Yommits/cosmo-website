@@ -1,0 +1,55 @@
+EXECUTION-CASE-001 -- public evidence artifacts (SupraFX mainnet, micro-live execution case, case_msskp1gg956f8a, 2026-08-14)
+
+Byte-identical copies of the canonical case documents. Check integrity with: openssl dgst -sha3-256 <file>
+
+Public evidence bundle. Offline verification currently requires the COSMO verifier,
+whose implementation remains private. The verifier checks ten criteria over this
+bundle: K attestor key pin, S receipt signature, T time bounds, P policy hash pin,
+M mandate recompute + signature + binding, V manifest vs. directory (exact set,
+per-file sha3), J journal hash chain, E execution envelope (BCS decode, local
+signature verify, mandate linkage), D receipt statement byte-equality against
+re-derivation from evidence, O outcome/evidence consistency.
+Result for this case: ACCEPT, 10/10 criteria, exit code 0.
+
+Files and sha3-256 hashes:
+
+receipt.json                   42fc8eecc8753257f6012f120b50675aa2df682ab2db92d07155897f09bc49fe  (signed outcome receipt, schema cosmo.execution-case.receipt.v1)
+MANIFEST.json                  a3c35961ac1ebe8e8ccd698cd03bcab4aeec2f1c0da198f1d24362cafee462dd  (evidence manifest; its 12 entries match the 12 evidence files below byte-for-byte)
+journal.jsonl                  2ed7a7ebb135f983149fef9932b944de776b6145354af77f7c2f4ce64b3c57ca  (hash-chained case journal, case_opened .. case_closed)
+intent.json                    976ebd559677b4f51e94955d4606f8ae3bc31d7b004770e6882056692b5a700a  (operator intent, micro_live, sell 1 SUPRA vs USDC, max notional 169 micro-USDC)
+mandate.json                   88f2cced5c5fb0b4f0cedd73ae5a26cc9fbccac76a3ae6d87cce8f3ebc5919f1  (one-shot mandate, nonce-bound, policy-hash-bound, TTL-bound)
+mandate.sig.json               0c4cf536ba571444984a4b1dfdda97a6989ba77492ea04be163455e99c123f4c  (ed25519 signature over the canonical mandate)
+policy.json                    16c78509edbf49788cf55fb7a733767980d95825fe1f2476cd768327358f37b7  (pinned policy execution-case-pilot-supra-usdc-v2; sha3 of canonical form = policy_hash 0x59f7c39f..dd75d)
+policy-decision.json           41c0ab307905932596a96ad5f111f1e29de4c359d06318e1639d80f72e531247  (policy verdict: accept, with reference price context)
+reference-price.json           374f7982f60494be68fa9494dc9f588d03e826723e91fd06be4a09a3bc2ae15d  (orderbook median reference at decision time)
+arm-consumed.json              f6869d8fc510880beee6239de38be569cefd547ae38dce99d60320bfd29f3f29  (human ARM ceremony record: armed_by rene, one-shot, mandate-bound)
+envelope.hex                   147317ab6dbf9844ca1421b9257e4a6b8f431f43ac39ac537ade6249c23484bd  (signed BCS execution envelope as submitted; sha3 of its bytes = execution_ref)
+envelope-verify.json           5e8665fc20776ea60f40b950724efc59a5b974efeda7875856794f667a2b845c  (local pre-submit verification of the envelope)
+submit-result.json             2b42fce5f8c2274aa9998eee8dad91f5b1379763fce5c34521644757412302f2  (submission classification: accepted, 1 attempt)
+settlement-observations.jsonl  b8b97ff259b6c67100c869034c356640121dc8c8a41e618bd06d028255317491  (poll-by-poll settlement watch until fill confirmation)
+errors.json                    7b41ad4a50b29158e075c6463133761266adb475130b8e886f2f5649070031cf  (empty -- no errors recorded)
+
+Case facts:
+
+outcome          EXECUTED (RFQ filled; settlement observed via platform balance delta)
+mode             micro_live
+settlement       -1 SUPRA / +169 micro-USDC, exactly the mandated rate; observed at SupraFX batch 9647777
+mandate_hash     0xb0d3911a44b1a8e703394dd64bd23588b24b1430c77b955a02a65ccfa96bab11
+policy_hash      0x59f7c39fc7bbbe5acd15a92881cad314a284e54ee9dfbd014506f52dfa7dd75d
+evidence_root    0x5799bf59c188f13948af107dd9cf0dbd654ed940dc02aaa59e8f64ea5b1b50c2
+execution_ref    0x56be7a3b7b7e33834e9bd606a3036a5918d63ff253f45d47495f21ecbbd764ee
+attestor pubkey  f3b33df0f339536e91fa12b40f14fc9cda2ed93dcbb84f2864f68a80f654fbac (pinned)
+producer_commit  070fbd1dace1ca682e9055be743533d813aec1b9
+
+Delegated authority lifecycle (separate from the mandate -- capability is copyable, authority is not):
+
+created          SupraFX batch 9559624 (2026-08-12): delegate c1add416.., taker-only SUPRA/USDC, caps 1 SUPRA per trade / 2 SUPRA total
+used             two micro-live cases within caps (cap fully consumed, 2/2 SUPRA)
+revoked          SupraFX batch 9649339 (2026-08-14): DelegatePolicyRevoked, event_hash 0xce7398f7..9f61de, revoked by the master account; local delegate key file deleted
+
+Honest limits, stated up front:
+
+- This receipt is a self-attestation by the COSMO engine (one attestor, no independent attestor network).
+- Verification proves internal consistency and integrity of this record, not world truth.
+- settlement_ref is an observation of platform balances, not a native chain proof.
+- One venue, one pair, micro scale.

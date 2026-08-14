@@ -52,6 +52,22 @@ function quantsToWcosmo(q: number): number {
 // data JSONs so hashes and tx ids stay single-sourced.
 const PROOFS = [
   {
+    id: 'execution-case-001',
+    title: 'EXECUTION-CASE-001 — mandated execution case',
+    date: '2026-08-14',
+    price: '1 SUPRA → 169 µUSDC',
+    text: 'First mandated micro-live execution case, not a marketplace job: delegated authority with on-chain caps and an on-chain revoke, a one-shot signed mandate, a pinned policy, a human ARM ceremony — closed EXECUTED at exactly the mandated rate, with a signed receipt that verifies offline on ten criteria (SupraFX Mainnet).',
+    hashes: [
+      { label: 'mandate_hash', value: '0xb0d3911a44b1a8e703394dd64bd23588b24b1430c77b955a02a65ccfa96bab11' },
+      { label: 'policy_hash', value: '0x59f7c39fc7bbbe5acd15a92881cad314a284e54ee9dfbd014506f52dfa7dd75d' },
+      { label: 'evidence_root', value: '0x5799bf59c188f13948af107dd9cf0dbd654ed940dc02aaa59e8f64ea5b1b50c2' },
+    ],
+    links: [
+      { label: 'Evidence bundle', href: '/evidence/execution-case-001/', external: true },
+      { label: 'Institutional layer', href: '/institutional/', external: false },
+    ],
+  },
+  {
     id: 'pilot-001',
     title: 'PILOT-001 — marketplace trade',
     date: pilot001.date,
@@ -277,7 +293,7 @@ export default function Assurance() {
 
             <div className="mt-5 flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-line-base bg-surface-2 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-ink-1">
-                4 settled proofs · Supra Mainnet
+                5 settled proofs · Supra Mainnet &amp; SupraFX
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full border border-phase-proof/40 bg-phase-proof/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-phase-proof">
                 Show, don&apos;t claim
@@ -318,7 +334,8 @@ export default function Assurance() {
               </h2>
             </div>
             <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
-              Four jobs settled on Supra Mainnet, each independently checkable. Newest first.
+              Five settled proofs, each independently checkable: four marketplace jobs on Supra
+              Mainnet and one mandated execution case on SupraFX Mainnet. Newest first.
             </p>
 
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -376,7 +393,9 @@ export default function Assurance() {
             <p className="mt-4 font-mono text-[11px] leading-relaxed text-ink-1">
               Buyer and provider on JOB-001, ATTEST-001 and PATCH-001 are operating-team
               accounts, disclosed on their detail pages. PILOT-001 settled through the public
-              marketplace flow.
+              marketplace flow. EXECUTION-CASE-001 was run by the operating team under its own
+              mandate discipline; its receipt is a self-attestation, stated as such in the
+              bundle.
             </p>
 
             <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px] leading-relaxed text-ink-1">

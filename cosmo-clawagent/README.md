@@ -1,7 +1,9 @@
-# COSMO — Execution & Accountability Layer for the Agent Economy
+# COSMO — The Institutional Layer for Autonomous Economies
 
-Public website for **COSMO**, the execution and accountability layer for the
-emerging Agent Economy on Supra.
+Public website for **COSMO**, the institutional layer for autonomous economies,
+built on Supra: delegated authority, mandates, pinned policies, receipts and
+verification around paid agent work. Canonical positioning: `docs/POSITIONING.md`
+(v5.0).
 
 ## Positioning
 
@@ -12,7 +14,7 @@ is **not a competitor**:
 |---|---|
 | **SupraOS** | Agent coordination / orchestration layer |
 | **SupraFX** | Market, liquidity and trading rails |
-| **COSMO** | Execution & accountability layer — turns autonomous intent into accountable, atomic on-chain execution |
+| **COSMO** | Institutional layer — governance primitives (authority, mandate, policy, ceremony, record, receipt, verification) around autonomous action |
 
 COSMO turns autonomous intent into accountable, atomic execution. The current
 proven capability is a **Mainnet proof of accountable execution** via an

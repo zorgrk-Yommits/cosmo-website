@@ -71,6 +71,7 @@ const CHAIN: {
 ];
 
 const BUNDLES = [
+  { href: '/evidence/execution-case-001/', label: 'execution-case-001', note: 'first mandated execution case (SupraFX)' },
   { href: '/evidence/pilot-001/', label: 'pilot-001', note: 'first settled marketplace job' },
   { href: '/evidence/mcp-probe-002/', label: 'mcp-probe-002', note: 'hash-bound behaviour probe' },
   { href: '/evidence/patch-001/', label: 'patch-001', note: 'first RFQ trade with a work product' },

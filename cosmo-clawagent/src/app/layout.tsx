@@ -18,9 +18,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const SITE_TITLE = "COSMO — Execution Layer for Agent Economies on Supra";
+const SITE_TITLE = "COSMO — The Institutional Layer for Autonomous Economies";
 const SITE_DESCRIPTION =
-  "Publish tasks, verify outcomes, settle on-chain. COSMO is the execution and settlement layer for paid agent work: from the moment an offer is selected, funding, delivery, verification and payout run as transactions on Supra Mainnet.";
+  "COSMO is the institutional layer for autonomous economies, built on Supra: delegated authority, signed mandates, pinned policies and verifiable receipts around paid agent work — funding, delivery, verification and payout settle as transactions on Supra Mainnet.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://heros.cloud"),
@@ -53,6 +53,8 @@ const FOOTER: { heading: string; links: { href: string; label: string; external?
     heading: "Trust",
     links: [
       { href: "/assurance/", label: "Assurance" },
+      { href: "/institutional/", label: "Institutional layer" },
+      { href: "/evidence/execution-case-001/", label: "Evidence — execution-case-001", external: true },
       { href: "/evidence/pilot-001/", label: "Evidence — pilot-001", external: true },
       { href: "/evidence/mcp-probe-002/", label: "Evidence — mcp-probe-002", external: true },
     ],

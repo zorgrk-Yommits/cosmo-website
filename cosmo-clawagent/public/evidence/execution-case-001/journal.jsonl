@@ -1,0 +1,12 @@
+{"case_id":"case_msskp1gg956f8a","event":"case_opened","prev_hash":"0x0000000000000000000000000000000000000000000000000000000000000000","ts":1786689329057}
+{"case_id":"case_msskp1gg956f8a","event":"intake_accepted","prev_hash":"0xbddd788c43d12013547ab4fb11b09a9be12f07d80f0b0cd5580f644ed6db4aba","ts":1786689329058}
+{"case_id":"case_msskp1gg956f8a","event":"mandate_issued","mandate_hash":"0xb0d3911a44b1a8e703394dd64bd23588b24b1430c77b955a02a65ccfa96bab11","prev_hash":"0x52fc51bbe8d0d9bf8f74e7f7b84fe479113cf67b5f4f52b97d2c85132a95e6bf","ts":1786689329128}
+{"case_id":"case_msskp1gg956f8a","event":"policy_checked","prev_hash":"0x00e815ea58c48e44e03cc10e7a8f6bad53928e2ac6f283c544574adf824dc4ce","ts":1786689329937,"verdict":"accept"}
+{"case_id":"case_msskp1gg956f8a","event":"awaiting_arm","mandate_hash":"0xb0d3911a44b1a8e703394dd64bd23588b24b1430c77b955a02a65ccfa96bab11","prev_hash":"0xcc0e6c72437329363ae167f3e3b6fa7f0ab03256ec287309404fef8fb5938ef6","ts":1786689329938}
+{"case_id":"case_msskp1gg956f8a","event":"resumed","prev_hash":"0xd31db3c51430815435a4781ceaa65e977cd8b905adb338f061054e018bc83bf3","ts":1786689589889}
+{"armed_by":"rene","case_id":"case_msskp1gg956f8a","event":"armed","prev_hash":"0xe532d7d7e844e16d43f7de1922d52d725e4374c497a9cbe6eabf4826e28ad2bd","ts":1786689589892}
+{"case_id":"case_msskp1gg956f8a","event":"mandate_consumed","nonce":"8ba581ecb06415228026bc4c22426c7b","prev_hash":"0xae3c24aeeed92d5dfa4a9d80adb074aed26cf885d4535cc74149fefd5cc298e1","ts":1786689589960}
+{"attempts":1,"case_id":"case_msskp1gg956f8a","classification":"accepted","event":"submitted","ok":true,"prev_hash":"0x3e31543dcb40532279c7dcc882bf064c16d5e2241a89d0ff84e74fc49e58395f","ts":1786689591201}
+{"case_id":"case_msskp1gg956f8a","event":"settling","prev_hash":"0xae2a9bd38b44d73c00bbc4dba5df61fbe17e157cd8435cf1f6a745b390b234ed","ts":1786689591202}
+{"case_id":"case_msskp1gg956f8a","event":"settled","prev_hash":"0xe5e49bd2f361c3f3f5a916aceef2d5603b18745365b62defb69ca610469be4bc","settlement_ref":{"balance_delta":{"base":"-1","quote":"0.00016899999999964166"},"batch_height":9647777,"observed_at":1786689620833},"ts":1786689622017}
+{"case_id":"case_msskp1gg956f8a","event":"case_closed","evidence_root":"0x5799bf59c188f13948af107dd9cf0dbd654ed940dc02aaa59e8f64ea5b1b50c2","outcome":"EXECUTED","prev_hash":"0x8126f54bc39ed6f51370e068f72116b0f80b75308b6b1926a34d8412e8f76ba4","receipt_sha3":"0x87c2c2dfd9afa20d32e5ebeb0e6f8b4098e7fc0383dca936ad4f1e9df8dccd5e","ts":1786689622020}
