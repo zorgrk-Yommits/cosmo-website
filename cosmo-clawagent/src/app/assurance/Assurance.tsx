@@ -52,6 +52,24 @@ function quantsToWcosmo(q: number): number {
 // data JSONs so hashes and tx ids stay single-sourced.
 const PROOFS = [
   {
+    id: 'execution-case-002g',
+    title: 'EXECUTION-CASE-002-G — mandated delivery and acceptance',
+    date: '2026-08-15',
+    price: '5 wCOSMO escrow released',
+    text: 'The double ceremony: the full economic arc of a marketplace job with BOTH irreversible legs under mandate. On live job 10, the solver agent (K1) committed a pre-mandated result hash on-chain under a provider mandate (deliver_result_v2), and the buyer acceptance — atomic escrow release via approve_delivery_v2 — was ALSO executed as its own case, under a one-shot mandate held by an agent-controlled buyer wallet. The approve policy re-verified delivered-and-unsettled, buyer-key binding, hash match, review window and escrow cap before release. Both cases verify offline through the same entry point: ACCEPT, ten of ten criteria each. Honest scope: both ceremonies armed by the same operator; authority separation is cryptographic, not organizational.',
+    hashes: [
+      { label: 'deliver mandate_hash', value: '0x7996b572a3ac017b9f1345df8de4d46de3978896eba4c27534867c2c17626652' },
+      { label: 'approve mandate_hash', value: '0x93ba83d6f0f8cd1598f7153ea26a38bcf9f983a9651572b31baa07c00eaa712f' },
+      { label: 'result_hash', value: '0xd71c14ce9c14cfa4d6a49337964926f4a01f543e1bc6d9648e7716d77104caf6' },
+    ],
+    links: [
+      { label: 'Evidence bundle', href: '/evidence/execution-case-002g/', external: true },
+      { label: 'Deliver tx', href: 'https://suprascan.io/tx/0x3d10048019fd33b6a4da1433b8aa6c8e0874781e959cb74609e26d46025e4bdb', external: true },
+      { label: 'Approve tx', href: 'https://suprascan.io/tx/0xa007c7962bbbddbc3787bee4866c5b58aca0d7410422f18ae8b9c20be00cceae', external: true },
+      { label: 'Institutional layer', href: '/institutional/', external: false },
+    ],
+  },
+  {
     id: 'execution-case-002',
     title: 'EXECUTION-CASE-002 — mandated work delivery',
     date: '2026-08-14',

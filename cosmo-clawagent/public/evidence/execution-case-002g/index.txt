@@ -1,0 +1,81 @@
+EXECUTION-CASE-002-G -- public evidence artifacts (Supra chain 8, mandated delivery AND mandated acceptance with escrow release, 2026-08-15)
+
+Double-ceremony drill on live on-chain job 10 (5 wCOSMO escrow): two independent
+execution cases through the same engine and the same verification entry point --
+  deliver/  case_msuc7iwa03bd86  market.deliver_result.v1   (provider mandate, solver K1)
+  approve/  case_msuc8s79e56cea  market.approve_delivery.v1 (buyer mandate, agent-held buyer wallet)
+Each leg: one-shot signed mandate, hash-pinned policy, human ARM ceremony,
+simulate-first submission, settlement watch, offline verification ACCEPT 10/10.
+
+Byte-identical copies of the canonical case documents. Check integrity with: openssl dgst -sha3-256 <file>
+
+Public evidence bundle. Offline verification currently requires the COSMO verifier,
+whose implementation remains private. It is a separate offline verification of
+internal consistency (not an independent third-party attestation), checking ten
+criteria (K/S/T/P/M/V/J/E/D/O). Result for BOTH cases: ACCEPT, 10/10, exit code 0.
+
+WHAT THIS PROVES (scope, honest): the full economic arc of a marketplace job --
+delivery committed on-chain under a provider mandate, then buyer acceptance and
+atomic escrow release executed under a buyer mandate held by an agent-controlled
+wallet. Both irreversible boundaries stayed human-gated (ARM). Both ceremonies
+were armed by the same operator (operator:zorg); the separation of buyer and
+provider authority is cryptographic (distinct keys, mandates, policies), not
+organizational.
+
+[deliver] case_msuc7iwa03bd86
+  tx                      0x3d10048019fd33b6a4da1433b8aa6c8e0874781e959cb74609e26d46025e4bdb
+  mandate_hash            0x7996b572a3ac017b9f1345df8de4d46de3978896eba4c27534867c2c17626652
+  evidence_root           0x166c68c7ed9bf025a2761b7a7c82081cad3365afdd5ce9f36fdcc7d1a0a14d13
+  receipt_statement_hash  0x946b35410d517cf39dd2bd1c5371accb6ef08e74555ff42dd910a33387d38234
+  receipt_file_sha3       27256bc659cf85f3e73e6b4904add04e0216ec81252ef1b48afff4407cfb1a53
+
+[approve] case_msuc8s79e56cea
+  tx                      0xa007c7962bbbddbc3787bee4866c5b58aca0d7410422f18ae8b9c20be00cceae
+  mandate_hash            0x93ba83d6f0f8cd1598f7153ea26a38bcf9f983a9651572b31baa07c00eaa712f
+  evidence_root           0xce8d5d7a7dd66b207219971839a9727fbf586f35ee56e91b5cbd85928f8ad037
+  receipt_statement_hash  0xa8539bb72f2b77c5d3c275410bc1b5f823522c4f77387ad863384728d901c324
+  receipt_file_sha3       eb54ac890005e04927379607bcdd126ba3ff6110d8c4c1e106898bb970289aa4
+
+Receipt hash convention (two values, both correct): the receipt statement hash is
+calculated from the canonical JSON representation of the signed receipt (sorted
+keys, no whitespace); it is the value recorded in the journal's case_closed entry.
+The published file hash is calculated from the exact downloadable file bytes.
+
+deliverable.json  sha3 = the mandated and on-chain result_hash:
+  d71c14ce9c14cfa4d6a49337964926f4a01f543e1bc6d9648e7716d77104caf6
+
+deliver/
+  MANIFEST.json                       4ecac40d29984154902f5d548b570f5c76d88951fc8d80382f3e3e46f767f6dc
+  arm-consumed.json                   98a3e1070fcda5fdeb38518b88b72795ae73386e7cd2bd8e5276ab5d224146d9
+  artifact-verify.json                a2b58157999011dd7f884e6880ac5baafec418f942eccb292897ba375b512251
+  artifact.hex                        eb010bda7d7beedcf92444b3175fbab7aaad332cece959a9cee0ad9a3d2c3d05
+  errors.json                         7b41ad4a50b29158e075c6463133761266adb475130b8e886f2f5649070031cf
+  intent.json                         385252b9acfe435ff06f69da3e6e96fea93cf062059a3c86fbea051f8b3ba272
+  job-snapshot.json                   4e434c2e067d7f86765dee960066e6d174321701ea832db09bd5d4f9683a7d95
+  journal.jsonl                       0d3cf5d596c151a3536dd7e47f2f025320ac3b769f9660fbae2f436ec549585a
+  mandate.json                        1fa63433b42c0e36fa4e522565c21dec0bacf8512ac006a49857e0ae687bca19
+  mandate.sig.json                    43c6abf623debe8c5b432c8555211897554a6ade82592e242fa45058e4555063
+  policy-decision.json                e33e99069cd55590ec1ad7059307ed6e8408b4ac507a09f2ab4bbe3ee4098a37
+  policy.json                         d65abe359a3caec547504cd60594b3ad23d703656f41ad6594c6d3d4780bf4fd
+  receipt.json                        27256bc659cf85f3e73e6b4904add04e0216ec81252ef1b48afff4407cfb1a53
+  result-preimage.json                e2e5e9d5dad9ef01963259cff8a555a982e9e46f19b384fe34ec6a07a6860bb2
+  settlement-observations.jsonl       bc265bed3914329e4b08e18295aa3c11399ba3a7605778ea5b1bccde0e001695
+  submit-result.json                  c79b4a5d6a22a3449a9ef24ebbd4a55d32ad0ed8aa7cda8fd348498a4133fa0a
+
+approve/
+  MANIFEST.json                       a7571acb0e22a1d27ecb0c6e531daf508aa8f6bba174fcce5d22178fda74a654
+  arm-consumed.json                   662caf940be8e4f45749511329867eb36b36fb1fd1937a08dc16a14c5807d621
+  artifact-verify.json                418216150024a7a54489805a5c3798ed378b452f1906d734089e2b0aa9d3778c
+  artifact.hex                        de70073c8b16201352661f2db57970bab6434f9464ed7bfad40e3c20fae277be
+  errors.json                         7b41ad4a50b29158e075c6463133761266adb475130b8e886f2f5649070031cf
+  intent.json                         ff1f41fb72b15bd593fb1777905f6069987f64b28a718c9eb4adcc1fb60c30c0
+  job-snapshot.json                   3728dcab282bb516b56716eb1e03b536a97b0af39f8570c0ec6edd80cab8fbe9
+  journal.jsonl                       62548c5dc93fe239ec8b889b9f3413d7a783dbe0200b2d6b696253ea0f8af2c7
+  mandate.json                        ea4fd3204afa0d34736bd094cba51e0e27fabc49e85d245a98b86303c27f7f84
+  mandate.sig.json                    393e7d55dda599142d4c9715935628b0c4962a2e271cd43a52de5b850d387489
+  policy-decision.json                474cdcb30a244d303aa723651ce26021cc65b3d00d258da78246d2d62b241f18
+  policy.json                         c23a28667f00569f11b249dcaa71d862579756576214ea156ecaa078c1f13a91
+  receipt.json                        eb54ac890005e04927379607bcdd126ba3ff6110d8c4c1e106898bb970289aa4
+  settlement-observations.jsonl       3eea991e68fdd625a12398f0300980a5bf3391f4ed30abf22e2f07dba2d8b9bd
+  submit-result.json                  1341eec2af5cd6c9d5626985ab95d5137b79c93215cfedd6ee4513c44d5d87e5
+

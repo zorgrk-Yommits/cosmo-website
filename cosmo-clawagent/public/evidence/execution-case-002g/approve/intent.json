@@ -1,0 +1,16 @@
+{
+  "schema": "cosmo.execution-case.intent.v2",
+  "mode": "micro_live",
+  "action": {
+    "kind": "market.approve_delivery.v1",
+    "params": {
+      "job_ref": "job_msuc02ahzksw5z",
+      "job_id_onchain": "10",
+      "expected_result_hash": "0xd71c14ce9c14cfa4d6a49337964926f4a01f543e1bc6d9648e7716d77104caf6",
+      "escrow_release_quants": "5000000"
+    }
+  },
+  "ttl_ms": 3600000,
+  "principal_ref": "operator:zorg",
+  "agent_ref": "cosmo-execution-case:market-v1"
+}

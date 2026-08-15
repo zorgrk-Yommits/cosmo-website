@@ -1,0 +1,2 @@
+{"job_found":true,"job_status":2,"kind":"poll","settled":true,"ts":1786796082549}
+{"confirming":true,"kind":"confirm","settlement_ref":{"height":51632430,"job_id_onchain":"10","job_status":2,"observed_at":1786796082549,"result_hash_onchain":"0xd71c14ce9c14cfa4d6a49337964926f4a01f543e1bc6d9648e7716d77104caf6"},"ts":1786796083373}

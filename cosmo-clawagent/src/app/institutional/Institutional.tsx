@@ -450,7 +450,7 @@ export default function Institutional() {
             <div className="flex items-center gap-2">
               <SearchCheck className="h-4 w-4 text-ink-1" />
               <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
-                The proofs — Execution Cases 001 &amp; 002
+                The proofs — Execution Cases 001, 002 &amp; 002-G
               </h2>
             </div>
 
@@ -566,7 +566,8 @@ export default function Institutional() {
                 delivery with on-chain commitment, not full settlement. That separate step has
                 since happened: the buyer approved and job 9 settled atomically on-chain
                 (escrow payout + deposit release) — as a direct human action, not yet as its
-                own mandated case.
+                own mandated case. That remaining gap has since been closed: see Case 002-G
+                below, where the approval leg runs as its own mandated case.
               </p>
 
               <p className="mt-3 font-mono text-[11px] leading-relaxed text-ink-2">
@@ -606,6 +607,77 @@ export default function Institutional() {
                 {VERIFY_WORDING}
               </p>
             </article>
+
+            {/* Case 002-G — double ceremony: mandated delivery AND mandated
+                acceptance with escrow release, EXECUTED × 2 on 2026-08-15. */}
+            <article className="mt-4 rounded-xl border border-phase-settled/30 bg-surface-1 p-5 md:p-6">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full border border-phase-settled/40 bg-phase-settled/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-phase-settled">
+                  EXECUTED × 2
+                </span>
+                <span className="rounded-full border border-line-base bg-surface-2 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-1">
+                  2026-08-15 · Supra chain 8 · mandated delivery + mandated acceptance
+                </span>
+              </div>
+
+              <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
+                Case 002-G — the double ceremony: the full economic arc of a marketplace job,
+                with BOTH irreversible legs under mandate. On live job 10 (5 wCOSMO escrow),
+                the solver agent (K1) committed a pre-mandated result hash on-chain under a
+                provider mandate (deliver_result_v2), and the buyer acceptance — atomic escrow
+                release via approve_delivery_v2 — was ALSO executed as its own case, under a
+                one-shot mandate held by an agent-controlled buyer wallet. The approve policy
+                re-verified before release: job delivered and unsettled, execution key equals
+                the on-chain buyer, on-chain result hash equals the mandated hash, mandate
+                window inside the review window, release within the escrow cap. Both cases
+                verify offline through the same entry point: ACCEPT, ten of ten criteria each.
+              </p>
+
+              <p className="mt-3 font-mono text-[11px] leading-relaxed text-ink-2">
+                Honest scope: both ceremonies were armed by the same operator — the separation
+                of buyer and provider authority is cryptographic (distinct keys, one-shot
+                mandates, domain policies), not organizational. The buyer wallet is agent-held
+                but was created and funded by the founder for this drill.
+              </p>
+
+              <div className="mt-4 space-y-0.5 font-mono text-[11px] leading-relaxed text-ink-1">
+                <p>deliver case_msuc7iwa03bd86 · mandate 0x7996b572…17626652</p>
+                <p>approve case_msuc8s79e56cea · mandate 0x93ba83d6…0eaa712f</p>
+                <p>result_hash 0xd71c14ce…7104caf6 (pre-committed == on-chain)</p>
+                <p>outcome job 10 SETTLED · escrow released 5 wCOSMO buyer → solver</p>
+              </div>
+
+              <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px]">
+                <a
+                  href="/evidence/execution-case-002g/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-phase-active hover:text-phase-active"
+                >
+                  Evidence bundle ↗
+                </a>
+                <a
+                  href="https://suprascan.io/tx/0x3d10048019fd33b6a4da1433b8aa6c8e0874781e959cb74609e26d46025e4bdb"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-phase-active hover:text-phase-active"
+                >
+                  Deliver tx ↗
+                </a>
+                <a
+                  href="https://suprascan.io/tx/0xa007c7962bbbddbc3787bee4866c5b58aca0d7410422f18ae8b9c20be00cceae"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-phase-active hover:text-phase-active"
+                >
+                  Approve tx ↗
+                </a>
+              </div>
+
+              <p className="mt-4 border-t border-line-subtle pt-3 font-mono text-[11px] leading-relaxed text-ink-1">
+                {VERIFY_WORDING}
+              </p>
+            </article>
           </section>
 
           {/* ── Honest limits ────────────────────────────────────────────── */}
@@ -637,8 +709,9 @@ export default function Institutional() {
               The market already shares part of this discipline: frozen criteria, on-chain
               settlement and published evidence. The full Execution Case framework — delegated
               authority, mandate, ARM, receipt, offline verification — has been proven in Case
-              001 (a SupraFX trade) and Case 002 (a marketplace work delivery, run over the
-              market as one mandated case). Day-to-day market jobs do not yet run through the
+              001 (a SupraFX trade), Case 002 (a marketplace work delivery, run over the
+              market as one mandated case) and Case 002-G (delivery AND acceptance with escrow
+              release, both legs mandated). Day-to-day market jobs do not yet run through the
               full framework. What settles on the market is listed on the Trust page, newest
               first.
             </p>

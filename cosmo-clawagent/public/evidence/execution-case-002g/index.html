@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="index,follow">
+<title>EXECUTION-CASE-002-G — Evidence Bundle</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin:0; background:#08090B; color:#F2F4F7; font:15px/1.6 ui-sans-serif,system-ui,sans-serif; }
+  main { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; }
+  h1,h2 { font-family: ui-monospace,Menlo,Consolas,monospace; letter-spacing:-0.01em; }
+  h1 { font-size: 1.7rem; margin: 0 0 6px; }
+  h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .22em; color:#A7B0BC; margin: 40px 0 12px; }
+  p { color:#A7B0BC; margin: 10px 0; }
+  .ink0 { color:#F2F4F7; }
+  code, .mono { font-family: ui-monospace,Menlo,Consolas,monospace; font-size: 12.5px; }
+  .chip { display:inline-block; border:1px solid rgba(70,214,160,.4); background:rgba(70,214,160,.1); color:#46D6A0; border-radius:999px; padding:3px 12px; font-family:ui-monospace,monospace; font-size:11px; text-transform:uppercase; letter-spacing:.08em; margin-right:8px; }
+  .chip.neutral { border-color:rgba(255,255,255,.14); background:rgba(255,255,255,.04); color:#A7B0BC; }
+  .panel { border:1px solid rgba(255,255,255,.1); background:#0D0F13; border-radius:12px; padding:16px 18px; margin:14px 0; overflow-x:auto; }
+  .well { border:1px solid rgba(255,255,255,.06); background:#050608; border-radius:10px; padding:12px 14px; margin:10px 0; overflow-x:auto; }
+  table { border-collapse: collapse; width:100%; font-family:ui-monospace,monospace; font-size:12px; }
+  td, th { text-align:left; padding:5px 14px 5px 0; vertical-align:top; white-space:nowrap; }
+  th { color:#757E8C; font-weight:600; text-transform:uppercase; font-size:10.5px; letter-spacing:.08em; }
+  td.hash { color:#757E8C; }
+  a { color:#6E8BFF; text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  ul { color:#A7B0BC; padding-left: 1.2em; } li { margin: 6px 0; }
+  .warnbox { border:1px solid rgba(224,164,88,.35); background:rgba(224,164,88,.06); border-radius:12px; padding:14px 18px; margin:14px 0; }
+  .warnbox p { color:#A7B0BC; margin:6px 0; }
+  .breakall { word-break: break-all; white-space: normal; }
+</style>
+</head>
+<body>
+<main>
+  <p class="mono" style="color:#757E8C; font-size:11px; text-transform:uppercase; letter-spacing:.2em;">COSMO · public evidence bundle</p>
+  <h1>EXECUTION-CASE-002-G</h1>
+  <p>
+    <span class="chip">EXECUTED × 2</span>
+    <span class="chip neutral">deliver + approve</span>
+    <span class="chip neutral">2026-08-15 · Supra chain 8 · micro-live · double ceremony</span>
+  </p>
+
+  <p class="ink0">
+    Scope of this proof: the FULL ECONOMIC ARC of a marketplace job — mandated delivery AND
+    mandated acceptance with escrow release. Two independent execution cases ran through the
+    same engine and the same verification entry point on live on-chain job 10 (5 wCOSMO
+    escrow): the solver agent (K1) committed a pre-mandated result hash on-chain
+    (deliver_result_v2) under a provider mandate, and the buyer acceptance
+    (approve_delivery_v2, atomic escrow payout) was ALSO executed under a signed one-shot
+    mandate — held by an agent-controlled buyer wallet, not a human wallet extension. This
+    closes the gap EXECUTION-CASE-002 deliberately left open: the approval leg is no longer a
+    direct human action, it is its own mandated, policy-checked, offline-verifiable case.
+  </p>
+  <p>
+    Public evidence bundle. Offline verification currently requires the COSMO verifier,
+    whose implementation remains private.
+  </p>
+  <p><a href="/institutional/">← The institutional layer (context page)</a></p>
+
+  <h2>The job (shared anchors)</h2>
+  <div class="panel"><table>
+    <tr><td>job</td><td class="hash">job_msuc02ahzksw5z · on-chain job 10 (request 15) · 5 wCOSMO escrow · SETTLED</td></tr>
+    <tr><td>buyer (agent-held)</td><td class="hash breakall">0x1c36f9b8a48b29c4c44992df86441018c6c94d1fcd2ae1a167149113a378216b</td></tr>
+    <tr><td>solver (delegated)</td><td class="hash breakall">K1 0x11c1c2660dc3e764c6b5b12f084cbbb11028b74686aea7a762e09b2ca651da53 (curated provider, on-chain bond)</td></tr>
+    <tr><td>spec_input_hash</td><td class="hash breakall">0x9b1c0f2acca8cc811fd84431669101fc2904c6be4f5ed81103bc26364c1194c8 (frozen job spec)</td></tr>
+    <tr><td>result_hash (pre-committed)</td><td class="hash breakall">d71c14ce9c14cfa4d6a49337964926f4a01f543e1bc6d9648e7716d77104caf6 (= sha3 of <a href="deliverable.json">deliverable.json</a>, served live)</td></tr>
+    <tr><td>escrow tx</td><td class="hash breakall"><a href="https://suprascan.io/tx/0x729d036445c2087e173af63a3333ad8e80bcc13b65c05f1381c701aa2c3b99c7" rel="noopener noreferrer" target="_blank">create_outcome_request_v2 ↗</a> (buyer wallet, headless)</td></tr>
+    <tr><td>accept tx</td><td class="hash breakall"><a href="https://suprascan.io/tx/0xdee0311e0ab97e7eaef463d9f72e9f1bbad45187dab81de1c3962bcbf1964aae" rel="noopener noreferrer" target="_blank">accept_quote_v2 ↗</a> (buyer wallet, headless)</td></tr>
+    <tr><td>attestor_pubkey</td><td class="hash breakall">f3b33df0f339536e91fa12b40f14fc9cda2ed93dcbb84f2864f68a80f654fbac (pinned — same attestor as Cases 001/002)</td></tr>
+  </table></div>
+
+  <h2>Ceremony 1 — mandated delivery (<span class="mono">market.deliver_result.v1</span>, case_msuc7iwa03bd86)</h2>
+  <div class="panel"><table>
+    <tr><td>outcome</td><td class="hash">EXECUTED — action accepted; settlement observed (on-chain DELIVERED, result_hash == mandated hash)</td></tr>
+    <tr><td>tx</td><td class="hash breakall"><a href="https://suprascan.io/tx/0x3d10048019fd33b6a4da1433b8aa6c8e0874781e959cb74609e26d46025e4bdb" rel="noopener noreferrer" target="_blank">0x3d10048019fd33b6a4da1433b8aa6c8e0874781e959cb74609e26d46025e4bdb ↗</a></td></tr>
+    <tr><td>mandate_hash</td><td class="hash breakall">0x7996b572a3ac017b9f1345df8de4d46de3978896eba4c27534867c2c17626652</td></tr>
+    <tr><td>evidence_root</td><td class="hash breakall">0x166c68c7ed9bf025a2761b7a7c82081cad3365afdd5ce9f36fdcc7d1a0a14d13</td></tr>
+    <tr><td>receipt_statement_hash</td><td class="hash breakall">0x946b35410d517cf39dd2bd1c5371accb6ef08e74555ff42dd910a33387d38234</td></tr>
+    <tr><td>receipt_file_sha3</td><td class="hash breakall">27256bc659cf85f3e73e6b4904add04e0216ec81252ef1b48afff4407cfb1a53</td></tr>
+    <tr><td>height</td><td class="hash">51,632,395</td></tr>
+  </table></div>
+
+  <h2>Ceremony 2 — mandated acceptance (<span class="mono">market.approve_delivery.v1</span>, case_msuc8s79e56cea)</h2>
+  <div class="panel"><table>
+    <tr><td>outcome</td><td class="hash">EXECUTED — action accepted; settlement observed (on-chain SETTLED, atomic escrow release to the solver)</td></tr>
+    <tr><td>tx</td><td class="hash breakall"><a href="https://suprascan.io/tx/0xa007c7962bbbddbc3787bee4866c5b58aca0d7410422f18ae8b9c20be00cceae" rel="noopener noreferrer" target="_blank">0xa007c7962bbbddbc3787bee4866c5b58aca0d7410422f18ae8b9c20be00cceae ↗</a></td></tr>
+    <tr><td>mandate_hash</td><td class="hash breakall">0x93ba83d6f0f8cd1598f7153ea26a38bcf9f983a9651572b31baa07c00eaa712f</td></tr>
+    <tr><td>evidence_root</td><td class="hash breakall">0xce8d5d7a7dd66b207219971839a9727fbf586f35ee56e91b5cbd85928f8ad037</td></tr>
+    <tr><td>receipt_statement_hash</td><td class="hash breakall">0xa8539bb72f2b77c5d3c275410bc1b5f823522c4f77387ad863384728d901c324</td></tr>
+    <tr><td>receipt_file_sha3</td><td class="hash breakall">eb54ac890005e04927379607bcdd126ba3ff6110d8c4c1e106898bb970289aa4</td></tr>
+    <tr><td>height</td><td class="hash">51,632,430</td></tr>
+  </table></div>
+  <p class="mono" style="font-size:12px;">
+    The approve policy re-verified before release: job DELIVERED and not yet settled (G1),
+    execution key == on-chain buyer (G2), on-chain result hash == mandated hash (G3), mandate
+    window inside the review window (G4), escrow release within the cap (G5). Payment proof:
+    buyer wallet −5 wCOSMO, solver +5 wCOSMO in the settle transaction.
+  </p>
+
+  <p class="mono" style="font-size:12px;">
+    Two receipt hashes per case, both correct: <span class="ink0">the receipt statement hash is
+    calculated from the canonical JSON representation</span> of the signed receipt (sorted keys,
+    no whitespace — the value recorded in the journal&rsquo;s <code>case_closed</code> entry).
+    <span class="ink0">The published file hash is calculated from the exact downloadable file
+    bytes.</span>
+  </p>
+
+  <h2>Authority on record</h2>
+  <div class="panel"><table>
+    <tr><td>provider authority</td><td class="hash">K1 — curated roster provider with an on-chain security deposit; on-chain solver of job 10</td></tr>
+    <tr><td>buyer authority</td><td class="hash">agent-held ed25519 wallet, funded by the founder for this drill; on-chain buyer of job 10</td></tr>
+    <tr><td>mandates</td><td class="hash">one-shot, 60-min TTL, exposure 5,000,000 wCOSMO-quants each (= the escrow), policy-hash-bound, distinct policies per domain</td></tr>
+    <tr><td>ceremonies</td><td class="hash">ARM by operator:zorg, consumed once per case; submission human-gated, simulate-first</td></tr>
+  </table></div>
+
+  <h2>Files (byte-identical copies of the canonical case documents)</h2>
+  <p class="mono" style="font-size:12px;">Check integrity with: <code>openssl dgst -sha3-256 &lt;file&gt;</code> · full list also in <a href="index.txt">index.txt</a></p>
+  <div class="panel"><table>
+    <tr><th>file</th><th>sha3-256</th></tr>
+    <tr><td><a href="deliverable.json">deliverable.json</a></td><td class="hash breakall">d71c14ce9c14cfa4d6a49337964926f4a01f543e1bc6d9648e7716d77104caf6</td></tr>
+    <tr><td><a href="deliver/MANIFEST.json">deliver/MANIFEST.json</a></td><td class="hash breakall">4ecac40d29984154902f5d548b570f5c76d88951fc8d80382f3e3e46f767f6dc</td></tr>
+    <tr><td><a href="deliver/arm-consumed.json">deliver/arm-consumed.json</a></td><td class="hash breakall">98a3e1070fcda5fdeb38518b88b72795ae73386e7cd2bd8e5276ab5d224146d9</td></tr>
+    <tr><td><a href="deliver/artifact-verify.json">deliver/artifact-verify.json</a></td><td class="hash breakall">a2b58157999011dd7f884e6880ac5baafec418f942eccb292897ba375b512251</td></tr>
+    <tr><td><a href="deliver/artifact.hex">deliver/artifact.hex</a></td><td class="hash breakall">eb010bda7d7beedcf92444b3175fbab7aaad332cece959a9cee0ad9a3d2c3d05</td></tr>
+    <tr><td><a href="deliver/errors.json">deliver/errors.json</a></td><td class="hash breakall">7b41ad4a50b29158e075c6463133761266adb475130b8e886f2f5649070031cf</td></tr>
+    <tr><td><a href="deliver/intent.json">deliver/intent.json</a></td><td class="hash breakall">385252b9acfe435ff06f69da3e6e96fea93cf062059a3c86fbea051f8b3ba272</td></tr>
+    <tr><td><a href="deliver/job-snapshot.json">deliver/job-snapshot.json</a></td><td class="hash breakall">4e434c2e067d7f86765dee960066e6d174321701ea832db09bd5d4f9683a7d95</td></tr>
+    <tr><td><a href="deliver/journal.jsonl">deliver/journal.jsonl</a></td><td class="hash breakall">0d3cf5d596c151a3536dd7e47f2f025320ac3b769f9660fbae2f436ec549585a</td></tr>
+    <tr><td><a href="deliver/mandate.json">deliver/mandate.json</a></td><td class="hash breakall">1fa63433b42c0e36fa4e522565c21dec0bacf8512ac006a49857e0ae687bca19</td></tr>
+    <tr><td><a href="deliver/mandate.sig.json">deliver/mandate.sig.json</a></td><td class="hash breakall">43c6abf623debe8c5b432c8555211897554a6ade82592e242fa45058e4555063</td></tr>
+    <tr><td><a href="deliver/policy-decision.json">deliver/policy-decision.json</a></td><td class="hash breakall">e33e99069cd55590ec1ad7059307ed6e8408b4ac507a09f2ab4bbe3ee4098a37</td></tr>
+    <tr><td><a href="deliver/policy.json">deliver/policy.json</a></td><td class="hash breakall">d65abe359a3caec547504cd60594b3ad23d703656f41ad6594c6d3d4780bf4fd</td></tr>
+    <tr><td><a href="deliver/receipt.json">deliver/receipt.json</a></td><td class="hash breakall">27256bc659cf85f3e73e6b4904add04e0216ec81252ef1b48afff4407cfb1a53</td></tr>
+    <tr><td><a href="deliver/result-preimage.json">deliver/result-preimage.json</a></td><td class="hash breakall">e2e5e9d5dad9ef01963259cff8a555a982e9e46f19b384fe34ec6a07a6860bb2</td></tr>
+    <tr><td><a href="deliver/settlement-observations.jsonl">deliver/settlement-observations.jsonl</a></td><td class="hash breakall">bc265bed3914329e4b08e18295aa3c11399ba3a7605778ea5b1bccde0e001695</td></tr>
+    <tr><td><a href="deliver/submit-result.json">deliver/submit-result.json</a></td><td class="hash breakall">c79b4a5d6a22a3449a9ef24ebbd4a55d32ad0ed8aa7cda8fd348498a4133fa0a</td></tr>
+    <tr><td><a href="approve/MANIFEST.json">approve/MANIFEST.json</a></td><td class="hash breakall">a7571acb0e22a1d27ecb0c6e531daf508aa8f6bba174fcce5d22178fda74a654</td></tr>
+    <tr><td><a href="approve/arm-consumed.json">approve/arm-consumed.json</a></td><td class="hash breakall">662caf940be8e4f45749511329867eb36b36fb1fd1937a08dc16a14c5807d621</td></tr>
+    <tr><td><a href="approve/artifact-verify.json">approve/artifact-verify.json</a></td><td class="hash breakall">418216150024a7a54489805a5c3798ed378b452f1906d734089e2b0aa9d3778c</td></tr>
+    <tr><td><a href="approve/artifact.hex">approve/artifact.hex</a></td><td class="hash breakall">de70073c8b16201352661f2db57970bab6434f9464ed7bfad40e3c20fae277be</td></tr>
+    <tr><td><a href="approve/errors.json">approve/errors.json</a></td><td class="hash breakall">7b41ad4a50b29158e075c6463133761266adb475130b8e886f2f5649070031cf</td></tr>
+    <tr><td><a href="approve/intent.json">approve/intent.json</a></td><td class="hash breakall">ff1f41fb72b15bd593fb1777905f6069987f64b28a718c9eb4adcc1fb60c30c0</td></tr>
+    <tr><td><a href="approve/job-snapshot.json">approve/job-snapshot.json</a></td><td class="hash breakall">3728dcab282bb516b56716eb1e03b536a97b0af39f8570c0ec6edd80cab8fbe9</td></tr>
+    <tr><td><a href="approve/journal.jsonl">approve/journal.jsonl</a></td><td class="hash breakall">62548c5dc93fe239ec8b889b9f3413d7a783dbe0200b2d6b696253ea0f8af2c7</td></tr>
+    <tr><td><a href="approve/mandate.json">approve/mandate.json</a></td><td class="hash breakall">ea4fd3204afa0d34736bd094cba51e0e27fabc49e85d245a98b86303c27f7f84</td></tr>
+    <tr><td><a href="approve/mandate.sig.json">approve/mandate.sig.json</a></td><td class="hash breakall">393e7d55dda599142d4c9715935628b0c4962a2e271cd43a52de5b850d387489</td></tr>
+    <tr><td><a href="approve/policy-decision.json">approve/policy-decision.json</a></td><td class="hash breakall">474cdcb30a244d303aa723651ce26021cc65b3d00d258da78246d2d62b241f18</td></tr>
+    <tr><td><a href="approve/policy.json">approve/policy.json</a></td><td class="hash breakall">c23a28667f00569f11b249dcaa71d862579756576214ea156ecaa078c1f13a91</td></tr>
+    <tr><td><a href="approve/receipt.json">approve/receipt.json</a></td><td class="hash breakall">eb54ac890005e04927379607bcdd126ba3ff6110d8c4c1e106898bb970289aa4</td></tr>
+    <tr><td><a href="approve/settlement-observations.jsonl">approve/settlement-observations.jsonl</a></td><td class="hash breakall">3eea991e68fdd625a12398f0300980a5bf3391f4ed30abf22e2f07dba2d8b9bd</td></tr>
+    <tr><td><a href="approve/submit-result.json">approve/submit-result.json</a></td><td class="hash breakall">1341eec2af5cd6c9d5626985ab95d5137b79c93215cfedd6ee4513c44d5d87e5</td></tr>
+  </table></div>
+  <p class="mono" style="font-size:12px;">
+    Per case, the evidence files (everything except receipt.json, MANIFEST.json,
+    journal.jsonl) match the MANIFEST.json entries byte-for-byte; each MANIFEST is sealed
+    into its receipt as <code>evidence_root</code>. deliverable.json is the delivered
+    artifact itself — its sha3 IS the mandated and on-chain result_hash.
+  </p>
+
+  <h2>What verification checks (K/S/T/P/M/V/J/E/D/O)</h2>
+  <ul class="mono" style="font-size:12.5px;">
+    <li><span class="ink0">K</span> — attestor key pin: the signing key is pinned in the trust store.</li>
+    <li><span class="ink0">S</span> — receipt signature: ed25519 over the canonical envelope + statement.</li>
+    <li><span class="ink0">T</span> — time bounds: attestation time within sane limits.</li>
+    <li><span class="ink0">P</span> — policy pin: the policy hash matches the pinned, active policy.</li>
+    <li><span class="ink0">M</span> — mandate integrity: recomputed hash, signature, case and policy binding.</li>
+    <li><span class="ink0">V</span> — evidence integrity: manifest vs. directory, exact set, per-file sha3.</li>
+    <li><span class="ink0">J</span> — journal chain: every entry hash-chained, opened first, closed last.</li>
+    <li><span class="ink0">E</span> — execution artifact: pure ed25519 order check (no SDK), sender/mandate/correlation binding.</li>
+    <li><span class="ink0">D</span> — derivation equality: the receipt statement re-derives byte-identically from the evidence.</li>
+    <li><span class="ink0">O</span> — outcome consistency: outcome matches the evidence the case actually produced.</li>
+  </ul>
+  <p class="mono" style="font-size:12px;">Result for BOTH cases: ACCEPT, 10/10 criteria, exit code 0 — separate offline verifications of internal consistency, run with the private COSMO verifier.</p>
+
+  <h2>Honest limits</h2>
+  <div class="warnbox">
+    <p>· These receipts are self-attestations by the COSMO engine: one attestor, no independent attestor network.</p>
+    <p>· Verification proves internal consistency and record integrity — not world truth.</p>
+    <p>· Both ceremonies were armed by the same operator (operator:zorg). The separation of buyer and provider authority is cryptographic — distinct keys, one-shot mandates and domain policies — not organizational.</p>
+    <p>· The buyer wallet is agent-held but was created and funded by the founder for this drill; this is a staged drill with curated participants, not an external buyer.</p>
+    <p>· The signed artifacts are the deliver-order and approve-order (pure ed25519, offline-verifiable without any SDK), not raw chain tx bytes; the world anchors are the on-chain result_hash and the SETTLED escrow release.</p>
+    <p>· Supervised agent execution with explicit human authorization at each irreversible boundary — the human ARM step is part of the proven authority model, not a shortcut.</p>
+    <p>· Full 10/10 verification currently requires the private COSMO verifier.</p>
+  </div>
+
+  <p class="mono" style="color:#757E8C; font-size:11px; margin-top:36px;">
+    Frozen 2026-08-15. Signed originals are never modified after publication.
+    · <a href="/assurance/">All settled proofs</a> · <a href="/institutional/">Institutional layer</a>
+  </p>
+</main>
+</body>
+</html>
