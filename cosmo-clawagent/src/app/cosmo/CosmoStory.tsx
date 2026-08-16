@@ -185,11 +185,10 @@ export default function CosmoStory() {
                 See the proof — live Mainnet round-trip
               </Link>
               <a
-                href="/COSMO_Manifesto_v4.0.pdf"
-                download
+                href="/manifesto/"
                 className="flex items-center gap-2 px-6 py-3 rounded-xl border border-phase-active/30 text-phase-active hover:border-phase-active hover:text-phase-active font-mono transition-all"
               >
-                Read the Manifesto — v4.0
+                Read the Manifesto — v5.0
                 <ArrowRight className="w-4 h-4" />
               </a>
             </div>

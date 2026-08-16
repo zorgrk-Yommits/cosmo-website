@@ -738,8 +738,8 @@ export default function ComputeLanding() {
             <Link href="/vault/" className="text-phase-active hover:text-phase-active">
               Maker vault →
             </Link>
-            <a href="/COSMO_Manifesto_v4.0.pdf" className="text-phase-active hover:text-phase-active">
-              Manifesto v4.0 (PDF) →
+            <a href="/manifesto/" className="text-phase-active hover:text-phase-active">
+              Manifesto v5.0 →
             </a>
           </div>
         </div>

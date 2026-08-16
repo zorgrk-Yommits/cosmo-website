@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>COSMO Manifesto v5.0</title>
+<meta name="description" content="COSMO is the institutional layer for autonomous economies, built on Supra. Manifesto v5.0.">
+<style>
+  :root{
+    --bg:#0b0c0e; --fg:#e9e9ec; --muted:#9a9aa4; --card:#141519; --border:#24252b;
+    --accent:#2fd6a8; --accent-dim:#1c8f74; --rule:#1c1d22; --maxw:760px;
+  }
+  @media (prefers-color-scheme:light){
+    :root{ --bg:#fbfbfc; --fg:#16171a; --muted:#5a5b63; --card:#f4f4f6; --border:#e4e4e8; --accent:#0b8f6e; --accent-dim:#0b8f6e; --rule:#ececef; }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--fg);
+       font:16px/1.7 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+       -webkit-font-smoothing:antialiased}
+  main{max-width:var(--maxw);margin:0 auto;padding:3rem 1.25rem 6rem}
+  a{color:var(--accent)}
+  .kicker{letter-spacing:.18em;text-transform:uppercase;font-size:12px;color:var(--muted);margin:0}
+  h1{font-size:clamp(2rem,6vw,3rem);line-height:1.05;margin:.4rem 0 .2rem;font-weight:700}
+  .lede{font-size:1.15rem;color:var(--fg);margin:.2rem 0 .1rem}
+  .meta{color:var(--muted);font-size:13px;margin:.75rem 0 0}
+  .pull{border-left:3px solid var(--accent);padding:.4rem 0 .4rem 1rem;margin:2.2rem 0;
+        font-size:1.4rem;font-weight:600;line-height:1.25}
+  .note{background:var(--card);border:1px solid var(--border);border-radius:10px;
+        padding:1rem 1.15rem;color:var(--muted);font-size:14px;margin:1.5rem 0}
+  h2{font-size:1.35rem;margin:2.6rem 0 .6rem;padding-top:1.4rem;border-top:1px solid var(--rule);font-weight:700}
+  h3{font-size:1.05rem;margin:1.6rem 0 .4rem;color:var(--fg)}
+  p{margin:.7rem 0}
+  ul,ol{margin:.6rem 0 .6rem 1.2rem;padding:0}
+  li{margin:.3rem 0}
+  .box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.15rem;margin:1.2rem 0}
+  .box .t{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 .35rem}
+  .callout{border:1px solid var(--accent-dim);border-radius:10px;padding:1rem 1.15rem;margin:1.4rem 0;background:color-mix(in srgb,var(--accent) 8%,transparent)}
+  .tablewrap{overflow-x:auto;margin:1.1rem 0;border:1px solid var(--border);border-radius:10px}
+  table{border-collapse:collapse;width:100%;font-size:14px;min-width:520px}
+  th,td{text-align:left;padding:.6rem .75rem;border-top:1px solid var(--border);vertical-align:top}
+  th{color:var(--muted);font-weight:600;border-top:none;background:var(--card)}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em;
+       background:var(--card);border:1px solid var(--border);border-radius:5px;padding:.05em .35em}
+  .flow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;color:var(--fg);
+        background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.7rem .9rem;overflow-x:auto}
+  .toggle{position:sticky;top:0;z-index:5;display:flex;gap:.5rem;padding:.6rem 0;margin:0 0 1rem;
+          background:linear-gradient(var(--bg),var(--bg) 70%,transparent)}
+  .toggle button{font:inherit;font-size:13px;cursor:pointer;border:1px solid var(--border);
+          background:var(--card);color:var(--muted);border-radius:999px;padding:.3rem .9rem}
+  .toggle button[aria-pressed="true"]{color:var(--bg);background:var(--accent);border-color:var(--accent)}
+  .lang[hidden]{display:none}
+  .foot{color:var(--muted);font-size:13px;margin-top:2rem;border-top:1px solid var(--rule);padding-top:1.2rem}
+  .back{display:inline-block;margin-bottom:1rem;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="/">← heros.cloud</a>
+  <p class="kicker">COSMO · Manifesto v5.0</p>
+  <h1>The Institutional Layer for Autonomous Economies</h1>
+  <p class="lede">A declaration for builders, operators, agents and the Supra community.</p>
+  <p class="meta">v5.0 · August 2026 · heros.cloud</p>
+
+  <p class="pull">Capability is copyable.<br>Authority is not.</p>
+
+  <div class="note">
+    <strong>Positioning note:</strong> "institutional" means governance primitives around autonomous action.
+    It does not mean custody, supervision, regulatory status or an investment product. COSMO is designed
+    to complement SupraOS and SupraFX, not compete with them.
+  </div>
+
+  <div class="toggle" role="group" aria-label="Language">
+    <button id="btn-en" aria-pressed="true" onclick="setLang('en')">English</button>
+    <button id="btn-de" aria-pressed="false" onclick="setLang('de')">Deutsch</button>
+  </div>
+
+  <!-- ============================ ENGLISH ============================ -->
+  <section id="lang-en" class="lang">
+
+    <h2>In one sentence</h2>
+    <p>COSMO is the institutional layer for autonomous economies, built on Supra: a framework that turns
+    autonomous capability into bounded authority, policy-governed execution, durable evidence, signed
+    receipts and verifiable economic outcomes.</p>
+
+    <h2>1. Preamble: when experience becomes executable</h2>
+    <p>AI is moving from assistance to action. A model can already research, write code, negotiate, monitor
+    markets, call tools and coordinate other models. The next step is not simply a smarter agent. It is a
+    society of agents: many specialized systems working together, buying services, delegating tasks,
+    checking one another and allocating scarce resources.</p>
+    <p>These societies may scale differently from human ones. A successful skill can be stored as Markdown,
+    code and tests. A working process can be copied into thousands of instances. Experience can become
+    executable, versioned and replayed.</p>
+    <p>That changes the problem. When capability becomes cheap to copy, authority becomes the scarce thing
+    that must not copy with it.</p>
+    <div class="box"><p class="t">The central distinction</p>
+      <p>A copied skill may preserve what an agent <em>can</em> do. It must not automatically preserve what
+      that agent is <em>allowed</em> to do.</p></div>
+    <p>COSMO exists for the gap between technical capability and legitimate economic action.</p>
+
+    <h2>2. The thesis: autonomous economies need institutions</h2>
+    <p>An economy is not built from intelligence alone. It is built from repeatable relations between actors
+    who can commit, deliver, accept, pay, fail, dispute and be held accountable.</p>
+    <p>Human societies built institutions to make cooperation possible without requiring blind trust. They
+    created mandates, budgets, approvals, contracts, receipts, audits and revocation. Autonomous agents
+    need the same functions, but in forms that machines can read, execute and verify.</p>
+    <p>An institutional layer for autonomous economies must answer five different questions:</p>
+    <ul>
+      <li><strong>Can do:</strong> does the agent possess the skill or tool?</li>
+      <li><strong>May do:</strong> is this agent authorized for this specific action, domain, budget and time window?</li>
+      <li><strong>Did do:</strong> what action was actually executed?</li>
+      <li><strong>Was valid:</strong> did the action remain within the mandate and policy?</li>
+      <li><strong>Was settled:</strong> what economic outcome finally occurred?</li>
+    </ul>
+    <p>COSMO is built around those questions. It does not try to be the smartest agent. It tries to make
+    autonomous action bounded, inspectable and accountable.</p>
+
+    <h2>3. Identity, trust, reputation and authority are not the same</h2>
+    <p>Agent infrastructure often merges four different ideas. They should remain separate.</p>
+    <div class="tablewrap"><table>
+      <tr><th>Layer</th><th>Question</th><th>What it should provide</th></tr>
+      <tr><td>Identity</td><td>Who is this actor?</td><td>A persistent reference to an agent, operator, wallet or organization.</td></tr>
+      <tr><td>Web of Trust</td><td>Who is connected to whom?</td><td>Relationship context, referrals, provenance and paths of confidence.</td></tr>
+      <tr><td>Reputation</td><td>What has this actor demonstrated?</td><td>A history derived from evidence, not a claim copied from code.</td></tr>
+      <tr><td>Authority</td><td>What may this actor do now?</td><td>A bounded grant for a specific domain, action, budget and time window.</td></tr>
+    </table></div>
+    <p>A capability can be copied. Credentials can also be copied if they are poorly protected. Reputation,
+    however, should be earned through a history attached to an identity. Authority must be granted again for
+    the concrete action, regardless of how trusted the actor appears.</p>
+    <p><em>A trust graph can carry context. Evidence can accumulate reputation. Neither should become a blank cheque.</em></p>
+    <p>COSMO does not try to replace identity systems or a Web of Trust. It produces the execution records
+    that those systems can use: what was authorized, what happened, which rules applied and how the economic
+    result closed.</p>
+
+    <h2>4. From execution layer to institutional layer</h2>
+    <p>COSMO began with a deliberately narrow problem: allow an agent to perform one real SupraFX trade
+    without giving it unrestricted control over the principal account.</p>
+    <p>Solving that problem required more than a transaction builder. It required a bounded delegate, a
+    one-shot mandate, rules fixed before execution, a human ceremony at the irreversible boundary, a
+    tamper-evident record, a signed receipt and a separate consistency check.</p>
+    <p>Most of those requirements were not about trading. Price bounds and pairs were domain-specific.
+    Authority, mandate, policy, ceremony, record, receipt and verification were not.</p>
+    <div class="box"><p class="t">What changed</p>
+      <p>The trade was the occasion. The institutional primitives became the product.</p></div>
+    <p>That is why COSMO is now positioned as the institutional layer for autonomous economies rather than
+    only an execution layer for one market.</p>
+
+    <h2>5. The seven primitives</h2>
+    <div class="tablewrap"><table>
+      <tr><th>#</th><th>Primitive</th><th>Function</th></tr>
+      <tr><td>1</td><td>Delegated authority</td><td>A standing but bounded permission: delegate key, scope, caps, expiry and revoke.</td></tr>
+      <tr><td>2</td><td>Mandate</td><td>A signed authorization for one concrete execution case: single-use nonce, TTL and policy-hash binding.</td></tr>
+      <tr><td>3</td><td>Policy</td><td>Rules fixed and hash-pinned before the action; default-REJECT and fail-closed.</td></tr>
+      <tr><td>4</td><td>Ceremony</td><td>Explicit arming of the irreversible step. In the current trust model, this is a human ARM.</td></tr>
+      <tr><td>5</td><td>Record</td><td>A hash-chained journal plus write-once evidence sealed under a manifest.</td></tr>
+      <tr><td>6</td><td>Receipt</td><td>A signed closing statement with an honest outcome taxonomy, including failure.</td></tr>
+      <tr><td>7</td><td>Verification</td><td>A separate offline check of internal consistency across keys, signatures, timing, policy, mandate, evidence, journal, action and outcome.</td></tr>
+    </table></div>
+    <p>The first two are deliberately different. Delegated authority is the standing permission a case runs
+    under. The mandate authorizes one case within that permission. Possession of a key is not treated as
+    permission.</p>
+
+    <h2>6. The Execution Case</h2>
+    <p>The core COSMO object is not a token, a trade or a chatbot session. It is the complete economic action:</p>
+    <p class="flow">Intent → Mandate → Policy → ARM → Execute → Record → Receipt → Verify</p>
+    <p>An Execution Case binds the principal, agent, action, budget, policy, authorization, evidence and
+    closing outcome into one reconstructable process. It gives a later reviewer enough information to ask:</p>
+    <ul>
+      <li>Who authorized the action?</li>
+      <li>Which agent or key was allowed to execute it?</li>
+      <li>What was the exact scope and exposure?</li>
+      <li>Which rules were fixed before execution?</li>
+      <li>What did the system observe?</li>
+      <li>What happened on-chain or in the external venue?</li>
+      <li>Why did the case close with this outcome?</li>
+    </ul>
+    <p>The receipt is therefore not merely a success certificate. A rejected, expired or failed case can be a
+    valid institutional record if it truthfully represents what the system knew and did.</p>
+
+    <h2>7. Shared integrity, domain-specific economics</h2>
+    <p>Economic domains are not interchangeable. A trading policy must reason about pairs, size and price. A
+    work-delivery policy must reason about job status, solver binding, result hashes, deadlines and escrow
+    exposure.</p>
+    <p>COSMO does not erase those differences. It places them behind domain-specific execution profiles while
+    preserving shared integrity guarantees.</p>
+    <div class="callout"><p class="t" style="color:var(--accent)">Claim demonstrated in August 2026</p>
+      <p style="margin:0">One verification entry point, shared integrity guarantees, two domain-specific execution profiles.</p></div>
+    <p>The shared guarantees include signatures, mandate binding, policy pins, journal chaining, evidence
+    manifests, receipt integrity and fail-closed behavior. The economic meaning of each action remains inside
+    its domain profile.</p>
+
+    <h2>8. Proof matters</h2>
+    <p>The Agent Economy is full of narratives. COSMO should be judged by evidence. Three public proof stages
+    now anchor the v5 thesis.</p>
+    <div class="tablewrap"><table>
+      <tr><th>Proof</th><th>Domain</th><th>What happened</th><th>Honest scope</th></tr>
+      <tr><td>Case 001</td><td>FX / SupraFX</td><td>A micro-live SUPRA/USDC trade ran through delegated authority, mandate, policy, ARM, execution, receipt and verification. Outcome: EXECUTED, ACCEPT 10/10. The delegate was later revoked on-chain.</td><td>One pair, one venue, micro scale. Settlement was observed through the platform API, not proven natively from chain state.</td></tr>
+      <tr><td>Case 002</td><td>Market work delivery</td><td>A solver delivered a pre-mandated result hash for a live marketplace job. The policy checked live chain state; the on-chain hash matched the mandate. Outcome: EXECUTED, ACCEPT 10/10.</td><td>The case ended at DELIVERED. The later buyer approval was initially a direct human action outside this case.</td></tr>
+      <tr><td>Case 002-G</td><td>Delivery + acceptance</td><td>On a second live job, the provider delivery and buyer acceptance were each executed as separate one-shot mandated cases. The approval atomically released 5 wCOSMO escrow. Both cases closed EXECUTED and verified ACCEPT 10/10.</td><td>The same operator armed both ceremonies. Role separation was cryptographic, not organizational independence.</td></tr>
+    </table></div>
+    <p>Public evidence: <a href="/evidence/execution-case-001/">Case 001</a>, <a href="/evidence/execution-case-002/">Case 002</a>,
+    <a href="/evidence/execution-case-002g/">Case 002-G</a>. Narrative overview: <a href="/institutional/">heros.cloud/institutional</a>.</p>
+    <p>The two failed Case 002 attempts are also part of the proof. One closed EXECUTION_FAILED before network
+    contact because of an SDK defect. Another closed EXPIRED because the ARM arrived after the mandate window.
+    Neither failure was relabelled to preserve a clean story.</p>
+    <p><em>An institution that cannot name its failures cannot be audited.</em></p>
+
+    <h2>9. Truth, observation and verification</h2>
+    <p>A verifier can only prove what its evidence model allows. COSMO currently verifies internal consistency
+    and record integrity. It does not claim universal world truth.</p>
+    <ul>
+      <li>A platform observation can be internally consistent and still be wrong about external reality.</li>
+      <li>An on-chain state transition is a stronger anchor than an application balance observation.</li>
+      <li>A self-attested receipt is not the same as an independent third-party attestation.</li>
+    </ul>
+    <div class="box"><p class="t">Current verification boundary</p>
+      <p>Public evidence bundles are available, and the standalone verifier is now public: a single
+      self-contained file at <a href="/verifier/">heros.cloud/verifier/</a> (v1.0.0), with a pinned source
+      hash so anyone can check the file they run. It performs a separate offline check of internal
+      consistency &mdash; not an independent third-party attestation.</p></div>
+    <p>That trust jump has now been made: COSMO's receipts are public evidence that anyone can re-check
+    offline with the public verifier. The remaining honest limits are that the engine is a single attestor
+    (not an independent attestor network), and that a consistent observation is still not a proof of external
+    world truth.</p>
+
+    <h2>10. The complementary stack</h2>
+    <div class="tablewrap"><table>
+      <tr><th>Layer</th><th>Role</th><th>Meaning</th></tr>
+      <tr><td>Models / skills</td><td>Capability</td><td>What agents can reason about and perform.</td></tr>
+      <tr><td>Identity / Web of Trust</td><td>Relationship context</td><td>Who an actor is, who introduced it and how trust paths are formed.</td></tr>
+      <tr><td>SupraOS</td><td>Coordination</td><td>How agents can be organized, composed and connected to workflows.</td></tr>
+      <tr><td>SupraFX</td><td>Market and liquidity rails</td><td>Price, depth, routing and execution venues for market-facing actions.</td></tr>
+      <tr><td>COSMO</td><td>Institutional execution</td><td>Delegated authority, mandates, policies, ceremony, records, receipts and verification around autonomous action.</td></tr>
+      <tr><td>Supra</td><td>Economic substrate</td><td>Programmable execution, state, assets and settlement anchors.</td></tr>
+    </table></div>
+    <p>The winning story is composition. COSMO is not a competitor to SupraOS or SupraFX. It is designed to
+    make agent action accountable around the coordination and market rails that the wider Supra stack can provide.</p>
+
+    <h2>11. Reputation should be derived, not declared</h2>
+    <p>COSMO should not assign a universal score saying that an agent is trustworthy. It should produce
+    high-quality facts.</p>
+    <p>A receipt history can show how many mandates an identity accepted, how often policies rejected it,
+    whether deadlines were met, whether settlement occurred and whether evidence remained consistent. A
+    reputation system or Web of Trust may then interpret that history according to its own context.</p>
+    <div class="box"><p class="t">Separation of responsibilities</p>
+      <p>Relationship trust can propagate through a graph. Reputation must accumulate through evidence.
+      Authority must still be granted per domain and per action.</p></div>
+    <p>A highly reputed agent should not receive unlimited power. Trust may justify a larger mandate. It must
+    never erase the mandate.</p>
+
+    <h2>12. COSMO as a bureaucracy compressor</h2>
+    <p>Human economies surround action with paperwork because action creates risk. A real transaction may
+    require an instruction, a power of attorney, budget approval, procurement rules, delivery evidence,
+    acceptance, payment, liability and an audit file.</p>
+    <p>COSMO does not remove those protections. It makes them machine-readable and binds them into one process.</p>
+    <div class="box"><p class="t">The compression</p>
+      <p>Mandate + policy + execution + evidence + settlement + responsibility become one verifiable Execution Case.</p></div>
+    <p>This is the deeper meaning of the institutional layer. COSMO is not trying to make bureaucracy disappear
+    by dropping safeguards. It is trying to compile safeguards into bounded execution.</p>
+
+    <h2>13. Use cases</h2>
+    <p>The common pattern is not the asset. The common pattern is an authorized economic action with a
+    verifiable close.</p>
+    <ul>
+      <li><strong>FX and DeFi execution:</strong> agents operate under pair, size, price and exposure limits.</li>
+      <li><strong>Agent work:</strong> a provider commits a result under mandate; a buyer accepts and releases escrow under a separate mandate.</li>
+      <li><strong>Compute:</strong> agents purchase capacity under budget and verify delivery conditions.</li>
+      <li><strong>APIs and data:</strong> agents buy metered access with explicit scope and output evidence.</li>
+      <li><strong>Storage and bandwidth:</strong> providers commit capacity and clients release payment against verifiable delivery.</li>
+      <li><strong>Autonomous procurement:</strong> agents compare quotes and execute within a machine-readable purchasing mandate.</li>
+      <li><strong>Treasury operations:</strong> an agent acts within asset, venue, counterparty and risk boundaries.</li>
+    </ul>
+    <p>Only the FX and marketplace-work profiles have been demonstrated through the full Execution Case
+    framework. The others remain applications to validate, not shipped facts.</p>
+
+    <h2>14. What COSMO is not</h2>
+    <p>COSMO is not a foundation model, a chatbot, a general agent framework, an identity provider, a Web of
+    Trust, a reputation oracle, a custodian, a regulator, an AMM or a replacement for SupraFX.</p>
+    <p>COSMO does not guarantee that an external observation is world truth. It does not make an agent honest.
+    It does not eliminate disputes. It does not prove market demand. It does not turn a founder-operated proof
+    into a neutral institution.</p>
+    <p>What it does is narrower: it makes the authority, rules, action, evidence and recorded outcome of an
+    autonomous economic act explicit and checkable.</p>
+
+    <h2>15. The role of $COSMO and the community</h2>
+    <p>The institutional thesis does not by itself prove a token economy. Any role for $COSMO must be justified
+    by real system needs rather than retrofitted narrative.</p>
+    <p>Potential roles include access, bonds, operator exposure, service settlement and community coordination.
+    Each role should be evaluated by one question: does it improve accountability or merely add a token where
+    none is needed?</p>
+    <p>The community should help build supply, domain profiles, verifier scrutiny, independent operation and
+    external demand. The strongest community is not an audience around a claim. It is a network that can
+    operate, challenge and improve the institution.</p>
+
+    <h2>16. Principles</h2>
+    <ul>
+      <li>Agents should be able to act, not only answer.</li>
+      <li>Capability is copyable. Authority is not.</li>
+      <li>Identity is not reputation. Reputation is not authority.</li>
+      <li>Every irreversible action needs a bounded mandate.</li>
+      <li>Policy is fixed before execution, not invented after the outcome.</li>
+      <li>Possession of a key is not permission.</li>
+      <li>Failure must close with a named, signed outcome.</li>
+      <li>Receipts should provide facts from which reputation can be derived.</li>
+      <li>On-chain state is stronger than platform observation when available.</li>
+      <li>Domain economics may differ while integrity guarantees remain shared.</li>
+      <li>Human authorization is valid architecture when the trust model requires it.</li>
+      <li>Bureaucracy should be compressed into executable safeguards, not discarded.</li>
+      <li>COSMO should complement SupraOS and SupraFX, not compete with them.</li>
+      <li>Public evidence matters more than pitch decks.</li>
+      <li>A demonstrated mechanism is not the same as demonstrated demand.</li>
+    </ul>
+
+    <h2>17. The declaration</h2>
+    <p>We believe autonomous agents will become economic actors.</p>
+    <p>We believe copied intelligence will make bounded authority more important, not less.</p>
+    <p>We believe agent societies will need identity, trust relationships, evidence, reputation, mandates,
+    policy, settlement and revocation.</p>
+    <p>We believe no agent should receive execution rights merely because it possesses the capability to act.</p>
+    <p>We believe a Web of Trust can provide relationship context, while receipts provide the evidence from
+    which reputation is earned.</p>
+    <p>We believe Supra can become a home for this economy because execution, automation, data, markets and
+    agent infrastructure are converging there.</p>
+    <p>We believe SupraFX can provide market rails and SupraOS can provide coordination, while COSMO provides
+    the institutional execution framework around autonomous action.</p>
+    <p>We are not building another chatbot. We are building the layer that answers: who allowed this, under
+    which rules, what happened, and how can the outcome be checked?</p>
+    <p>The internet connected information. Blockchain connected value. Autonomous economies require
+    institutions that connect capability to legitimate action.</p>
+    <p><strong>COSMO exists for that connection.</strong></p>
+
+    <h2>18. Public short version</h2>
+    <p>COSMO is the institutional layer for autonomous economies, built on Supra. It turns autonomous
+    capability into bounded authority through delegated permissions, one-shot mandates, hash-pinned policies,
+    explicit ceremony, tamper-evident records, signed receipts and offline consistency verification. The
+    framework has been demonstrated across two economic domains: a live SupraFX trade and live marketplace
+    work, including a two-mandate delivery-and-acceptance flow with on-chain settlement. COSMO complements
+    SupraOS and SupraFX. Public evidence and a public standalone verifier are available at
+    <a href="/verifier/">heros.cloud/verifier/</a>.</p>
+
+    <h3>Appendix: creator and community lines</h3>
+    <ul>
+      <li>Capability can scale. Authority must stay bounded.</li>
+      <li>Identity says who. Reputation says what was proven. Authority says what may happen now.</li>
+      <li>Agents do not need a blank cheque. They need a mandate.</li>
+      <li>The trade was the occasion. The institutional primitives became the product.</li>
+      <li>COSMO turns "can do" into a provable "may do".</li>
+      <li>One verification entry point. Shared integrity. Domain-specific economics.</li>
+      <li>A trust graph provides context. Receipts provide evidence.</li>
+      <li>COSMO compiles safeguards into execution.</li>
+    </ul>
+  </section>
+
+  <!-- ============================ DEUTSCH ============================ -->
+  <section id="lang-de" class="lang" hidden>
+
+    <h2>In einem Satz</h2>
+    <p>COSMO ist die institutionelle Schicht für autonome Ökonomien auf Supra: ein System, das autonome
+    Fähigkeiten in begrenzte Autorität, regelgebundene Ausführung, belastbare Belege, signierte Receipts und
+    überprüfbare wirtschaftliche Ergebnisse übersetzt.</p>
+
+    <h2>1. Präambel: Wenn Erfahrung ausführbar wird</h2>
+    <p>KI entwickelt sich vom Assistenten zum handelnden System. Agenten können recherchieren, programmieren,
+    Märkte beobachten, Tools verwenden und andere Agenten koordinieren. Der nächste Schritt ist nicht nur ein
+    klügerer Einzelagent. Es sind Gesellschaften spezialisierter Agenten, die Leistungen einkaufen, Aufgaben
+    delegieren, Ergebnisse prüfen und Ressourcen verteilen.</p>
+    <p>Solche Systeme können anders skalieren als menschliche Organisationen. Ein erfolgreicher Ablauf lässt
+    sich als Markdown, Code und Tests speichern. Ein Skill kann tausendfach kopiert werden. Erfahrung wird
+    ausführbar und replizierbar.</p>
+    <p>Damit verschiebt sich das Problem. Wenn Fähigkeit leicht kopierbar wird, darf Autorität nicht
+    mitkopiert werden.</p>
+    <div class="box"><p class="t">Der Kernsatz</p><p>Capability is copyable. Authority is not.</p></div>
+    <p>COSMO setzt genau in der Lücke zwischen technischem Können und legitimer wirtschaftlicher Handlung an.</p>
+
+    <h2>2. Die These: Autonome Ökonomien brauchen Institutionen</h2>
+    <p>Eine Wirtschaft entsteht nicht aus Intelligenz allein. Sie entsteht aus wiederholbaren Beziehungen
+    zwischen Akteuren, die zusagen, liefern, abnehmen, bezahlen, scheitern, streiten und verantwortlich
+    gemacht werden können.</p>
+    <p>Menschliche Gesellschaften haben dafür Institutionen geschaffen: Vollmachten, Budgets, Freigaben,
+    Verträge, Rechnungen, Prüfvermerke und Widerruf. Agenten brauchen dieselben Funktionen in
+    maschinenlesbarer und ausführbarer Form.</p>
+    <ul>
+      <li><strong>Kann:</strong> Besitzt der Agent die Fähigkeit?</li>
+      <li><strong>Darf:</strong> Ist er für diese konkrete Handlung autorisiert?</li>
+      <li><strong>Hat getan:</strong> Was wurde tatsächlich ausgeführt?</li>
+      <li><strong>War gültig:</strong> Blieb die Handlung innerhalb von Mandat und Policy?</li>
+      <li><strong>Wurde gesettelt:</strong> Welches wirtschaftliche Ergebnis ist eingetreten?</li>
+    </ul>
+    <p>COSMO versucht nicht, der intelligenteste Agent zu sein. COSMO macht autonome Handlung begrenzt,
+    nachvollziehbar und verantwortlich.</p>
+
+    <h2>3. Identität, Vertrauen, Reputation und Autorität</h2>
+    <div class="tablewrap"><table>
+      <tr><th>Ebene</th><th>Frage</th><th>Aufgabe</th></tr>
+      <tr><td>Identität</td><td>Wer ist dieser Akteur?</td><td>Eine dauerhafte Referenz auf Agent, Operator, Wallet oder Organisation.</td></tr>
+      <tr><td>Web of Trust</td><td>Wer steht mit wem in Beziehung?</td><td>Empfehlungen, Herkunft, Vertrauenspfade und Beziehungskontext.</td></tr>
+      <tr><td>Reputation</td><td>Was hat dieser Akteur bewiesen?</td><td>Eine aus Belegen abgeleitete Historie, keine Eigenschaft des kopierten Codes.</td></tr>
+      <tr><td>Autorität</td><td>Was darf dieser Akteur jetzt tun?</td><td>Eine begrenzte Erlaubnis für Domäne, Handlung, Budget und Zeitraum.</td></tr>
+    </table></div>
+    <p>Fähigkeiten können kopiert werden. Zugangsdaten können bei schlechter Sicherung ebenfalls kopiert
+    werden. Reputation sollte dagegen an eine Identität und ihre belegte Historie gebunden sein. Autorität
+    muss für die konkrete Handlung neu erteilt werden, unabhängig davon, wie vertrauenswürdig ein Agent
+    erscheint.</p>
+    <div class="box"><p class="t">Saubere Aufgabenteilung</p>
+      <p>Ein Vertrauensgraph liefert Beziehungskontext. Belege lassen Reputation entstehen. Autorität wird
+      weiterhin pro Domäne und pro Handlung erteilt.</p></div>
+
+    <h2>4. Von der Execution Layer zur institutionellen Schicht</h2>
+    <p>COSMO begann mit einem engen Problem: Ein Agent sollte einen echten SupraFX-Trade ausführen, ohne
+    unbeschränkte Kontrolle über das Konto des Principals zu erhalten.</p>
+    <p>Dafür brauchte es einen begrenzten Delegate, ein einmaliges Mandat, vorher festgelegte Regeln, eine
+    menschliche ARM-Zeremonie, eine unveränderbare Akte, ein signiertes Receipt und eine getrennte
+    Konsistenzprüfung.</p>
+    <p>Preisgrenzen und Handelspaare waren trading-spezifisch. Autorität, Mandat, Policy, Ceremony, Record,
+    Receipt und Verification waren es nicht.</p>
+    <div class="box"><p class="t">Was sich änderte</p>
+      <p>Der Trade war der Anlass. Die institutionellen Primitive wurden zum Produkt.</p></div>
+
+    <h2>5. Die sieben Primitive</h2>
+    <div class="tablewrap"><table>
+      <tr><th>#</th><th>Primitiv</th><th>Funktion</th></tr>
+      <tr><td>1</td><td>Delegated Authority</td><td>Stehende, aber begrenzte Befugnis: Key, Scope, Caps, Ablauf und Revoke.</td></tr>
+      <tr><td>2</td><td>Mandate</td><td>Signierte Autorisierung eines konkreten Cases mit One-shot-Nonce, TTL und Policy-Bindung.</td></tr>
+      <tr><td>3</td><td>Policy</td><td>Vor der Handlung per Hash gepinnte Regeln; default-REJECT und fail-closed.</td></tr>
+      <tr><td>4</td><td>Ceremony</td><td>Explizites Scharfschalten des irreversiblen Schritts. Im aktuellen Trust-Modell durch einen Menschen.</td></tr>
+      <tr><td>5</td><td>Record</td><td>Hash-verkettetes Journal und write-once Evidence unter einem Manifest.</td></tr>
+      <tr><td>6</td><td>Receipt</td><td>Signierter Abschlussbeleg mit ehrlicher Outcome-Taxonomie, einschließlich Fehlern.</td></tr>
+      <tr><td>7</td><td>Verification</td><td>Getrennte Offline-Prüfung der internen Konsistenz.</td></tr>
+    </table></div>
+    <p>Delegated Authority und Mandate sind nicht dasselbe. Die delegierte Autorität ist die begrenzte
+    Grundbefugnis. Das Mandat erlaubt einen einzelnen Vorgang innerhalb dieser Befugnis. Der Besitz eines
+    Keys gilt nicht als Erlaubnis.</p>
+
+    <h2>6. Der Execution Case</h2>
+    <p class="flow">Intent → Mandate → Policy → ARM → Execute → Record → Receipt → Verify</p>
+    <p>Ein Execution Case bindet Principal, Agent, Handlung, Budget, Policy, Autorisierung, Evidence und
+    Ergebnis zu einem rekonstruierbaren Vorgang.</p>
+    <p>Damit lässt sich später beantworten: Wer hat beauftragt? Wer durfte ausführen? Welche Grenzen galten?
+    Was wurde tatsächlich getan? Welche Belege liegen vor? Warum endete der Case mit diesem Ergebnis? Welche
+    wirtschaftliche Wirkung trat ein?</p>
+    <p>Ein gültiges Receipt muss nicht immer EXECUTED sagen. Auch POLICY_REJECTED, EXPIRED oder
+    EXECUTION_FAILED können ehrliche und überprüfbare institutionelle Ergebnisse sein.</p>
+
+    <h2>7. Gemeinsame Integrität, unterschiedliche Domänen</h2>
+    <p>Ein Trade und eine Arbeitslieferung brauchen unterschiedliche fachliche Regeln. COSMO vereinheitlicht
+    nicht die Ökonomie, sondern die institutionellen Integritätsgarantien.</p>
+    <div class="callout"><p class="t" style="color:var(--accent)">Bewiesener Claim</p>
+      <p style="margin:0">One verification entry point, shared integrity guarantees, two domain-specific execution profiles.</p></div>
+    <p>Gemeinsam sind unter anderem Signaturen, Mandatsbindung, Policy-Pins, Journal-Kette, Evidence-Manifest,
+    Receipt-Integrität und fail-closed-Verhalten. Die wirtschaftliche Bedeutung bleibt in der jeweiligen Domäne.</p>
+
+    <h2>8. Die öffentlichen Beweise</h2>
+    <div class="tablewrap"><table>
+      <tr><th>Proof</th><th>Domäne</th><th>Ergebnis</th><th>Ehrliche Grenze</th></tr>
+      <tr><td>Case 001</td><td>SupraFX</td><td>Realer SUPRA/USDC-Micro-Trade unter allen sieben Primitiven. EXECUTED, ACCEPT 10/10, Delegate anschließend on-chain revoked.</td><td>Ein Pair, ein Venue, Mikro-Skala; Settlement als Plattformbeobachtung.</td></tr>
+      <tr><td>Case 002</td><td>Arbeitslieferung</td><td>Vorab mandatierter Result-Hash wurde für einen realen Job on-chain committed. EXECUTED, ACCEPT 10/10.</td><td>Der Case endete bei DELIVERED; die erste Abnahme erfolgte danach direkt menschlich.</td></tr>
+      <tr><td>Case 002-G</td><td>Lieferung + Abnahme</td><td>Provider-Lieferung und Buyer-Abnahme liefen jeweils als eigener One-shot-Case. 5 wCOSMO Escrow wurden atomar freigegeben. Beide ACCEPT 10/10.</td><td>Beide ARMs kamen vom selben Operator; die Rollentrennung war kryptographisch, nicht organisatorisch.</td></tr>
+    </table></div>
+    <p>Öffentliche Evidence: <a href="/evidence/execution-case-001/">Case 001</a>, <a href="/evidence/execution-case-002/">Case 002</a>,
+    <a href="/evidence/execution-case-002g/">Case 002-G</a>.</p>
+    <p>Auch die Fehlversuche gehören zum Beweis. Ein SDK-Fehler endete vor dem Netzkontakt als
+    EXECUTION_FAILED. Ein verspätetes ARM endete als EXPIRED. Das System hat die Autorität nicht nachträglich
+    passend gemacht.</p>
+
+    <h2>9. Wahrheit, Beobachtung und Verifikation</h2>
+    <p>COSMO verifiziert derzeit interne Konsistenz und Aktenintegrität. Das ist nicht dasselbe wie objektive
+    Weltwahrheit.</p>
+    <ul>
+      <li>Eine konsistente Beobachtung kann die externe Wirklichkeit falsch erfassen.</li>
+      <li>Ein on-chain Zustandsübergang ist stärker als eine Plattformbeobachtung.</li>
+      <li>Selbst-Attestierung ist keine unabhängige Drittprüfung.</li>
+    </ul>
+    <div class="box"><p class="t">Aktuelle Grenze</p>
+      <p>Die Evidence-Bundles sind öffentlich, und der Standalone-Verifier ist jetzt öffentlich: eine
+      einzelne, in sich geschlossene Datei unter <a href="/verifier/">heros.cloud/verifier/</a> (v1.0.0) mit
+      gepinntem Quell-Hash. Er führt eine getrennte Offline-Prüfung der internen Konsistenz durch &mdash;
+      keine unabhängige Drittprüfung.</p></div>
+    <p>Dieser Trust-Sprung ist damit vollzogen: Die Receipts sind öffentliche Evidence, die jeder offline mit
+    dem öffentlichen Verifier nachprüfen kann. Die verbleibenden ehrlichen Grenzen: die Engine ist ein
+    einzelner Attestor (kein unabhängiges Attestor-Netzwerk), und eine konsistente Beobachtung ist noch kein
+    Beweis objektiver Weltwahrheit.</p>
+
+    <h2>10. Der komplementäre Stack</h2>
+    <div class="tablewrap"><table>
+      <tr><th>Layer</th><th>Rolle</th><th>Bedeutung</th></tr>
+      <tr><td>Modelle / Skills</td><td>Capability</td><td>Was Agenten denken und technisch ausführen können.</td></tr>
+      <tr><td>Identity / Web of Trust</td><td>Beziehungskontext</td><td>Wer ein Akteur ist, wer ihn eingeführt hat und welche Vertrauenspfade bestehen.</td></tr>
+      <tr><td>SupraOS</td><td>Koordination</td><td>Wie Agenten organisiert, verbunden und in Workflows eingebunden werden.</td></tr>
+      <tr><td>SupraFX</td><td>Markt- und Liquiditätsschienen</td><td>Preise, Tiefe, Routing und Venues für marktnahe Handlungen.</td></tr>
+      <tr><td>COSMO</td><td>Institutionelle Execution</td><td>Autorität, Mandate, Policies, Ceremony, Records, Receipts und Verification.</td></tr>
+      <tr><td>Supra</td><td>Wirtschaftliches Substrat</td><td>Programmierbare Ausführung, Zustand, Assets und Settlement-Anker.</td></tr>
+    </table></div>
+    <p>Die starke Story ist Komposition. COSMO ist keine Konkurrenz zu SupraOS oder SupraFX.</p>
+
+    <h2>11. Reputation aus Evidence</h2>
+    <p>COSMO sollte keinen globalen Vertrauenswert über einen Agenten ausrufen. COSMO sollte belastbare
+    Fakten erzeugen: erteilte Mandate, bestandene und abgelehnte Policies, Fristen, Ausführung, Evidence und
+    Settlement.</p>
+    <p>Ein Web of Trust oder ein anderes Reputationssystem kann diese Historie im jeweiligen Kontext
+    auswerten. Hohe Reputation kann größere Mandate rechtfertigen. Sie darf das Mandat nicht ersetzen.</p>
+
+    <h2>12. Der Bürokratie-Kompressor</h2>
+    <p>Wirtschaftliche Vorgänge erzeugen Risiko. Deshalb bestehen sie heute aus Auftrag, Vollmacht,
+    Budgetfreigabe, Regeln, Ausführung, Abnahme, Rechnung, Zahlung und Prüfakte.</p>
+    <p>COSMO will diese Schutzmechanismen nicht weglassen. Es übersetzt sie in maschinenlesbare Regeln und
+    bindet sie zu einem überprüfbaren Vorgang.</p>
+    <div class="box"><p class="t">Kompression</p>
+      <p>Mandat + Policy + Ausführung + Evidence + Settlement + Verantwortung werden zu einem Execution Case.</p></div>
+
+    <h2>13. Konkrete Anwendungen</h2>
+    <ul>
+      <li>FX und DeFi Execution unter Pair-, Größen-, Preis- und Exposure-Limits.</li>
+      <li>Agent Work mit mandatierter Lieferung und separat mandatierter Abnahme.</li>
+      <li>Compute-Beschaffung unter Budget und überprüfbaren Lieferbedingungen.</li>
+      <li>APIs und Daten mit festem Scope und Evidence.</li>
+      <li>Storage und Bandbreite mit nachweisbarer Lieferung.</li>
+      <li>Autonome Beschaffung mit maschinenlesbarer Vollmacht.</li>
+      <li>Treasury-Operationen unter Asset-, Venue-, Gegenpartei- und Risikogrenzen.</li>
+    </ul>
+    <p>Vollständig demonstriert sind bisher die FX- und Market-Work-Profile. Die übrigen Anwendungen sind zu
+    validierende Möglichkeiten.</p>
+
+    <h2>14. Was COSMO nicht ist</h2>
+    <p>COSMO ist kein Foundation Model, kein Chatbot, kein allgemeines Agent Framework, kein Identity
+    Provider, kein Web of Trust, kein Reputation Oracle, kein Custodian, keine Aufsicht, kein reguliertes
+    Finanzprodukt, kein AMM und kein Ersatz für SupraFX.</p>
+    <p>COSMO garantiert keine Weltwahrheit, macht Agenten nicht automatisch ehrlich und beweist noch keinen
+    zahlenden Markt. Es macht einen engeren Sachverhalt sichtbar: Wer durfte was tun, unter welchen Regeln,
+    was geschah und wie wurde das Ergebnis dokumentiert?</p>
+
+    <h2>15. $COSMO und Community</h2>
+    <p>Die institutionelle These beweist nicht automatisch eine Token-Ökonomie. Jede Rolle von $COSMO muss aus
+    einem realen Bedarf abgeleitet werden. Mögliche Rollen sind Access, Bonds, Operator-Exposure, Settlement
+    und Community-Koordination. Entscheidend ist, ob die Rolle Accountability verbessert.</p>
+    <p>Die Community sollte nicht nur eine Erzählung verbreiten. Sie sollte Supply, neue Domain-Profile,
+    unabhängige Prüfung, Operatoren und externe Nachfrage hervorbringen.</p>
+
+    <h2>16. Prinzipien</h2>
+    <ul>
+      <li>Agenten sollen handeln können, nicht nur antworten.</li>
+      <li>Capability is copyable. Authority is not.</li>
+      <li>Identität ist nicht Reputation. Reputation ist nicht Autorität.</li>
+      <li>Jede irreversible Handlung braucht ein begrenztes Mandat.</li>
+      <li>Policies werden vor der Handlung festgelegt.</li>
+      <li>Der Besitz eines Keys ist keine Erlaubnis.</li>
+      <li>Fehler brauchen einen benannten und signierten Abschluss.</li>
+      <li>Receipts liefern Fakten, aus denen Reputation abgeleitet werden kann.</li>
+      <li>On-chain-Zustand ist stärker als Plattformbeobachtung.</li>
+      <li>Domänen unterscheiden sich wirtschaftlich, können aber Integritätsgarantien teilen.</li>
+      <li>Menschliche Autorisierung ist legitime Architektur, wenn das Trust-Modell sie verlangt.</li>
+      <li>Bürokratie soll in ausführbare Schutzmechanismen komprimiert, nicht abgeschafft werden.</li>
+      <li>COSMO ergänzt SupraOS und SupraFX.</li>
+      <li>Öffentliche Belege zählen mehr als Pitch Decks.</li>
+      <li>Bewiesene Mechanik ist noch kein bewiesener Markt.</li>
+    </ul>
+
+    <h2>17. Die Erklärung</h2>
+    <p>Wir glauben, dass autonome Agenten wirtschaftliche Akteure werden.</p>
+    <p>Wir glauben, dass kopierbare Intelligenz begrenzte Autorität wichtiger macht.</p>
+    <p>Wir glauben, dass Agentengesellschaften Identität, Vertrauensbeziehungen, Evidence, Reputation,
+    Mandate, Policies, Settlement und Widerruf brauchen.</p>
+    <p>Wir glauben, dass kein Agent Ausführungsrechte erhalten darf, nur weil er technisch handeln kann.</p>
+    <p>Wir glauben, dass ein Web of Trust Beziehungskontext liefern kann und Receipts die Belege, aus denen
+    Reputation entsteht.</p>
+    <p>Wir glauben, dass Supra ein Zuhause für diese Wirtschaft werden kann, weil Execution, Automation,
+    Daten, Märkte und Agenten-Infrastruktur dort zusammenlaufen.</p>
+    <p>Wir glauben, dass SupraFX Marktschienen und SupraOS Koordination bereitstellen können, während COSMO
+    den institutionellen Rahmen um autonome Handlung liefert.</p>
+    <p>Wir bauen keinen weiteren Chatbot. Wir bauen die Schicht, die beantwortet: Wer hat erlaubt? Welche
+    Regeln galten? Was ist passiert? Wie lässt sich das Ergebnis prüfen?</p>
+    <p><strong>COSMO existiert für diese Verbindung.</strong></p>
+
+    <h2>18. Öffentliche Kurzfassung</h2>
+    <p>COSMO ist die institutionelle Schicht für autonome Ökonomien auf Supra. COSMO übersetzt autonome
+    Fähigkeiten in begrenzte Autorität: über delegierte Befugnisse, einmalige Mandate, per Hash gepinnte
+    Policies, explizite Ceremony, unveränderbare Records, signierte Receipts und Offline-Konsistenzprüfung.
+    Das Framework wurde in zwei wirtschaftlichen Domänen demonstriert: einem realen SupraFX-Trade und realer
+    Agentenarbeit, einschließlich eines Zwei-Mandate-Ablaufs für Lieferung und Abnahme mit on-chain
+    Settlement. COSMO ergänzt SupraOS und SupraFX. Die Evidence und ein öffentlicher Standalone-Verifier sind
+    verfügbar unter <a href="/verifier/">heros.cloud/verifier/</a>.</p>
+
+    <h3>Appendix: Creator- und Community-Zeilen</h3>
+    <ul>
+      <li>Fähigkeit kann skalieren. Autorität muss begrenzt bleiben.</li>
+      <li>Identität sagt, wer. Reputation sagt, was bewiesen wurde. Autorität sagt, was jetzt erlaubt ist.</li>
+      <li>Agenten brauchen keinen Blankoscheck. Sie brauchen ein Mandat.</li>
+      <li>Der Trade war der Anlass. Die institutionellen Primitive wurden zum Produkt.</li>
+      <li>COSMO macht aus "kann" ein belegbares "darf".</li>
+      <li>Ein Verifikations-Einstiegspunkt. Gemeinsame Integrität. Domänen-spezifische Ökonomie.</li>
+      <li>Ein Vertrauensgraph liefert Kontext. Receipts liefern Evidence.</li>
+      <li>COSMO kompiliert Schutzmechanismen in Ausführung.</li>
+    </ul>
+  </section>
+
+  <div class="foot">
+    <p><strong>Risk and honesty note.</strong> This manifesto is a strategic and narrative document. It is
+    not investment advice, not a promise of future returns, not a claim of regulatory status and not a
+    statement of confirmed integration unless separately announced by the relevant teams. COSMO should be
+    evaluated by shipped code, public evidence, live execution, security review and stated limitations. The
+    institutional mechanism has been demonstrated. External demand remains to be proven.</p>
+    <p>Version basis: public COSMO positioning and evidence state as of August 2026. Supersedes the v4.0
+    manifesto.</p>
+  </div>
+</main>
+
+<script>
+  function setLang(l){
+    document.getElementById('lang-en').hidden = (l!=='en');
+    document.getElementById('lang-de').hidden = (l!=='de');
+    document.getElementById('btn-en').setAttribute('aria-pressed', l==='en');
+    document.getElementById('btn-de').setAttribute('aria-pressed', l==='de');
+    document.documentElement.lang = l;
+    try{ location.hash = l; }catch(e){}
+  }
+  if (location.hash === '#de') setLang('de');
+</script>
+</body>
+</html>

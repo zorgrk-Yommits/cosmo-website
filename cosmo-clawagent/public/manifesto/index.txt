@@ -1,0 +1,33 @@
+COSMO MANIFESTO v5.0 -- The Institutional Layer for Autonomous Economies
+v5.0 - August 2026 - heros.cloud
+
+Capability is copyable. Authority is not.
+
+Read the full manifesto (English + Deutsch): heros.cloud/manifesto/
+
+Positioning note: "institutional" means governance primitives around
+autonomous action. It does not mean custody, supervision, regulatory status
+or an investment product. COSMO complements SupraOS and SupraFX, it does not
+compete with them.
+
+PUBLIC SHORT VERSION
+COSMO is the institutional layer for autonomous economies, built on Supra. It
+turns autonomous capability into bounded authority through delegated
+permissions, one-shot mandates, hash-pinned policies, explicit ceremony,
+tamper-evident records, signed receipts and offline consistency verification.
+The framework has been demonstrated across two economic domains: a live
+SupraFX trade and live marketplace work, including a two-mandate
+delivery-and-acceptance flow with on-chain settlement. COSMO complements
+SupraOS and SupraFX. Public evidence and a public standalone verifier are
+available at heros.cloud/verifier/.
+
+PROOF
+  Case 001    FX / SupraFX          EXECUTED, ACCEPT 10/10  /evidence/execution-case-001/
+  Case 002    Market work delivery  EXECUTED, ACCEPT 10/10  /evidence/execution-case-002/
+  Case 002-G  Delivery + acceptance EXECUTED x2, ACCEPT 10/10  /evidence/execution-case-002g/
+Narrative overview: /institutional/  |  Verifier: /verifier/
+
+Risk and honesty note: strategic/narrative document, not investment advice,
+no regulatory status, no confirmed integration unless separately announced.
+The institutional mechanism has been demonstrated; external demand remains to
+be proven. Supersedes the v4.0 manifesto.
