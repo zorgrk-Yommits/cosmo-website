@@ -26,8 +26,8 @@ AUTHENTICITY (verify this file before trusting it):
      so the file can be rebuilt from source in the COSMO repo and reproduced
      byte-for-byte.
 
-  version           1.0.0-rc.1
-  distributable     sha3-256 0x8891b644cdb1f4be4fd3b1c6fa2d5a7d7e87970ac2d50f84dc068a13788e23fb
+  version           1.0.0
+  distributable     sha3-256 0x198ace970c6e188a080de8530deb4e0f38656d3bd6f4dc492c25c523266f54f1
   trust_profile_id  cosmo-trust-v1
   trust_profile     sha3-256 0xc840482f68cea78d91d298a33536f3cab02c53bdb718630d7865f7dc6c507dd5
 

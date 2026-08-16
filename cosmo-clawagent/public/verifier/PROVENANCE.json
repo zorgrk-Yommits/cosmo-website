@@ -1,16 +1,16 @@
 {
   "schema": "cosmo.standalone-verifier.provenance.v1",
   "verifier_name": "cosmo-standalone-verifier",
-  "verifier_version": "1.0.0-rc.1",
+  "verifier_version": "1.0.0",
   "node_engine_min": ">=18",
   "trust_profile_id": "cosmo-trust-v1",
   "trust_profile_hash": "0xc840482f68cea78d91d298a33536f3cab02c53bdb718630d7865f7dc6c507dd5",
   "distributable": {
     "file": "cosmo-verify.mjs",
-    "sha3": "0x8891b644cdb1f4be4fd3b1c6fa2d5a7d7e87970ac2d50f84dc068a13788e23fb"
+    "sha3": "0x198ace970c6e188a080de8530deb4e0f38656d3bd6f4dc492c25c523266f54f1"
   },
   "build_inputs": {
-    "core.src.mjs": "0x7e203383240fb1729be0c04fe8fe02cd3473c149b17b6f1ce3f40568fab0e90f",
+    "core.src.mjs": "0xa28aaee0c8a2495ca923122faacf795e28bc5ae015164fe7e3b479bd1aeeef53",
     "build.mjs": "0x881b52d50e31d6ac37e58ec9aa44b93292886bd6c3e8312fb5363e12109247e2"
   },
   "vendored": {
