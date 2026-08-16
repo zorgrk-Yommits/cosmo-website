@@ -1,0 +1,37 @@
+{
+  "schema": "cosmo.standalone-verifier.provenance.v1",
+  "verifier_name": "cosmo-standalone-verifier",
+  "verifier_version": "1.0.0-rc.1",
+  "node_engine_min": ">=18",
+  "trust_profile_id": "cosmo-trust-v1",
+  "trust_profile_hash": "0xc840482f68cea78d91d298a33536f3cab02c53bdb718630d7865f7dc6c507dd5",
+  "distributable": {
+    "file": "cosmo-verify.mjs",
+    "sha3": "0x8891b644cdb1f4be4fd3b1c6fa2d5a7d7e87970ac2d50f84dc068a13788e23fb"
+  },
+  "build_inputs": {
+    "core.src.mjs": "0x7e203383240fb1729be0c04fe8fe02cd3473c149b17b6f1ce3f40568fab0e90f",
+    "build.mjs": "0x881b52d50e31d6ac37e58ec9aa44b93292886bd6c3e8312fb5363e12109247e2"
+  },
+  "vendored": {
+    "@noble/hashes": {
+      "version": "1.8.0",
+      "license": "MIT"
+    },
+    "@noble/curves": {
+      "version": "1.9.7",
+      "license": "MIT"
+    },
+    "@suprafx/agent-sdk": {
+      "version": "0.1.1",
+      "license": "MIT",
+      "file": "dist/src/sign-event.js",
+      "sha3": "0x1f4fd56d1ece7e52a5d05a855b1cffb3483bbbc9368090c8dc037cd0a8c480db"
+    }
+  },
+  "how_to_verify": [
+    "Recompute sha3-256 of cosmo-verify.mjs and match distributable.sha3 (equals `node cosmo-verify.mjs --version`.source_sha3).",
+    "To reproduce from source: confirm build_inputs hashes, run `node build.mjs`, and check the rebuilt cosmo-verify.mjs sha3 matches.",
+    "ACCEPT from this verifier means: valid under trust profile cosmo-trust-v1 (0xc840482f68cea78d91d298a33536f3cab02c53bdb718630d7865f7dc6c507dd5)."
+  ]
+}

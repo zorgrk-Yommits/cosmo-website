@@ -1,0 +1,37 @@
+COSMO EXECUTION-CASE STANDALONE VERIFIER -- public, offline, single file
+
+cosmo-verify.mjs verifies a COSMO execution-case evidence bundle offline.
+No npm packages, no network, no environment reads. Node >= 18.
+
+  node cosmo-verify.mjs <bundle-dir>     verify a bundle (case or flat layout)
+  node cosmo-verify.mjs --show-trust     print the embedded trust profile + hash
+  node cosmo-verify.mjs --version        name, version, trust hash, source sha3
+
+Exit codes: 0 ACCEPT, 1 REJECT (last result names the criterion
+K/S/T/P/M/V/J/E/D/O), 2 ERROR (could not verify unambiguously).
+
+WHAT ACCEPT MEANS (honest scope): the bundle satisfies all ten criteria under
+exactly the published COSMO trust profile named below. This is a separate
+offline verification of internal consistency -- not an independent third-party
+attestation. There is no trust override in the normal mode.
+
+The published evidence bundles at heros.cloud/evidence/ can be checked with
+this file. To verify a flat published bundle, point the verifier at the bundle
+directory; it stages the case layout deterministically (no bytes changed).
+
+AUTHENTICITY (verify this file before trusting it):
+  1. openssl dgst -sha3-256 cosmo-verify.mjs
+     must equal distributable.sha3 in PROVENANCE.json (and --version source_sha3).
+  2. PROVENANCE.json also pins the build inputs and vendored package versions,
+     so the file can be rebuilt from source in the COSMO repo and reproduced
+     byte-for-byte.
+
+  version           1.0.0-rc.1
+  distributable     sha3-256 0x8891b644cdb1f4be4fd3b1c6fa2d5a7d7e87970ac2d50f84dc068a13788e23fb
+  trust_profile_id  cosmo-trust-v1
+  trust_profile     sha3-256 0xc840482f68cea78d91d298a33536f3cab02c53bdb718630d7865f7dc6c507dd5
+
+Files here:
+  cosmo-verify.mjs   the verifier (one file)
+  PROVENANCE.json    pinned hashes + vendored package versions + how to verify
+  index.html         this page, rendered

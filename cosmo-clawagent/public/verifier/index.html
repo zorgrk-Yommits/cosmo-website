@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>COSMO Execution-Case Verifier</title>
+<style>
+  :root { color-scheme: light dark; --fg:#111; --muted:#555; --bg:#fff; --card:#f6f6f7; --border:#e2e2e5; --accent:#0b7; }
+  @media (prefers-color-scheme: dark){ :root{ --fg:#e8e8ea; --muted:#9a9aa2; --bg:#0d0d0f; --card:#17171a; --border:#26262b; --accent:#1db; } }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:2rem 1.25rem 4rem; background:var(--bg); color:var(--fg);
+         font:15px/1.6 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  main { max-width:720px; margin:0 auto; }
+  h1 { font-size:1.5rem; margin:0 0 .25rem; }
+  h2 { font-size:1.05rem; margin:2rem 0 .5rem; }
+  .sub { color:var(--muted); margin:0 0 1.5rem; }
+  code, pre { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+  pre { background:var(--card); border:1px solid var(--border); border-radius:8px;
+        padding:.85rem 1rem; overflow-x:auto; font-size:13px; }
+  .hash { word-break:break-all; }
+  table { border-collapse:collapse; width:100%; font-size:13px; }
+  td { border-top:1px solid var(--border); padding:.5rem .4rem; vertical-align:top; }
+  td:first-child { color:var(--muted); white-space:nowrap; padding-right:1rem; }
+  a { color:var(--accent); }
+  .files a { display:inline-block; margin-right:1.25rem; }
+  .note { color:var(--muted); font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>COSMO Execution-Case Verifier</h1>
+  <p class="sub">A public, offline, single-file verifier for COSMO execution-case evidence bundles.</p>
+
+  <div class="files">
+    <a href="cosmo-verify.mjs">cosmo-verify.mjs</a>
+    <a href="PROVENANCE.json">PROVENANCE.json</a>
+    <a href="index.txt">index.txt</a>
+  </div>
+
+  <h2>Run</h2>
+  <pre>node cosmo-verify.mjs &lt;bundle-dir&gt;     # verify a bundle
+node cosmo-verify.mjs --show-trust     # print the embedded trust profile
+node cosmo-verify.mjs --version        # version, trust hash, source sha3</pre>
+  <p class="note">Node &ge; 18. No npm packages, no network, no environment reads.
+  Exit codes: <code>0</code> ACCEPT, <code>1</code> REJECT (the last result names the
+  criterion K/S/T/P/M/V/J/E/D/O), <code>2</code> ERROR.</p>
+
+  <h2>What ACCEPT means</h2>
+  <p>The bundle satisfies all ten criteria under exactly the published COSMO trust
+  profile below. This is a <strong>separate offline verification of internal
+  consistency</strong> &mdash; not an independent third-party attestation. There is no
+  trust override in the normal mode.</p>
+  <p class="note">The evidence bundles under <a href="/evidence/">/evidence/</a> can be
+  checked with this file. Point the verifier at a bundle directory; a flat published
+  bundle is staged into the case layout deterministically, without changing any bytes.</p>
+
+  <h2>Verify this file before trusting it</h2>
+  <pre>openssl dgst -sha3-256 cosmo-verify.mjs
+# must equal distributable.sha3 in PROVENANCE.json (and --version source_sha3)</pre>
+  <p class="note">PROVENANCE.json also pins the build inputs and vendored package
+  versions, so the file can be rebuilt from source and reproduced byte-for-byte.</p>
+
+  <table>
+    <tr><td>version</td><td>1.0.0-rc.1</td></tr>
+    <tr><td>distributable</td><td class="hash">sha3-256 0x8891b644cdb1f4be4fd3b1c6fa2d5a7d7e87970ac2d50f84dc068a13788e23fb</td></tr>
+    <tr><td>trust_profile_id</td><td>cosmo-trust-v1</td></tr>
+    <tr><td>trust_profile</td><td class="hash">sha3-256 0xc840482f68cea78d91d298a33536f3cab02c53bdb718630d7865f7dc6c507dd5</td></tr>
+  </table>
+</main>
+</body>
+</html>
