@@ -53,8 +53,9 @@
     direct human action, it is its own mandated, policy-checked, offline-verifiable case.
   </p>
   <p>
-    Public evidence bundle. Offline verification currently requires the COSMO verifier,
-    whose implementation remains private.
+    Public evidence bundle. Offline verification uses the public COSMO verifier at
+    <a href="/verifier/">heros.cloud/verifier/</a> (one self-contained file, no npm, no network) &mdash; a separate
+    offline verification of internal consistency, not an independent third-party attestation.
   </p>
   <p><a href="/institutional/">← The institutional layer (context page)</a></p>
 
@@ -171,7 +172,7 @@
     <li><span class="ink0">D</span> — derivation equality: the receipt statement re-derives byte-identically from the evidence.</li>
     <li><span class="ink0">O</span> — outcome consistency: outcome matches the evidence the case actually produced.</li>
   </ul>
-  <p class="mono" style="font-size:12px;">Result for BOTH cases: ACCEPT, 10/10 criteria, exit code 0 — separate offline verifications of internal consistency, run with the private COSMO verifier.</p>
+  <p class="mono" style="font-size:12px;">Result for BOTH cases: ACCEPT, 10/10 criteria, exit code 0 — separate offline verifications of internal consistency, run with the public COSMO verifier at heros.cloud/verifier/.</p>
 
   <h2>Honest limits</h2>
   <div class="warnbox">
@@ -181,7 +182,7 @@
     <p>· The buyer wallet is agent-held but was created and funded by the founder for this drill; this is a staged drill with curated participants, not an external buyer.</p>
     <p>· The signed artifacts are the deliver-order and approve-order (pure ed25519, offline-verifiable without any SDK), not raw chain tx bytes; the world anchors are the on-chain result_hash and the SETTLED escrow release.</p>
     <p>· Supervised agent execution with explicit human authorization at each irreversible boundary — the human ARM step is part of the proven authority model, not a shortcut.</p>
-    <p>· Full 10/10 verification currently requires the private COSMO verifier.</p>
+    <p>· Full 10/10 verification uses the public COSMO verifier at <a href="/verifier/">heros.cloud/verifier/</a> (a self-consistency check, not a third-party attestation).</p>
   </div>
 
   <p class="mono" style="color:#757E8C; font-size:11px; margin-top:36px;">

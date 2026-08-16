@@ -48,8 +48,9 @@
     internal consistency verifies on ten criteria.
   </p>
   <p>
-    Public evidence bundle. Offline verification currently requires the COSMO verifier,
-    whose implementation remains private.
+    Public evidence bundle. Offline verification uses the public COSMO verifier at
+    <a href="/verifier/">heros.cloud/verifier/</a> (one self-contained file, no npm, no network) &mdash; a separate
+    offline verification of internal consistency, not an independent third-party attestation.
   </p>
   <p><a href="/institutional/">← The institutional layer (context page)</a></p>
 
@@ -138,7 +139,7 @@
     <li><span class="ink0">D</span> — derivation equality: the receipt statement re-derives byte-identically from the evidence.</li>
     <li><span class="ink0">O</span> — outcome consistency: outcome matches the evidence the case actually produced.</li>
   </ul>
-  <p class="mono" style="font-size:12px;">Result for this case: ACCEPT, 10/10 criteria, exit code 0 — a separate offline verification of internal consistency, run with the private COSMO verifier.</p>
+  <p class="mono" style="font-size:12px;">Result for this case: ACCEPT, 10/10 criteria, exit code 0 — a separate offline verification of internal consistency, run with the public COSMO verifier at heros.cloud/verifier/.</p>
 
   <h2>Honest limits</h2>
   <div class="warnbox">
@@ -146,7 +147,7 @@
     <p>· Verification proves internal consistency and record integrity — not world truth.</p>
     <p>· settlement_ref is an observation of platform balances, not a native chain proof.</p>
     <p>· One venue, one pair, micro scale. Supervised agent execution with explicit human authorization at the irreversible boundary — the human ARM step is part of the proven authority model, not a shortcut.</p>
-    <p>· Full 10/10 verification currently requires the private COSMO verifier.</p>
+    <p>· Full 10/10 verification uses the public COSMO verifier at <a href="/verifier/">heros.cloud/verifier/</a> (a self-consistency check, not a third-party attestation).</p>
   </div>
 
   <p class="mono" style="color:#757E8C; font-size:11px; margin-top:36px;">

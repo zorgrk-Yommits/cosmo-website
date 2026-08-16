@@ -9,9 +9,10 @@ simulate-first submission, settlement watch, offline verification ACCEPT 10/10.
 
 Byte-identical copies of the canonical case documents. Check integrity with: openssl dgst -sha3-256 <file>
 
-Public evidence bundle. Offline verification currently requires the COSMO verifier,
-whose implementation remains private. It is a separate offline verification of
-internal consistency (not an independent third-party attestation), checking ten
+Public evidence bundle. Offline verification uses the public COSMO verifier at
+heros.cloud/verifier/ (one self-contained file, no npm, no network). It is a
+separate offline verification of internal consistency (not an independent
+third-party attestation), checking ten
 criteria (K/S/T/P/M/V/J/E/D/O). Result for BOTH cases: ACCEPT, 10/10, exit code 0.
 
 WHAT THIS PROVES (scope, honest): the full economic arc of a marketplace job --

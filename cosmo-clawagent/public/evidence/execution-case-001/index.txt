@@ -2,9 +2,10 @@ EXECUTION-CASE-001 -- public evidence artifacts (SupraFX mainnet, micro-live exe
 
 Byte-identical copies of the canonical case documents. Check integrity with: openssl dgst -sha3-256 <file>
 
-Public evidence bundle. Offline verification currently requires the COSMO verifier,
-whose implementation remains private. It is a separate offline verification of
-internal consistency (not an independent third-party attestation), checking ten
+Public evidence bundle. Offline verification uses the public COSMO verifier at
+heros.cloud/verifier/ (one self-contained file, no npm, no network). It is a
+separate offline verification of internal consistency (not an independent
+third-party attestation), checking ten
 criteria over this bundle: K attestor key pin, S receipt signature, T time bounds,
 P policy hash pin, M mandate recompute + signature + binding, V manifest vs.
 directory (exact set, per-file sha3), J journal hash chain, E execution envelope

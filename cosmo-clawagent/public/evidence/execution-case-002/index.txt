@@ -2,9 +2,10 @@ EXECUTION-CASE-002 -- public evidence artifacts (Supra chain 8, mandated work de
 
 Byte-identical copies of the canonical case documents. Check integrity with: openssl dgst -sha3-256 <file>
 
-Public evidence bundle. Offline verification currently requires the COSMO verifier,
-whose implementation remains private. It is a separate offline verification of
-internal consistency (not an independent third-party attestation), checking ten
+Public evidence bundle. Offline verification uses the public COSMO verifier at
+heros.cloud/verifier/ (one self-contained file, no npm, no network). It is a
+separate offline verification of internal consistency (not an independent
+third-party attestation), checking ten
 criteria: K attestor key pin, S receipt signature, T time bounds, P policy hash
 pin, M mandate recompute + signature + binding + registered action kind, V
 manifest vs. directory (exact set, per-file sha3), J journal hash chain, E
@@ -86,4 +87,4 @@ Honest limits, stated up front:
 - The signed artifact is the deliver-order (pure ed25519, offline-verifiable without any SDK), not the raw chain tx bytes; the world anchor is the on-chain result_hash, which matches the mandated hash exactly.
 - This case ends at DELIVERED. Buyer approval and escrow release are a separate human step outside the case.
 - Supervised agent execution with explicit human authorization at the irreversible boundary -- the human ARM step is part of the proven authority model, not a shortcut.
-- Full 10/10 verification currently requires the private COSMO verifier.
+- Full 10/10 verification uses the public COSMO verifier at heros.cloud/verifier/ (self-consistency check, not a third-party attestation).
