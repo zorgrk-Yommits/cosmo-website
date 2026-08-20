@@ -35,6 +35,7 @@ const RPC = "https://rpc-mainnet.supra.com";
 const SALE_ADDR =
   "0xf2785bf6510d738d2f58c48ee62f00ec56462a5bf0de4ccfdebd11cd2b1264e1";
 const BUILT_PAGE = join(__dirname, "..", "out", "buy", "index.html");
+const BUILT_HOME = join(__dirname, "..", "out", "index.html");
 
 // The exact string the disabled-build banner renders. If the banner copy in
 // BuySaleHelper.tsx changes, change it here too -- a guard that silently stops
@@ -112,5 +113,26 @@ async function saleStatus() {
     process.exit(1);
   }
 
-  console.log("PASS - built /buy page and chain state agree.");
+  // --- discoverability ----------------------------------------------------
+  // A live sale nobody can find is the same outage in slower motion: the sale
+  // was reachable only by typing /buy for a month. If this build can buy, the
+  // landing page must actually link there.
+  if (!buildDisabled) {
+    if (!existsSync(BUILT_HOME)) {
+      console.error(`FAIL - built landing page missing: ${BUILT_HOME}`);
+      process.exit(1);
+    }
+    const home = readFileSync(BUILT_HOME, "utf-8");
+    const linksToBuy = /href="\/buy\/?"/.test(home);
+    console.log(`home  : linksToBuy=${linksToBuy}`);
+    if (!linksToBuy) {
+      console.error(
+        "FAIL - the landing page does not link to /buy.\n" +
+          "       The sale is live but unreachable from the front door.",
+      );
+      process.exit(1);
+    }
+  }
+
+  console.log("PASS - built pages and chain state agree.");
 })();

@@ -2,6 +2,7 @@
 
 import { PhaseProvider } from '@/components/cosmo/usePhase';
 import Hero from './sections/Hero';
+import TreasurySale from './sections/TreasurySale';
 import Problem from './sections/Problem';
 import Flow from './sections/Flow';
 import Evidence from './sections/Evidence';
@@ -22,6 +23,10 @@ export default function Landing() {
         </div>
         <div className="relative">
           <Hero />
+          {/* Discoverability, not a second thesis: the sale sits directly
+              under the hero so it is reachable without hunting, while the
+              headline above it stays the institutional layer. */}
+          <TreasurySale />
           <Problem />
           <Flow />
           <Evidence />

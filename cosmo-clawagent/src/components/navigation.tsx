@@ -22,6 +22,21 @@ const navLinks: {
   { href: '/assurance/', label: 'Trust' },
   { href: '/compute/', label: 'Network', match: ['/vault', '/maker-onboarding'] },
   { href: '/cosmo/', label: '$COSMO', match: ['/wcosmo'] },
+  // 2026-08-20: the treasury sale was live on mainnet but reachable only by
+  // typing the URL. It gets a real top-level entry — /buy is a product, not a
+  // hidden path. It stays a plain nav link, not a second primary CTA: the
+  // headline action on this site is still the market, not the token.
+  { href: '/buy/', label: 'Buy wCOSMO' },
+];
+
+const SALE_HREF = '/buy/';
+
+// The mobile sheet opens under a 64px header on short phones, so the last
+// entry can sit below the fold. The sale link is hoisted to the top there —
+// on desktop it keeps its natural place at the end of the row.
+const mobileLinks = [
+  ...navLinks.filter((l) => l.href === SALE_HREF),
+  ...navLinks.filter((l) => l.href !== SALE_HREF),
 ];
 
 const norm = (p: string) => p.replace(/\/+$/, '') || '/';
@@ -144,7 +159,7 @@ export default function Navigation() {
           id="mobile-nav"
           className="flex flex-col gap-1 border-t border-line-base bg-surface-0/95 px-5 py-4 md:hidden"
         >
-          {navLinks.map((link) => {
+          {mobileLinks.map((link) => {
             const active = isActive(pathname, link);
             return (
               <Link
