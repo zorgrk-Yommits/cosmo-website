@@ -18,7 +18,7 @@ const AUDIENCES = [
       'The capital owner defines venues, assets, amounts, slippage, gas and execution limits in a signed mandate.',
       'The operator executes within those hard limits; every action ends in an independently verifiable receipt.',
     ],
-    href: '/institutional/',
+    href: '/mandates/',
     cta: 'Verifiable Liquidity Mandates',
     status: { tone: 'active' as const, label: 'controlled liquidity pilot' },
   },

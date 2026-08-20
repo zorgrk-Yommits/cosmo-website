@@ -53,8 +53,8 @@ export default function Hero() {
             See how settlement works
             <ArrowDown className="h-4 w-4" />
           </CtaLink>
-          <CtaLink href="/institutional/" variant="ghost" size="lg">
-            The institutional layer
+          <CtaLink href="/mandates/" variant="ghost" size="lg">
+            Verifiable Liquidity Mandates
             <ArrowRight className="h-4 w-4" />
           </CtaLink>
         </div>

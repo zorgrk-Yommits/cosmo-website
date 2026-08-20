@@ -19,6 +19,7 @@ const navLinks: {
   match?: string[];
 }[] = [
   { href: '/market/', label: 'Market' },
+  { href: '/mandates/', label: 'Mandates' },
   { href: '/assurance/', label: 'Trust' },
   { href: '/compute/', label: 'Network', match: ['/vault', '/maker-onboarding'] },
   { href: '/cosmo/', label: '$COSMO', match: ['/wcosmo'] },

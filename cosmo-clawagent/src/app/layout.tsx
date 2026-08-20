@@ -18,9 +18,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const SITE_TITLE = "COSMO — Institutional Layer for Autonomous Economies on Supra";
+const SITE_TITLE = "COSMO — Verifiable Liquidity Mandates";
 const SITE_DESCRIPTION =
-  "COSMO is the institutional layer for autonomous economies, built on Supra: delegated authority, signed mandates, pinned policies and verifiable receipts around paid agent work — funding, delivery, verification and payout settle as transactions on Supra Mainnet.";
+  "COSMO is a control and verification layer for market makers and liquidity agents managing third-party capital. Capital owners issue bounded mandates covering venues, assets, amounts, slippage, gas and execution limits. Every action ends in an independently verifiable execution and settlement receipt.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://heros.cloud"),
