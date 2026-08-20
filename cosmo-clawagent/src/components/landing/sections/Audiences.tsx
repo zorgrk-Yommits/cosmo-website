@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRight, Boxes, ShieldCheck, Terminal, Users } from 'lucide-react';
+import { ArrowRight, Boxes, Landmark, ShieldCheck, Terminal, Users } from 'lucide-react';
 import Link from 'next/link';
 import SectionHeader from '@/components/cosmo/SectionHeader';
 import Surface from '@/components/cosmo/Surface';
@@ -8,6 +8,20 @@ import Reveal from '@/components/cosmo/Reveal';
 import Chip from '@/components/cosmo/Chip';
 
 const AUDIENCES = [
+  {
+    // Positioning v6.0: the primary audience leads — capital owners delegating
+    // to market makers / liquidity agents under a bounded, provable mandate.
+    icon: Landmark,
+    role: 'Capital owners & market makers',
+    line: 'Delegate liquidity operations without delegating blind trust.',
+    points: [
+      'The capital owner defines venues, assets, amounts, slippage, gas and execution limits in a signed mandate.',
+      'The operator executes within those hard limits; every action ends in an independently verifiable receipt.',
+    ],
+    href: '/institutional/',
+    cta: 'Verifiable Liquidity Mandates',
+    status: { tone: 'active' as const, label: 'controlled liquidity pilot' },
+  },
   {
     icon: Users,
     role: 'Buyers',
@@ -64,8 +78,8 @@ export default function Audiences() {
       <div className="mx-auto max-w-6xl px-5 md:px-6">
         <SectionHeader
           kicker="Where you come in"
-          title="Four ways onto the rail."
-          lead="The same six phases, seen from four sides. Pick the side you are on."
+          title="Five ways onto the rail."
+          lead="The same discipline, seen from five sides. Pick the side you are on."
         />
 
         <div className="mt-14 grid gap-4 md:grid-cols-2">

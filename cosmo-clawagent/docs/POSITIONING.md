@@ -1,9 +1,153 @@
-# COSMO Strategic Positioning v5.0
+# COSMO Strategic Positioning v6.0
 
 > **Priority: HIGH — this document is the canonical public positioning of COSMO.**
-> v5.0 supersedes v4.0 ("Execution Layer for the Agent Economy"), which superseded
-> the RFQ/TRANSACT-provider framing of Whitepaper v3.1. Effective 2026-08-14.
-> All v4.0 guardrails remain in force verbatim (see below).
+> v6.0 supersedes v5.0 as the PRIMARY story, effective 2026-08-20. Nothing from
+> v5.0 is revoked: the seven primitives, the claim discipline and all language
+> guardrails remain in force verbatim (kept in full below). v6.0 changes the
+> ORDER — the concrete go-to-market audience now comes first, the abstract
+> category last.
+
+## Primary audience
+
+**Market makers and liquidity managers deploying capital entrusted to them** by
+protocols, foundations, DAOs, treasuries or investors.
+
+The driving question is no longer the general "how can autonomous agents act
+economically?" but the concrete:
+
+> **"How does a capital owner delegate execution to a market maker or agent
+> without handing over a wallet key with blanket authority?"**
+
+## Core statement (binding)
+
+**Capital owners define the mandate. Agents execute within hard limits. COSMO
+proves every action.**
+
+Extended form: *COSMO lets market makers and liquidity managers deploy
+third-party capital without requiring blind trust.*
+
+German working form: COSMO ermöglicht Market Makern und Liquiditätsmanagern,
+anvertrautes Kapital innerhalb eines klaren Mandats einzusetzen. Der
+Kapitalgeber legt Märkte, Beträge und Risikogrenzen fest. COSMO weist
+anschließend unabhängig prüfbar nach, was tatsächlich ausgeführt und gesettelt
+wurde.
+
+## Product term
+
+**Verifiable Liquidity Mandates.** One mandate binds: the capital owner; the
+market maker or liquidity agent; permitted markets and venues; amount, position
+and inventory limits; slippage and gas bounds; duration and action count; retry
+and stop rules; one-shot or time-bounded authorization; the actual execution;
+settlement; and an independently checkable receipt.
+
+## Primary problem
+
+A capital owner wants to delegate liquidity work but not: hand out an
+unrestricted private key; sign every transaction manually; rely solely on the
+market maker's own reports; discover limit breaches only after a loss; or
+reassemble authorization, execution and settlement from separate systems.
+
+COSMO closes that gap: **delegation without blanket authority, autonomy without
+free disposal, proof instead of reporting.**
+
+## Primary use cases
+
+1. Bounded treasury rebalancing.
+2. Deploying capital into approved liquidity pools.
+3. Rebalancing inventory across approved assets.
+4. Hedging holdings within preset limits.
+5. Building or withdrawing liquidity by fixed rules.
+6. Later: proving execution quality against external reference markets.
+
+The first pilot does not need to automate a full market-making strategy — a
+single rebalancing or one bounded liquidity action suffices.
+
+## Roles
+
+| Role | Who |
+|---|---|
+| Capital owner | Protocol, foundation, DAO, treasury, investor |
+| Operator | Market maker, liquidity manager, autonomous agent |
+| COSMO | The mandate, control, execution and proof layer between them |
+
+COSMO is explicitly NOT: the market maker; a trading strategy; a DEX; a
+custodian; merely an agent wallet; a profitability promise; a general trading
+bot.
+
+## Differentiation
+
+Other wallet/policy systems can LIMIT what an agent may spend. COSMO
+additionally PROVES: which mandate applied; which policy was enforced; which
+market conditions were checked; which exact transaction was prepared; what was
+actually sent; what settled on chain; whether amount, route, slippage, gas and
+retry rules were honored; and that an independent verifier confirms the same
+case.
+
+## Anchor proof: EVM-MICRO-001 (approved usage)
+
+EVM-MICRO-001 may be used as the technical proof: real Ethereum mainnet, real
+capital, native ETH -> SUPRA, hard-pinned pool and router, bounded amount,
+slippage and gas caps, manual case-bound ARM, exactly one submit, no automatic
+retry, settlement on Ethereum, internal AND standalone verifier ACCEPT.
+Records: `cosmo-contracts-v2/docs/evm-micro-001/` (final-live-record.md,
+post-live-record.md, mainnet-shadow-record.md).
+
+It must NOT be inflated into: a production-ready market-making system, or a
+complete best-execution product.
+
+## Positioning hierarchy (binding order)
+
+1. **Primary:** Verifiable Liquidity Mandates for market makers and liquidity
+   managers.
+2. **Secondary:** Controlled treasury execution.
+3. **Category:** Execution and assurance infrastructure for agent economies.
+
+"Execution Layer for Agent Economies on Supra" and "Institutional Layer for
+Autonomous Economies" remain valid as technical category labels — but they are
+no longer the first and most abstract statement anywhere.
+
+## Approved hero
+
+> **Verifiable Liquidity Mandates**
+>
+> Delegate liquidity operations without delegating blind trust.
+>
+> Capital owners define the markets, limits and authority. Agents execute.
+> COSMO proves every action.
+
+## Approved short pitch
+
+COSMO is a control and verification layer for market makers and liquidity
+agents managing third-party capital. Capital owners issue bounded mandates
+covering venues, assets, amounts, slippage, gas and execution limits. Every
+action ends in an independently verifiable execution and settlement receipt.
+
+## Pilot offer
+
+**COSMO Controlled Liquidity Pilot** — one capital owner; one market maker or
+agent; one trading pair; one approved venue; one bounded capital mandate; one
+concrete liquidity or rebalancing action; one independently checkable closing
+record. CTA: *"Run one bounded liquidity mandate with real capital and
+independently verify the result."*
+
+## Never claim (v6 additions, alongside all v5 rules)
+
+- guaranteed capital safety;
+- guaranteed profitability;
+- regulatory or legal compliance;
+- best execution while no reference-market comparison data exists;
+- fully autonomous market making;
+- support for arbitrary chains, routers or strategies;
+- production readiness based on the EVM-MICRO-001 pilot alone.
+
+---
+
+# Inherited layer: v5.0 — Institutional Layer for Autonomous Economies
+
+> v5.0 (effective 2026-08-14) is SUBORDINATED under v6.0 above, not revoked:
+> every primitive, every claim rule and every guardrail below remains in force.
+> What changed in v6.0 is the ORDER of the story — the abstract category is no
+> longer the first sentence.
 
 ## The positioning
 

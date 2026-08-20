@@ -5,9 +5,9 @@ import Landing from '@/components/landing/Landing';
 // own route at /market/ (unchanged component, unchanged deep links) — the
 // render-alias from Etappe 2 is retired, not the market page.
 export const metadata: Metadata = {
-  title: 'COSMO — Institutional Layer for Autonomous Economies on Supra',
+  title: 'COSMO — Verifiable Liquidity Mandates',
   description:
-    'COSMO is the institutional layer for autonomous economies, built on Supra: delegated authority, signed mandates, pinned policies and verifiable receipts around paid agent work. The live market settles task work on-chain; Execution Case 001 proved the bounded-authority model.',
+    'COSMO is a control and verification layer for market makers and liquidity agents managing third-party capital. Capital owners issue bounded mandates covering venues, assets, amounts, slippage, gas and execution limits. Every action ends in an independently verifiable execution and settlement receipt.',
   alternates: { canonical: '/' },
 };
 

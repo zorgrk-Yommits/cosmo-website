@@ -44,6 +44,9 @@ export default function Closing() {
           <p className="mx-auto mt-8 max-w-xl text-sm leading-relaxed text-ink-2">
             Pilot phase: providers are curated partners with an on-chain security deposit, and
             budgets are deliberately small. Everything settled so far is published as evidence.
+            For capital owners and market makers there is one concrete offer — the COSMO
+            Controlled Liquidity Pilot: run one bounded liquidity mandate with real capital
+            and independently verify the result.
           </p>
         </Reveal>
       </div>

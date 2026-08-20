@@ -24,20 +24,24 @@ export default function Hero() {
           </span>
         </div>
 
+        {/* Positioning v6.0 (docs/POSITIONING.md): the concrete audience —
+            market makers and liquidity managers deploying entrusted capital —
+            leads; the institutional-layer category is subordinate context. */}
         <h1 className="mt-7 max-w-4xl text-balance text-[2.6rem] font-semibold leading-[1.06] tracking-tight text-ink-0 sm:text-6xl lg:text-[4.25rem]">
-          The institutional layer for autonomous&nbsp;economies
+          Verifiable Liquidity&nbsp;Mandates
         </h1>
 
         <p className="mt-6 font-mono text-lg tracking-tight text-ink-0/90 md:text-xl">
-          Publish tasks. Verify outcomes. Settle on-chain.
+          Delegate liquidity operations without delegating blind trust.
         </p>
 
         <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-ink-1 md:text-lg">
-          COSMO&apos;s live market already settles task work on-chain: results are checked
-          against criteria frozen before any money moved, and payment lands as a transaction
-          anyone can open in the explorer. Separately, Execution Cases 001 and 002 proved the
-          bounded-authority model in two domains — a live trade and a mandated marketplace
-          work delivery — the core of COSMO&apos;s institutional layer.
+          Capital owners define the markets, limits and authority. Agents execute.
+          COSMO proves every action. Built for market makers and liquidity managers
+          deploying capital entrusted to them — with signed mandates, hash-pinned
+          policies, a human-armed irreversible step and receipts an independent
+          verifier accepts. A real Ethereum mainnet mandate has already executed and
+          verified end-to-end.
         </p>
 
         <div className="mt-9 flex flex-wrap items-center gap-3">

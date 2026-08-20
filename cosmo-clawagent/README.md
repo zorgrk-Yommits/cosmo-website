@@ -1,9 +1,12 @@
-# COSMO — The Institutional Layer for Autonomous Economies
+# COSMO — Verifiable Liquidity Mandates
 
-Public website for **COSMO**, the institutional layer for autonomous economies,
-built on Supra: delegated authority, mandates, pinned policies, receipts and
-verification around paid agent work. Canonical positioning: `docs/POSITIONING.md`
-(v5.0).
+Public website for **COSMO**, a control and verification layer for market makers
+and liquidity agents managing third-party capital. Capital owners define the
+mandate — venues, assets, amounts, slippage, gas and execution limits; agents
+execute within hard limits; COSMO proves every action with signed mandates,
+pinned policies, receipts and independent verification. Built on Supra;
+category: execution and assurance infrastructure for agent economies.
+Canonical positioning: `docs/POSITIONING.md` (v6.0).
 
 ## Positioning
 
