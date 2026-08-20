@@ -1,6 +1,6 @@
 'use client';
 
-// /buy — SUPRA -> wCOSMO seller sale (G1b-3, NOT LIVE until G2/G3).
+// /buy — SUPRA -> wCOSMO seller sale. LIVE on Supra mainnet (chain 8).
 //
 // Follows the proven ProviderBondHelper pattern (chain 8, StarKey
 // prepare/review/sign, live views, no keys ever). Differences: the price
@@ -13,10 +13,19 @@
 // "guaranteed market price". The four price terms (twap, spread, floor,
 // effective ask) are always shown individually, plus which term won.
 //
-// NEXT_PUBLIC_SALE_LIVE gate: until G2 (module published) / G3 (inventory)
-// this page builds with the buy path DISABLED at build time — banner up,
-// buttons off, no transaction reachable. Defense in depth: the module is
-// not even published, and the quoter refuses to sign pre-G2.
+// NEXT_PUBLIC_SALE_LIVE gate: when unset, this page builds with the buy path
+// DISABLED at build time — banner up, buttons off, no transaction reachable.
+//
+// THE FLAG MUST LIVE IN .env.local, NEVER INLINE ON THE BUILD COMMAND.
+// Incident 2026-08-20: it was set inline for the 2026-07-19 build (two real
+// mainnet buys, one external), then silently lost on the next unrelated
+// rebuild. The buy path stayed dead for a month while the contract was
+// published, funded and unpaused, and the quoter kept signing on request.
+// A rebuild must never be able to close the sale by accident again.
+//
+// Defense in depth is unchanged and does NOT depend on this flag: the chain
+// enforces floor, caps, buyer/chain binding, TTL and replay in cosmo_sale::buy,
+// and the quoter fails closed when it cannot read the on-chain floor.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
@@ -425,17 +434,23 @@ export default function BuySaleHelper() {
             </p>
           </header>
 
-          {/* NOT LIVE banner — build-time gate */}
+          {/* Buy path disabled banner — build-time gate.
+              HONESTY RULE: this banner may only describe THIS BUILD, never the
+              chain. The contract is published and funded (see "Live status"
+              below, read from the chain on every load) — a build without the
+              flag says nothing about that. The earlier wording claimed the
+              contract was not deployed; that became false at G2 and stayed up
+              for a month. Do not reintroduce claims about chain state here. */}
           {!SALE_LIVE && (
             <div className="mt-8 rounded-lg border border-phase-warn/40 bg-phase-warn/10 p-4">
               <p className="flex items-start gap-2 font-mono text-xs leading-relaxed text-phase-warn">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                 <span>
-                  <span className="font-bold">Not live.</span> The sale contract is not
-                  deployed and no inventory exists. This page is a preview of the exact
-                  flow; the buy path is disabled at build time and the quote server signs
-                  nothing. Launch happens in stages (publish, funding, first capped sale)
-                  — each with its own go decision.
+                  <span className="font-bold">Buy path disabled in this build.</span> The
+                  connect, quote and sign steps are switched off at build time, so no
+                  transaction is reachable from this page. This is a property of the
+                  build, not a statement about the sale — the live status below is read
+                  from the chain and remains authoritative.
                 </span>
               </p>
             </div>
