@@ -118,27 +118,35 @@ const NOT_LIST = [
 
 export default function Mandates() {
   return (
-    <div className="min-h-screen">
-      <div className="mx-auto max-w-6xl px-5 py-16 md:px-6 md:py-24">
-        {/* ── Hero ─────────────────────────────────────────────────────── */}
-        <section>
-          <div className="flex flex-wrap items-center gap-2">
-            <Chip tone="active">Controlled Liquidity Pilot</Chip>
-            <Chip tone="neutral">For market makers &amp; liquidity managers</Chip>
-          </div>
-          <h1 className="mt-6 max-w-3xl text-balance text-4xl font-semibold leading-[1.08] tracking-tight text-ink-0 md:text-5xl">
-            Verifiable Liquidity Mandates
-          </h1>
-          <p className="mt-5 font-mono text-lg tracking-tight text-ink-0/90">
-            Delegate liquidity operations without delegating blind trust.
-          </p>
-          <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-ink-1 md:text-lg">
-            Capital owners define the markets, limits and authority. Agents execute.
-            COSMO proves every action. Built for capital entrusted by protocols,
-            foundations, DAOs, treasuries and investors — where a wallet key with
-            blanket authority was never an acceptable answer.
-          </p>
-        </section>
+    <div className="terminal-theme-scope min-h-screen">
+      <div className="terminal-container">
+        <div className="grid-bg" />
+
+        <div className="relative z-10 mx-auto max-w-4xl px-5 py-16 md:py-24">
+          {/* ── Hero ─────────────────────────────────────────────────── */}
+          <header className="max-w-3xl">
+            <div className="mb-5 flex flex-wrap items-center gap-3">
+              <span className="inline-flex h-2 w-2 rounded-full bg-phase-active shadow-[0_0_10px_rgba(110,139,255,0.8)]" />
+              <span className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
+                COSMO Mandates
+              </span>
+              <Chip tone="active" size="sm">
+                Controlled Liquidity Pilot
+              </Chip>
+            </div>
+            <h1 className="text-balance text-4xl font-semibold leading-[1.08] tracking-tight text-ink-0 md:text-5xl">
+              Verifiable Liquidity Mandates
+            </h1>
+            <p className="mt-5 font-mono text-lg tracking-tight text-ink-0/90">
+              Delegate liquidity operations without delegating blind trust.
+            </p>
+            <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-ink-1 md:text-lg">
+              Capital owners define the markets, limits and authority. Agents execute.
+              COSMO proves every action. Built for capital entrusted by protocols,
+              foundations, DAOs, treasuries and investors — where a wallet key with
+              blanket authority was never an acceptable answer.
+            </p>
+          </header>
 
         {/* ── The delegation gap ──────────────────────────────────────── */}
         <section className="mt-20 border-t border-line-subtle pt-16">
@@ -147,7 +155,7 @@ export default function Mandates() {
             title="Delegation today means handing over too much."
             lead="A capital owner who wants liquidity work done has had five bad options. A mandate replaces all five."
           />
-          <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid gap-4 md:grid-cols-2">
             {GAPS.map((g, i) => (
               <Reveal key={g.title} delay={i * 0.05}>
                 <Surface className="h-full p-6">
@@ -180,7 +188,7 @@ export default function Mandates() {
             title="One mandate binds the whole engagement."
             lead="Not a policy PDF and a spreadsheet — one signed object the execution engine enforces and a verifier can re-check."
           />
-          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid gap-3 sm:grid-cols-2">
             {MANDATE_BINDS.map((item, i) => (
               <Reveal key={item} delay={i * 0.04}>
                 <div className="flex items-start gap-3 rounded-xl border border-line-subtle bg-white/[0.02] p-4">
@@ -199,7 +207,7 @@ export default function Mandates() {
             title="Six stages, fail-closed at every one."
             lead="Other systems can limit what an agent may spend. A mandate additionally proves what applied, what ran, and what settled."
           />
-          <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid gap-4 md:grid-cols-2">
             {LIFECYCLE.map((s, i) => (
               <Reveal key={s.step} delay={i * 0.05}>
                 <Surface className="h-full p-6">
@@ -281,7 +289,7 @@ export default function Mandates() {
             title="COSMO Controlled Liquidity Pilot"
             lead="Deliberately small, deliberately concrete: run one bounded liquidity mandate with real capital and independently verify the result."
           />
-          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-3 sm:grid-cols-2">
             {PILOT.map((item, i) => (
               <Reveal key={item} delay={i * 0.04}>
                 <div className="flex items-start gap-3 rounded-xl border border-line-subtle bg-white/[0.02] p-4">
@@ -332,6 +340,7 @@ export default function Mandates() {
             ))}
           </ul>
         </section>
+        </div>
       </div>
     </div>
   );
