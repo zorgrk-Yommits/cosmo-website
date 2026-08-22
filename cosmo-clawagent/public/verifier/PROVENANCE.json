@@ -1,16 +1,16 @@
 {
   "schema": "cosmo.standalone-verifier.provenance.v1",
   "verifier_name": "cosmo-standalone-verifier",
-  "verifier_version": "1.3.0",
+  "verifier_version": "1.3.1",
   "node_engine_min": ">=18",
   "trust_profile_id": "cosmo-trust-v4",
-  "trust_profile_hash": "0x3509a8073c9a574b5e3f7c39c6c43b7dd841bf07a7e874732e4e9de5ca4a2677",
+  "trust_profile_hash": "0xbc8649af49834f2089f1205e88e9fb8bdac9e1f4d15959d86582bb89ccd2cefb",
   "distributable": {
     "file": "cosmo-verify.mjs",
-    "sha3": "0x851a156bb439f893e3111484c1d16cd99587f4efc701495fc5e9ed585f8e65b3"
+    "sha3": "0xe6ad18695f2cc0339c3da0323d8bdf1f951f0a77d7139e084d15d86bc06c7942"
   },
   "build_inputs": {
-    "core.src.mjs": "0x6b6bb6768ad43f2f79e4d0a1cdfdcc1aa2b62bf646407d068245772b891b0ee3",
+    "core.src.mjs": "0x83b6802792bf87e4972357ac4564713fe2e71809ea9af873e886e91949f0d00a",
     "build.mjs": "0xc63a16e112dc37aa0fd9f489cfeb75c4e92f715089b43e07ebcfce56ff31c432"
   },
   "vendored": {
@@ -32,6 +32,6 @@
   "how_to_verify": [
     "Recompute sha3-256 of cosmo-verify.mjs and match distributable.sha3 (equals `node cosmo-verify.mjs --version`.source_sha3).",
     "To reproduce from source: confirm build_inputs hashes, run `node build.mjs`, and check the rebuilt cosmo-verify.mjs sha3 matches.",
-    "ACCEPT from this verifier means: valid under trust profile cosmo-trust-v4 (0x3509a8073c9a574b5e3f7c39c6c43b7dd841bf07a7e874732e4e9de5ca4a2677)."
+    "ACCEPT from this verifier means: valid under trust profile cosmo-trust-v4 (0xbc8649af49834f2089f1205e88e9fb8bdac9e1f4d15959d86582bb89ccd2cefb)."
   ]
 }
