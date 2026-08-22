@@ -274,3 +274,6 @@ first names do not appear in new public evidence.
   wiring `bdd0231`; manifesto finalized `f4a6db6`/`66e882b`.
 - Mirrored in: Obsidian vault and Claude auto-memory (`institutional-layer.md`,
   `cosmo-positioning-v4.md` for history).
+- Related internal strategy doc: `docs/OPPORTUNITY-MAP.md` (2026-08-22,
+  working hypothesis — opportunity portfolio and market-proof ladder; does NOT
+  override this document).
