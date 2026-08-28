@@ -1,0 +1,198 @@
+{
+  "schema_version": "cosmo-mcp-probe-v1",
+  "job_id": "job_ms2ru3onlg98mo",
+  "target": {
+    "package": "@modelcontextprotocol/server-everything",
+    "version": "2026.7.4",
+    "integrity": "sha512-ydMW/M6rk9tK23b+U38trsNLHhd5eF+ntiv2Vr+RPMDhbiKY/IKrZU25ukvSXVPUBvy7TxTPWpeV4KcYcXg72w==",
+    "transport": "stdio",
+    "launch_command": "npx -y @modelcontextprotocol/server-everything@2026.7.4"
+  },
+  "probed_at": "2026-07-27T05:18:46Z",
+  "environment": {
+    "isolation": "ephemeral Docker container (node:22-slim), tmpfs work/home dirs, no host secrets or credentials mounted, network used only for the npm registry; the solver is ClawAgent K1 and the probe tooling is operated by COSMO, so this run is NOT an independent third-party assessment - it demonstrates the hash binding, not independence",
+    "node_version": "v22.23.1",
+    "os": "linux 6.8.0-136-generic (container: node:22-slim)"
+  },
+  "handshake": {
+    "protocolVersion": "2025-06-18",
+    "serverName": "mcp-servers/everything",
+    "serverVersion": "2.0.0",
+    "capabilities": {
+      "tools": {
+        "listChanged": true
+      },
+      "prompts": {
+        "listChanged": true
+      },
+      "resources": {
+        "subscribe": true,
+        "listChanged": true
+      },
+      "logging": {},
+      "tasks": {
+        "list": {},
+        "cancel": {},
+        "requests": {
+          "tools": {
+            "call": {}
+          }
+        }
+      },
+      "completions": {}
+    }
+  },
+  "tools": [
+    {
+      "name": "echo",
+      "description": "Echoes back the input string",
+      "input_schema_sha256": "23208732760e38000175681f60293c482f61257ada9284ce788fc9c939666360"
+    },
+    {
+      "name": "get-annotated-message",
+      "description": "Demonstrates how annotations can be used to provide metadata about content.",
+      "input_schema_sha256": "65319b2de7941b89cbd03a32131fe2027b58f8c7e27b008a988fa772ea2d6cad"
+    },
+    {
+      "name": "get-env",
+      "description": "Returns all environment variables, helpful for debugging MCP server configuration",
+      "input_schema_sha256": "e70a91efa7d51df66e3870ea687b68ea0f49b50832bdb901db7c1cbaa881a7cf"
+    },
+    {
+      "name": "get-resource-links",
+      "description": "Returns up to ten resource links that reference different types of resources",
+      "input_schema_sha256": "1a32afbc5ad155018e48710464c4d0eb303a6ae6df050cea02d29e559103fa5e"
+    },
+    {
+      "name": "get-resource-reference",
+      "description": "Returns a resource reference that can be used by MCP clients",
+      "input_schema_sha256": "199ec1626bcfb71c9a09afe7eaf195f467a1937a678462a47da197c80e2aa44a"
+    },
+    {
+      "name": "get-structured-content",
+      "description": "Returns structured content along with an output schema for client data validation",
+      "input_schema_sha256": "98f6de81d3a404d3380d98060d6256ff3b35c075a28e507b8da0d882c35dadab"
+    },
+    {
+      "name": "get-sum",
+      "description": "Returns the sum of two numbers",
+      "input_schema_sha256": "d319585deed1e588426d89ca19acc4e4be56e73057b53bfc859d8b6fe2f632a9"
+    },
+    {
+      "name": "get-tiny-image",
+      "description": "Returns a tiny MCP logo image.",
+      "input_schema_sha256": "e70a91efa7d51df66e3870ea687b68ea0f49b50832bdb901db7c1cbaa881a7cf"
+    },
+    {
+      "name": "gzip-file-as-resource",
+      "description": "Compresses a single file using gzip compression. Depending upon the selected output type, returns either the compressed data as a gzipped resource or a resource link, allowing it to be downloaded in a subsequent request during the current session.",
+      "input_schema_sha256": "ec2c9eb0039df1cf85ef99046d66db5b1277748214d7a91655b1035b3cfde8ab"
+    },
+    {
+      "name": "simulate-research-query",
+      "description": "Simulates a deep research operation that gathers, analyzes, and synthesizes information. Demonstrates MCP task-based operations with progress through multiple stages. If 'ambiguous' is true and client supports elicitation, sends an elicitation request for clarification.",
+      "input_schema_sha256": "bee51976d15b405cc4b4442e5e2b473a82431ae42a52906862c0cdb636bc1fba"
+    },
+    {
+      "name": "toggle-simulated-logging",
+      "description": "Toggles simulated, random-leveled logging on or off.",
+      "input_schema_sha256": "e70a91efa7d51df66e3870ea687b68ea0f49b50832bdb901db7c1cbaa881a7cf"
+    },
+    {
+      "name": "toggle-subscriber-updates",
+      "description": "Toggles simulated resource subscription updates on or off.",
+      "input_schema_sha256": "e70a91efa7d51df66e3870ea687b68ea0f49b50832bdb901db7c1cbaa881a7cf"
+    },
+    {
+      "name": "trigger-long-running-operation",
+      "description": "Demonstrates a long running operation with progress updates.",
+      "input_schema_sha256": "6bc9f572dd450eefcf93b82b0c7ab660e0901cdfd7d52d64e552aa96316c1e1f"
+    }
+  ],
+  "resources": [
+    {
+      "name": "architecture.md",
+      "uri": "demo://resource/static/document/architecture.md"
+    },
+    {
+      "name": "extension.md",
+      "uri": "demo://resource/static/document/extension.md"
+    },
+    {
+      "name": "features.md",
+      "uri": "demo://resource/static/document/features.md"
+    },
+    {
+      "name": "how-it-works.md",
+      "uri": "demo://resource/static/document/how-it-works.md"
+    },
+    {
+      "name": "instructions.md",
+      "uri": "demo://resource/static/document/instructions.md"
+    },
+    {
+      "name": "startup.md",
+      "uri": "demo://resource/static/document/startup.md"
+    },
+    {
+      "name": "structure.md",
+      "uri": "demo://resource/static/document/structure.md"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "simple-prompt",
+      "description": "A prompt with no arguments"
+    },
+    {
+      "name": "args-prompt",
+      "description": "A prompt with two arguments, one required and one optional"
+    },
+    {
+      "name": "completable-prompt",
+      "description": "First argument choice narrows values for second argument."
+    },
+    {
+      "name": "resource-prompt",
+      "description": "A prompt that includes an embedded resource reference"
+    }
+  ],
+  "tests": [
+    {
+      "tool": "echo",
+      "input": {
+        "message": "mcpprobe002-c573b79c425d"
+      },
+      "expected": "returned text contains \"mcpprobe002-c573b79c425d\"",
+      "actual": "Echo: mcpprobe002-c573b79c425d",
+      "result": "PASS"
+    },
+    {
+      "tool": "get-sum",
+      "input": {
+        "a": 2,
+        "b": 3
+      },
+      "expected": "result equals 5",
+      "actual": "The sum of 2 and 3 is 5.",
+      "result": "PASS"
+    },
+    {
+      "tool": "add",
+      "input": {
+        "a": 2,
+        "b": 3
+      },
+      "expected": "call fails with error -32602 (tool not found) and `add` is absent from tools/list",
+      "actual": "MCP error -32602: Tool add not found | present_in_tools_list=false",
+      "result": "PASS"
+    }
+  ],
+  "deviations": [
+    "Tool `add` does not exist in 2026.7.4: it is absent from tools/list and tools/call returns an isError result carrying \"MCP error -32602: Tool add not found\". Addition is provided by `get-sum` with the same {a, b} input schema. This reproduces the MCP-PROBE-001 finding and is the reason Test C exists."
+  ],
+  "unexpected": [],
+  "verdict": "WARN",
+  "limitation": "This specific version (@modelcontextprotocol/server-everything@2026.7.4) exhibited the recorded behavior under the documented tests. This is not a general security certification.",
+  "evidence_hash": "0x6eedcd85420c79135d7770680afb00c19619e253547a85fc04ce6bb5a64be5f4"
+}
