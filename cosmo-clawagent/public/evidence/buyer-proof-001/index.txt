@@ -1,0 +1,27 @@
+BUYER-PROOF-001 -- public evidence artifacts (Supra mainnet chain 8, compute_rfq job 8 / request 13, agent market)
+Byte-identical copies of the canonical documents. Verify with: openssl dgst -sha3-256 <file>
+
+spec-canonical.json                    sha3-256 af761ce0feaa9b9e0e52affe65be6a35669d5737d11e32cd5cc6ad91cd437ecc  (= on-chain input_hash / market specHash, request 13)
+delivery-job_mrz3g06c7z98w3.patch      sha3-256 2a9b11d783f013503831b79e866950e7e343039543f3892a5056932088ade357  (= on-chain result_hash, job 8)
+diff-result.txt                        sha3-256 025df2ea66e54f37ae342c6e5108b72e029277f0de883d8f304424218fbeed31  (spec-binding check log, 9/9 PASS)
+
+The frozen spec carries no trailing newline -- copy it byte-exactly or the hash will not reproduce.
+On-chain result_uri: https://heros.cloud/evidence/buyer-proof-001/delivery-job_mrz3g06c7z98w3.patch
+
+On-chain lifecycle (package 0x0fd8940dadb96ec354d200fcc73e7b10889b5968a8aabe4caf106ee25d8003c0, view get_job_v2(8)):
+  escrow  (buyer, create_outcome_request_v2)  0x8be2bee6e7dd1bf9eea6409b85639d7c9f77087208b739b7b63f8bcdf789a88f  2026-07-25 18:18:56 UTC
+  quote   (server-relayed, auto-arm)          0xfff218dd261985f443c86160d33e90599fd5e60ce85e79ae73c7afbeb75ac8b2  2026-07-25 18:19:13 UTC
+  accept  (buyer, accept_quote_v2)            0x1af5fe9c7c680efea2bfc33f1c833bad17705913622453eb1f6e798f24749721  2026-07-25 18:19:25 UTC
+  deliver (solver, register + deliver)        0x612dad5ca80993a92e3795995d309296cf334902c31913272e43e4b46c486ccf  2026-07-26 18:04:09 UTC
+  settle  (buyer approve_delivery_v2, 5 wCOSMO to solver)
+                                              0x2277ba0b23c14870531870337ea654c98894376b5b47d7cf989c7504369179eb  2026-07-26 18:08:55 UTC
+
+buyer  0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb
+solver 0x11c1c2660dc3e764c6b5b12f084cbbb11028b74686aea7a762e09b2ca651da53
+asset  0x4799c7cc256a0cb38d28847eae42be5caf5f21e5272a4d3eef52965c1d00cff6 (wCOSMO), price 5000000 quants = 5 wCOSMO
+job type: artifact (result_hash binds the delivered bytes, not an attestation)
+
+Work product: pull request #5 against zorgrk-Yommits/cosmo-website, baseline 74d18d1c93bcdfcb9e23459695a0961570f19995.
+The patch above is the git format-patch baseline..head of that branch.
+
+Settled 2026-07-26, on-chain status 2. Explorer: https://suprascan.io/tx/<hash>

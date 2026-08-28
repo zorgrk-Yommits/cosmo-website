@@ -1,0 +1,11 @@
+PASS  specHash == sha3-256(spec bytes), independently recomputed — 0xaf761ce0feaa9b9e0e52affe65be6a35669d5737d11e32cd5cc6ad91cd437ecc vs job.specHash 0xaf761ce0feaa9b9e0e52affe65be6a35669d5737d11e32cd5cc6ad91cd437ecc
+PASS  title byte-identical
+PASS  description byte-identical
+PASS  acceptanceCriteria byte-identical
+PASS  budgetAmount identical — 5
+PASS  budgetAsset identical
+PASS  description embeds draft sha256 (hash binding) — draft sha256 bfc7fce86708d6c02b4330198bef6a5a9108d916b5743ac3808ca7dbc82b65aa
+PASS  deadlineTs within (approvedAt, approvedAt+7d] — deadline 1785338834, approvedAt 1784907054, delta 5.00d
+PASS  no contactEmail in frozen spec
+
+ALL 9 CHECKS PASS
