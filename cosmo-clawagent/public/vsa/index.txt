@@ -1,0 +1,134 @@
+# VenueSettlementAttestation.v1 - Requirements (venue-neutral)
+
+Status: PUBLISHED 2026-09-01 (decision E5). Normative source: VAL Compute Economic
+Profile 001, SPEC v1.0 (frozen, tag `cep-001-spec-v1.0-frozen`), section 6.2. This
+document restates that section for venue operators; if the two ever diverge, the
+frozen SPEC governs. Published copy: https://heros.cloud/vsa/
+
+## 1. The problem this solves
+
+Compute marketplaces today can report that a settlement happened, but a provider
+(or anyone auditing a provider) cannot prove what was settled, for which request,
+at what fee, or whether the payer was independent. Money is observable;
+provenance is not. On every venue we examined, the fields that would connect a
+payment to its origin simply do not exist.
+
+A VenueSettlementAttestation (VSA) is the smallest signed statement a venue can
+issue to close part of that gap. It is deliberately modest: it raises venue
+claims from "unverifiable dashboard data" to "attested and falsifiable" - never
+to "proven".
+
+## 2. What a VSA is - and is not
+
+- A VSA is a per-settlement statement signed by the venue
+  (`trust_domain = venue_third_party`).
+- Its evidence rank is at most `attested_falsifiable`, and only **per claim**:
+  each field group must declare its own falsifier (the concrete way the claim
+  could be refuted). Fields without a declared falsifier remain unverified
+  venue data. An attestation without any `falsifiers[]` is not evidence at all.
+- A VSA never proves buyer independence. `payer_class = "external"` is a venue
+  statement about its own bookkeeping, not an independence proof, and never
+  changes a counterparty-relation finding.
+- A VSA never proves the origin of the payer's funds. The venue sees inflows to
+  a buyer balance, not their owner.
+- Every VSA speaks **as of** its timestamp. A later refund or dispute is a new
+  fact that produces a new record; it does not retroactively falsify the earlier
+  attestation. Falsification requires a contradiction for the same as-of point,
+  or a genuine venue equivocation (two attestations for the same `request_id`
+  and as-of with different values).
+- A consumer must pin the venue's signing key in advance. An attestation under
+  an unpinned or rotated-without-notice key is treated as absent.
+
+## 3. Schema `cosmo.val.compute.venue-settlement-attestation.v1`
+
+```json
+{
+  "schema": "cosmo.val.compute.venue-settlement-attestation.v1",
+  "venue_id": "<venue domain or registered rail id>",
+  "request_id": "<venue job id>",
+  "request_hash": "<sha3-256 of canonical request bytes as seen by the venue>",
+  "quote_id": "<quote id, or null, declared>",
+  "payer_reference": { "kind": "address | account_id | payer_class",
+                       "value": "<...>",
+                       "payer_class": "external | venue_credit | affiliated_by_venue | unknown" },
+  "provider_id": "<...>",
+  "model_id": "<as dispatched>",
+  "measured_usage": { "input_tokens": "<...>", "output_tokens": "<...>",
+                      "cache_read": "<...>", "cache_write": "<...>",
+                      "tokenizer": "<id+version>" },
+  "gross_billed":    { "unit": "USDC-micro", "amount": "<...>" },
+  "venue_fee":       { "unit": "USDC-micro", "amount": "<...>" },
+  "provider_credit": { "unit": "USDC-micro", "amount": "<...>" },
+  "settlement_status": "BILLED | SETTLED | REFUNDED | DISPUTED",
+  "settlement_reference": { "kind": "payout_tx | ledger_row", "value": "<...>" },
+  "route_type": "marketplace | key_relay | centralized_fallback",
+  "timestamp": { "kind": "venue_clock | chain_anchor", "value": "<...>" },
+  "falsifiers": [
+    { "claims": ["provider_credit", "settlement_reference"],
+      "falsifier": "payout tx on <chain> contradicts amount or reference" },
+    { "claims": ["measured_usage", "gross_billed"],
+      "falsifier": "venue equivocation: second VSA or ledger row for same request_id with different values" },
+    { "claims": ["settlement_status", "timestamp"],
+      "falsifier": "contradiction for the SAME as_of: chain anchor or payout tx dated at or before the attested timestamp contradicts the status, or venue equivocation (second attestation for same request_id and as_of with different values); a later refund or dispute is a new fact, not a falsification" }
+  ],
+  "venue_signature": { "alg": "ed25519", "pubkey_pin": "<...>", "sig": "<...>" }
+}
+```
+
+Notes on individual fields:
+
+- `request_hash`: the venue hashes the canonical request bytes it dispatched.
+  This is what lets a provider (who holds the same request) bind the settlement
+  to a concrete job without the venue revealing request content.
+- `quote_id`: venues without a quote step set `null` explicitly - declared
+  absence, not omission.
+- `payer_reference`: an opaque `payer_class` is acceptable. No clear names, no
+  KYC data, no account internals are requested - only the venue's own
+  classification of the payment source, as a falsifiable statement.
+- `venue_fee`: if the venue does not track its fee as a separate row, it cannot
+  attest it; the field is then omitted and stays unverifiable. Attesting a
+  number that has no ledger row behind it would be falsified by the ledger
+  itself.
+- `measured_usage.tokenizer`: the billing basis must be named, because a
+  provider's own count is typically advisory; divergence between the two counts
+  is a first-class signal, not an error to hide.
+- `falsifiers[]` is mandatory and per claim group. A payout transaction can
+  falsify `provider_credit`, but proves nothing about tokenizer-based
+  `measured_usage` - that is why one global falsifier is not acceptable.
+
+## 4. Privacy
+
+A VSA carries no prompts, no completions, no clear names, no contact data, and
+no venue internals beyond the settlement itself. Everything content-shaped
+travels as a hash.
+
+## 5. Conformance checklist for a venue
+
+1. Publish a stable ed25519 signing key (rotations announced; old keys remain
+   listed for verification of past attestations).
+2. Emit at most one VSA per (`request_id`, as-of). A second, differing VSA for
+   the same pair is an equivocation and falsifies both.
+3. Serialize canonically (sorted keys, UTF-8, no insignificant whitespace) and
+   sign the canonical bytes; consumers verify hash and signature offline.
+4. Declare a falsifier for every claim group you attest. Attest only fields
+   that have a ledger row or chain anchor behind them.
+5. Set `quote_id: null` and omit untracked fields rather than inventing values.
+6. Do not claim independence for a payer. `payer_class` is your bookkeeping
+   view, nothing more.
+
+## 6. What implementing this buys a venue
+
+Providers and third parties can treat the venue's settlement data as
+falsifiable evidence instead of hearsay: billed amounts, provider credits,
+settlement timestamps and refund status become citable (at the
+attested-falsifiable rank) in any downstream accounting or verification system,
+including offline verification. Venues that cannot or do not wish to implement
+it lose nothing today - their data simply remains unverifiable, and honest
+downstream systems will say so.
+
+## 7. Neutrality
+
+This interface is venue-agnostic. Implementing it requires no account,
+no bond, no token, and no integration with any COSMO system. The schema id is
+namespaced only to identify its origin. Feedback and implementation reports are
+welcome via the contact listed at https://heros.cloud/.
