@@ -180,7 +180,7 @@ export default function Intelligence() {
 
       {/* Order */}
       <section id="order" className="mt-20 scroll-mt-24">
-        <SectionHeader kicker="order" title="Single brief or monthly edition" />
+        <SectionHeader kicker="order" title={hasMonthlyCheckout ? "Single brief or monthly edition" : "Single issue"} />
         <Surface tone="raised" className="mt-8 p-6 md:p-8">
           <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div className="max-w-xl">
@@ -215,35 +215,32 @@ export default function Intelligence() {
               </CtaLink>
             </div>
           </div>
-          <div className="mt-8 border-t border-line-subtle pt-8">
-            <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-              <div className="max-w-xl">
-                <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-2">
-                  Monthly edition
+          {/* Monthly edition: rendered only once monthly_payment_url is set (one-time only for now, Rene 2026-09-04) */}
+          {hasMonthlyCheckout && (
+            <div className="mt-8 border-t border-line-subtle pt-8">
+              <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+                <div className="max-w-xl">
+                  <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-2">
+                    Monthly edition
+                  </div>
+                  <div className="mt-2 text-4xl font-bold text-ink-0">
+                    ${offer.monthly_price_usd}
+                    <span className="text-lg font-normal text-ink-2">/month</span>
+                  </div>
+                  <p className="mt-3 text-sm leading-relaxed text-ink-1">
+                    The same brief every month for your category, same method, same sources, delivered as{' '}
+                    {offer.delivery}. Cancel any time. Same {offer.refund_days}-day money-back on the first
+                    issue.
+                  </p>
                 </div>
-                <div className="mt-2 text-4xl font-bold text-ink-0">
-                  ${offer.monthly_price_usd}
-                  <span className="text-lg font-normal text-ink-2">/month</span>
-                </div>
-                <p className="mt-3 text-sm leading-relaxed text-ink-1">
-                  The same brief every month for your category, same method, same sources, delivered as{' '}
-                  {offer.delivery}. Cancel any time. Same {offer.refund_days}-day money-back on the first
-                  issue.
-                </p>
-              </div>
-              <div className="flex flex-col gap-3 md:min-w-[260px]">
-                {hasMonthlyCheckout ? (
+                <div className="flex flex-col gap-3 md:min-w-[260px]">
                   <a href={offer.monthly_payment_url} className={ctaClasses('secondary', 'lg')} rel="noopener">
                     Subscribe — ${offer.monthly_price_usd}/month
                   </a>
-                ) : (
-                  <span className={ctaClasses('secondary', 'lg')} aria-disabled="true">
-                    Monthly checkout opens shortly
-                  </span>
-                )}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </Surface>
       </section>
 
