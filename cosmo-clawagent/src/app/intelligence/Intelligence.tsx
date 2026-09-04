@@ -69,6 +69,7 @@ const FOR = [
 
 export default function Intelligence() {
   const hasCheckout = offer.payment_url.length > 0;
+  const hasMonthlyCheckout = offer.monthly_payment_url.length > 0;
 
   return (
     <div className="mx-auto max-w-5xl px-5 pb-24 pt-14 md:px-6 md:pt-20">
@@ -179,7 +180,7 @@ export default function Intelligence() {
 
       {/* Order */}
       <section id="order" className="mt-20 scroll-mt-24">
-        <SectionHeader kicker="order" title="Single issue" />
+        <SectionHeader kicker="order" title="Single brief or monthly edition" />
         <Surface tone="raised" className="mt-8 p-6 md:p-8">
           <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div className="max-w-xl">
@@ -214,19 +215,34 @@ export default function Intelligence() {
               </CtaLink>
             </div>
           </div>
-          <div className="mt-8 border-t border-line-subtle pt-6">
-            <p className="text-sm text-ink-1">
-              <span className="font-semibold text-ink-0">Interested in a monthly edition?</span> There is no
-              subscription yet. At checkout you can tell us whether a monthly issue for your category would
-              be worth{' '}
-              {offer.monthly_options_usd.map((p, i) => (
-                <span key={p}>
-                  {i > 0 ? ' or ' : ''}
-                  <span className="font-mono text-ink-0">${p}/month</span>
-                </span>
-              ))}{' '}
-              to your team. That answer decides whether a recurring edition gets built.
-            </p>
+          <div className="mt-8 border-t border-line-subtle pt-8">
+            <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+              <div className="max-w-xl">
+                <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-2">
+                  Monthly edition
+                </div>
+                <div className="mt-2 text-4xl font-bold text-ink-0">
+                  ${offer.monthly_price_usd}
+                  <span className="text-lg font-normal text-ink-2">/month</span>
+                </div>
+                <p className="mt-3 text-sm leading-relaxed text-ink-1">
+                  The same brief every month for your category, same method, same sources, delivered as{' '}
+                  {offer.delivery}. Cancel any time. Same {offer.refund_days}-day money-back on the first
+                  issue.
+                </p>
+              </div>
+              <div className="flex flex-col gap-3 md:min-w-[260px]">
+                {hasMonthlyCheckout ? (
+                  <a href={offer.monthly_payment_url} className={ctaClasses('secondary', 'lg')} rel="noopener">
+                    Subscribe — ${offer.monthly_price_usd}/month
+                  </a>
+                ) : (
+                  <span className={ctaClasses('secondary', 'lg')} aria-disabled="true">
+                    Monthly checkout opens shortly
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
         </Surface>
       </section>
