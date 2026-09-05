@@ -1,0 +1,31 @@
+{
+  "schema": "cosmo.liquidity-mandate.nft-auth-proof.v1",
+  "liquidity_mandate_id": "vlm-001:25a991ae424a5de974135e0f7e6f7034384418841bb22164bbb9aa1c47669ec1",
+  "actor": "rene",
+  "recorded_at_unix_ms": 1787407935867,
+  "policy": {
+    "policy_id": "execution-case-liquidity-mandate-collect-v1-micro-live",
+    "policy_hash": "0x095910fbcdcdf8f4ff51a1a65afb9e11682be4cae9982119bc89aeeafafe441c",
+    "kind": "evm.liquidity_mandate.collect.v1"
+  },
+  "block": {
+    "number": "25811203",
+    "hash": "0xefe627abbafa5b4ee2a73b0efe8400d7d82e9f2eaabb3bfbbe504d0e1495bcc5"
+  },
+  "token_id": "59",
+  "token_exists": true,
+  "owner_of": "0x8f38b8451d15fe090A3f3503A0DaFd24432167dF",
+  "get_approved": "0x0000000000000000000000000000000000000000",
+  "approved_for_all_execution": false,
+  "approval_for_all_active_count": "0",
+  "approval_scan": {
+    "from_block": "25809096",
+    "to_block": "25811203",
+    "chunk_size": "10000",
+    "logs": []
+  },
+  "clean": true,
+  "reasons": [],
+  "note": "Post-OPEN NFT auth proof (Rene GO 2026-08-22, proof-surface prep)",
+  "rpc_write_count": 0
+}

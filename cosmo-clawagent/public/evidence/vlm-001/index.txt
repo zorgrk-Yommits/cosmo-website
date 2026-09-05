@@ -1,0 +1,53 @@
+VLM-001 -- Verifiable Liquidity Mandate 001, public evidence bundle (Ethereum mainnet, 2026-08-22 .. 2026-09-05)
+
+lm_id (sha3-256 of the frozen mandate text mandate-001-ACTIVATED.md):
+  vlm-001:25a991ae424a5de974135e0f7e6f7034384418841bb22164bbb9aa1c47669ec1
+execution wallet 0xC4F8b3d7a9737e8e85825F306bf0A8C6AEACb00B (4 lifetime transactions, seed retired 2026-09-05)
+sponsor wallet   0x8f38b8451d15fe090A3f3503A0DaFd24432167dF (owner of LP-NFT #59 throughout)
+proof page       https://heros.cloud/mandates/vlm-001/
+verifier         https://heros.cloud/verifier/  (cosmo-verify.mjs 1.3.2, cosmo-trust-v4, one file, no npm, no network)
+
+Byte-identical copies of the canonical case documents and records. Check integrity with: openssl dgst -sha3-256 <file>
+
+LAYOUT
+  open/         case_mt4c82oge012a2  evm.liquidity_mandate.open.v1            tx 0x732e52f9..c57a  block 25810671  (nonce 0 approve + nonce 1 mint)
+  reset/        case_mt4d5ua218f203  evm.liquidity_mandate.approval_reset.v1  tx 0xdf67bc78..b33b  block 25810738  (nonce 2)
+  close/        case_mtcn68amba4b26  evm.liquidity_mandate.close.v1           tx 0x770980c9..549b  block 25852377  (nonce 3)
+                each: MANIFEST.json, journal.jsonl, receipt.json, evidence/ (case layout as verified)
+  termination/  termination-proof-L4-derived.json    terminal block 25912857, TERMINATED, class derived, sha3-256 445e7dfb67cd7de1fb7bb78b03c0be53cdee97639a8bace3fc7d429a566bccb9
+                termination-proof-L5-attested.json   terminal block 25912914, TERMINATED, class attested_falsifiable, sha3-256 a42dd47633164afdbccfa4872e31431754e25e6e7f7f62fc213e92bf9101656a
+                nft-auth-proof-*.json (blocks 25811203, 25852403, 25912835: owner sponsor, approvals none, ApprovalForAll scan from 25809096 = 0 logs)
+                sweep-proof-1787903855660.json (returns not_proven BY SHAPE for the multicall close -- kept as the honest negative)
+  verdicts/     15 persisted verifier outputs + README.md with a sha3-256 per file
+  mandate-001-ACTIVATED.md  the frozen mandate text (its sha3-256 IS the lm_id above; do not reformat)
+
+RE-RUN THE VERDICTS
+  node cosmo-verify.mjs open      -> ACCEPT 10/10, exit 0
+  node cosmo-verify.mjs reset     -> ACCEPT 10/10, exit 0
+  node cosmo-verify.mjs close     -> ACCEPT 10/10, exit 0
+  node cosmo-verify.mjs --termination termination/termination-proof-L4-derived.json   -> ACCEPT, TERMINATED, derived
+  node cosmo-verify.mjs --termination termination/termination-proof-L5-attested.json  -> ACCEPT, TERMINATED, attested_falsifiable
+  (verified against these exact files with the served verifier before publication)
+
+WHAT THIS PROVES (scope, honest)
+  One capital mandate with frozen limits (caps, action list, fee ceiling, expiry) was executed by a machine
+  wallet: position opened and minted directly to the sponsor, approvals reset to zero, position closed with
+  proceeds paid directly to the sponsor. After the expiry a read-only termination proof at a pinned terminal
+  block on two independent RPCs derived five predicates (exposure zero, approvals zero, authority ended,
+  ownership with the sponsor, every nonce 0..3 mapped to an archived receipt). The seed was then shredded
+  and the ONE unprovable claim -- "no copy remains" -- is recorded as an attestation with a public
+  falsification rule (any nonce above 4 on the execution wallet) and a standing 6-hour watch.
+  It is an offline verification of internal consistency against the published trust profile, not a
+  third-party attestation. Seed destruction and the absence of pre-signed transactions are attested /
+  stated, not proven -- the records say so verbatim (unverifiable_assumptions).
+
+OPERATOR IDENTITY
+  The ARM ceremonies (arm-consumed.json, journal 'armed' events), the authority proofs (actor) and the
+  retirement attestation (attestor) carry the operator's first name. Published by the operator's consent;
+  the separation of sponsor and execution authority is cryptographic (distinct keys, pinned policies),
+  not organizational.
+
+NOT INCLUDED
+  The engine ledger (internal state, not evidence), the ARM files themselves (outside the manifests),
+  and the eight failed-before-signing attempts of 2026-08-22..27 (fail-closed demonstrations, described
+  in the proof page; archived, not published).

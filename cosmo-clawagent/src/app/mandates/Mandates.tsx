@@ -270,6 +270,41 @@ export default function Mandates() {
               </Reveal>
             ))}
           </div>
+          <Reveal delay={0.12}>
+            <div className="mt-6 rounded-xl border border-phase-active/30 bg-phase-active/[0.06] p-5">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <span className="font-mono text-xs uppercase tracking-[0.18em] text-ink-2">
+                  VLM-001 · Verifiable Liquidity Mandate · Ethereum mainnet
+                </span>
+                <Chip tone="settled" size="sm">
+                  TERMINATED · VERIFIED ×2
+                </Chip>
+              </div>
+              <p className="mt-3 text-sm leading-relaxed text-ink-1">
+                A full mandate lifecycle: position opened and minted directly to the sponsor, approvals
+                reset, position closed with proceeds paid straight to the sponsor — four lifetime
+                transactions, each verified ACCEPT 10/10 by the internal and the public verifier. After the
+                mandate&apos;s expiry, a termination proof derived five predicates on-chain and the signing
+                seed was retired under a falsifiable, watched attestation.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-4">
+                <a
+                  href="/mandates/vlm-001/"
+                  className="inline-flex items-center gap-2 font-mono text-xs text-phase-active transition-colors hover:text-ink-0"
+                >
+                  Read the proof page
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </a>
+                <a
+                  href="/evidence/vlm-001/"
+                  className="inline-flex items-center gap-2 font-mono text-xs text-phase-active transition-colors hover:text-ink-0"
+                >
+                  Download the evidence bundle
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </a>
+              </div>
+            </div>
+          </Reveal>
           <Reveal delay={0.14}>
             <div className="mt-6 rounded-xl border border-line-subtle bg-white/[0.02] p-5">
               <p className="text-sm leading-relaxed text-ink-2">

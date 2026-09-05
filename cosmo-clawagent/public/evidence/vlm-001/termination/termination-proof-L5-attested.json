@@ -1,0 +1,287 @@
+{
+  "schema": "cosmo.liquidity-mandate.termination.v1",
+  "record_version": "1.0.0",
+  "liquidity_mandate_id": "vlm-001:25a991ae424a5de974135e0f7e6f7034384418841bb22164bbb9aa1c47669ec1",
+  "actor": "rene",
+  "recorded_at_unix_ms": 1788632787140,
+  "policy": {
+    "policy_id": "execution-case-liquidity-mandate-close-v1-micro-live",
+    "policy_hash": "0x0fe35f4159839d259a5954e0c6c932cc1d806b7e978c91a7d530023e7bfd3a13",
+    "kind": "evm.liquidity_mandate.close.v1"
+  },
+  "principals": {
+    "execution_wallet": "0xC4F8b3d7a9737e8e85825F306bf0A8C6AEACb00B",
+    "sponsor": "0x8f38b8451d15fe090A3f3503A0DaFd24432167dF"
+  },
+  "resources": {
+    "weth": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    "supra": "0xDC7404100A092c898E93708EF73F3322A7acc213",
+    "position_manager": "0x212A1aa26fBA5E73D217Bb2c4829de29cB99F036",
+    "token_id": "59"
+  },
+  "mandate": {
+    "expiry_unix_seconds": "1788606671",
+    "last_mandate_tx_block": "25852377"
+  },
+  "terminal_block": {
+    "number": "25912914",
+    "hash": "0x2c7303bb2499b51468aa8c2bba59e0636c6de2c17b0584b7d2bbcd98a7c41f39",
+    "timestamp": "1788632783",
+    "canonical_recheck": {
+      "number": "25912914",
+      "hash": "0x2c7303bb2499b51468aa8c2bba59e0636c6de2c17b0584b7d2bbcd98a7c41f39"
+    }
+  },
+  "boundaries": {
+    "start": {
+      "block": {
+        "number": "25809698",
+        "hash": "0xcc096378afa702a87a96da2372d811548f57c9fe04aaf865096777b384d33bc1"
+      },
+      "nonce": "0",
+      "code": "0x",
+      "balance_wei": "0",
+      "sources": [
+        "rpc:mevblocker",
+        "rpc:tenderly"
+      ]
+    },
+    "terminal": {
+      "nonce": "4",
+      "block": {
+        "number": "25912914",
+        "hash": "0x2c7303bb2499b51468aa8c2bba59e0636c6de2c17b0584b7d2bbcd98a7c41f39"
+      },
+      "sources": [
+        "rpc:mevblocker",
+        "rpc:tenderly"
+      ]
+    }
+  },
+  "slots": [
+    {
+      "slot_id": "open",
+      "status": "executed",
+      "case_id": "case_mt4c82oge012a2",
+      "tx_hash": "0x732e52f9e549c46685e85a9cca5c3203c3b7403fb49c1d2df5051c366c23c57a",
+      "renounce_act": null
+    },
+    {
+      "slot_id": "reset_after_open",
+      "status": "executed",
+      "case_id": "case_mt4d5ua218f203",
+      "tx_hash": "0xdf67bc7842ba02da1729e25b6f9ab17e355e5adc12ca2c1b7a72248055c9b33b",
+      "renounce_act": null
+    },
+    {
+      "slot_id": "collect_1",
+      "status": "open",
+      "case_id": null,
+      "tx_hash": null,
+      "renounce_act": null
+    },
+    {
+      "slot_id": "collect_2",
+      "status": "unprovisioned",
+      "case_id": null,
+      "tx_hash": null,
+      "renounce_act": null
+    },
+    {
+      "slot_id": "close",
+      "status": "executed",
+      "case_id": "case_mtcn68amba4b26",
+      "tx_hash": "0x770980c9eb4c61d900ab69b2b1f231f9a064d2df71a82f768289899a804d549b",
+      "renounce_act": null
+    }
+  ],
+  "nonce_map": [
+    {
+      "nonce": "0",
+      "tx_hash": "0x34b171ee28c2367c5be4c878013c98150031769aba20461fda776fd108e9aad3",
+      "case_id": "case_mt4c82oge012a2",
+      "slot_id": "open",
+      "decoded_sender": "0xC4F8b3d7a9737e8e85825F306bf0A8C6AEACb00B",
+      "evidence_source": "case_mt4c82oge012a2/evidence/evm-lp-open-tx1.json"
+    },
+    {
+      "nonce": "1",
+      "tx_hash": "0x732e52f9e549c46685e85a9cca5c3203c3b7403fb49c1d2df5051c366c23c57a",
+      "case_id": "case_mt4c82oge012a2",
+      "slot_id": "open",
+      "decoded_sender": "0xC4F8b3d7a9737e8e85825F306bf0A8C6AEACb00B",
+      "evidence_source": "case_mt4c82oge012a2/evidence/artifact.hex"
+    },
+    {
+      "nonce": "2",
+      "tx_hash": "0xdf67bc7842ba02da1729e25b6f9ab17e355e5adc12ca2c1b7a72248055c9b33b",
+      "case_id": "case_mt4d5ua218f203",
+      "slot_id": "reset_after_open",
+      "decoded_sender": "0xC4F8b3d7a9737e8e85825F306bf0A8C6AEACb00B",
+      "evidence_source": "case_mt4d5ua218f203/evidence/artifact.hex"
+    },
+    {
+      "nonce": "3",
+      "tx_hash": "0x770980c9eb4c61d900ab69b2b1f231f9a064d2df71a82f768289899a804d549b",
+      "case_id": "case_mtcn68amba4b26",
+      "slot_id": "close",
+      "decoded_sender": "0xC4F8b3d7a9737e8e85825F306bf0A8C6AEACb00B",
+      "evidence_source": "case_mtcn68amba4b26/evidence/artifact.hex"
+    }
+  ],
+  "terminal_state": {
+    "block": {
+      "number": "25912914",
+      "hash": "0x2c7303bb2499b51468aa8c2bba59e0636c6de2c17b0584b7d2bbcd98a7c41f39",
+      "timestamp": "1788632783",
+      "canonical_recheck": {
+        "number": "25912914",
+        "hash": "0x2c7303bb2499b51468aa8c2bba59e0636c6de2c17b0584b7d2bbcd98a7c41f39"
+      }
+    },
+    "execution_wallet": "0xC4F8b3d7a9737e8e85825F306bf0A8C6AEACb00B",
+    "sponsor": "0x8f38b8451d15fe090A3f3503A0DaFd24432167dF",
+    "token_id": "59",
+    "token_exists": true,
+    "owner_of": "0x8f38b8451d15fe090A3f3503A0DaFd24432167dF",
+    "get_approved": "0x0000000000000000000000000000000000000000",
+    "approved_for_all_execution": false,
+    "approval_for_all_active_count": "0",
+    "execution_weth_balance": "0",
+    "execution_supra_balance": "0",
+    "execution_eth_balance": "4914348193654428",
+    "supra_allowance_to_nfpm": "0",
+    "weth_allowance_to_nfpm": "0"
+  },
+  "predicates": [
+    {
+      "predicate": "P1_capital_exposure_zero",
+      "verdict": "PROVEN",
+      "evidence_class": "externally_verifiable",
+      "reasons": []
+    },
+    {
+      "predicate": "P2_approvals_zero",
+      "verdict": "PROVEN",
+      "evidence_class": "externally_verifiable",
+      "reasons": []
+    },
+    {
+      "predicate": "P3_authority_ended",
+      "verdict": "PROVEN",
+      "evidence_class": "derived",
+      "reasons": []
+    },
+    {
+      "predicate": "P4_ownership_user",
+      "verdict": "PROVEN",
+      "evidence_class": "externally_verifiable",
+      "reasons": []
+    },
+    {
+      "predicate": "P5_retrospective_completeness",
+      "verdict": "PROVEN",
+      "evidence_class": "externally_verifiable",
+      "reasons": []
+    }
+  ],
+  "residue": {
+    "eth_wei": "4914348193654428",
+    "scope_note": "capital exposure = sponsor capital in mandate assets; the <= 0.02 ETH gas reserve was COSMO-financed and is reported, not swept."
+  },
+  "attestations": [
+    {
+      "claim": "The VLM-001 execution seed was shredded; no copy of it remains.",
+      "evidence_class": "attested_falsifiable",
+      "attestor": "rene",
+      "confirm_phrase": "RETIRE VLM-001 SEED",
+      "baseline": {
+        "address": "0xC4F8b3d7a9737e8e85825F306bf0A8C6AEACb00B",
+        "terminal_nonce": "4"
+      },
+      "watch": {
+        "source": "lpWatch nonce tick (6h)",
+        "falsify_if": "the execution wallet shows any nonce above the attested terminal nonce",
+        "horizon": "perpetual",
+        "evidence_requirements": [
+          "block pin (number and hash) for the observation",
+          "canonical recheck on two independent sources"
+        ]
+      },
+      "reaction_on_falsification": "public contested annotation on bundle and proof page (S8: Terminated -> Terminated, contested); no silent continued ACCEPT, no deletion of the historical record",
+      "status_at_issuance": "NOT_FALSIFIED"
+    }
+  ],
+  "unverifiable_assumptions": [
+    "Seed deletion: the single copy on the VPS (exec-keygen O_EXCL, never logged, never backed up) is shredded; disk remanence and RAM copies remain unprovable. Hence attestation plus falsifiability, not proof.",
+    "No pre-signed transactions were created: a process statement only (the engine signs solely on the ceremony path and the journals show no further sign events); unprovable against a malicious operator. Named, not claimed."
+  ],
+  "weakest_evidence_class": "attested_falsifiable",
+  "verdict": "TERMINATED",
+  "reasons": [],
+  "ledger_cross_reference": {
+    "open": {
+      "case_id": "case_mt4c82oge012a2",
+      "state": "executed",
+      "at": 1787401540575,
+      "tx_hash": "0x732e52f9e549c46685e85a9cca5c3203c3b7403fb49c1d2df5051c366c23c57a",
+      "token_id": "59",
+      "note": null
+    },
+    "collect_1": null,
+    "collect_2": null,
+    "close": {
+      "case_id": "case_mtcn68amba4b26",
+      "state": "executed",
+      "at": 1787903748206,
+      "tx_hash": "0x770980c9eb4c61d900ab69b2b1f231f9a064d2df71a82f768289899a804d549b",
+      "token_id": null,
+      "note": null
+    },
+    "reset_after_open": {
+      "case_id": "case_mt4d5ua218f203",
+      "state": "executed",
+      "at": 1787402351104,
+      "tx_hash": "0xdf67bc7842ba02da1729e25b6f9ab17e355e5adc12ca2c1b7a72248055c9b33b",
+      "token_id": null,
+      "note": null
+    },
+    "open_unresolved": false,
+    "open_partial": false,
+    "nft_auth_clean": true,
+    "human_acts": [
+      {
+        "at": 1787407935867,
+        "actor": "rene",
+        "action": "nft_auth_proof_clean",
+        "note": "clean proof: /root/cosmo-contracts-v2/state/execution-cases/records/nft-auth-proof-vlm-001_25a991ae424a5de974135e0f7e6f7034384418841bb22164bbb9aa1c47669ec1-1787407935867.json"
+      },
+      {
+        "at": 1787852462637,
+        "actor": "rene",
+        "action": "manual_release_reserved_close",
+        "note": "GO Rene 2026-08-27: released stale close reservation held by case_mtbss7zn817be4 (EXECUTION_FAILED at preflight, RPC HTTP 400; provably nothing signed: no PREPARED-MANIFEST, no artifact.hex, execution_ref null, exec-wallet nonce 3 before/after/now). No release verb exists for a reserved close slot (engine gap, VAL-I2 class; final-report finding). Released slot was: {\"case_id\": \"case_mtbss7zn817be4\", \"state\": \"reserved\", \"at\": 1787851881308, \"tx_hash\": null, \"token_id\": null, \"note\": null}"
+      },
+      {
+        "at": 1787852701060,
+        "actor": "rene",
+        "action": "manual_release_reserved_close",
+        "note": "GO Rene 2026-08-27: released stale close reservation held by case_mtbt7nr1c459c5 (EXECUTION_FAILED at preflight, maxFeePerGas exceeds pinned cap (basefee 0.557 gwei); provably nothing signed: no PREPARED-MANIFEST, no artifact.hex, execution_ref null, exec-wallet nonce 3 before/after/now). No release verb exists for a reserved close slot (engine gap, VAL-I2 class; final-report finding). Released slot was: {\"case_id\": \"case_mtbt7nr1c459c5\", \"state\": \"reserved\", \"at\": 1787852595798, \"tx_hash\": null, \"token_id\": null, \"note\": null}"
+      },
+      {
+        "at": 1787904044907,
+        "actor": "rene",
+        "action": "nft_auth_proof_clean",
+        "note": "clean proof: /root/cosmo-contracts-v2/state/execution-cases/records/nft-auth-proof-vlm-001_25a991ae424a5de974135e0f7e6f7034384418841bb22164bbb9aa1c47669ec1-1787904044907.json"
+      },
+      {
+        "at": 1788631827766,
+        "actor": "rene",
+        "action": "nft_auth_proof_clean",
+        "note": "clean proof: /root/cosmo-contracts-v2/state/execution-cases/records/nft-auth-proof-vlm-001_25a991ae424a5de974135e0f7e6f7034384418841bb22164bbb9aa1c47669ec1-1788631827766.json"
+      }
+    ]
+  },
+  "note": "L5 seed retirement attestation after typed confirmation; seed shredded before this record was built; L4 record 1788632093822 ACCEPT x2",
+  "rpc_write_count": 0
+}

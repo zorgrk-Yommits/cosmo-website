@@ -1,0 +1,24 @@
+{
+  "schema": "cosmo.execution-case.intent.v2",
+  "mode": "micro_live",
+  "action": {
+    "kind": "evm.liquidity_mandate.close.v1",
+    "params": {
+      "liquidity_mandate_id": "vlm-001:25a991ae424a5de974135e0f7e6f7034384418841bb22164bbb9aa1c47669ec1",
+      "sponsor": "0x8f38b8451d15fe090A3f3503A0DaFd24432167dF",
+      "execution_wallet": "0xC4F8b3d7a9737e8e85825F306bf0A8C6AEACb00B",
+      "gas_units_cap": "450000",
+      "max_fee_per_gas_cap_wei": "370004076",
+      "max_gas_cost_wei": "5000000000000000",
+      "transaction_deadline_seconds": 120,
+      "min_confirmations": 3,
+      "token_id": "59",
+      "burn_allowed": false,
+      "min_out_bps": 9950,
+      "approval_scan_from_block": "25809096"
+    }
+  },
+  "ttl_ms": 3600000,
+  "principal_ref": "sponsor:vlm-001",
+  "agent_ref": "cosmo-execution-case:vlm-001"
+}

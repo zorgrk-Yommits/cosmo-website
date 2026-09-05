@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>VLM-001 — One Mandate, Three Transactions | COSMO</title>
+<style>
+  :root{
+    --surface-0:#08090b; --surface-1:#0d0f13; --surface-2:#14171d; --surface-inset:#050608;
+    --ink-0:#f2f4f7; --ink-1:#a7b0bc; --ink-2:#757e8c;
+    --line-subtle:rgba(255,255,255,.06); --line-base:rgba(255,255,255,.1); --line-strong:rgba(255,255,255,.18);
+    --phase-idle:#4a5260; --phase-active:#6e8bff; --phase-proof:#4fd3d9; --phase-settled:#46d6a0; --phase-warn:#e0a458; --phase-fault:#ff6b7e;
+    --sans:Geist,Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --mono:"Geist Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--surface-0);color:var(--ink-1);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:var(--phase-proof);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code,.mono{font-family:var(--mono);font-size:.92em}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+  h1,h2,h3{color:var(--ink-0);font-weight:600;letter-spacing:-.01em}
+  h2{font-size:1.35rem;margin-bottom:.35rem}
+  .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+  section{padding:56px 0;border-bottom:1px solid var(--line-subtle)}
+  .sec-note{color:var(--ink-2);font-size:.85rem;margin-bottom:28px}
+
+  /* draft + status bars */
+  .draftbar{background:repeating-linear-gradient(45deg,rgba(224,164,88,.12),rgba(224,164,88,.12) 12px,transparent 12px,transparent 24px);border-bottom:1px dashed var(--phase-warn);color:var(--phase-warn);font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-align:center;padding:7px 12px}
+  .statusbar{position:sticky;top:0;z-index:50;background:rgba(8,9,11,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line-base);padding:9px 0;font-family:var(--mono);font-size:.74rem;color:var(--ink-1)}
+  .statusbar .dot{color:var(--phase-warn)}
+  .statusbar .wrap{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+
+  /* badges */
+  .badge{display:inline-block;font-family:var(--mono);font-size:.64rem;letter-spacing:.08em;padding:2px 8px;border-radius:4px;border:1px solid;white-space:nowrap;vertical-align:middle}
+  .b-onchain{color:var(--phase-settled);border-color:rgba(70,214,160,.4);background:rgba(70,214,160,.07)}
+  .b-artifact{color:var(--phase-proof);border-color:rgba(79,211,217,.4);background:rgba(79,211,217,.07)}
+  .b-doc{color:var(--ink-2);border-color:var(--line-strong);background:var(--surface-2)}
+  .b-pending{color:var(--phase-warn);border-color:rgba(224,164,88,.45);background:rgba(224,164,88,.08)}
+  .b-sched{color:var(--phase-idle);border-color:var(--line-base);border-style:dashed;background:transparent}
+
+  /* hero */
+  .hero{padding:72px 0 56px;text-align:left}
+  .hero h1{font-size:clamp(1.9rem,4.6vw,3.1rem);line-height:1.12;margin:14px 0 14px}
+  .hero .sub{font-size:1.06rem;color:var(--ink-1);max-width:640px}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:34px 0 18px}
+  .tile{background:var(--surface-1);border:1px solid var(--line-base);border-radius:10px;padding:20px 18px}
+  .tile .big{font-family:var(--mono);font-size:2.1rem;color:var(--ink-0);line-height:1.1}
+  .tile .lbl{font-size:.82rem;color:var(--ink-2);margin-top:6px}
+  .ctx{font-family:var(--mono);font-size:.78rem;color:var(--ink-2)}
+
+  /* idea strip */
+  .idea{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:24px}
+  .idea .step{background:var(--surface-1);border:1px solid var(--line-base);border-radius:10px;padding:16px}
+  .idea .step b{display:block;font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;color:var(--ink-0);margin-bottom:6px}
+  .idea .step span{font-size:.86rem;color:var(--ink-1)}
+  .hashline{margin-top:18px;font-family:var(--mono);font-size:.8rem;color:var(--ink-2);word-break:break-all}
+  .hashline b{color:var(--phase-proof);font-weight:500}
+
+  /* allowed vs done table */
+  table.avd{width:100%;border-collapse:collapse;margin-top:22px;font-size:.88rem}
+  table.avd th{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line-strong)}
+  table.avd td{padding:12px;border-bottom:1px solid var(--line-subtle);vertical-align:top;color:var(--ink-1)}
+  table.avd td.chk{color:var(--phase-settled);font-family:var(--mono);width:36px;text-align:center}
+  table.avd td b{color:var(--ink-0);font-weight:500}
+  .tbl-scroll{overflow-x:auto}
+  .caption{font-size:.8rem;color:var(--ink-2);margin-top:12px}
+
+  /* timeline */
+  .tl{position:relative;margin-top:30px}
+  .station{position:relative;padding:0 0 34px 34px;border-left:2px solid var(--line-base)}
+  .station.sealed{border-left-color:rgba(79,211,217,.55)}
+  .station:last-child{padding-bottom:0}
+  .node{position:absolute;left:-8px;top:2px;width:14px;height:14px;border-radius:50%;background:var(--surface-0);border:2px solid var(--ink-2)}
+  .station.sealed .node{border-color:var(--phase-proof)}
+  .st-head{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline}
+  .st-head h3{font-size:1.02rem}
+  .st-blocks{font-family:var(--mono);font-size:.72rem;color:var(--ink-2)}
+  .st-chip{font-family:var(--mono);font-size:.64rem;color:var(--phase-proof);border:1px solid rgba(79,211,217,.35);border-radius:4px;padding:1px 7px}
+  .st-body{margin-top:8px;max-width:760px}
+  .st-lede{color:var(--ink-1);font-size:.93rem}
+  .st-anchor{font-family:var(--mono);font-size:.8rem;color:var(--ink-0);background:var(--surface-1);border:1px solid var(--line-base);border-radius:6px;padding:8px 12px;margin-top:10px;word-break:break-word}
+  .st-io{font-family:var(--mono);font-size:.68rem;color:var(--ink-2);margin-top:10px;line-height:1.9}
+  .st-io b{color:var(--ink-1);font-weight:500}
+  details.evd{margin-top:10px}
+  details.evd summary{cursor:pointer;font-family:var(--mono);font-size:.72rem;color:var(--phase-proof)}
+  details.evd div{margin-top:8px;font-family:var(--mono);font-size:.74rem;color:var(--ink-2);background:var(--surface-inset);border:1px solid var(--line-subtle);border-radius:6px;padding:12px;word-break:break-all;line-height:1.8}
+
+  /* panels */
+  .panel{background:var(--surface-1);border:1px solid var(--line-base);border-radius:12px;padding:28px;margin:34px 0}
+  .panel h3{font-size:1.05rem;margin-bottom:4px}
+  .panel .p-note{font-size:.8rem;color:var(--ink-2);margin-bottom:20px}
+  .band{font-family:var(--mono);font-size:.75rem;overflow-x:auto}
+  .band pre{color:var(--ink-1);line-height:1.7;min-width:640px}
+  .band .z{color:var(--phase-settled)}
+  .band .f{color:var(--phase-active)}
+  .counter{display:flex;align-items:center;gap:26px;flex-wrap:wrap}
+  .counter .num{font-family:var(--mono);font-size:4.2rem;color:var(--ink-0);border:1px solid var(--line-strong);border-radius:12px;padding:8px 30px;background:var(--surface-inset)}
+  .txlist{font-family:var(--mono);font-size:.76rem;line-height:2.1;color:var(--ink-1);word-break:break-all}
+  .txlist b{color:var(--ink-0);font-weight:500}
+  .falsify{margin-top:16px;font-size:.85rem;color:var(--ink-1);border-left:2px solid var(--phase-settled);padding-left:12px}
+
+  /* differs */
+  table.diff{width:100%;border-collapse:collapse;margin-top:22px;font-size:.88rem}
+  table.diff th{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line-strong);width:50%}
+  table.diff td{padding:12px;border-bottom:1px solid var(--line-subtle);vertical-align:top}
+  table.diff td:first-child{color:var(--ink-2)}
+  table.diff td:last-child{color:var(--ink-0)}
+
+  /* verification ladder */
+  .ladder{margin-top:22px;display:flex;flex-direction:column;gap:12px}
+  .rung{display:flex;gap:16px;align-items:flex-start;background:var(--surface-1);border:1px solid var(--line-base);border-radius:10px;padding:16px 18px}
+  .rung.current{border-color:rgba(224,164,88,.5)}
+  .rung .mark{font-family:var(--mono);font-size:1rem;line-height:1.4;width:18px;flex:none}
+  .rung.current .mark{color:var(--phase-warn)}
+  .rung .mark{color:var(--phase-idle)}
+  .rung h4{color:var(--ink-0);font-size:.92rem;font-weight:600}
+  .rung p{font-size:.84rem;color:var(--ink-1);margin-top:3px}
+  .ladder-note{margin-top:16px;font-size:.9rem;color:var(--ink-1);border-left:2px solid var(--phase-warn);padding-left:12px}
+
+  /* evidence index */
+  .evindex{font-family:var(--mono);font-size:.76rem;line-height:2.05;color:var(--ink-1);background:var(--surface-inset);border:1px solid var(--line-subtle);border-radius:10px;padding:22px;overflow-x:auto;margin-top:22px}
+  .evindex .k{color:var(--ink-2);display:inline-block;min-width:190px}
+  .evindex .v{color:var(--ink-0);word-break:break-all}
+  .gaps{margin-top:22px;background:var(--surface-1);border:1px solid var(--line-base);border-radius:10px;padding:20px}
+  .gaps h4{color:var(--ink-0);font-size:.92rem;margin-bottom:8px}
+  .gaps li{margin-left:18px;font-size:.86rem;color:var(--ink-1);margin-top:6px}
+
+  footer{padding:36px 0 60px;font-family:var(--mono);font-size:.72rem;color:var(--ink-2)}
+  @media(max-width:640px){.hero h1{font-size:1.75rem}.counter .num{font-size:3rem}}
+</style>
+</head>
+<body>
+
+
+<div class="statusbar"><div class="wrap">
+  <span><span class="dot" style="color:var(--phase-ok,#46d6a0)">●</span>&nbsp; TERMINATED — LIFECYCLE CLOSED &nbsp;·&nbsp; VERIFIED ×2 UNDER THE PUBLIC VERIFIER 1.3.2 &nbsp;·&nbsp; EVIDENCE BUNDLE: PUBLIC</span>
+  <span>status as of 2026-09-05</span>
+</div></div>
+
+<!-- S1 · HERO -->
+<div class="wrap hero">
+  <div class="kicker">VLM-001 · Verifiable Liquidity Mandate · Ethereum Mainnet</div>
+  <h1>One mandate. Four transactions. Zero residue. Then it ended.</h1>
+  <p class="sub">A capital mandate, executed by a machine within hard limits, closed by the same mandate — and then provably terminated: authority ended, approvals zero, the signing seed retired under a falsifiable attestation. Every claim on this page carries a block number and its verification status.</p>
+  <div class="tiles">
+    <div class="tile"><div class="big">4</div><div class="lbl">transactions the execution wallet has ever sent — all four listed below; nonce 4 read on two independent RPCs at the terminal block, and watched every six hours since</div></div>
+    <div class="tile"><div class="big">0&thinsp;/&thinsp;0&thinsp;/&thinsp;0&thinsp;/&thinsp;0</div><div class="lbl">token allowances and balances of the machine wallet — at the mint block, after the reset, after the close, and at the terminal block</div></div>
+    <div class="tile"><div class="big">10/10 · ×3</div><div class="lbl">verifier criteria passed for OPEN, RESET and CLOSE — by two verifier implementations, under the <b>published</b> verifier 1.3.2; plus the termination record: ACCEPT ×2 <a href="#verification">*see status</a></div></div>
+  </div>
+  <div class="ctx">Ethereum mainnet · 2026-08-22 → 2026-09-05 · LP position minted directly to the sponsor's wallet (token #59), closed by the mandate on 2026-08-28 with the proceeds paid straight to the sponsor, mandate terminated and seed retired on 2026-09-05</div>
+</div>
+
+<!-- S2 · THE IDEA -->
+<section><div class="wrap">
+  <div class="kicker">The instrument</div>
+  <h2>Mandate → Execution → Proof</h2>
+  <div class="idea">
+    <div class="step"><b>MANDATE</b><span>The capital owner pins hard limits in a frozen file: budget caps, an exact action list, fee ceilings, an expiry date.</span></div>
+    <div class="step"><b>EXECUTION</b><span>The engine can act only inside those limits — every live policy is pinned by hash before anything runs.</span></div>
+    <div class="step"><b>PROOF</b><span>Every action leaves receipts, pinned state reads and a hash-chained journal, replayed by verifiers against the sealed mandate.</span></div>
+  </div>
+  <p class="hashline">The mandate file's sha3-256 fingerprint IS its identity:<br><b>vlm-001:25a991ae424a5de974135e0f7e6f7034384418841bb22164bbb9aa1c47669ec1</b></p>
+</div></section>
+
+<!-- S3 · ALLOWED vs DONE -->
+<section><div class="wrap">
+  <div class="kicker">The core comparison</div>
+  <h2>What the mandate allowed — and what actually happened</h2>
+  <div class="tbl-scroll"><table class="avd">
+    <tr><th>Mandate (pinned before execution)</th><th>Executed (proven after)</th><th></th></tr>
+    <tr><td>Budget: <b>EUR 20 per leg</b>, EUR 40 total — a pinned cap, not a market value</td><td>Funded by the sponsor to the exact wei; settled fully into the position</td><td class="chk">✓</td></tr>
+    <tr><td>Max WETH: <b>0.009635489434685834 ETH</b> (pinned in wei)</td><td>Used: <b>0.009635489434685834 ETH</b> — equal to the cap, not a wei above it</td><td class="chk">✓</td></tr>
+    <tr><td>Max SUPRA: <b>119,060.897… SUPRA</b> (pinned in wei)</td><td>Used: <b>114,556.177… SUPRA</b> — under the cap</td><td class="chk">✓</td></tr>
+    <tr><td>Gas: fee cap pinned; reserve ceiling 0.02 ETH</td><td>Remainder after all three transactions: <b>0.004941 ETH ≤ reserve</b></td><td class="chk">✓</td></tr>
+    <tr><td>Allowed actions: <b>1×OPEN · ≤1×COLLECT (day 7+) · 1×CLOSE · APPROVAL-RESET</b> — nothing else has an active policy pin</td><td>Executed: OPEN and RESET. COLLECT and CLOSE: <b>unused — still null in the lifecycle ledger</b></td><td class="chk">✓</td></tr>
+    <tr><td>Term: until <b>2026-09-05</b></td><td>Executed 2026-08-22 — inside the term</td><td class="chk">✓</td></tr>
+    <tr><td>Position owner: <b>the sponsor</b></td><td>LP-NFT <b>#59 minted directly to the sponsor's wallet</b> — the engine never held it</td><td class="chk">✓</td></tr>
+  </table></div>
+  <p class="caption">Every row: actual ≤ cap. No row asks for trust in COSMO — each is checkable at a pinned block (full values in the <a href="#evidence">evidence index</a>).</p>
+</div></section>
+
+<!-- S4 · TIMELINE -->
+<section><div class="wrap">
+  <div class="kicker">The causal chain</div>
+  <h2>Walk the chain</h2>
+  <p class="sec-note">Eight stations. From the sealing of the mandate onward, every station runs under the same fingerprint — one identity governs everything below it. Each card states what it requires from the station before and what it establishes for the next.</p>
+
+  <div class="tl">
+
+    <div class="station"><span class="node"></span>
+      <div class="st-head"><h3>1 · Clean-Room Wallets</h3> <span class="badge b-onchain">ON-CHAIN</span> <span class="st-blocks">blocks 25809698 · 25809785</span></div>
+      <div class="st-body">
+        <p class="st-lede">Two brand-new wallets — one for the machine, one for the sponsor — proven empty and unused before anything else happened.</p>
+        <div class="st-anchor">nonce 0 · balance 0 · code 0x — confirmed on 2 independent RPCs, pinned at block hashes</div>
+        <div class="st-io"><b>ESTABLISHES →</b> [virgin execution wallet] [virgin sponsor wallet]</div>
+        <details class="evd"><summary>+ evidence</summary><div>execution wallet 0xC4F8b3d7a9737e8e85825F306bf0A8C6AEACb00B, virgin @ block 25809698<br>sponsor wallet 0x8f38b8451d15fe090A3f3503A0DaFd24432167dF, virgin @ block 25809785<br>source: activation-record.md §D1 (dual-RPC reads, pinned block hashes)</div></details>
+      </div>
+    </div>
+
+    <div class="station"><span class="node"></span>
+      <div class="st-head"><h3>2 · Capital Staged</h3> <span class="badge b-onchain">ON-CHAIN</span> <span class="badge b-doc">EUR CHECK: DOCUMENTED</span> <span class="st-blocks">blocks 25809994 → 25810279</span></div>
+      <div class="st-body">
+        <p class="st-lede">The sponsor is funded and swaps ETH for SUPRA. Total exposure at this point: EUR 44.87 — against a EUR 500 hard cap.</p>
+        <div class="st-anchor">swap 0.0105 ETH → 125,382.54 SUPRA @ block 25810279 · execution-wallet gas 0.005 ETH @ block 25809994</div>
+        <div class="st-io"><b>REQUIRES ←</b> [virgin wallets] &nbsp;&nbsp;<b>ESTABLISHES →</b> [funded sponsor, within cap] [approval-scan pin 25809096]</div>
+        <details class="evd"><summary>+ evidence</summary><div>sponsor first funding 0.023421 ETH @ block 25810096 → approval_scan_from_block pinned at 25809096<br>documented deviation: the 0.005 ETH gas funding was sent by the project deployer wallet, not the sponsor (recorded, accepted)<br>EUR sum check 44.87 ≤ 500 from pinned price sources (prose record)</div></details>
+      </div>
+    </div>
+
+    <div class="station sealed"><span class="node"></span>
+      <div class="st-head"><h3>3 · Mandate Sealed</h3> <span class="badge b-artifact">ARTIFACT</span> <span class="st-blocks">activation block 25810302</span></div>
+      <div class="st-body">
+        <p class="st-lede">The complete rulebook is frozen into one file. Its fingerprint IS the mandate's identity — change one byte and it is a different mandate.</p>
+        <div class="st-anchor">lm_id = vlm-001:25a991ae…9ec1 · pinned: EUR 20/leg · wei-exact caps · 1×OPEN, ≤1×COLLECT, 1×CLOSE, RESET · term ends 2026-09-05</div>
+        <div class="st-io"><b>REQUIRES ←</b> [funded sponsor] &nbsp;&nbsp;<b>ESTABLISHES →</b> [sealed mandate 25a9…9ec1] [pinned policy hashes]</div>
+        <details class="evd"><summary>+ evidence</summary><div>frozen file mandate-001-ACTIVATED.md; sha3-256 over the file bytes = the lm_id<br>activation block 25810302, 2026-08-22T11:11:11Z; expiry 2026-09-05T11:11:11Z<br>live policy pins (snapshot 2, block 25810586): open 0x92c82831…d002 · reset 0xa3551342…88fa<br>ARTIFACT = reproducible from the frozen file; becomes publicly checkable with the evidence bundle</div></details>
+      </div>
+    </div>
+
+    <div class="station sealed"><span class="node"></span>
+      <div class="st-head"><h3>4 · The Human Brake</h3> <span class="badge b-onchain">0 BROADCASTS: ON-CHAIN</span> <span class="badge b-doc">ARM ACTS: DOCUMENTED</span> <span class="st-chip">under mandate 25a9…9ec1</span></div>
+      <div class="st-body">
+        <p class="st-lede">The first run was stopped by the human sponsor before a single signature existed — then deliberately re-armed. The machine cannot move capital on its own.</p>
+        <div class="st-anchor">attempt 1: 0 signatures · 0 broadcasts (execution-wallet nonce still 0 at block 25810586) · mandate hash unchanged · re-armed by a typed human act</div>
+        <div class="st-io"><b>REQUIRES ←</b> [sealed mandate] &nbsp;&nbsp;<b>ESTABLISHES →</b> [human ARM]</div>
+        <details class="evd"><summary>+ evidence</summary><div>aborted case journal ends at awaiting_arm — no ARM file, no receipt<br>process change after the stop: intent TTL 10 → 60 min (a pace change; no guard weakened, caps unchanged)<br>snapshot 2 pinned additively @ block 25810586 — the lm_id did not change<br>"A brake you never used is a brake you cannot trust."</div></details>
+      </div>
+    </div>
+
+    <div class="station sealed"><span class="node"></span>
+      <div class="st-head"><h3>5 · The Execution Window</h3> <span class="badge b-onchain">ON-CHAIN</span> <span class="badge b-doc">JIT FUNDING: DOCUMENTED</span> <span class="st-blocks">block 25810671</span> <span class="st-chip">under mandate 25a9…9ec1</span></div>
+      <div class="st-body">
+        <p class="st-lede">The sponsor sends the exact amounts — to the wei. The machine spends them in two transactions and mints the LP position directly to the sponsor. The machine never owns the position.</p>
+        <div class="st-anchor">tx1 approve 0x34b171ee…aad3 · tx2 mint 0x732e52f9…c57a @ block 25810671 (3 conf.) · LP-NFT #59 → sponsor, directly · full range</div>
+        <div class="st-io"><b>REQUIRES ←</b> [human ARM] [pinned wei caps] &nbsp;&nbsp;<b>ESTABLISHES →</b> [2 capital transactions] [NFT #59 at the sponsor]</div>
+        <details class="evd"><summary>+ evidence</summary><div>settled: 9635489434685834 wei WETH (= cap exactly) + 114556177151889602287506 wei SUPRA (under cap); liquidity 33223558428094832901<br>honest gap: the JIT funding transaction hashes were not archived — the wei-exact match (delta 0) is proven by balance reads on 2 RPCs, not by tx receipts<br>recipient in the mint calldata = the sponsor address (decoded in artifact-verify.json)</div></details>
+      </div>
+    </div>
+
+    <div class="station sealed"><span class="node"></span>
+      <div class="st-head"><h3>6 · Zero Residue — Proven Twice</h3> <span class="badge b-onchain">ON-CHAIN</span> <span class="st-blocks">blocks 25810671 · 25810738</span> <span class="st-chip">under mandate 25a9…9ec1</span></div>
+      <div class="st-body">
+        <p class="st-lede">Two separate proofs, two different kinds. <b style="color:var(--ink-0)">Proof one</b> is a state read pinned at the mint block itself (25810671, part of the OPEN case evidence): allowances zero, balances zero. <b style="color:var(--ink-0)">Proof two</b> is a dedicated on-chain transaction — the RESET case (block 25810738) — that re-establishes the same all-zero state under its own pinned policy and receipt.</p>
+        <div class="st-anchor">@ 25810671 (read): allowances 0/0 · balances 0/0 · ETH 0.004944 ≤ reserve &nbsp;&nbsp;|&nbsp;&nbsp; @ 25810738 (tx 0xdf67bc78…b33b): allowances 0/0 · balances 0/0 · ETH 0.004941</div>
+        <div class="st-io"><b>REQUIRES ←</b> [2 capital transactions] &nbsp;&nbsp;<b>ESTABLISHES →</b> [zero residue, twice] [lifetime tx count 3]</div>
+        <details class="evd"><summary>+ evidence</summary><div>proof 1: lp-post-state.json pinned at block 25810671, hash 0x6bb8bbbd…52b6, canonical recheck identical — same block as the mint, not a later snapshot<br>proof 2: separate case receipt (approval_reset policy 0xa3551342…88fa), tx 0xdf67bc78…b33b, block 25810738, gas 33,955<br>these are distinct artifacts: an evidence read inside the OPEN case vs. a stand-alone RESET case with its own journal and receipt</div></details>
+      </div>
+    </div>
+
+    <div class="station sealed"><span class="node"></span>
+      <div class="st-head"><h3>7 · The Verdict</h3> <span class="badge b-onchain">ACCEPT ×2 — PUBLIC VERIFIER 1.3.2</span> <span class="st-chip">under mandate 25a9…9ec1</span></div>
+      <div class="st-body">
+        <p class="st-lede">Two verifier implementations replayed the archived evidence against the sealed mandate: ACCEPT, 10 of 10 criteria — for the OPEN, the RESET and (below) the CLOSE. The standalone verifier that returns these verdicts is the one published at heros.cloud/verifier/, byte-identical to the repository build.</p>
+        <div class="st-anchor">internal verifier: ACCEPT 10/10 ×3 · standalone verifier 1.3.2 with its embedded public trust profile: ACCEPT 10/10 ×3 — 15 verdict files persisted with sha3-256 pins</div>
+        <div class="st-io"><b>REQUIRES ←</b> [zero residue] [sealed mandate — the end is measured against the beginning] &nbsp;&nbsp;<b>ESTABLISHES →</b> [ACCEPT ×2, publicly re-runnable]</div>
+        <details class="evd"><summary>+ evidence</summary><div>persisted verdict files with sha3-256 hashes: evidence bundle <span class="mono">verdicts/</span> (README lists every hash)<br>fail-closed demonstration, kept deliberately: the verifier 1.3.1 published on 2026-08-22 predated the activation pins — run against these cases it returned REJECT, failing only "P policy pinned". The 1.3.2 republish on 2026-08-28 (four ADDITIVE live pins, profile id unchanged) turns those runs into ACCEPTs without touching the cases; both the REJECT and the ACCEPT files are in the bundle.<br>re-run it yourself: download the bundle, then <span class="mono">node cosmo-verify.mjs &lt;case-dir&gt;</span> — no npm, no network</div></details>
+      </div>
+    </div>
+
+    <div class="station sealed"><span class="node"></span>
+      <div class="st-head"><h3>8 · Closed by the Mandate</h3> <span class="badge b-onchain">ON-CHAIN</span> <span class="st-blocks">block 25852377</span> <span class="st-chip">under mandate 25a9…9ec1</span></div>
+      <div class="st-body">
+        <p class="st-lede">Six days later the sponsor asked the mandate to close the position. Same ceremony, same gates: the sponsor granted a single-token approval, a human typed ARM and BROADCAST, the engine removed the full liquidity in one transaction — and paid the proceeds <b style="color:var(--ink-0)">directly to the sponsor</b>. The machine wallet never held them. The sponsor then revoked the approval; a fresh authority proof read zero standing approvals.</p>
+        <div class="st-anchor">@ 25852377 (tx 0x770980c9…d549b, 0.125 gwei under the 0.370 gwei cap, gas 216,233): liquidity → 0 · to sponsor: 0.009533 WETH + 116,717.35 SUPRA (both ≥ the pinned minimums, byte-equal to the receipt's settlement_ref) · machine wallet after: allowances 0/0 · balances 0/0 · ETH 0.004914 ≤ reserve</div>
+        <div class="st-anchor">between 2026-08-22 and 2026-08-28, six armed attempts stopped themselves before signing anything: fee cap exceeded (0.557 gwei), RPC 429/400, a pre-approve read gate. Each left a journal ending in execution_failed — and no signature. They are in the bundle as fail-closed demonstrations.</div>
+        <div class="st-io"><b>REQUIRES ←</b> [sponsor approval, single token] [typed ARM + BROADCAST] &nbsp;&nbsp;<b>ESTABLISHES →</b> [position dissolved] [proceeds with the sponsor] [lifetime tx count 4] [ACCEPT ×2 for CLOSE under 1.3.2]</div>
+        <details class="evd"><summary>+ evidence</summary><div>case receipt (close policy 0x0fe35f41…3a13), settlement_ref block 25852377 / 0x6297e33c…57ff; Transfer events to the sponsor on two RPCs; sponsor revoke verified (getApproved(59) = 0x0 on two RPCs); fresh nft-auth proof CLEAN at block 25852403<br>honest gap: the dedicated sweep-proof verb returns not_proven BY SHAPE (the close is a position-manager multicall, not a direct transfer); receipt of funds is proven from the settlement evidence plus the transfer logs instead</div></details>
+      </div>
+    </div>
+
+    <div class="station sealed"><span class="node"></span>
+      <div class="st-head"><h3>9 · Terminated &amp; Retired</h3> <span class="badge b-onchain">TERMINATION PROOF: ON-CHAIN READS</span> <span class="badge b-doc">SEED RETIREMENT: ATTESTED, FALSIFIABLE</span> <span class="st-chip">after expiry 2026-09-05 11:11:11Z</span></div>
+      <div class="st-body">
+        <p class="st-lede">The mandate had an expiry written into its frozen text. After it passed, a read-only termination proof was taken at a pinned terminal block on two independent RPCs, and five separate predicates were derived: capital exposure zero, approvals zero, authority ended, ownership with the sponsor, and every nonce the wallet ever used mapped to an archived receipt. Then the operator typed the retirement phrase, the signing seed was shredded, and the one claim that cannot be proven — "no copy remains" — was recorded as an attestation with a standing falsification rule: any nonce above 4 on this wallet, ever, breaks it.</p>
+        <div class="st-anchor">terminal block 25912914 / 0x2c7303bb…41f39 (timestamp 1788632783 ≥ expiry 1788606671) · sources rpc:mevblocker + rpc:tenderly, 0 disagreements · nonce 4 · start boundary 25809698 (nonce 0, no code, balance 0) · P1–P5 PROVEN · verdict TERMINATED · weakest evidence class: attested_falsifiable · 0 RPC writes</div>
+        <div class="st-anchor">watch: the 6-hour watcher now also reads the wallet nonce at each pinned block against the attested baseline — first tick 4 / 4 clean. Declared reaction to a valid falsification: this page changes to "Terminated, contested"; nothing is deleted.</div>
+        <div class="st-io"><b>REQUIRES ←</b> [all slots executed or expired — close never expires, it was executed] [ACCEPT ×2 on the record BEFORE the seed was destroyed] &nbsp;&nbsp;<b>ESTABLISHES →</b> [authority ended] [seed retired, attested] [standing falsification watch]</div>
+        <details class="evd"><summary>+ evidence</summary><div>termination record L4 (before retirement, class derived) sha3-256 0x445e7dfb…6bccb9 · termination record L5 (attested, class attested_falsifiable) sha3-256 0xa42dd476…01656a — both ACCEPT by the internal verifier and by the public 1.3.2 verifier (<span class="mono">node cosmo-verify.mjs --termination &lt;record.json&gt;</span>)<br>what the record does NOT claim, in its own words: seed deletion is unprovable (disk remanence, RAM) — hence attestation plus falsifiability, not proof; the absence of pre-signed transactions is a process statement, "named, not claimed"<br>the ETH gas remainder (0.004914 ETH) was COSMO-financed and is reported, not swept — capital exposure is scoped to sponsor capital in mandate assets</div></details>
+      </div>
+    </div>
+
+  </div>
+</div></section>
+
+<!-- PANELS -->
+<section><div class="wrap">
+  <div class="kicker">Two facts worth staring at</div>
+
+  <div class="panel">
+    <h3>The custody window</h3>
+    <p class="p-note">The machine's wallet held capital only between just-in-time funding and the mint — and the chain proves the empty states on both sides. The width of this plateau is deliberately not drawn to scale: the funding timestamps were not archived. What the chain proves is the entry and exit states, not the duration. The close on 2026-08-28 added no second plateau: the proceeds went from the position manager straight to the sponsor.</p>
+    <div class="band"><pre>
+machine wallet token holdings (SUPRA + WETH)
+─────────────────────────────────────────────────────────────────────
+                        ┌─────────────┐
+                        │   <span class="f">funded</span>    │
+ <span class="z">0</span> ─────────────────────┘             └───────────────<span class="z">0</span>──────────<span class="z">0</span>──
+ <span class="z">proven empty</span>            wei-exact,      <span class="z">proven empty</span>   <span class="z">proven AGAIN</span>
+ @ 25810586              spent in         @ 25810671     @ 25810738
+ (nonce still 0)         2 txs            allowances 0/0 RESET case tx
+                                          balances  0/0  allowances 0/0
+─────────────────────────────────────────────────────────────────────
+   "Capital entered, did its one job, and left. Nothing stayed behind."
+    </pre></div>
+  </div>
+
+  <div class="panel">
+    <h3>Lifetime transaction count</h3>
+    <p class="p-note">The complete on-chain history of the execution wallet, from its first transaction to its last. Not "few" transactions — a countable, closed list, and now a closed life.</p>
+    <div class="counter">
+      <div class="num">4</div>
+      <div class="txlist">
+        <b>tx 1</b> · approve &nbsp;0x34b171ee28c2367c5be4c878013c98150031769aba20461fda776fd108e9aad3<br>
+        <b>tx 2</b> · mint &nbsp;&nbsp;&nbsp;&nbsp;0x732e52f9e549c46685e85a9cca5c3203c3b7403fb49c1d2df5051c366c23c57a<br>
+        <b>tx 3</b> · reset-proof &nbsp;0xdf67bc7842ba02da1729e25b6f9ab17e355e5adc12ca2c1b7a72248055c9b33b<br>
+        <b>tx 4</b> · close &nbsp;&nbsp;&nbsp;0x770980c9eb4c61d900ab69b2b1f231f9a064d2df71a82f768289899a804d549b
+      </div>
+    </div>
+    <p class="falsify">Check the address yourself — <span class="mono">0xC4F8b3d7a9737e8e85825F306bf0A8C6AEACb00B</span> — any fifth transaction breaks this claim AND falsifies the seed-retirement attestation. Nonce read on two independent RPCs at the terminal block on 2026-09-05: <b style="color:var(--ink-0)">4</b>. A watcher re-reads it every six hours.</p>
+  </div>
+</div></section>
+
+<!-- DIFFERS -->
+<section><div class="wrap">
+  <div class="kicker">Context</div>
+  <h2>Why this is not a bot with your keys</h2>
+  <p class="sec-note">The left column describes a common automation pattern — not any specific provider.</p>
+  <div class="tbl-scroll"><table class="diff">
+    <tr><th>A common automation pattern</th><th>This mandate</th></tr>
+    <tr><td>Standing token approvals that remain open after the trade</td><td>Allowances back to zero — read at the mint block itself, re-proven by a dedicated transaction</td></tr>
+    <tr><td>Capital parked in the bot's wallet, waiting</td><td>Capital arrives just-in-time, wei-exact, and is spent in the same ceremony</td></tr>
+    <tr><td>The bot holds the position; you trust it to hand it over</td><td>Position minted directly to the sponsor — never held by the engine</td></tr>
+    <tr><td>The bot can send any number of transactions, any time</td><td>This wallet sent exactly 4 transactions in its lifetime — all four listed above, provable via nonce — and its seed is retired under a falsifiable attestation</td></tr>
+    <tr><td>The bot keeps its keys — and its access — after the job</td><td>The mandate had an expiry; after it, a termination proof derived five predicates on-chain, the seed was shredded, and a standing watch will contradict the attestation the moment the wallet moves again</td></tr>
+    <tr><td>"Trust me" after the fact</td><td>Block numbers before, during and after — and a frozen mandate the outcome is measured against</td></tr>
+  </table></div>
+  <p class="caption">The question is never whether software can trade. The question is what it <i>could have done</i> — and here the answer is on-chain: nothing beyond the mandate.</p>
+</div></section>
+
+<!-- VERIFICATION STATUS -->
+<section id="verification"><div class="wrap">
+  <div class="kicker">Verification status</div>
+  <h2>Where this proof stands — precisely</h2>
+  <div class="ladder">
+    <div class="rung"><div class="mark">●</div><div>
+      <h4>Stage 1 — Verified internally <span class="badge b-onchain">REACHED 2026-08-22</span></h4>
+      <p>10/10 criteria passed by the internal verifier AND by independent standalone verifier code, for OPEN and RESET; CLOSE followed on 2026-08-28. The verdicts are persisted as machine-readable files with sha3-256 pins.</p>
+    </div></div>
+    <div class="rung"><div class="mark">●</div><div>
+      <h4>Stage 2 — Evidence bundle public <span class="badge b-onchain">REACHED 2026-09-05</span></h4>
+      <p>The evidence bundle — the three case directories, the two termination records, the authority proofs and all 15 verdict files — is downloadable from the <a href="#evidence">evidence index</a> below.</p>
+    </div></div>
+    <div class="rung current"><div class="mark">●</div><div>
+      <h4>Stage 3 — Publicly re-runnable <span class="badge b-onchain">REACHED · VERIFIER 1.3.2 SINCE 2026-08-28</span></h4>
+      <p>The public verifier at heros.cloud/verifier/ carries the live policy pins (an additive update, profile id unchanged). Anyone can re-run the 10/10 check on each case and the termination check on each record. The 1.3.1 REJECT runs from before the republish are archived in the bundle alongside the ACCEPTs, deliberately.</p>
+    </div></div>
+    <div class="rung"><div class="mark">●</div><div>
+      <h4>Terminated <span class="badge b-doc">2026-09-05 · WATCHED</span></h4>
+      <p>Five termination predicates proven at a pinned terminal block on two RPCs; the seed-retirement attestation is the weakest evidence in the record and is labelled so. Should the standing nonce watch ever be falsified with block-pinned, two-source evidence, this line becomes "Terminated, contested".</p>
+    </div></div>
+  </div>
+  <p class="ladder-note">Every block, transaction and nonce on this page is public — and so is the verdict: download the bundle and the verifier, run both offline, and compare. We ask you to check us, not to trust us.</p>
+</div></section>
+
+<!-- EVIDENCE INDEX -->
+<section id="evidence"><div class="wrap">
+  <div class="kicker">For auditors</div>
+  <h2>Evidence index</h2>
+  <div class="evindex">
+    <span class="k">execution wallet</span><span class="v">0xC4F8b3d7a9737e8e85825F306bf0A8C6AEACb00B</span><br>
+    <span class="k">sponsor wallet</span><span class="v">0x8f38b8451d15fe090A3f3503A0DaFd24432167dF</span><br>
+    <span class="k">lm_id (sha3-256)</span><span class="v">vlm-001:25a991ae424a5de974135e0f7e6f7034384418841bb22164bbb9aa1c47669ec1</span><br>
+    <span class="k">approve tx (1)</span><span class="v">0x34b171ee28c2367c5be4c878013c98150031769aba20461fda776fd108e9aad3</span><br>
+    <span class="k">mint tx (2)</span><span class="v">0x732e52f9e549c46685e85a9cca5c3203c3b7403fb49c1d2df5051c366c23c57a · block 25810671 · 0x6bb8bbbd…52b6</span><br>
+    <span class="k">reset tx (3)</span><span class="v">0xdf67bc7842ba02da1729e25b6f9ab17e355e5adc12ca2c1b7a72248055c9b33b · block 25810738 · 0x198047a3…ca4d</span><br>
+    <span class="k">close tx (4)</span><span class="v">0x770980c9eb4c61d900ab69b2b1f231f9a064d2df71a82f768289899a804d549b · block 25852377 · 0x6297e33c…57ff · proceeds to sponsor 9533343998137384 wei WETH + 116717354704721540595770 wei SUPRA</span><br>
+    <span class="k">LP-NFT</span><span class="v">token #59 · position manager 0x212A1aa26fBA5E73D217Bb2c4829de29cB99F036 · pool 0xe33294a2863199541d6ea584f1cc4e3f36b8ea39</span><br>
+    <span class="k">caps (wei)</span><span class="v">max_weth 9635489434685834 · max_supra 119060897297596899987446 · fee cap 370004076</span><br>
+    <span class="k">settled (wei)</span><span class="v">amount0 9635489434685834 · amount1 114556177151889602287506 · liquidity 33223558428094832901 (full range)</span><br>
+    <span class="k">policy pins (live)</span><span class="v">open 0x92c82831…d002 · reset 0xa3551342…88fa (snapshot 2, block 25810586) · collect 0x095910fb…441c · close 0x0fe35f41…3a13 — all additive</span><br>
+    <span class="k">mandate expiry</span><span class="v">1788606671 (2026-09-05T11:11:11Z), hash-bound to the frozen mandate text</span><br>
+    <span class="k">termination record L4</span><span class="v">terminal block 25912857 · nonce 4 · TERMINATED · class derived · sha3-256 0x445e7dfb67cd7de1fb7bb78b03c0be53cdee97639a8bace3fc7d429a566bccb9</span><br>
+    <span class="k">termination record L5</span><span class="v">terminal block 25912914 · 0x2c7303bb…41f39 · nonce 4 · TERMINATED · class attested_falsifiable · sha3-256 0xa42dd47633164afdbccfa4872e31431754e25e6e7f7f62fc213e92bf9101656a</span><br>
+    <span class="k">authority proofs</span><span class="v">nft-auth-proof CLEAN @ 25811203 · @ 25852403 · @ 25912835 (ApprovalForAll scan from 25809096: 0 logs each)</span><br>
+    <span class="k">verdict files</span><span class="v">15 files (OPEN/RESET/CLOSE ×3–4 each, termination L4/L5 ×2) — sha3-256 per file in verdicts/README.md</span><br>
+    <span class="k">verifier provenance</span><span class="v">standalone 1.3.2 · cosmo-trust-v4 · profile hash 0x0a9bb043…56bf · distributable sha3 0xfc513588768a28db0b828432c1d1274d0fe623582cbf0e5d8158357ee29fe2b5 (served file == repository build)</span><br>
+    <span class="k">evidence bundle</span><span class="v"><a href="/evidence/vlm-001/">/evidence/vlm-001/</a> — index.txt lists every file; verifier at <a href="/verifier/">/verifier/</a></span>
+  </div>
+  <div class="gaps">
+    <h4>Honesty section — what this page cannot show you (yet), and why</h4>
+    <ul>
+      <li>The JIT funding transaction hashes were not archived; the wei-exact match is proven by balance reads on two RPCs, not by tx receipts.</li>
+      <li>The custody window's duration in seconds is unknown — only the empty states on both sides are proven.</li>
+      <li>"EUR 40" is the sum of the pinned budget legs — a cap, not a computed market value of the position.</li>
+      <li>Seed destruction cannot be proven, only attested: disk remanence and RAM copies are unprovable. The record says so verbatim and is graded <span class="mono">attested_falsifiable</span> — the weakest class it will ever carry. The falsification rule (any nonce above 4) is public and watched.</li>
+      <li>That no transaction was pre-signed before the seed was shredded is a process statement (the engine signs only on the ceremony path; the journals show no other sign events) — named, not claimed. Session keys or account abstraction would make this provable; that is a later mandate design, not this one.</li>
+      <li>The ETH gas remainder in the machine wallet (0.004914 ETH) was COSMO-financed; it is reported, not swept, and lies outside the "capital exposure" claim, which is scoped to sponsor capital in mandate assets.</li>
+      <li>The dedicated sweep-proof verb could not prove the close proceeds by shape (multicall via the position manager); receipt is shown from the settlement evidence and the transfer logs on two RPCs instead.</li>
+      <li>Public RPC quality shaped the day: one free endpoint answered 40 % of requests with a routing error, another refuses historical state, a third rate-limits bursts. The reads went through read-only retry proxies (one port = one upstream identity, broadcast methods refused) so that the two sources named in the record are truthfully two.</li>
+      <li>The verifier 1.3.1 published on 2026-08-22 did not carry the live pins; the 1.3.2 republish (2026-08-28) fixed that additively. The embedded-profile REJECT runs are archived alongside the ACCEPTs, deliberately.</li>
+    </ul>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  VLM-001 · Verifiable Liquidity Mandate 001 · COSMO / Supra Heroes · draft target URL: heros.cloud/mandates/vlm-001/ · this draft is not published
+</div></footer>
+
+</body>
+</html>
