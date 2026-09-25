@@ -260,13 +260,16 @@ first names do not appear in new public evidence.
 
 ## Primary public document
 
-- **COSMO Manifesto v4.0 (FINAL, July 2026)** — `public/COSMO_Manifesto_v4.0.pdf`,
-  15 pages, served at `/COSMO_Manifesto_v4.0.pdf`. Editable master:
-  `docs/manifesto/COSMO_Manifesto_v4.0.html` (render via weasyprint).
-- **Known discrepancy:** the Manifesto still reflects the v4 "Execution Layer"
-  framing. A v5 manifesto is a separate track behind its own GO; until then the
-  website (`/institutional/`, `/assurance/`, landing) is the current statement
-  of the v5 positioning.
+- **COSMO Manifesto v6.0 ("Verifiable Liquidity Mandates", September 2026)** —
+  served at `/manifesto/` (self-contained HTML, EN + DE, plus `/manifesto/index.txt`
+  short version). Editable master: `docs/manifesto/COSMO_Manifesto_v6.0.html`;
+  `public/manifesto/index.html` is a verbatim copy of it.
+- **Archived:** Manifesto v5.0 ("The Institutional Layer for Autonomous
+  Economies", August 2026) at `/manifesto/v5/`, unchanged apart from an archive
+  note. Manifesto v4.0 PDF (`/COSMO_Manifesto_v4.0.pdf`, master
+  `docs/manifesto/COSMO_Manifesto_v4.0.html`) stays in place for old links.
+- The manifesto follows the v6.0 hierarchy above (mandates first, primitives as
+  foundation, category last) and carries every proof with its honest scope.
 
 ## Notes
 

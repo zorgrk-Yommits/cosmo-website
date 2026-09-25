@@ -1,33 +1,49 @@
-COSMO MANIFESTO v5.0 -- The Institutional Layer for Autonomous Economies
-v5.0 - August 2026 - heros.cloud
+COSMO MANIFESTO v6.0 -- Verifiable Liquidity Mandates
+v6.0 - September 2026 - heros.cloud
 
-Capability is copyable. Authority is not.
+Capital owners define the mandate. Agents execute within hard limits.
+COSMO proves every action.
 
 Read the full manifesto (English + Deutsch): heros.cloud/manifesto/
+Previous version (v5.0, archived): heros.cloud/manifesto/v5/
 
-Positioning note: "institutional" means governance primitives around
-autonomous action. It does not mean custody, supervision, regulatory status
-or an investment product. COSMO complements SupraOS and SupraFX, it does not
-compete with them.
+Positioning note: COSMO is not the market maker, not a trading strategy,
+not a DEX and not a custodian. It is the mandate, control, execution and
+proof layer between a capital owner and the operator who works with that
+capital. Built on Supra; complementary to SupraOS and SupraFX.
 
 PUBLIC SHORT VERSION
-COSMO is the institutional layer for autonomous economies, built on Supra. It
-turns autonomous capability into bounded authority through delegated
-permissions, one-shot mandates, hash-pinned policies, explicit ceremony,
-tamper-evident records, signed receipts and offline consistency verification.
-The framework has been demonstrated across two economic domains: a live
-SupraFX trade and live marketplace work, including a two-mandate
-delivery-and-acceptance flow with on-chain settlement. COSMO complements
-SupraOS and SupraFX. Public evidence and a public standalone verifier are
-available at heros.cloud/verifier/.
+COSMO lets market makers and liquidity agents deploy third-party capital
+without requiring blind trust. A capital owner issues one bounded mandate
+covering venues, assets, amounts, slippage, gas, action count and term. The
+mandate is sealed by hash, the policy is pinned before execution, a human
+arms the irreversible step, exactly one transaction is submitted, settlement
+is checked against what was signed, and a signed receipt closes the case. A
+public standalone verifier re-checks the whole case from the files alone.
+The mechanism has been proven with real capital on Ethereum mainnet,
+including a complete mandate lifecycle through to termination, and across
+two economic domains on Supra.
 
 PROOF
-  Case 001    FX / SupraFX          EXECUTED, ACCEPT 10/10  /evidence/execution-case-001/
-  Case 002    Market work delivery  EXECUTED, ACCEPT 10/10  /evidence/execution-case-002/
-  Case 002-G  Delivery + acceptance EXECUTED x2, ACCEPT 10/10  /evidence/execution-case-002g/
-Narrative overview: /institutional/  |  Verifier: /verifier/
+  VLM-001        Liquidity mandate, Ethereum mainnet, 2026-08-22 -> 09-05
+                 OPEN/RESET/CLOSE ACCEPT 10/10 x2 verifiers, terminated
+                 /mandates/vlm-001/  |  /evidence/vlm-001/
+  EVM-MICRO-001  2 bounded swaps, Ethereum mainnet, 2026-08-20
+                 EXECUTED, 1 submit each, both verifiers ACCEPT
+                 (transactions public; case bundles not published) /mandates/
+  Case 001       FX / SupraFX          EXECUTED, ACCEPT 10/10  /evidence/execution-case-001/
+  Case 002       Market work delivery  EXECUTED, ACCEPT 10/10  /evidence/execution-case-002/
+  Case 002-G     Delivery + acceptance EXECUTED x2, ACCEPT 10/10  /evidence/execution-case-002g/
+Verifier (public, 1.3.2): /verifier/  |  Narrative overview: /institutional/
+
+PILOT
+COSMO Controlled Liquidity Pilot: one capital owner, one operator, one pair,
+one venue, one bounded mandate, one action, one independently checkable
+closing record. Start: heros.cloud/mandates/
 
 Risk and honesty note: strategic/narrative document, not investment advice,
 no regulatory status, no confirmed integration unless separately announced.
-The institutional mechanism has been demonstrated; external demand remains to
-be proven. Supersedes the v4.0 manifesto.
+No guaranteed capital safety, no profitability claim, no best-execution claim
+without reference-market data, no production readiness from bounded pilots
+alone. The mandate mechanism has been demonstrated; external demand remains
+to be proven. Supersedes the v5.0 manifesto.

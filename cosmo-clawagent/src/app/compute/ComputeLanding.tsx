@@ -739,7 +739,7 @@ export default function ComputeLanding() {
               Maker vault →
             </Link>
             <a href="/manifesto/" className="text-phase-active hover:text-phase-active">
-              Manifesto v5.0 →
+              Manifesto v6.0 →
             </a>
           </div>
         </div>

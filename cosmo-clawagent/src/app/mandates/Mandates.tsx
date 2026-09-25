@@ -349,6 +349,9 @@ export default function Mandates() {
             <CtaLink href="/assurance/" variant="secondary" size="lg">
               COSMO Trust
             </CtaLink>
+            <CtaLink href="/manifesto/" variant="secondary" size="lg">
+              Read the Manifesto v6.0
+            </CtaLink>
           </div>
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-ink-2">
             The pilot is curated: one engagement at a time, scoped together with the capital

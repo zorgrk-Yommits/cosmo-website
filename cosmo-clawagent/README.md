@@ -24,8 +24,8 @@ proven capability is a **Mainnet proof of accountable execution** via an
 RFQ-based round-trip; it is **not permissionless yet**. RFQ is the technical
 proof of the mechanism, not COSMO's product identity.
 
-The primary public statement is the **COSMO Manifesto v4.0** (linked from the
-homepage). See `docs/POSITIONING.md` for the canonical positioning and the
+The primary public statement is the **COSMO Manifesto v6.0** ("Verifiable
+Liquidity Mandates", served at `/manifesto/`, v5.0 archived at `/manifesto/v5/`). See `docs/POSITIONING.md` for the canonical positioning and the
 language guardrails (no hard SupraOS/SupraFX integration or partnership claims).
 
 ## Routes
@@ -43,4 +43,4 @@ npm run build   # static export to out/
 ```
 
 The site is a static export (`out/`) served by `serve`. `public/` assets —
-including `COSMO_Manifesto_v4.0_DRAFT.pdf` — are copied into `out/` on build.
+including `manifesto/` and the evidence bundles — are copied into `out/` on build.
