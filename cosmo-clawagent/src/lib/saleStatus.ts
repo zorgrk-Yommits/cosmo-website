@@ -21,12 +21,15 @@ export const SALE_LIVE = process.env.NEXT_PUBLIC_SALE_LIVE === '1';
 // Raw wCOSMO carries 6 decimals (SUPRA carries 8). Pinned by the on-chain
 // COSMO_SCALE constant in cosmo_sale.move.
 export const WCOSMO_DECIMALS = 6;
+export const SUPRA_DECIMALS = 8;
 
 export type SaleChainStatus = {
   configured?: boolean;
   paused?: boolean;
   closed?: boolean;
   inventoryRaw?: string;
+  soldLifetime?: string;
+  treasuryRaw?: string;
 };
 
 export type SaleStatusLike = {
@@ -40,15 +43,30 @@ export type SaleAvailability = {
   selling: boolean;
   // Human-readable inventory, or null when it cannot be established.
   inventoryWcosmo: number | null;
+  // wCOSMO sold over the sale's lifetime, or null when not established.
+  soldWcosmo: number | null;
+  // SUPRA currently held by the sale treasury (UNSWEPT balance, not lifetime
+  // proceeds -- a sweep lowers it), or null when not established.
+  treasurySupra: number | null;
   // Effective ask in SUPRA per COSMO, or null when the quoter refused.
   effectiveAsk: string | null;
   // Why we are not claiming "live", for the neutral fallback copy.
   reason: 'ok' | 'loading' | 'unreachable' | 'paused' | 'closed' | 'empty' | 'build-disabled';
 };
 
+// Secondary figures fail closed PER FIELD: a missing or malformed value
+// becomes null and is not shown, without touching the live verdict (which
+// rests on inventory alone).
+function rawToUnits(raw: string | undefined, decimals: number): number | null {
+  if (raw === undefined || !/^\d+$/.test(raw)) return null;
+  return Number(BigInt(raw)) / 10 ** decimals;
+}
+
 const NEUTRAL = (reason: SaleAvailability['reason']): SaleAvailability => ({
   selling: false,
   inventoryWcosmo: null,
+  soldWcosmo: null,
+  treasurySupra: null,
   effectiveAsk: null,
   reason,
 });
@@ -89,6 +107,8 @@ export function deriveSaleAvailability(
   return {
     selling: true,
     inventoryWcosmo: Number(inventoryRaw) / 10 ** WCOSMO_DECIMALS,
+    soldWcosmo: rawToUnits(s.soldLifetime, WCOSMO_DECIMALS),
+    treasurySupra: rawToUnits(s.treasuryRaw, SUPRA_DECIMALS),
     effectiveAsk: ask,
     reason: 'ok',
   };
@@ -98,4 +118,21 @@ export async function fetchSaleStatus(signal?: AbortSignal): Promise<SaleStatusL
   const r = await fetch('/api/sale/status', { cache: 'no-store', signal });
   if (!r.ok) throw new Error(`sale status HTTP ${r.status}`);
   return (await r.json()) as SaleStatusLike;
+}
+
+// Display helpers, pure so the rounding rule is pinned by tests.
+//
+// Floor, never round: an inventory or balance figure may understate what is
+// there, never overstate it (23782.60 reads 23,782, not 23,783).
+export function formatUnitsFloor(n: number): string {
+  return Math.floor(n).toLocaleString('en-US');
+}
+
+// Share of the sale already sold: sold / (sold + available), in whole percent,
+// floored. null when either side is unknown or there is nothing to divide.
+export function soldSharePct(sold: number | null, available: number | null): number | null {
+  if (sold === null || available === null) return null;
+  const total = sold + available;
+  if (!(total > 0)) return null;
+  return Math.floor((sold / total) * 100);
 }

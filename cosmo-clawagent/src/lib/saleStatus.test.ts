@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { deriveSaleAvailability, type SaleStatusLike } from './saleStatus';
+import {
+  deriveSaleAvailability,
+  formatUnitsFloor,
+  soldSharePct,
+  type SaleStatusLike,
+} from './saleStatus';
 
 // The landing page may only claim the treasury sale is live when the chain
 // actually is selling. Every test below is a case where saying "live" would
@@ -113,5 +118,82 @@ describe('deriveSaleAvailability', () => {
     );
     expect(a.selling).toBe(true);
     expect(a.effectiveAsk).toBeNull();
+  });
+});
+
+// Live figures as read on 2026-10-01 (after the +100k topup).
+const withFigures: SaleStatusLike = {
+  chain: {
+    available: true,
+    status: {
+      configured: true,
+      paused: false,
+      closed: false,
+      inventoryRaw: '119453975947',
+      soldLifetime: '15546024053',
+      treasuryRaw: '294800000000',
+    },
+  },
+  probe: { ok: true, tiles: { effectiveAsk: '0.239844182631' } },
+};
+
+describe('secondary sale figures', () => {
+  it('reads sold (6 dec) and treasury (8 dec) from the chain status', () => {
+    const a = deriveSaleAvailability(withFigures, true);
+    expect(a.selling).toBe(true);
+    expect(a.inventoryWcosmo).toBeCloseTo(119453.975947, 6);
+    expect(a.soldWcosmo).toBeCloseTo(15546.024053, 6);
+    expect(a.treasurySupra).toBeCloseTo(2948, 8);
+  });
+
+  it('a malformed secondary field is null and does not touch the live verdict', () => {
+    const st = withFigures.chain!.status!;
+    const a = deriveSaleAvailability(
+      { ...withFigures, chain: { available: true, status: { ...st, soldLifetime: 'abc', treasuryRaw: '-5' } } },
+      true,
+    );
+    expect(a.selling).toBe(true);
+    expect(a.soldWcosmo).toBeNull();
+    expect(a.treasurySupra).toBeNull();
+    expect(a.inventoryWcosmo).toBeCloseTo(119453.975947, 6);
+  });
+
+  it('a missing secondary field is null (older quoter payload)', () => {
+    const a = deriveSaleAvailability(selling, true);
+    expect(a.selling).toBe(true);
+    expect(a.soldWcosmo).toBeNull();
+    expect(a.treasurySupra).toBeNull();
+  });
+
+  it('neutral states carry no figures', () => {
+    const st = withFigures.chain!.status!;
+    const a = deriveSaleAvailability(
+      { ...withFigures, chain: { available: true, status: { ...st, paused: true } } },
+      true,
+    );
+    expect(a.selling).toBe(false);
+    expect(a.soldWcosmo).toBeNull();
+    expect(a.treasurySupra).toBeNull();
+  });
+});
+
+describe('display helpers', () => {
+  it('floors, never rounds up', () => {
+    expect(formatUnitsFloor(119453.975947)).toBe('119,453');
+    expect(formatUnitsFloor(23782.602601)).toBe('23,782');
+    expect(formatUnitsFloor(2948)).toBe('2,948');
+  });
+
+  it('sold share = sold / (sold + available), floored', () => {
+    // 15546.02 / 135000.00 = 11.515 % -> 11
+    expect(soldSharePct(15546.024053, 119453.975947)).toBe(11);
+    // 2/3 = 66.67 % -> 66, not 67
+    expect(soldSharePct(2, 1)).toBe(66);
+  });
+
+  it('sold share is null when a side is unknown or the total is zero', () => {
+    expect(soldSharePct(null, 100)).toBeNull();
+    expect(soldSharePct(100, null)).toBeNull();
+    expect(soldSharePct(0, 0)).toBeNull();
   });
 });
