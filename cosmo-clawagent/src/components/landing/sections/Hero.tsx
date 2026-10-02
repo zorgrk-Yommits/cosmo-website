@@ -1,9 +1,9 @@
 'use client';
 
-import { ArrowDown, ArrowRight } from 'lucide-react';
+import { ArrowDown, ArrowRight, Download } from 'lucide-react';
 import CosmoCore from '@/components/cosmo/core/CosmoCore';
 import PhaseRail from '@/components/cosmo/PhaseRail';
-import { CtaLink } from '@/components/cosmo/Cta';
+import { CtaLink, ctaClasses } from '@/components/cosmo/Cta';
 import { usePhase } from '@/components/cosmo/usePhase';
 
 export default function Hero() {
@@ -58,6 +58,18 @@ export default function Hero() {
             <ArrowRight className="h-4 w-4" />
           </CtaLink>
         </div>
+
+        {/* Promo spot: plain <a download> so the MP4 saves instead of opening
+            in the player. File lives in public/media/ (survives every build). */}
+        <a
+          href="/media/cosmo-promo-15s-v1.mp4"
+          download="cosmo-promo-15s.mp4"
+          className={ctaClasses('secondary', 'md') + ' mt-4'}
+        >
+          <Download className="h-4 w-4" />
+          Download the 15 s promo
+          <span className="text-ink-2">MP4 · 28 MB</span>
+        </a>
 
         {/* The whole product in one line — the ten-second version. */}
         <div className="mt-14 max-w-4xl">
