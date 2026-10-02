@@ -48,6 +48,12 @@ import {
   fetchSeqNum,
   faBalance,
 } from '@/lib/mainnetOnchain';
+import {
+  describeDepositOutcome,
+  depositOutcomeLines,
+  depositReceiptLines,
+  type DepositReceipt,
+} from './lib/depositOutcome';
 
 // ---- On-chain status snapshot ----------------------------------------------------
 type GlobalStatus = {
@@ -57,6 +63,7 @@ type GlobalStatus = {
   totalBonded: bigint;
   paused: boolean;
   paymentFaOk: boolean;
+  cooldownSecs: bigint; // bond_cooldown_secs(): lock length after a penalty deduction
 };
 
 type WalletStatus = {
@@ -72,13 +79,14 @@ type WalletStatus = {
 const PV = `${COMPUTE_PKG_ADDR}::provider_vault`;
 
 async function fetchGlobalStatus(): Promise<GlobalStatus> {
-  const [minBond, maxPer, globalCap, totalBonded, paused, paymentFa] = await Promise.all([
+  const [minBond, maxPer, globalCap, totalBonded, paused, paymentFa, cooldown] = await Promise.all([
     rpcView(`${PV}::get_min_provider_bond`, [], []),
     rpcView(`${PV}::get_max_bond_per_provider`, [], []),
     rpcView(`${PV}::get_global_bond_cap`, [], []),
     rpcView(`${PV}::get_total_bonded`, [], []),
     rpcView(`${PV}::is_onboarding_paused`, [], []),
     rpcView(`${PV}::payment_fa_addr`, [], []),
+    rpcView(`${PV}::bond_cooldown_secs`, [], []),
   ]);
   return {
     minBond: BigInt(String(minBond ?? 0)),
@@ -87,6 +95,7 @@ async function fetchGlobalStatus(): Promise<GlobalStatus> {
     totalBonded: BigInt(String(totalBonded ?? 0)),
     paused: paused === true,
     paymentFaOk: sameAddr(String(paymentFa ?? ''), WCOSMO_META),
+    cooldownSecs: BigInt(String(cooldown ?? 0)),
   };
 }
 
@@ -118,12 +127,14 @@ const STEPS: StepDef[] = [
 
 type StepState = {
   payloadText: string | null;
+  payloadAmount: bigint | null; // the exact u64 in the prepared payload (drives the outcome box)
   txHash: string | null;
   busy: boolean;
   signReady: boolean;
 };
 const emptyStep = (): StepState => ({
   payloadText: null,
+  payloadAmount: null,
   txHash: null,
   busy: false,
   signReady: false,
@@ -152,6 +163,8 @@ export default function ProviderBondHelper() {
   const [log, setLog] = useState<{ text: string; tone: 'ok' | 'bad' | 'warn' | 'info' } | null>(
     null,
   );
+  // Receipt for the last deposit (step 2), built from LIVE reads after the tx.
+  const [receipt, setReceipt] = useState<DepositReceipt | null>(null);
 
   const patchStep = useCallback((n: number, patch: Partial<StepState>) => {
     setSteps((s) => ({ ...s, [n]: { ...s[n], ...patch } }));
@@ -195,8 +208,8 @@ export default function ProviderBondHelper() {
   useEffect(() => {
     preparedRef.current = {};
     setSteps((s) => ({
-      1: { ...s[1], payloadText: null, signReady: false },
-      2: { ...s[2], payloadText: null, signReady: false },
+      1: { ...s[1], payloadText: null, payloadAmount: null, signReady: false },
+      2: { ...s[2], payloadText: null, payloadAmount: null, signReady: false },
     }));
   }, [amountInput]);
 
@@ -352,7 +365,7 @@ export default function ProviderBondHelper() {
           `Expiry (unix)   : ${expiry}`,
           'Chain           : 8 (Supra Mainnet)',
         ].join('\n');
-        patchStep(step.n, { payloadText: text, signReady: true });
+        patchStep(step.n, { payloadText: text, payloadAmount: amount, signReady: true });
         setLog({ text: `Step ${step.n} payload ready. Review it, then sign.`, tone: 'info' });
       } catch (e) {
         setLog({ text: `Payload error: ${(e as Error).message ?? e}`, tone: 'bad' });
@@ -373,6 +386,7 @@ export default function ProviderBondHelper() {
         // Snapshot the value the poll below watches for.
         const before =
           step.n === 1 ? (wallet?.wcosmoBal ?? ZERO) : (wallet?.bondAmount ?? ZERO);
+        const walletBefore = wallet?.wcosmoBal ?? ZERO;
         setLog({ text: 'Waiting for signature in StarKey …', tone: 'info' });
         const txHash = await p.sendTransaction({
           data: prepared.data,
@@ -382,17 +396,44 @@ export default function ProviderBondHelper() {
           value: '',
         });
         preparedRef.current[step.n] = null;
-        patchStep(step.n, { txHash, payloadText: null });
+        patchStep(step.n, { txHash, payloadText: null, payloadAmount: null });
+        if (step.n === 2) setReceipt(null);
         setLog({ text: `TX sent (step ${step.n}). Waiting for on-chain confirmation …`, tone: 'info' });
         // Poll until the state change is visible (max ~60s), like the M2 helper.
+        let seen: WalletStatus | null = null;
+        let confirmed = false;
         for (let i = 0; i < 20; i++) {
           await new Promise((r) => setTimeout(r, 3000));
           const st = await refreshStatus();
           if (!st?.w) continue;
-          if (step.n === 1 && st.w.wcosmoBal > before) break;
-          if (step.n === 2 && st.w.bondAmount > before) break;
+          seen = st.w;
+          if (step.n === 1 && st.w.wcosmoBal > before) {
+            confirmed = true;
+            break;
+          }
+          if (step.n === 2 && st.w.bondAmount > before) {
+            confirmed = true;
+            break;
+          }
         }
-        setLog({ text: `Step ${step.n} confirmed on-chain (or still pending — check status).`, tone: 'ok' });
+        if (step.n === 2) {
+          setReceipt({
+            payloadAmount: prepared.amount,
+            bondBefore: before,
+            bondAfter: seen?.bondAmount ?? before,
+            walletBefore,
+            walletAfter: seen?.wcosmoBal ?? walletBefore,
+            lockedUntilSecs: seen?.lockedUntil ?? ZERO,
+            activeJobs: seen?.activeJobs ?? ZERO,
+            txHash,
+            confirmed,
+          });
+        }
+        setLog(
+          confirmed
+            ? { text: `Step ${step.n} confirmed on-chain.`, tone: 'ok' }
+            : { text: `Step ${step.n} sent; not yet visible on-chain — refresh status in a moment.`, tone: 'warn' },
+        );
       } catch (e) {
         setLog({ text: `Sign/send error: ${(e as Error).message ?? e}`, tone: 'bad' });
         patchStep(step.n, { signReady: true });
@@ -712,6 +753,27 @@ export default function ProviderBondHelper() {
                     Sign in StarKey
                   </button>
                 </div>
+                {step.n === 2 && steps[2].payloadAmount !== null && wallet && global && (
+                  <TokenOutcomeBox
+                    lines={depositOutcomeLines(
+                      describeDepositOutcome({
+                        payloadAmount: steps[2].payloadAmount,
+                        wcosmoBal: wallet.wcosmoBal,
+                        bondAmount: wallet.bondAmount,
+                        lockedUntilSecs: wallet.lockedUntil,
+                        activeJobs: wallet.activeJobs,
+                        cooldownSecs: global.cooldownSecs,
+                        nowSecs: Math.floor(Date.now() / 1000),
+                      }),
+                    )}
+                  />
+                )}
+                {step.n === 2 && receipt && (
+                  <DepositReceiptBox
+                    lines={depositReceiptLines(receipt, Math.floor(Date.now() / 1000))}
+                    confirmed={receipt.confirmed}
+                  />
+                )}
                 {steps[step.n].payloadText && (
                   <details open className="mt-4">
                     <summary className="cursor-pointer font-mono text-[11px] uppercase tracking-wider text-ink-2 hover:text-ink-1">
@@ -763,9 +825,10 @@ export default function ProviderBondHelper() {
                 the buyer (fixed at accept time).
               </li>
               <li>
-                · Withdrawing the deposit (`withdraw_provider_bond`) requires the cooldown to have
-                passed and no active job; full exit is always allowed. This page does not offer
-                withdraw in v1.
+                · Withdrawing the deposit (`withdraw_provider_bond`) requires no active job and no
+                penalty lock (a penalty deduction locks withdrawal for 14 days); full exit is
+                always allowed. A deposit itself starts no lock. This page does not offer withdraw
+                in v1.
               </li>
               <li>· All parameters (required minimum, limits) can change through governance.</li>
             </ul>
@@ -962,6 +1025,67 @@ function TransactionPlan({
       </div>
       <p className="mt-2 font-sans text-[11px] text-ink-2">
         Projection assumes both transactions confirm; SUPRA gas not included.
+      </p>
+    </section>
+  );
+}
+
+// Pre-signing box for step 2: describes the EXACT payload amount, one fact per line.
+// Rendered only while a step-2 payload is prepared; disappears once it is signed.
+function TokenOutcomeBox({ lines }: { lines: string[] }) {
+  return (
+    <section
+      data-testid="token-outcome"
+      className="mt-4 rounded-lg border border-phase-active/40 bg-phase-active/[0.06] p-4"
+    >
+      <h4 className="font-mono text-[11px] uppercase tracking-wider text-phase-active">
+        What happens to your tokens when you sign
+      </h4>
+      <ul className="mt-2 space-y-1.5 font-sans text-sm leading-relaxed text-ink-1">
+        {lines.map((l) => (
+          <li key={l}>· {l}</li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+// Receipt after step 2: live before/after values, where the deposit now sits,
+// and when it can come back. Links to the vault page until /portfolio exists.
+function DepositReceiptBox({ lines, confirmed }: { lines: string[]; confirmed: boolean }) {
+  return (
+    <section
+      data-testid="deposit-receipt"
+      className={cn(
+        'mt-4 rounded-lg border p-4',
+        confirmed
+          ? 'border-phase-settled/40 bg-phase-settled/[0.06]'
+          : 'border-phase-warn/40 bg-phase-warn/[0.06]',
+      )}
+    >
+      <h4
+        className={cn(
+          'font-mono text-[11px] uppercase tracking-wider',
+          confirmed ? 'text-phase-settled' : 'text-phase-warn',
+        )}
+      >
+        {confirmed ? 'Receipt — your deposit is in the vault' : 'Receipt — pending'}
+      </h4>
+      <ul className="mt-2 space-y-1.5 font-sans text-sm leading-relaxed text-ink-1">
+        {lines.map((l) => (
+          <li key={l}>· {l}</li>
+        ))}
+      </ul>
+      <p className="mt-3 font-sans text-xs text-ink-2">
+        The vault totals are public on the{' '}
+        <Link
+          href="/vault/"
+          className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof"
+        >
+          vault page
+        </Link>
+        . Your wallet shows the lower balance because the deposit is held there, not because it
+        was spent.
       </p>
     </section>
   );
