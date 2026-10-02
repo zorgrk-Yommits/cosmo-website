@@ -26,6 +26,8 @@ export type Position = {
     | 'compute_job';
   // human id of the record, '' for bonds
   ref: string;
+  // numeric record id (request_id / quote_id / job_id) for the return call, null for bonds
+  id: bigint | null;
   role: 'operator' | 'provider' | 'council' | 'maker' | 'taker' | 'buyer' | 'requester';
   amount: bigint;
   token: Token;
@@ -35,6 +37,9 @@ export type Position = {
   returnFn: string | null;
   // unix secs from which returnFn is callable (escrow rows that will become claimable), else null
   returnAfterSecs: bigint | null;
+  // true iff the owner can call returnFn RIGHT NOW (stage 2b button gate). Derived
+  // from the same predicates as bucket/next; re-evaluated live before any signature.
+  actionable: boolean;
 };
 
 const ZERO = BigInt(0);
@@ -89,12 +94,14 @@ export function makerBondPosition(b: BondInput | null, token: Token, nowSecs: bi
     bucket: 'bonded',
     source: 'maker_vault',
     ref: '',
+    id: null,
     role: 'operator',
     amount: b.amount,
     token,
     next: s.next,
     returnFn: 'maker_vault::withdraw_operator_bond',
     returnAfterSecs: s.lockedUntilSecs,
+    actionable: s.withdrawableNow,
   };
 }
 
@@ -105,12 +112,14 @@ export function providerBondPosition(b: BondInput | null, token: Token, nowSecs:
     bucket: 'bonded',
     source: 'provider_vault',
     ref: '',
+    id: null,
     role: 'provider',
     amount: b.amount,
     token,
     next: s.next,
     returnFn: 'provider_vault::withdraw_provider_bond',
     returnAfterSecs: s.lockedUntilSecs,
+    actionable: s.withdrawableNow,
   };
 }
 
@@ -121,12 +130,14 @@ export function councilBondPosition(amount: bigint | null, token: Token): Positi
     bucket: 'bonded',
     source: 'council_bond',
     ref: '',
+    id: null,
     role: 'council',
     amount,
     token,
     next: 'No withdraw function in v1. Exit rules are planned (council liability), not deployed.',
     returnFn: null,
     returnAfterSecs: null,
+    actionable: false,
   };
 }
 
@@ -239,12 +250,14 @@ export function classifyRfqRequest(
       bucket: 'gone',
       source: 'rfq_request',
       ref,
+      id: req.requestId,
       role: 'requester',
       amount: req.requestFeeQuants,
       token: feeToken,
       next: 'Request fee, paid to the fee account at creation. Not refundable.',
       returnFn: null,
       returnAfterSecs: null,
+      actionable: false,
     });
   }
   if (req.status === RFQ_REQ.FUNDED && quote?.hasQuote && eq(quote.makerOperator, addr)) {
@@ -253,6 +266,7 @@ export function classifyRfqRequest(
       bucket: expired ? 'claimable' : 'escrow',
       source: 'rfq_request',
       ref,
+      id: req.requestId,
       role: 'maker',
       amount: quote.amountOut,
       token: tokenOf(req.tokenOut),
@@ -261,6 +275,7 @@ export function classifyRfqRequest(
         : `Your funded quote leg. Returned if nobody accepts by ${fmtUtc(req.expiresAt)}; otherwise it settles.`,
       returnFn: 'rfq_engine::reclaim_unaccepted_quote',
       returnAfterSecs: req.expiresAt,
+      actionable: expired,
     });
   }
   return out;
@@ -291,9 +306,11 @@ export function classifyRfqAccepted(
     bucket: (due ? 'claimable' : 'escrow') as Bucket,
     source: 'rfq_accepted' as const,
     ref,
+    id: acc.quoteId,
     next,
     returnFn: 'rfq_engine::claim_unwind',
     returnAfterSecs: acc.settlementDeadlineSecs,
+    actionable: due,
   };
   if (eq(acc.taker, addr)) {
     out.push({ ...base, role: 'taker', amount: acc.amountIn, token: tokenOf(acc.tokenIn) });
@@ -385,6 +402,7 @@ export function classifyCmpRequest(
       bucket: expired ? 'claimable' : 'escrow',
       source: 'compute_request',
       ref: `compute request #${req.requestId.toString()}`,
+      id: req.requestId,
       role: 'buyer',
       amount: req.maxPrice,
       token: tokenOf(req.paymentFa),
@@ -393,6 +411,7 @@ export function classifyCmpRequest(
         : `Escrowed max price while providers quote, until ${fmtUtc(req.expiresAt)}. Returned if no job starts.`,
       returnFn: 'compute_rfq::reclaim_expired_request_v2',
       returnAfterSecs: req.expiresAt,
+      actionable: expired,
     },
   ];
 }
@@ -418,6 +437,7 @@ export function classifyCmpJob(
         bucket: due ? 'claimable' : 'escrow',
         source: 'compute_job',
         ref,
+        id: job.jobId,
         role: 'buyer',
         amount: job.price,
         token,
@@ -426,6 +446,7 @@ export function classifyCmpJob(
           : `Job price escrowed until delivery, due by ${fmtUtc(job.jobDeadlineSecs)}. If nothing is delivered, you can claim it back.`,
         returnFn: 'compute_rfq::claim_no_delivery_v2',
         returnAfterSecs: job.jobDeadlineSecs,
+        actionable: due,
       },
     ];
   }
@@ -436,12 +457,14 @@ export function classifyCmpJob(
         bucket: 'escrow',
         source: 'compute_job',
         ref,
+        id: job.jobId,
         role: 'buyer',
         amount: job.price,
         token,
         next: `Result delivered. Review window until ${fmtUtc(settleAt)}; then the price settles to the provider unless you dispute.`,
         returnFn: null,
         returnAfterSecs: null,
+        actionable: false,
       },
     ];
   }
@@ -453,6 +476,7 @@ export function classifyCmpJob(
         bucket: due ? 'claimable' : 'escrow',
         source: 'compute_job',
         ref,
+        id: job.jobId,
         role: 'buyer',
         amount,
         token,
@@ -461,6 +485,7 @@ export function classifyCmpJob(
           : `Disputed. Price plus your dispute bond stay escrowed until resolution or ${fmtUtc(job.disputedAt + DISPUTE_TTL_SECS)}.`,
         returnFn: 'compute_rfq::claim_dispute_unwind_v2',
         returnAfterSecs: job.disputedAt + DISPUTE_TTL_SECS,
+        actionable: due,
       },
     ];
   }

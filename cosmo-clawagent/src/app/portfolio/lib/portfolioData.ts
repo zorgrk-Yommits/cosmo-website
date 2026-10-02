@@ -268,3 +268,91 @@ export function nextWindow(win: ScanWindow, lastMs: number): ScanWindow {
   const h = (n: number) => Math.max(MIN_WINDOW, Math.floor(n / 2));
   return { rfqRequests: h(win.rfqRequests), rfqQuotes: h(win.rfqQuotes), cmpRequests: h(win.cmpRequests), cmpJobs: h(win.cmpJobs) };
 }
+
+// ---- Stage 2b: live re-read of ONE position + tx status -----------------------------
+// The button flow re-reads exactly the record behind a position (plus the bond
+// tables for bond rows) and classifies it against fresh chain time. The result
+// feeds verifyFresh() in ./portfolioTx; the stale snapshot never enables a button.
+
+export const PACKAGE_ADDRS = { cosmoclaw: COSMOCLAW_ADDR, compute: COMPUTE_PKG_ADDR } as const;
+
+export type MinBonds = { operator: bigint | null; provider: bigint | null };
+
+export async function fetchMinBonds(): Promise<MinBonds> {
+  const [op, pv] = await Promise.all([
+    guarded<unknown>(rpcView(`${MV}::min_operator_bond`, [], []), null),
+    guarded<unknown>(rpcView(`${PV}::get_min_provider_bond`, [], []), null),
+  ]);
+  return { operator: op === null ? null : big(op), provider: pv === null ? null : big(pv) };
+}
+
+export async function refetchPosition(p: Position, addr: string, nowSecs: bigint): Promise<Position[]> {
+  switch (p.source) {
+    case 'maker_vault':
+    case 'provider_vault':
+    case 'council_bond': {
+      const w = await fetchWalletSnapshot(addr);
+      return bondPositions(w, nowSecs).filter((x) => x.source === p.source);
+    }
+    case 'rfq_request': {
+      if (p.id === null) return [];
+      const t = await guarded<unknown[] | null>(rpcViewAll(`${RFQ}::get_request`, [], [p.id.toString()]), null);
+      const r = t ? parseRfqRequest(t) : null;
+      if (!r) return [];
+      const q = r.status === 5 ? parseRfqQuote(await guarded<unknown[] | null>(rpcViewAll(`${RFQ}::get_quote`, [], [p.id.toString()]), null)) : null;
+      return classifyRfqRequest(r, q, addr, nowSecs, tokenOf, WCOSMO, eq);
+    }
+    case 'rfq_accepted': {
+      if (p.id === null) return [];
+      const a = parseRfqAccepted(await guarded<unknown[] | null>(rpcViewAll(`${RFQ}::get_accepted_quote`, [], [p.id.toString()]), null));
+      return a ? classifyRfqAccepted(a, addr, nowSecs, tokenOf, eq) : [];
+    }
+    case 'compute_request': {
+      if (p.id === null) return [];
+      const r = parseCmpRequest(p.id, await guarded<unknown[] | null>(rpcViewAll(`${CR}::get_request_v2`, [], [p.id.toString()]), null));
+      return r ? classifyCmpRequest(r, addr, nowSecs, tokenOf, eq) : [];
+    }
+    case 'compute_job': {
+      if (p.id === null) return [];
+      const id = p.id.toString();
+      const [t, d] = await Promise.all([
+        guarded<unknown[] | null>(rpcViewAll(`${CR}::get_job_v2`, [], [id]), null),
+        guarded<unknown[] | null>(rpcViewAll(`${CR}::get_dispute_info_v2`, [], [id]), null),
+      ]);
+      const j = parseCmpJob(p.id, t, d);
+      return j ? classifyCmpJob(j, addr, nowSecs, tokenOf, eq) : [];
+    }
+    default:
+      return [];
+  }
+}
+
+// GET /rpc/v1/transactions/<hash>: {status: 'Success'|'Fail'|'Pending'|..., output.Move.vm_status}.
+// Verified 2026-10-02 against rpc-mainnet: an unknown / not-yet-indexed hash answers
+// HTTP 200 with body `null` (not 404) -> treated as still pending.
+export type TxStatus = { status: 'Success' | 'Fail' | 'Pending' | 'Unknown'; vmStatus: string | null; raw: string };
+
+export async function fetchTxStatus(hash: string): Promise<TxStatus> {
+  const h = hash.startsWith('0x') ? hash : `0x${hash}`;
+  const r = await fetch(`${RPC}/rpc/v1/transactions/${h}`);
+  if (r.status === 404) return { status: 'Pending', vmStatus: null, raw: '404' };
+  if (!r.ok) throw new Error(`tx HTTP ${r.status}`);
+  const body = (await r.json()) as unknown;
+  if (body === null || typeof body !== 'object') return { status: 'Pending', vmStatus: null, raw: 'null' };
+  const j = body as { status?: string; output?: { Move?: { vm_status?: string } } };
+  const s = String(j.status ?? '');
+  const vm = j.output?.Move?.vm_status ?? null;
+  if (s === 'Success' || s === 'Fail' || s === 'Pending') return { status: s, vmStatus: vm, raw: s };
+  return { status: 'Unknown', vmStatus: vm, raw: s };
+}
+
+// Poll until finalized or `maxMs` elapsed. Returns null on timeout (caller says "unconfirmed", never "failed").
+export async function waitForTx(hash: string, maxMs = 90_000, stepMs = 3000): Promise<TxStatus | null> {
+  const t0 = Date.now();
+  while (Date.now() - t0 < maxMs) {
+    await new Promise((r) => setTimeout(r, stepMs));
+    const st = await guarded<TxStatus | null>(fetchTxStatus(hash), null);
+    if (st && st.status !== 'Pending' && st.status !== 'Unknown') return st;
+  }
+  return null;
+}

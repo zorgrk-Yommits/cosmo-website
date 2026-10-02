@@ -252,9 +252,9 @@ describe('parsers', () => {
 describe('aggregation', () => {
   it('sums per token and formats with decimals', () => {
     const s = sumByToken([
-      { bucket: 'escrow', source: 'rfq_accepted', ref: '', role: 'taker', amount: M, token: W, next: '', returnFn: null, returnAfterSecs: null },
-      { bucket: 'escrow', source: 'rfq_accepted', ref: '', role: 'taker', amount: M * BigInt(2), token: W, next: '', returnFn: null, returnAfterSecs: null },
-      { bucket: 'escrow', source: 'rfq_accepted', ref: '', role: 'taker', amount: BigInt(1500000), token: T, next: '', returnFn: null, returnAfterSecs: null },
+      { bucket: 'escrow', source: 'rfq_accepted', ref: '', id: null, role: 'taker', amount: M, token: W, next: '', returnFn: null, returnAfterSecs: null, actionable: false },
+      { bucket: 'escrow', source: 'rfq_accepted', ref: '', id: null, role: 'taker', amount: M * BigInt(2), token: W, next: '', returnFn: null, returnAfterSecs: null, actionable: false },
+      { bucket: 'escrow', source: 'rfq_accepted', ref: '', id: null, role: 'taker', amount: BigInt(1500000), token: T, next: '', returnFn: null, returnAfterSecs: null, actionable: false },
     ]);
     expect(s).toHaveLength(2);
     expect(fmtTokenAmt(s[0].amount, s[0].token)).toBe('3 wCOSMO');

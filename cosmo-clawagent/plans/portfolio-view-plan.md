@@ -85,6 +85,17 @@ Harte Regeln:
 
 ## Stufe 2b -- Rueckweg-Buttons (separates GO, Chain-Writes)
 
+STATUS: GO Rene 02.10.2026 (nur 2b, Stufe 3 bleibt Plan). GEBAUT 02.10.: `src/app/portfolio/lib/portfolioTx.ts` (pure: buildCall fuer die 7 Funktionen, checkWithdrawAmount rem==0||rem>=min, verifyFresh, parseVmAbort/explainAbort mit Codes je Modul, Kill-Zaehler), `portfolioTx.test.ts` (19 Tests, 4 Mutationen rot: actionable-Gate in verifyFresh und buildCall, Min-Rest-Vergleich, Abort-Map ohne Modul), `portfolioData.ts` (+refetchPosition je Quelle, fetchMinBonds, fetchTxStatus/waitForTx 90 s), `PortfolioView.tsx` (ClaimPanel pro actionable Position). Position-Typ erweitert um `id` (Record-ID) und `actionable` (Button-Gate, aus denselben Praedikaten wie bucket).
+
+Umsetzungsentscheide 2b (02.10.):
+- Buttons NUR wenn StarKey verbunden, Signer-Adresse == Snapshot-Adresse und StarKey auf Chain 8 (changeNetwork wird versucht, dann harter Check). Fremde Adressen bleiben read-only, auch bei permissionless Funktionen (claim_unwind, compute claims): kein Gas fuer fremde Positionen.
+- Ablauf: "Check live and prepare" (frische Chain-Zeit + Re-Read genau dieses Records + verifyFresh: existiert, actionable, Betrag unveraendert) -> Payload-Text (Sender, Function-ID, Arg, Seq, Expiry 300 s, Effekt) -> "Sign in StarKey" -> Poll /rpc/v1/transactions/<hash> bis Success/Fail (max 90 s; danach "unconfirmed", nie "failed").
+- Befund RPC 02.10.: unbekannter Hash liefert HTTP 200 mit Body `null` (nicht 404) -> als Pending behandelt.
+- Withdraw: Betragsfeld, vorbelegt mit Vollbetrag ("all"); Regel rem==0 || rem>=min live aus `min_operator_bond` (100 wCOSMO) bzw. `get_min_provider_bond` (100.000 wCOSMO). Min nicht lesbar -> nur Voll-Exit.
+- Kill-Conditions implementiert: |Browser-Chain-Skew| > 60 s sperrt alle Buttons; zweiter Move-Abort nach gruener Vorbedingung sperrt alle Buttons bis Reload (Zaehler nur Seite, nicht persistiert).
+- Abort-Texte: 22 Codes aus maker_vault/provider_vault/rfq_engine/compute_rfq (Quellenzeilen im Code). Unbekannte Codes verbatim mit Modul + Symbol + Hex, nie erfunden.
+- Nicht gebaut: Council-Withdraw (L3), Yield (L4), Stakes (L1) -- Honesty-Box unveraendert.
+
 Neue Mainnet-Tx-Builder in `src/app/portfolio/lib/portfolioTx.ts` (Muster: inline BCS wie ProviderBondHelper; NICHT supraTx.ts):
 - `provider_vault::withdraw_provider_bond` (Vorbedingung: locked_until vorbei, active_job_count == 0)
 - `maker_vault::withdraw_operator_bond` (Vorbedingung: locked_until vorbei)
