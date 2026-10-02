@@ -56,6 +56,8 @@ Kein Chain-Write ausser dem bestehenden Deposit-Flow. Keine neuen Views noetig.
 
 ## Stufe 2a -- `/portfolio` read-only Abstimmungsansicht
 
+STATUS: GEBAUT + LIVE 02.10.2026 (Commit im Website-Repo, ungepusht). `src/app/portfolio/` mit `lib/positions.ts` (pure, 26 Tests, 3 Mutationen rot), `lib/portfolioData.ts` (Chain-Zeit aus `/rpc/v1/block`, Fenster-Scan mit Concurrency 8, V2-Views je ID abgefangen), `PortfolioView.tsx`, `page.tsx`; Nav-Link "Portfolio"; Quittung auf /compute/bond verlinkt. Abweichung vom Plan: zusaetzlich freies Adressfeld (read-only, keine Signatur), weil die Seite sonst ohne StarKey nicht pruefbar waere. Live-Smoke K1/M2 vor Deploy; Rollback-Drill PASS (`out.pre-portfolio-2a`); gerenderte Seite mit K1 geprueft (Maker-Bond 100 + Provider-Bond 100.000 wCOSMO, Scan 2,4 s ueber alle 6/4/16/11 Records). Hinweis: Live-Zaehler sind heute weit unter dem Fenster (200/200/200/100), die Auto-Halbierung ist implementiert, aber noch nie ausgeloest worden. M2-Seite aendert sich nur durch den gemeinsamen Nav-Link (156 Zeichen), M2-Quelle unangetastet.
+
 Neu:
 - `src/app/portfolio/page.tsx` (Server-Wrapper, Metadata, indexierbar)
 - `src/app/portfolio/PortfolioView.tsx` ('use client', StarKey-Connect wie ProviderBondHelper, Chain-8-Enforcement hart)
