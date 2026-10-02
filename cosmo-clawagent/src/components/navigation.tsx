@@ -23,6 +23,8 @@ const navLinks: {
   { href: '/assurance/', label: 'Trust' },
   { href: '/compute/', label: 'Network', match: ['/vault', '/maker-onboarding'] },
   { href: '/cosmo/', label: '$COSMO', match: ['/wcosmo'] },
+  // 2026-10-02 (D-PV-1): read-only position snapshot "where are my tokens?".
+  { href: '/portfolio/', label: 'Portfolio' },
   // 2026-08-20: the treasury sale was live on mainnet but reachable only by
   // typing the URL. It gets a real top-level entry — /buy is a product, not a
   // hidden path. It stays a plain nav link, not a second primary CTA: the

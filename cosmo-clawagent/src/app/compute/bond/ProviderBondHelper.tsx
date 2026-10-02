@@ -1077,7 +1077,14 @@ function DepositReceiptBox({ lines, confirmed }: { lines: string[]; confirmed: b
         ))}
       </ul>
       <p className="mt-3 font-sans text-xs text-ink-2">
-        The vault totals are public on the{' '}
+        See all your positions on the{' '}
+        <Link
+          href="/portfolio/"
+          className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof"
+        >
+          portfolio page
+        </Link>
+        ; vault totals are on the{' '}
         <Link
           href="/vault/"
           className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof"
