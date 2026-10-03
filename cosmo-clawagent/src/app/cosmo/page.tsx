@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 import CosmoStory from './CosmoStory';
 
-// The former landing page (protocol story). Carries the old site-default SEO
-// text; overrides openGraph/twitter so it does not inherit the buyer-first
-// layout defaults (Next merges metadata shallowly per top-level key).
-const TITLE = 'COSMO — $COSMO and the Institutional Layer on Supra';
+// The $COSMO token page (rewritten in the site-clarity refactor). Overrides
+// openGraph/twitter so it does not inherit the layout defaults (Next merges
+// metadata shallowly per top-level key).
+const TITLE = 'COSMO — $COSMO: the token behind the deposits and the payments';
 const DESCRIPTION =
-  'COSMO is the institutional layer for autonomous economies, built on Supra: SupraOS coordinates agents, SupraFX moves markets and liquidity, COSMO provides the delegated authority, mandates, policies and receipts that make autonomous work accountable. Live on Supra Mainnet with documented settlement proofs; guarded v1, not permissionless yet.';
+  '$COSMO is the token of the COSMO project on Supra. Wrapped 1 to 1 as wCOSMO, it is what providers put down as a safety deposit and what a job can be paid in. What is live, what is a pilot and what is only planned is labelled; no yield is promised.';
 
 export const metadata: Metadata = {
   title: TITLE,

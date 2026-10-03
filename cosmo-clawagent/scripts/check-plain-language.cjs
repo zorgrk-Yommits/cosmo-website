@@ -70,12 +70,6 @@ const EXEMPT = [
   // paid research product with its own vocabulary; outside the plan's page list
   'src/app/intelligence/',
   'src/components/ProtocolNotice.tsx',
-  // the $COSMO token story and the three diagrams only it uses: v5 framing,
-  // not in the plan's page list; needs its own rewrite, not a word swap
-  'src/app/cosmo/',
-  'src/components/IntelligenceLoop.tsx',
-  'src/components/LayerStack.tsx',
-  'src/components/PrimitiveChain.tsx',
   // the vocabulary table itself
   'src/components/cosmo/terms.ts',
 ];

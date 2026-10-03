@@ -1,538 +1,287 @@
 'use client';
 
-// /cosmo — the COSMO protocol story (former landing page, moved 1:1 in Etappe 2).
+// /cosmo — what the $COSMO token is and what it is used for today.
+//
+// Rewritten in the site-clarity refactor (positioning v6.1). The earlier page
+// told the v5 "institutional layer" story with an eight-agent swarm; what is
+// kept from it is stated with its real maturity: one agent runs, seven are
+// planned, staking rewards are not active. No token figure appears here that
+// the page cannot back; supply and distribution are linked, not restated.
 
-import Link from 'next/link';
-import {
-  Activity,
-  ArrowRight,
-  Brain,
-  Crown,
-  Database,
-  Lock,
-  Radar,
-  ScrollText,
-  Search,
-  Wallet,
-  Zap,
-} from 'lucide-react';
-import BentoItem from '@/components/ui/terminal-bento-grid';
-import IntelligenceLoop from '@/components/IntelligenceLoop';
-import LayerStack from '@/components/LayerStack';
-import PrimitiveChain from '@/components/PrimitiveChain';
+import { ArrowLeftRight, ArrowRight, Banknote, Bot, Coins, Lock, ShieldCheck } from 'lucide-react';
+import { COSMO_META, COSMOCLAW_ADDR, WCOSMO_META } from '@/lib/mainnetOnchain';
+import { CtaLink } from '@/components/cosmo/Cta';
+import MaturityBadge, { type Maturity } from '@/components/cosmo/MaturityBadge';
+import PageIntro from '@/components/cosmo/PageIntro';
+import Reveal from '@/components/cosmo/Reveal';
+import SectionHeader from '@/components/cosmo/SectionHeader';
+import Surface from '@/components/cosmo/Surface';
+import TechDetails from '@/components/cosmo/TechDetails';
 
-const agents = [
+const USES: {
+  icon: typeof Coins;
+  title: string;
+  body: string;
+  maturity: Maturity;
+  detail?: string;
+  href: string;
+  cta: string;
+}[] = [
   {
-    id: 'KAHLESS-1',
-    name: 'Kahless',
-    type: 'FLOW',
-    role: 'Governance Root',
-    category: 'Governance',
-    icon: Crown,
-    accent: 'purple',
-    description:
-      'Designed as the master of EOM: will hold 24-hour veto power over all protocol actions, the root of trust for the entire agent hierarchy.',
+    icon: ShieldCheck,
+    title: 'Safety deposits',
+    body: 'A provider puts down wCOSMO before taking jobs. If the provider does not deliver, part of it goes to the buyer.',
+    maturity: 'pilot',
+    href: '/compute/bond/',
+    cta: 'How the deposit works',
   },
   {
-    id: 'GOV-2',
-    name: 'Gov. Architect',
-    type: 'FLOW',
-    role: 'Proposal Execution',
-    category: 'Governance',
-    icon: ScrollText,
-    accent: 'purple',
-    description:
-      'Will execute on-chain governance proposals once approved, translating council decisions into protocol state changes.',
+    icon: Banknote,
+    title: 'Paying for jobs',
+    body: 'A job on the market can be priced in wCOSMO. CASH and SUPRA are accepted as well.',
+    maturity: 'pilot',
+    href: '/market/',
+    cta: 'See the job board',
   },
   {
-    id: 'ORACLE-3',
-    name: 'Oracle Node',
-    type: 'GET',
-    role: 'Price Feed Validation',
-    category: 'Intelligence',
-    icon: Radar,
-    accent: 'cyan',
-    description:
-      'Designed to validate price feeds from Supra DORA oracles — the foundation of the execution loop; without reliable data, no downstream agent can reason correctly.',
-  },
-  {
-    id: 'ARBITER-4',
-    name: 'Arbiter',
-    type: 'GET',
-    role: 'Opportunity Scanner',
-    category: 'Intelligence',
-    icon: Search,
-    accent: 'cyan',
-    description:
-      'Will scan Atmos pools and external chain prices for raw spreads — pure sensing, no judgement; signals routed to the Strategist for evaluation.',
-  },
-  {
-    id: 'STRAT-5',
-    name: 'Strategist',
-    type: 'THINK',
-    role: 'Signal Generation',
-    category: 'Intelligence',
-    icon: Brain,
-    accent: 'cyan',
-    description:
-      'Designed to evaluate every opportunity — does the spread cover costs, inventory, and risk appetite? — producing actionable signals or discarding noise, and triggering COSMO on confirmation.',
-  },
-  {
-    id: 'LIQ-6',
-    name: 'Liquidity General',
-    type: 'ACT',
-    role: 'Vault Management',
-    category: 'Capital',
-    icon: Wallet,
-    accent: 'green',
-    description:
-      'Will manage maker-side vault inventory across chains, ensuring COSMO always has the capital to accept inbound RFQs and execute outbound opportunities.',
-  },
-  {
-    id: 'KEEPER-7',
-    name: 'Keeper',
-    type: 'THINK + ACT',
-    role: 'Learning Layer',
-    category: 'Memory',
-    icon: Database,
-    accent: 'cyan',
-    description:
-      'Will archive each settlement outcome as a labelled training example, closing the loop by feeding the Learning Layer — compounding execution quality with every trade.',
-  },
-  {
-    id: 'COSMO-8',
-    name: 'COSMO',
-    type: 'TRANSACT',
-    role: 'Accountable Execution',
-    category: 'Execution',
-    icon: Zap,
-    accent: 'purple',
-    featured: true,
-    description:
-      'The eighth agent and the only one that acts on-chain. Live on Supra Mainnet: COSMO is the execution and accountability layer — it turns a confirmed quote into bonded, atomic settlement through audited Move modules. Proven via an RFQ-based round-trip.',
+    icon: ArrowLeftRight,
+    title: 'Deposits for token trades',
+    body: 'In the earlier trading track, the operators who offered token trades put down wCOSMO as their deposit.',
+    maturity: 'archive',
+    href: '/vault/',
+    cta: 'Where deposits are held',
   },
 ];
 
-const accentMap = {
-  green: {
-    border: 'border-phase-settled/30',
-    bg: 'bg-phase-settled/10',
-    text: 'text-phase-settled',
-    dot: 'bg-phase-settled',
-    badge: 'bg-phase-settled/15 text-phase-settled border border-phase-settled/30',
+const NOT_YET: { title: string; body: string }[] = [
+  {
+    title: 'Rewards for staking',
+    body: 'Not active in this version. There is nothing to claim, and no yield is promised.',
   },
-  cyan: {
-    border: 'border-phase-proof/30',
-    bg: 'bg-phase-proof/10',
-    text: 'text-phase-proof',
-    dot: 'bg-phase-proof',
-    badge: 'bg-phase-proof/15 text-phase-proof border border-phase-proof/30',
+  {
+    title: 'A track record on the operator license',
+    body: 'The license is built to count completed trades and missed deadlines. Today that record lives in the transactions, not on the license.',
   },
-  purple: {
-    border: 'border-phase-active/30',
-    bg: 'bg-phase-active/10',
-    text: 'text-phase-active',
-    dot: 'bg-phase-active',
-    badge: 'bg-phase-active/15 text-phase-active border border-phase-active/30',
+  {
+    title: 'Seven of the eight agents',
+    body: 'The project was designed as a group of eight agents. One runs today: the one that carries out transactions. The other seven are designs.',
   },
-};
+  {
+    title: 'An open market for everyone',
+    body: 'Providers are hand-picked, limits are low, and offers reach the contract through a signing service we run.',
+  },
+];
 
 export default function CosmoStory() {
   return (
     <div className="terminal-container terminal-theme-scope">
       <div className="grid-bg" />
 
-      {/* Hero */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-16">
-        <div className="flex flex-row items-center gap-8">
-
-          {/* Left: Text block */}
-          <div className="flex-1 pl-4 lg:pl-8">
-            <div className="flex flex-wrap items-center gap-2 mb-8">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-phase-active/10 border border-phase-active/25">
-                <span className="w-2 h-2 rounded-full bg-phase-settled animate-pulse" />
-                <span className="font-mono text-xs text-phase-active tracking-widest uppercase">
-                  COSMO live on Supra Mainnet
-                </span>
-              </div>
-            </div>
-
-            <h1 className="text-5xl md:text-7xl font-mono font-bold tracking-tight mb-6 text-left">
-              <span className="neon-text-purple">COSMO</span>
-              <span className="block text-2xl md:text-3xl text-ink-1 font-normal mt-2 tracking-wide">
-                The Institutional Layer for Autonomous Economies
-              </span>
-            </h1>
-
-            <p className="text-ink-0 text-xl leading-relaxed mb-6 font-mono max-w-xl">
-              COSMO turns agent intent into accountable on-chain execution — bonded commitments,
-              capabilities, and atomic settlement that either completes in full or reverts.
-            </p>
-
-            <p className="text-ink-1 text-lg leading-relaxed mb-10 font-sans max-w-xl">
-              COSMO is the institutional layer of the agent stack on Supra: SupraOS coordinates
-              agents, SupraFX moves markets and liquidity, COSMO provides the governance that
-              makes autonomous work accountable — bonded, atomic, settled on-chain. Live on
-              Supra Mainnet today; the proofs on this page link straight to the chain.
-            </p>
-
-            <div className="flex flex-wrap items-center justify-start gap-4">
-              <Link
-                href="/demo/"
-                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-phase-active hover:bg-phase-active text-white font-mono font-semibold transition-all hover:shadow-[0_0_30px_rgba(139,92,246,0.5)]"
-              >
-                <Activity className="w-4 h-4" />
-                See the proof — live Mainnet round-trip
-              </Link>
-              <a
-                href="/manifesto/"
-                className="flex items-center gap-2 px-6 py-3 rounded-xl border border-phase-active/30 text-phase-active hover:border-phase-active hover:text-phase-active font-mono transition-all"
-              >
-                Read the Manifesto — v6.0
-                <ArrowRight className="w-4 h-4" />
-              </a>
-            </div>
-          </div>
-
-        </div>
-
-        {/* Live stats bar */}
-        <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl">
-          {[
-            { label: 'Supra Mainnet', value: 'Live' },
-            { label: 'Move modules deployed', value: '5' },
-            { label: 'Agents — architecture', value: '8' },
-            { label: 'settled proofs', value: '5' },
-          ].map((stat) => (
-            <div
-              key={stat.label}
-              className="bg-surface-1 border border-white/[0.08] rounded-xl p-4 text-center backdrop-blur"
-            >
-              <div className="font-mono text-xl font-bold text-white">{stat.value}</div>
-              <div className="font-mono text-xs text-ink-2 mt-1 uppercase tracking-wider">
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* The Primitive — what COSMO does, shown rather than argued. The layer stack does the
-          work three "not a competitor" sentences used to attempt; the chain is the primitive
-          itself. Honest limits are bundled into the amber box instead of dampening every
-          paragraph. */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 pb-8">
-        <div className="rounded-2xl border border-phase-active/20 bg-surface-1 p-8 md:p-10 backdrop-blur">
-          <div className="flex items-center gap-2 mb-5">
-            <span className="w-2 h-2 rounded-full bg-phase-active" />
-            <span className="font-mono text-xs uppercase tracking-[0.2em] text-phase-active/80">
-              The primitive
-            </span>
-          </div>
-
-          <h2 className="font-mono text-2xl md:text-3xl font-bold text-white mb-8 leading-snug max-w-4xl">
-            COSMO defines the primitive: an agent&apos;s commitment becomes{' '}
-            <span className="neon-text-purple">binding on-chain</span>, and settlement either
-            completes in full or reverts.
-          </h2>
-
-          <LayerStack />
-
-          <div className="mt-10">
-            <PrimitiveChain />
-          </div>
-
-          {/* The chain claims LIVE; this line is what backs it. Keep it as evidence with
-              links, never as an adjective. */}
-          {/* ink-1, not ink-2: at 11px ink-1 measures 9.1:1 against the page ground while
-              ink-2 only just clears AA at 4.8:1. This line is the evidence for the chain's
-              LIVE badges — dimming it defeats it. */}
-          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[11px] text-ink-1">
-            <span className="text-ink-1">Proven on Supra Mainnet:</span>
-            <Link href="/demo/" className="text-phase-active/80 underline-offset-4 hover:underline">
-              RFQ round-trip settled
-            </Link>
-            <Link href="/compute/" className="text-phase-active/80 underline-offset-4 hover:underline">
-              3 outcome-based compute jobs settled
-            </Link>
-            <span>all three license gates fired and passed</span>
-          </div>
-
-          {/* Honest limits, bundled and visible — same pattern as /compute's honesty box. */}
-          <div className="mt-10 rounded-xl border border-phase-warn/20 bg-phase-warn/[0.04] p-5">
-            <div className="flex items-center gap-2 mb-2">
-              <Lock className="h-4 w-4 text-phase-warn" />
-              <h3 className="font-mono text-sm text-ink-0">
-                Guarded v1 — what is deliberately small
-              </h3>
-            </div>
-            <p className="font-sans text-sm leading-relaxed text-ink-1">
-              The primitive is proven end-to-end on Mainnet; the access to it is not open. Quotes
-              flow through a signed quote path we operate — a quality gate, not a permissionless
-              market. The outcome-based compute market runs one active job per provider on
-              deterministic workloads. Seven of the eight agents above are roadmap; only COSMO
-              acts on-chain today. The license accumulates no reputation score yet — the trade
-              record lives in transaction events. Broader service settlement — data access,
-              signed outputs, API responses — is where the primitive is built to extend next, and
-              it is not built yet.
-            </p>
-            <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
-              Want to hold the token? A small, capped direct sale of wCOSMO against SUPRA is
-              live as a pilot —{' '}
-              <a href="/buy/" className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof">
-                buy wCOSMO
-              </a>{' '}
-              (hard on-chain caps, floor-protected price, no buy-back commitment; every caveat
-              is stated on the page itself).
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* EOM Intelligence Loop - SupraOS-style node graph */}
-      <IntelligenceLoop />
-
-      {/* Agent Cards Bento Grid */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 pb-24">
-        <div className="mb-10 text-center">
-          <h2 className="font-mono text-3xl font-bold text-white mb-2">
-            {'>'} The EOM Swarm
-          </h2>
-          <p className="text-ink-1 font-mono text-sm max-w-3xl mx-auto leading-relaxed">
-            An agent swarm doesn&apos;t need another chat layer. It needs a way to make commitments
-            enforceable. COSMO gives agents that primitive:{' '}
-            <span className="text-ink-0">
-              request, quote, bond, capability, atomic settlement, accountability.
-            </span>
-            <span className="blinking-cursor" />
-          </p>
-          <p className="mt-4 text-ink-2 font-mono text-xs max-w-3xl mx-auto leading-relaxed">
-            The eight agents below are the user-facing story, expressed in SupraOS Bot Builder
-            syntax: WHEN, GET, THINK, FLOW, ACT, TRANSACT. The swarm sits on top; COSMO is the
-            execution and accountability layer underneath it. Only one agent runs today — COSMO,
-            live on Supra Mainnet and proven via an RFQ-based round-trip. The seven thinking
-            agents are the roadmap, and digitally verifiable work — API responses, data access and
-            capabilities — is where the primitive is built to extend next.
-          </p>
-        </div>
-
-        <div className="bento-grid">
-          {agents.map((agent) => {
-            const colors = accentMap[agent.accent as keyof typeof accentMap];
-            const Icon = agent.icon;
-            const featured = agent.featured === true;
-
-            return (
-              <BentoItem
-                key={agent.id}
-                className={featured ? 'col-span-2 cosmo-featured glow-border-purple' : ''}
-              >
-                {/* Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`w-10 h-10 rounded-xl ${colors.bg} ${colors.border} border flex items-center justify-center`}>
-                    <Icon className={`w-5 h-5 ${colors.text}`} />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`w-2 h-2 rounded-full ${colors.dot} animate-pulse`} />
-                    <span className={`font-mono text-xs ${colors.text}`}>{agent.category.toUpperCase()}</span>
-                  </div>
-                </div>
-
-                {/* Agent ID */}
-                <div className="font-mono text-xs text-ink-2 mb-1">[{agent.id}]</div>
-                <h3 className={`font-mono text-xl font-bold mb-2 ${featured ? 'neon-text-purple' : 'text-white'}`}>
-                  {agent.name}
-                </h3>
-                <div className="flex items-center gap-2 mb-4 flex-wrap">
-                  <span className={`tier-badge ${colors.badge}`}>
-                    {agent.type}
-                  </span>
-                  <span className="font-mono text-xs text-ink-2">{agent.role}</span>
-                  {featured ? (
-                    <span className="ml-auto inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-phase-settled/15 text-phase-settled border border-phase-settled/30">
-                      <span className="w-1.5 h-1.5 rounded-full bg-phase-settled animate-pulse" /> Live
-                    </span>
-                  ) : (
-                    <span className="ml-auto font-mono text-[10px] uppercase tracking-wider text-ink-2">planned</span>
-                  )}
-                </div>
-
-                <p className="text-ink-1 text-sm leading-relaxed font-sans">
-                  {agent.description}
-                </p>
-
-                {featured && (
-                  <Link
-                    href="/demo/"
-                    className="mt-3 inline-flex items-center gap-1 font-mono text-xs text-phase-settled hover:text-phase-settled transition-colors"
-                  >
-                    See the live round-trip
-                    <ArrowRight className="w-3 h-3" />
-                  </Link>
-                )}
-              </BentoItem>
-            );
-          })}
-
-          {/* CTA Bento */}
-          <BentoItem className="col-span-3">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="text-left">
-                <h3 className="font-mono text-2xl font-bold text-white mb-2">
-                  {'>'} BIND TO THE SWARM
-                </h3>
-                <p className="text-ink-1 font-sans text-sm max-w-lg">
-                  Stake $COSMO to secure the institutional layer, earn protocol rewards, and participate in
-                  the future of autonomous DeFi governance under the Imperium Protocol.
-                </p>
-              </div>
-              <div className="flex items-center gap-3 shrink-0">
-                <a
-                  href="https://www.tadfi.online/community-tokens/COSMO"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-5 py-2.5 rounded-xl border border-phase-active/30 text-phase-active font-mono text-sm hover:border-phase-active transition-all"
-                >
-                  Tokenomics
-                </a>
-                <Link
-                  href="/demo/"
-                  className="px-5 py-2.5 rounded-xl bg-phase-active hover:bg-phase-active text-white font-mono text-sm font-semibold transition-all hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]"
-                >
-                  Walk through the round-trip →
-                </Link>
-              </div>
-            </div>
-          </BentoItem>
-        </div>
-      </section>
-
-      {/* The Operator License — Agent NFT */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 pb-24">
-        <div className="mb-10 text-center">
-          <h2 className="font-mono text-3xl font-bold text-white mb-2">
-            {'>'} The Operator License
-          </h2>
-          <p className="text-ink-1 font-mono text-sm max-w-3xl mx-auto leading-relaxed">
-            COSMO settles for no one by default. Every quote is bound to a COSMO Operator License —
-            an on-chain operator credential. Not a collectible: today it decides, on-chain, who may
-            settle and how large a trade may be.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Enforced today */}
-          <div className="rounded-2xl border border-phase-settled/30 bg-phase-settled/[0.04] p-6">
-            <div className="flex items-center gap-2 mb-5">
-              <span className="w-2 h-2 rounded-full bg-phase-settled animate-pulse" />
-              <span className="font-mono text-xs uppercase tracking-[0.2em] text-phase-settled/80">
-                Enforced on Supra Mainnet today
-              </span>
-            </div>
-            <ul className="space-y-4">
-              <li>
-                <div className="font-mono text-sm font-bold text-white">Operator identity</div>
-                <p className="text-ink-1 text-sm font-sans leading-relaxed">
-                  Only the agent&apos;s designated operator can have its quote accepted. A quote whose
-                  operator does not match the license is rejected on-chain.
-                </p>
-              </li>
-              <li>
-                <div className="font-mono text-sm font-bold text-white">Active &amp; pausable</div>
-                <p className="text-ink-1 text-sm font-sans leading-relaxed">
-                  An inactive or guardian-paused agent can neither quote nor settle. The check runs
-                  again at acceptance, so a pause mid-flight stops the trade.
-                </p>
-              </li>
-              <li>
-                <div className="font-mono text-sm font-bold text-white">Trade-size cap</div>
-                <p className="text-ink-1 text-sm font-sans leading-relaxed">
-                  Every trade is checked against the agent&apos;s notional ceiling before it can be
-                  accepted — over-cap quotes abort.
-                </p>
-              </li>
-            </ul>
-            <Link
-              href="/demo/"
-              className="mt-5 inline-flex items-center gap-1 font-mono text-xs text-phase-settled hover:text-phase-settled transition-colors"
-            >
-              All three gates fired and passed in the live round-trip
-              <ArrowRight className="w-3 h-3" />
-            </Link>
-          </div>
-
-          {/* By design — roadmap */}
-          <div className="rounded-2xl border border-line-base bg-surface-1 p-6">
-            <div className="flex items-center gap-2 mb-5">
-              <span className="font-mono text-xs uppercase tracking-[0.2em] text-ink-2">
-                By design — roadmap
-              </span>
-              <span className="ml-auto font-mono text-[10px] uppercase tracking-wider text-ink-2">planned</span>
-            </div>
-            <ul className="space-y-4">
-              <li>
-                <div className="font-mono text-sm font-bold text-ink-1">History &amp; reputation</div>
-                <p className="text-ink-2 text-sm font-sans leading-relaxed">
-                  The license is built to accumulate a settled-trade count, missed-deadline tracking
-                  and a reputation score. The fields live on-chain; wiring them into settlement is the
-                  next step — today the trade record lives in the transaction events, not yet on the
-                  license.
-                </p>
-              </li>
-              <li>
-                <div className="font-mono text-sm font-bold text-ink-1">Stake &amp; slashing</div>
-                <p className="text-ink-2 text-sm font-sans leading-relaxed">
-                  Tiered notional limits and slashable stake are designed into the license; tier
-                  magnitudes are still illustrative and staking is Phase-2 scope.
-                </p>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <p className="mt-6 text-center font-mono text-[11px] text-ink-2">
-          Agent #0 ·{' '}
-          <a
-            href="https://suprascan.io/account/0xabd7c1df1767a626c213ffb6942c4d39158f7c2f75dbd5669b25dd6e9bd06084?network=mainnet"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-ink-2 hover:text-ink-1 transition-colors"
-          >
-            0xabd7c1df…6084
-          </a>{' '}
-          · live on Supra Mainnet
+      {/* ── Intro: what this is, the picture, the next action ── */}
+      <section className="relative z-10 mx-auto max-w-5xl px-4 pb-10 pt-20 md:px-6 md:pt-24">
+        <PageIntro
+          maturity="live"
+          maturityDetail="token on Supra Mainnet"
+          title="$COSMO: the token behind the deposits and the payments."
+          lead="$COSMO is this project's token on Supra. Wrapped 1 to 1 as wCOSMO, it is what providers put down as a safety deposit and what a job can be paid in."
+          flow={[
+            { id: 'cosmo', icon: Coins, label: '$COSMO' },
+            { id: 'wcosmo', icon: ArrowLeftRight, label: 'wCOSMO, 1 to 1' },
+            { id: 'deposit', icon: ShieldCheck, label: 'Safety deposit' },
+            { id: 'pay', icon: Banknote, label: 'Job payment' },
+          ]}
+          flowLabel="$COSMO is wrapped 1 to 1 into wCOSMO, which is used for safety deposits and for paying jobs."
+        >
+          <CtaLink href="/buy/" variant="primary" size="lg">
+            Buy wCOSMO
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </CtaLink>
+          <CtaLink href="/wcosmo/" variant="secondary" size="lg">
+            Why two tokens?
+          </CtaLink>
+        </PageIntro>
+        <p className="mt-6 max-w-2xl text-pretty text-sm leading-relaxed text-ink-2">
+          A token for using this system, not an investment product. No yield and no rising price
+          is promised.
         </p>
       </section>
 
-      {/* COSMO Assurance — compact entry point to the research track. Deliberately small
-          and explicitly labelled research/read-only: it must not read as a live product
-          card next to the Mainnet claims above. */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 pb-24">
-        <div className="rounded-2xl border border-phase-proof/25 bg-phase-proof/[0.03] p-6 md:p-8">
-          <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-            <div className="max-w-2xl">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-phase-proof/15 text-phase-proof">
-                  <Radar className="h-3.5 w-3.5" strokeWidth={2.2} />
-                </span>
-                <h2 className="font-mono text-lg font-bold text-white">COSMO Assurance</h2>
-                <span className="rounded-full border border-phase-proof/40 bg-phase-proof/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-phase-proof">
-                  Research prototype · Read-only
-                </span>
-              </div>
-              <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
-                Independent checks for economically critical data.
-              </p>
+      {/* ── What it is used for today ── */}
+      <section className="relative z-10 mx-auto max-w-5xl px-4 py-10 md:px-6">
+        <SectionHeader
+          kicker="What it is used for"
+          title="Three uses. Each is labelled with how real it is."
+        />
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
+          {USES.map((u, i) => {
+            const Icon = u.icon;
+            return (
+              <Reveal key={u.title} delay={i * 0.06}>
+                <Surface className="flex h-full flex-col p-6">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-line-base bg-surface-2 text-ink-0">
+                    <Icon className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <h3 className="mt-4 text-lg font-semibold text-ink-0">{u.title}</h3>
+                  <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-1">{u.body}</p>
+                  <div className="mt-4">
+                    <MaturityBadge level={u.maturity} detail={u.detail} size="sm" />
+                  </div>
+                  <a
+                    href={u.href}
+                    className="mt-4 inline-flex items-center gap-2 font-mono text-[13px] text-phase-active transition-colors hover:text-ink-0"
+                  >
+                    {u.cta}
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                  </a>
+                </Surface>
+              </Reveal>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ── Where it sits ── */}
+      <section className="relative z-10 mx-auto max-w-5xl px-4 py-10 md:px-6">
+        <Surface className="p-6 md:p-8">
+          <h2 className="text-balance text-2xl font-semibold tracking-tight text-ink-0">Built on Supra.</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-ink-1 md:text-base">
+            Supra provides the chain, and its own products cover how agents are coordinated
+            (SupraOS) and where assets are traded (SupraFX). COSMO adds the part that makes paid
+            work binding between two parties who do not know each other: a payment locked up
+            front, a safety deposit behind the provider, and a public record of every step. It
+            is meant to complement those products.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <CtaLink href="/#flow" variant="secondary" size="md">
+              How a job works
+            </CtaLink>
+            <CtaLink href="/assurance/" variant="ghost" size="md">
+              Proof overview
+            </CtaLink>
+          </div>
+        </Surface>
+      </section>
+
+      {/* ── What is not there yet ── */}
+      <section className="relative z-10 mx-auto max-w-5xl px-4 py-10 md:px-6">
+        <SectionHeader
+          kicker="Honest limits"
+          title="What the token does not do yet."
+          lead="Earlier versions of this page described a larger design. These parts of it are not running."
+        />
+        <div className="mt-10 grid gap-4 md:grid-cols-2">
+          {NOT_YET.map((n, i) => (
+            <Reveal key={n.title} delay={i * 0.05}>
+              <Surface tone="quiet" className="h-full p-6">
+                <MaturityBadge level="planned" size="sm" />
+                <h3 className="mt-3 text-base font-semibold text-ink-0">{n.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-ink-1">{n.body}</p>
+              </Surface>
+            </Reveal>
+          ))}
+        </div>
+
+        <Surface className="mt-4 p-6">
+          <div className="flex flex-wrap items-center gap-3">
+            <Bot className="h-5 w-5 text-ink-1" aria-hidden="true" />
+            <h3 className="text-base font-semibold text-ink-0">The operator license</h3>
+            <MaturityBadge level="archive" detail="token-trade track" size="sm" />
+          </div>
+          <p className="mt-3 text-sm leading-relaxed text-ink-1">
+            In the token-trade track, an on-chain license decided which operator could trade and
+            how large a trade could be. Its three checks ran in the trade that was completed on
+            Supra Mainnet.
+          </p>
+          <a
+            href="/demo/"
+            className="mt-3 inline-flex items-center gap-2 font-mono text-[13px] text-phase-active transition-colors hover:text-ink-0"
+          >
+            Replay that trade (archive)
+            <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+          </a>
+          <TechDetails title="Technical details: what the license checks" className="mt-4">
+            <ul className="space-y-2">
+              <li>
+                <span className="text-ink-0">Operator identity.</span> Only the agent&apos;s designated
+                operator can have its quote accepted; a mismatch is rejected on-chain.
+              </li>
+              <li>
+                <span className="text-ink-0">Active and pausable.</span> An inactive or
+                guardian-paused agent can neither quote nor settle. The check runs again at
+                acceptance.
+              </li>
+              <li>
+                <span className="text-ink-0">Trade-size cap.</span> Every trade is checked against
+                the agent&apos;s notional ceiling before it can be accepted.
+              </li>
+            </ul>
+            <p className="mt-3">
+              Agent #0:{' '}
+              <a
+                href="https://suprascan.io/account/0xabd7c1df1767a626c213ffb6942c4d39158f7c2f75dbd5669b25dd6e9bd06084?network=mainnet"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-xs text-phase-proof hover:text-ink-0"
+              >
+                0xabd7c1df…6084
+              </a>
+              . Stake and slashing tiers are designed into the license; staking is Phase-2 scope.
+            </p>
+          </TechDetails>
+        </Surface>
+      </section>
+
+      {/* ── How to get it, and the limits ── */}
+      <section className="relative z-10 mx-auto max-w-5xl px-4 py-10 pb-24 md:px-6">
+        <div className="grid gap-4 md:grid-cols-2">
+          <Surface className="p-6">
+            <h2 className="text-lg font-semibold text-ink-0">How to get it</h2>
+            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-ink-1">
+              <li>· Buy wCOSMO with SUPRA from the project&apos;s own stock, in a capped sale.</li>
+              <li>· Or trade on Atmos, where little money sits in the pool and prices move easily.</li>
+              <li>· For the amounts a provider needs, write to us through the community channel.</li>
+            </ul>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <CtaLink href="/buy/" variant="primary" size="md">
+                Buy wCOSMO
+              </CtaLink>
+              <CtaLink href="/wcosmo/" variant="secondary" size="md">
+                wCOSMO guide
+              </CtaLink>
+              <CtaLink
+                href="https://www.tadfi.online/community-tokens/COSMO"
+                variant="ghost"
+                size="md"
+                external
+              >
+                Token distribution (external)
+              </CtaLink>
             </div>
-            <Link
-              href="/assurance/"
-              className="inline-flex shrink-0 items-center gap-2 self-start rounded-xl border border-phase-proof/40 bg-phase-proof/10 px-5 py-2.5 font-mono text-sm text-phase-proof transition-all hover:border-phase-proof hover:bg-phase-proof/15 md:self-auto"
-            >
-              Explore Assurance
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+          </Surface>
+          <div className="rounded-xl border border-phase-warn/20 bg-phase-warn/[0.04] p-6">
+            <div className="flex items-center gap-2">
+              <Lock className="h-4 w-4 text-phase-warn" aria-hidden="true" />
+              <h2 className="text-lg font-semibold text-ink-0">Read this before buying</h2>
+            </div>
+            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-ink-1">
+              <li>· Nothing on this page is financial advice.</li>
+              <li>· Selling is only possible on Atmos, at whatever liquidity exists there. There is no promise to buy back.</li>
+              <li>· The markets that use the token are small pilots with low limits. Their rules can be changed by the 2-of-3 admin group.</li>
+              <li>· Buyer and provider in several of the paid jobs so far were accounts of the operating team.</li>
+            </ul>
           </div>
         </div>
+        <TechDetails title="Technical details: token addresses" className="mt-4">
+          <dl className="space-y-1.5 font-mono text-[11px]">
+            <div className="break-all">$COSMO FA: {COSMO_META}</div>
+            <div className="break-all">wCOSMO FA: {WCOSMO_META}</div>
+            <div className="break-all">wrap / unwrap module: {COSMOCLAW_ADDR}::wcosmo</div>
+          </dl>
+          <p className="mt-3">
+            $COSMO is a dispatchable fungible asset on Supra Mainnet (chain 8); wCOSMO is its
+            plain 1:1 wrapper. The backing is read live on the wCOSMO guide.
+          </p>
+        </TechDetails>
       </section>
     </div>
   );

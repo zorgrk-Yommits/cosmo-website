@@ -214,7 +214,12 @@ Alle sechs Etappen sind umgesetzt und live. Offen (ausserhalb der Etappen):
 
 - Echter 10-Sekunden-Test mit einer Person ohne Krypto-Wissen (Rene; bisher nur ein Vortest mit einem frischen Agenten auf der Startseite).
 - Echte Signiertests der neuen Statuspfade: Markt (Sperren, Bestaetigen, Freigeben), Deposit, Hand-in, Abheben/Zurueckholen, Kauf, Unwrap. Bisher nur Mock-Vorschauen und lesende Live-Pruefung.
-- `/cosmo` passt noch nicht zur neuen Leitstory (Ausnahmeliste).
 - Texte aus dem Market-Backend (`headline`, Blocker) sprechen teils noch Fachsprache.
 - Erster Bildschirm der Startseite nennt kein Beispiel, welche Art Arbeit gemeint ist.
 - Commits lokal auf `master`, nicht gepusht. Rollback-Kopien `out.pre-site-clarity-e1` bis `-e5` liegen im Repo-Ordner (git-ignoriert).
+
+### Nachtrag: `/cosmo` umgebaut 03.10.2026 (Auftrag Rene; lokal, NICHT deployt)
+
+- Neu als Token-Seite: "$COSMO: the token behind the deposits and the payments." mit Bild $COSMO → wCOSMO → Safety deposit / Job payment, drei Verwendungen mit Reifegrad (Pilot, Pilot, Archive), "Built on Supra" in einem Absatz, "What the token does not do yet" (Staking-Rewards, Track-Record auf der Lizenz, sieben der acht Agenten, offener Markt: alle als Planned), Operator-Lizenz als Archiv-Karte mit den drei Checks im Aufklapper, "How to get it" und Hinweise vor dem Kauf.
+- Entfernt: v5-Hero "The Institutional Layer for Autonomous Economies", Stats-Leiste (u. a. "settled proofs: 5"), die Acht-Agenten-Kacheln mit dem Aufruf "Stake $COSMO ... earn protocol rewards" (Staking-Rewards sind nicht aktiv), die Diagramme `IntelligenceLoop`, `LayerStack`, `PrimitiveChain` und `ui/terminal-bento-grid` (geloescht, nur dort benutzt).
+- Die Ausnahme fuer `/cosmo` im Waechter ist wieder entfernt; Liste bleibt leer.
