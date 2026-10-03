@@ -141,61 +141,8 @@ export function payloadLines(args: { sender: string; call: ClaimCall; seq: numbe
   ];
 }
 
-// ---- Abort mapping -----------------------------------------------------------------
-// vm_status on Supra: "Move abort in <addr>::<module>: E_SYMBOL(0x1f): comment"
-// (older nodes may omit the symbol: "Move abort in <addr>::<module>: 0x1f").
-
-export type VmAbort = { module: string; symbol: string | null; code: number };
-
-export function parseVmAbort(vmStatus: string | null | undefined): VmAbort | null {
-  if (!vmStatus) return null;
-  const m = /Move abort in (?:0x[0-9a-fA-F]+)::(\w+):\s*(?:(E_\w+)\()?(0x[0-9a-fA-F]+|\d+)\)?/.exec(vmStatus);
-  if (!m) return null;
-  const raw = m[3];
-  const code = raw.startsWith('0x') ? parseInt(raw.slice(2), 16) : parseInt(raw, 10);
-  if (!Number.isFinite(code)) return null;
-  return { module: m[1], symbol: m[2] ?? null, code };
-}
-
-// Keyed by module:code. Codes verified against the Move sources on 2026-10-02:
-// maker_vault.move:111-114, provider_vault.move:46-60, rfq_engine.move:83-126,
-// compute_rfq.move:100-154.
-const ABORT_TEXT: Record<string, string> = {
-  'maker_vault:2': 'Withdrawal is locked by a penalty cooldown. The lock end is shown in the deposits row.',
-  'maker_vault:3': 'Amount exceeds your deposit, or there is no deposit for this address.',
-  'maker_vault:4': 'A partial withdrawal must leave at least the minimum deposit, or take everything.',
-  'provider_vault:10': 'A partial withdrawal must leave at least the minimum deposit, or take everything.',
-  'provider_vault:11': 'Amount exceeds your deposit, or there is no deposit for this address.',
-  'provider_vault:12': 'Withdrawal is locked by a penalty cooldown. The lock end is shown in the deposits row.',
-  'provider_vault:15': 'A job is still active for this provider. Withdraw after it settles.',
-  'rfq_engine:10': 'Request not found on chain.',
-  'rfq_engine:29': 'This request has no quote to reclaim.',
-  'rfq_engine:50': 'Accepted quote not found on chain.',
-  'rfq_engine:52': 'Settlement deadline not reached on chain time. Try again after the deadline.',
-  'rfq_engine:54': 'Only the maker who funded this quote can reclaim it.',
-  'rfq_engine:60': 'The request has not expired on chain time. Try again after expiry.',
-  'rfq_engine:61': 'This request is no longer in the funded state (accepted, settled or already reclaimed).',
-  'compute_rfq:10': 'Compute request not found on chain.',
-  'compute_rfq:11': 'The request is no longer open: a job may have started, or it was already reclaimed.',
-  'compute_rfq:18': 'The quoting window has not closed on chain time. Try again after expiry.',
-  'compute_rfq:40': 'Compute job not found on chain.',
-  'compute_rfq:48': 'The provider delivered before you claimed. The review window applies now.',
-  'compute_rfq:49': 'The delivery deadline has not passed on chain time. Try again after the deadline.',
-  'compute_rfq:50': 'The job is not in dispute, so a dispute unwind does not apply.',
-  'compute_rfq:52': 'The dispute window has not elapsed on chain time. Try again later.',
-};
-
-export function explainAbort(vmStatus: string | null | undefined): string {
-  const a = parseVmAbort(vmStatus);
-  if (!a) {
-    return vmStatus
-      ? `Transaction failed: ${vmStatus}. Tokens did not move; only gas was spent.`
-      : 'Transaction failed without a VM status. Tokens did not move; only gas was spent.';
-  }
-  const text = ABORT_TEXT[`${a.module}:${a.code}`];
-  const tag = `${a.module}: ${a.symbol ?? 'abort'}(0x${a.code.toString(16)})`;
-  return text ? `${text} [${tag}]` : `Contract aborted with ${tag}. Tokens did not move; only gas was spent.`;
-}
+// ---- Abort mapping: moved to @/lib/txStatus (shared with market + deposit flows) ----
+export { explainAbort, parseVmAbort, type VmAbort } from '@/lib/txStatus';
 
 // ---- Kill-condition bookkeeping (plan: "zweiter Contract-Abort trotz gruener Vorbedingung") ----
 export const MAX_ABORTS_AFTER_GREEN = 2;

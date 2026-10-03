@@ -9,7 +9,8 @@
     "check:sale-live": "node scripts/check-sale-live-consistency.cjs",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run && node scripts/check-plain-language.cjs",
+    "check:plain-language": "node scripts/check-plain-language.cjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",

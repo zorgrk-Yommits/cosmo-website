@@ -3,8 +3,6 @@ import {
   buildCall,
   buttonsLocked,
   checkWithdrawAmount,
-  explainAbort,
-  parseVmAbort,
   payloadLines,
   samePosition,
   verifyFresh,
@@ -142,33 +140,6 @@ describe('payloadLines', () => {
     expect(lines.find((l) => l.startsWith('Arg 1'))).toContain('7  (quote_id (u64))');
     expect(lines.find((l) => l.startsWith('Function-ID'))).toBe('Function-ID     : 0xCLAW::rfq_engine::claim_unwind');
     expect(lines.find((l) => l.startsWith('Sequence'))).toContain('12');
-  });
-});
-
-describe('abort mapping', () => {
-  it('parses symbol + hex code, hex-only, and rejects non-abort statuses', () => {
-    expect(parseVmAbort('Move abort in 0x2edd::compute_rfq: E_PAUSED(0x20): paused')).toEqual({ module: 'compute_rfq', symbol: 'E_PAUSED', code: 32 });
-    expect(parseVmAbort('Move abort in 0x2edd::rfq_engine: 0x34')).toEqual({ module: 'rfq_engine', symbol: null, code: 52 });
-    expect(parseVmAbort('Executed successfully')).toBeNull();
-    expect(parseVmAbort(null)).toBeNull();
-  });
-  it('maps the known return-path aborts to plain text and keeps the tag', () => {
-    const t = explainAbort('Move abort in 0xabc::rfq_engine: E_DEADLINE_NOT_REACHED(0x34): claim_unwind before deadline');
-    expect(t).toContain('Settlement deadline not reached');
-    expect(t).toContain('rfq_engine: E_DEADLINE_NOT_REACHED(0x34)');
-    expect(explainAbort('Move abort in 0xabc::provider_vault: E_WITHDRAW_DURING_ACTIVE_JOB(0xf)')).toContain('job is still active');
-    expect(explainAbort('Move abort in 0xabc::maker_vault: E_BELOW_MIN_BOND(0x4)')).toContain('minimum deposit');
-  });
-  it('MUTATION: same symbol in another module is not reused (codes are per module)', () => {
-    // rfq_engine:50 is "accepted quote not found"; compute_rfq:50 is "not disputed".
-    expect(explainAbort('Move abort in 0xabc::rfq_engine: E_ACCEPTED_NOT_FOUND(0x32)')).toContain('Accepted quote not found');
-    expect(explainAbort('Move abort in 0xabc::compute_rfq: E_JOB_NOT_DISPUTED(0x32)')).toContain('not in dispute');
-  });
-  it('unknown codes are shown verbatim, never invented', () => {
-    const t = explainAbort('Move abort in 0xabc::compute_rfq: E_PAUSED(0x20)');
-    expect(t).toContain('E_PAUSED(0x20)');
-    expect(t).toContain('only gas was spent');
-    expect(explainAbort('Out of gas')).toContain('Out of gas');
   });
 });
 

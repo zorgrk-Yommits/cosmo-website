@@ -1,11 +1,77 @@
-# COSMO Strategic Positioning v6.0
+# COSMO Strategic Positioning v6.1
 
 > **Priority: HIGH — this document is the canonical public positioning of COSMO.**
-> v6.0 supersedes v5.0 as the PRIMARY story, effective 2026-08-20. Nothing from
-> v5.0 is revoked: the seven primitives, the claim discipline and all language
-> guardrails remain in force verbatim (kept in full below). v6.0 changes the
-> ORDER — the concrete go-to-market audience now comes first, the abstract
-> category last.
+> v6.1 (effective 2026-10-03, decision Rene) changes the ORDER of the public
+> story once more: **jobs first, liquidity under rules second.** Nothing from
+> v6.0 or v5.0 is revoked: the mandate story, the seven primitives, the claim
+> discipline and all language guardrails remain in force (kept in full below).
+> Implementation plan: `plans/site-clarity-plan.md`.
+
+## v6.1: the story a first-time visitor gets
+
+**Rule for every page:** a person without blockchain knowledge can say what the
+page does after ten seconds. Picture first, one plain sentence second,
+technical detail on request. Simpler wording never widens a claim: every limit
+below still applies, and the limit stands next to the sentence it qualifies.
+
+### Positioning hierarchy (binding order, replaces the v6.0 order)
+
+1. **Primary: jobs.** "AI needs work done. COSMO gets it done." An AI agent
+   posts a job, a provider does the work, payment is released after the result
+   is checked. Picture: AI Agent → COSMO → Provider → Result → Payment.
+2. **Secondary: liquidity under rules.** "Let an agent manage liquidity without
+   giving it unlimited control." This is the Verifiable Liquidity Mandates
+   story of v6.0, told with the allowed actions and limits shown before the
+   word "mandate" appears.
+3. **Category:** execution and assurance infrastructure for agent economies.
+
+### Approved hero (replaces the v6.0 hero on the landing page)
+
+> **AI needs work done. COSMO gets it done.**
+>
+> An AI agent posts a job. A provider does the work. Payment is released only
+> after the result is checked.
+
+Binding qualifiers, visible next to the hero:
+
+- COSMO does not do the work itself. Curated providers do; COSMO runs the job,
+  holds the payment and pays out. Never imply an open provider network.
+- State the maturity: pilot, supervised, small budgets, settles on Supra Mainnet.
+- "Marketplace ≠ full Execution Case" (below) still holds: day-to-day jobs do
+  not run through the full mandate framework.
+
+The v6.0 hero stays approved for the liquidity page (`/mandates/`), under the
+plain headline of point 2.
+
+### Vocabulary
+
+Visible copy uses the plain words in `src/components/cosmo/terms.ts` (job,
+offer, payment, locked payment, safety deposit, rules, result, "what counts as
+done"). The technical term stays available in the technical-details blocks and
+once in brackets where an expert looks for it. `npm test` enforces this
+(`scripts/check-plain-language.cjs`). The seven primitives keep their canonical
+names in technical and evidence contexts.
+
+### Maturity labels (one scale, site-wide)
+
+Live · Pilot · Tested · Experimental · Planned · Archive, defined once in
+`src/components/cosmo/MaturityBadge.tsx`. The market is **Pilot**. Liquidity
+mandates are **Tested** (EVM-MICRO-001, VLM-001: run for real, evidence
+published, nothing running now), never "live".
+
+### Say only what the interface can do
+
+Copy describes what a visitor can do on the site today. A function that exists
+in the contracts but has no button (cancelling a job, disputing a result) is
+described as "contact us" or as planned, never as something the visitor can
+do "at any time".
+
+---
+
+# v6.0 layer: Verifiable Liquidity Mandates
+
+> v6.0 (effective 2026-08-20) is now the SECOND story, not revoked. Everything
+> below applies in full wherever liquidity mandates are presented.
 
 ## Primary audience
 
@@ -95,18 +161,20 @@ post-live-record.md, mainnet-shadow-record.md).
 It must NOT be inflated into: a production-ready market-making system, or a
 complete best-execution product.
 
-## Positioning hierarchy (binding order)
+## Positioning hierarchy inside the liquidity story
 
-1. **Primary:** Verifiable Liquidity Mandates for market makers and liquidity
-   managers.
-2. **Secondary:** Controlled treasury execution.
-3. **Category:** Execution and assurance infrastructure for agent economies.
+> The site-wide order is set by v6.1 above. This order applies within the
+> liquidity story.
+
+1. Verifiable Liquidity Mandates for market makers and liquidity managers.
+2. Controlled treasury execution.
+3. Category: execution and assurance infrastructure for agent economies.
 
 "Execution Layer for Agent Economies on Supra" and "Institutional Layer for
 Autonomous Economies" remain valid as technical category labels — but they are
 no longer the first and most abstract statement anywhere.
 
-## Approved hero
+## Approved hero (liquidity page)
 
 > **Verifiable Liquidity Mandates**
 >
@@ -218,13 +286,16 @@ entry point. Ends at DELIVERED (honest scope). Bundle:
   jobs do not yet run through the full framework." Landing wording: "COSMO's
   live market already settles task work on-chain. Separately, Execution Cases
   001 and 002 proved the bounded-authority model in two domains."
-- **Verification claim, exact wording while the verifier is private:** "Public
-  evidence bundle. Offline verification currently requires the COSMO verifier,
-  whose implementation remains private." Describe the check as "separate
-  offline consistency verification" or "offline verification of internal
-  consistency" — never "independent offline check" or anything suggesting
-  third-party attestation, and never "verifiable by anyone offline". Proof
-  lists say "backed by public evidence", not "independently checkable".
+- **Verification claim (updated v6.1: the verifier is public):** the standalone
+  verifier is published at `/verifier/` (v1.3.2). Approved wording: "Public
+  evidence bundle. Anyone can run the published offline verifier against it."
+  Describe what it does as "offline verification of internal consistency".
+  "Independently verifiable" is allowed only in that sense: someone other than
+  COSMO can run the published verifier. It never means third-party
+  attestation, an audit, or proof that the outside world matches the record;
+  the verifier is written by COSMO and that limit is stated next to the claim.
+  The earlier wording "requires the private COSMO verifier" is retired and must
+  be removed where it still appears (`/assurance/`, `/institutional/`).
 - **Human trust anchor:** Case 001 was supervised agent execution with explicit
   human authorization at the irreversible boundary (ARM). The human step is
   part of the proven authority model, never described as a shortcoming or

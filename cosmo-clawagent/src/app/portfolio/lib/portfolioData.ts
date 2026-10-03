@@ -327,32 +327,5 @@ export async function refetchPosition(p: Position, addr: string, nowSecs: bigint
   }
 }
 
-// GET /rpc/v1/transactions/<hash>: {status: 'Success'|'Fail'|'Pending'|..., output.Move.vm_status}.
-// Verified 2026-10-02 against rpc-mainnet: an unknown / not-yet-indexed hash answers
-// HTTP 200 with body `null` (not 404) -> treated as still pending.
-export type TxStatus = { status: 'Success' | 'Fail' | 'Pending' | 'Unknown'; vmStatus: string | null; raw: string };
-
-export async function fetchTxStatus(hash: string): Promise<TxStatus> {
-  const h = hash.startsWith('0x') ? hash : `0x${hash}`;
-  const r = await fetch(`${RPC}/rpc/v1/transactions/${h}`);
-  if (r.status === 404) return { status: 'Pending', vmStatus: null, raw: '404' };
-  if (!r.ok) throw new Error(`tx HTTP ${r.status}`);
-  const body = (await r.json()) as unknown;
-  if (body === null || typeof body !== 'object') return { status: 'Pending', vmStatus: null, raw: 'null' };
-  const j = body as { status?: string; output?: { Move?: { vm_status?: string } } };
-  const s = String(j.status ?? '');
-  const vm = j.output?.Move?.vm_status ?? null;
-  if (s === 'Success' || s === 'Fail' || s === 'Pending') return { status: s, vmStatus: vm, raw: s };
-  return { status: 'Unknown', vmStatus: vm, raw: s };
-}
-
-// Poll until finalized or `maxMs` elapsed. Returns null on timeout (caller says "unconfirmed", never "failed").
-export async function waitForTx(hash: string, maxMs = 90_000, stepMs = 3000): Promise<TxStatus | null> {
-  const t0 = Date.now();
-  while (Date.now() - t0 < maxMs) {
-    await new Promise((r) => setTimeout(r, stepMs));
-    const st = await guarded<TxStatus | null>(fetchTxStatus(hash), null);
-    if (st && st.status !== 'Pending' && st.status !== 'Unknown') return st;
-  }
-  return null;
-}
+// Transaction status polling moved to @/lib/txStatus (shared with market + deposit flows).
+export { fetchTxStatus, waitForTx, type TxResult as TxStatus } from '@/lib/txStatus';

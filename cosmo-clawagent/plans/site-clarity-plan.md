@@ -133,3 +133,24 @@ Dazu:
 ## Nicht in diesem Plan
 
 Storno- und Dispute-Button, Provider-Einnahmen im Portfolio, Zusammenlegen der vier StarKey-Wrapper, Aenderungen am Market-Backend, Manifesto-Text.
+
+## Status
+
+### Etappe 0: umgesetzt 03.10.2026 (nicht deployt, keine sichtbare Aenderung)
+
+- Bausteine in `src/components/cosmo/`: `FlowStrip`, `StatusTrack`, `TechDetails`, `MaturityBadge`, `TokenPosition`, `PageIntro`, `WalletButton`, `TxStatus`. Noch von keiner Seite benutzt. Sichtpruefung ueber eine temporaere Vorschauseite bei 390 px und 1440 px, kein horizontales Scrollen (auch 360 px); Vorschauseite wieder entfernt.
+- `src/lib/txStatus.ts`: `fetchTxStatus`, `waitForTx`, `parseVmAbort`, `explainAbort` aus `portfolio/lib` hierher verschoben (alte Importe laufen ueber Re-Exports weiter), neu `outcomeOf` und `explainSignError`.
+- `terms.ts` + `scripts/check-plain-language.cjs`, in `npm test` eingehaengt. 44 Dateien stehen in `scripts/plain-language-pending.json`; die Liste darf nur schrumpfen. Grenze des Waechters: er sieht JSX-Text, Strings in JSX und Copy-Properties, nicht Saetze, die eine Hilfsfunktion zusammenbaut.
+- `docs/POSITIONING.md` v6.1.
+- 6-Schritte-Ablaeufe passen bei 390 px nicht in eine Zeile: dort `layout="stack"` nehmen oder Umbruch akzeptieren. 5 Schritte passen.
+
+Vertragsfakten, am 03.10.2026 live von Mainnet gelesen (alle vier sind Views, spaetere Etappen lesen sie live statt Zahlen in Texte zu schreiben):
+
+| View | Wert | Bedeutung |
+|---|---|---|
+| `provider_vault::bond_cooldown_secs` | 1209600 | 14 Tage Sperre, nur nach einer Strafe |
+| `provider_vault::slash_comp_bps` | 1000 | Strafe 10 %, laut Quelle vom Jobpreis (v1) bzw. vom geforderten Deposit (v2), gedeckelt auf das Deposit |
+| `compute_rfq::dispute_bond_bps` | 500 | Kaeufer hinterlegt 5 % des Preises beim Reklamieren |
+| `compute_rfq::dispute_ttl_secs` | 604800 | 7 Tage bis zur Rueckabwicklung einer Reklamation |
+
+Quelle der Regeln: `cosmo-contracts-move/compute-rfq/sources/` auf Branch `feat/gpu-provider-poc`; ob dieser Stand byte-gleich deployt ist, wurde nicht geprueft, die vier Werte oben stammen von der Chain.
