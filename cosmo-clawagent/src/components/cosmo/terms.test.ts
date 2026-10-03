@@ -59,6 +59,12 @@ describe('plain-language check', () => {
     expect(terms('const A = () => <p>Calls get_quote_v2 on chain.</p>;')).toEqual([]);
   });
 
+  it('ignores state ids that are only compared against, but not the copy next to them', () => {
+    expect(terms("const A = () => <div>{stage === 'escrow' && <p>Lock payment</p>}</div>;")).toEqual([]);
+    expect(terms("const A = () => <div>{stage === 'escrow' && <p>Fund the escrow</p>}</div>;")).toEqual(['escrow']);
+    expect(terms("const A = () => <p>{busy !== 'settled' ? 'Open' : 'Settled'}</p>;")).toEqual(['settlement']);
+  });
+
   it('does not flag ordinary words that only contain a term', () => {
     expect(terms('const A = () => <p>A mandatory field. Vagabonds welcome.</p>;')).toEqual([]);
   });

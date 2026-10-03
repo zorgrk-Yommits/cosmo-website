@@ -11,10 +11,11 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { AlertTriangle, ArrowLeft, ListChecks, RefreshCw, Route } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ListChecks, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Surface from '@/components/cosmo/Surface';
 import { useMarketJob, useMarketJobStatus, useMarketProviders } from '../useMarketData';
-import { STATUS_BADGE, buildBuyerSteps } from '../lib/marketStatus';
+import { buildBuyerSteps, buyerStageView } from '../lib/marketStatus';
 import { getMyJobs } from '../lib/myJobs';
 import { useMarketFlow } from '../lib/useMarketFlow';
 import { useNextStepsDoc } from '../lib/useNextStepsDoc';
@@ -22,7 +23,9 @@ import { sameWallet } from '../lib/marketWallet';
 import FlowRail from '../components/FlowRail';
 import OfferCard from '../components/OfferCard';
 import NextStepPanel from '../components/NextStepPanel';
-import TurnStatusLine from '../components/TurnStatusLine';
+import WalletChip from '../components/WalletChip';
+import StatusTrack from '@/components/cosmo/StatusTrack';
+import TechDetails from '@/components/cosmo/TechDetails';
 import { FrozenSpecCard, JobFactsCard, TxRecord } from '../components/JobInfoSections';
 import HonestyBox from '../components/HonestyBox';
 
@@ -70,13 +73,30 @@ export default function JobDetail() {
         (p) => p.wallet && offers.some((o) => o.providerId === p.id) && sameWallet(f.wallet!, p.wallet),
       ));
 
+  const oj = f.onchainJob;
+  const buyerState = doc?.roles.find((r) => r.role === 'buyer')?.state ?? null;
+  const view = job
+    ? buyerStageView({
+        status: f.flow?.status ?? job.status,
+        selectedOfferId: f.flow?.selectedOfferId ?? job.selectedOfferId ?? undefined,
+        requestId: f.flow?.requestId ?? job.requestId ?? undefined,
+        jobIdOnchain: f.flow?.jobIdOnchain ?? job.jobIdOnchain ?? undefined,
+        offersCount: offers.length,
+        onchainStatus: oj?.status ?? null,
+        deliverDueSecs: oj?.jobDeadlineSecs ?? null,
+        checkBySecs: oj && oj.deliveredAt > 0 ? oj.deliveredAt + oj.reviewWindowSecs : null,
+        requestClosed: buyerState === 'request_closed',
+        nowSec: nowSec ?? undefined,
+      })
+    : null;
+
   const workUrl = id ? `/market/work/?id=${encodeURIComponent(id)}` : '/market/work/';
 
   return (
     <div className="terminal-container terminal-theme-scope">
       <div className="grid-bg" />
 
-      <section className="relative z-10 mx-auto max-w-5xl px-6 pt-24 pb-8">
+      <section className="relative z-10 mx-auto max-w-5xl px-4 pb-8 pt-24 md:px-6">
         <Link
           href="/market/"
           className="inline-flex items-center gap-1.5 font-mono text-xs text-ink-1 transition-colors hover:text-white"
@@ -87,7 +107,7 @@ export default function JobDetail() {
 
         {!id && (
           <p className="mt-8 font-mono text-sm text-ink-1">
-            No job selected — pick one from{' '}
+            No job chosen. Pick one from{' '}
             <Link href="/market/" className="text-phase-proof hover:text-phase-proof">
               the job board
             </Link>
@@ -98,25 +118,28 @@ export default function JobDetail() {
         {/* ── Moderation fallback: not publicly listed, but the status answers ── */}
         {statusFallbackEnabled && fallbackStatus && !job && (
           <>
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-              <h1 className="font-mono text-2xl font-bold tracking-tight text-ink-0 md:text-3xl">
-                {myTitle ?? 'Your submitted job'}
-              </h1>
-              <span
-                className={cn(
-                  'rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider',
-                  STATUS_BADGE[fallbackStatus.status].cls,
-                )}
-              >
-                {STATUS_BADGE[fallbackStatus.status].label}
-              </span>
-            </div>
+            <h1 className="mt-6 text-2xl font-semibold tracking-tight text-ink-0 md:text-3xl">
+              {myTitle ?? 'Your submitted job'}
+            </h1>
 
-            <div className="mt-6 rounded-xl border border-phase-active/25 bg-phase-active/[0.04] p-6">
+            {(() => {
+              const view = buyerStageView({
+                status: fallbackStatus.status,
+                requestId: fallbackStatus.requestId,
+                offersCount: 0,
+              });
+              return (
+                <Surface className="mt-6 p-5 md:p-6">
+                  <StatusTrack current={view.current} yourTurn={view.yourTurn} end={view.end} note={view.note} />
+                </Surface>
+              );
+            })()}
+
+            <div className="mt-4 rounded-xl border border-phase-active/25 bg-phase-active/[0.04] p-6">
               <h2 className="font-mono text-sm font-bold text-ink-0">Your next step</h2>
               {fallbackStatus.status === 'rejected' ? (
                 <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
-                  This job was not approved for the pilot board.{' '}
+                  This job was not approved for the pilot board. Nothing was charged.{' '}
                   <Link href="/market/post/" className="text-phase-proof hover:text-phase-proof">
                     Post a new job
                   </Link>{' '}
@@ -127,18 +150,14 @@ export default function JobDetail() {
                   <span className="mt-1 inline-flex h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-ink-2" />
                   <p className="font-sans text-sm leading-relaxed text-ink-1">
                     Your job is <span className="font-bold text-ink-0">in review</span>. Once
-                    approved it opens for offers from curated pilot providers — we also reach out
-                    by email. Nothing to do right now; this page updates automatically.
+                    approved, hand-picked pilot providers can make offers. We also write to you
+                    by email. Nothing to do right now; this page updates by itself.
                   </p>
                 </div>
               )}
             </div>
 
-            <div className="mt-4 rounded-xl border border-line-base bg-surface-1 p-6">
-              <div className="mb-4 flex items-center gap-2">
-                <Route className="h-4 w-4 text-phase-active" />
-                <h2 className="font-mono text-sm font-bold text-ink-0">Your steps</h2>
-              </div>
+            <TechDetails title="Technical details: every step" className="mt-4">
               <FlowRail
                 steps={buildBuyerSteps(
                   { status: fallbackStatus.status, requestId: fallbackStatus.requestId },
@@ -146,14 +165,14 @@ export default function JobDetail() {
                 )}
                 txRefs={fallbackStatus.txRefs}
               />
-            </div>
+            </TechDetails>
           </>
         )}
 
         {statusFallbackEnabled && !fallbackStatus && statusSection.error && (
           <p className="mt-8 font-mono text-sm text-ink-1">
-            This job is not publicly visible ({section.error}). It may still be in moderation —
-            check back later.
+            This job is not public ({section.error}). It may still be in review. Check back
+            later.
           </p>
         )}
 
@@ -161,42 +180,36 @@ export default function JobDetail() {
           <div className="mt-8 h-24 w-full animate-pulse rounded bg-surface-2" />
         )}
 
-        {job && nowSec !== null && (
+        {job && view && nowSec !== null && (
           <>
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-              <h1 className="font-mono text-2xl font-bold tracking-tight text-ink-0 md:text-3xl">
+            <div className="mt-6 flex flex-wrap items-start justify-between gap-3">
+              <h1 className="text-2xl font-semibold tracking-tight text-ink-0 md:text-3xl">
                 {job.title}
               </h1>
-              <div className="flex items-center gap-3">
-                <span
-                  className={cn(
-                    'rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider',
-                    STATUS_BADGE[job.status].cls,
-                  )}
-                >
-                  {STATUS_BADGE[job.status].label}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => void refresh()}
-                  disabled={refreshing}
-                  className="inline-flex items-center gap-2 rounded-lg border border-line-base px-3 py-1.5 font-mono text-[11px] text-ink-1 transition-all hover:border-line-strong hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <RefreshCw className={cn('h-3 w-3', refreshing && 'animate-spin')} />
-                  Refresh
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => void refresh()}
+                disabled={refreshing}
+                className="inline-flex items-center gap-2 rounded-lg border border-line-base px-3 py-1.5 font-mono text-[11px] text-ink-1 transition-all hover:border-line-strong hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <RefreshCw className={cn('h-3 w-3', refreshing && 'animate-spin')} />
+                Refresh
+              </button>
             </div>
 
-            {/* ── Status line + wallet ── */}
-            <TurnStatusLine
-              ownRole="buyer"
-              doc={doc}
-              wallet={f.wallet}
-              buyerWallet={buyerWallet}
-              providers={providers}
-              onConnect={() => void f.connect()}
-            />
+            {/* ── Where the job stands: five stages, whose turn, end states ── */}
+            <Surface className="mt-6 p-5 md:p-6">
+              <StatusTrack current={view.current} yourTurn={view.yourTurn} end={view.end} note={view.note} />
+            </Surface>
+
+            <div className="mt-4 flex justify-end">
+              <WalletChip
+                wallet={f.wallet}
+                buyerWallet={buyerWallet}
+                providers={providers}
+                onConnect={() => void f.connect()}
+              />
+            </div>
 
             {/* ── Provider-wallet hint (never a redirect) ── */}
             {walletIsProvider && (
@@ -205,7 +218,7 @@ export default function JobDetail() {
                   <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-phase-warn" />
                   <span>
                     You are connected with a provider wallet for this job. This page is the
-                    buyer&apos;s view — offers and delivery happen on the provider view.{' '}
+                    buyer&apos;s view. Offers and delivery happen on the provider view.{' '}
                     <Link href={workUrl} className="font-bold text-phase-proof hover:text-phase-proof">
                       Open the provider view →
                     </Link>
@@ -219,18 +232,7 @@ export default function JobDetail() {
               <NextStepPanel job={job} offers={offers} providers={providers} doc={doc} f={f} />
             </div>
 
-            {/* ── Your steps (buyer-only rail) ── */}
-            <div className="mt-4 rounded-xl border border-line-base bg-surface-1 p-6">
-              <div className="mb-4 flex items-center gap-2">
-                <Route className="h-4 w-4 text-phase-active" />
-                <h2 className="font-mono text-sm font-bold text-ink-0">Your steps</h2>
-              </div>
-              <FlowRail steps={buildBuyerSteps(job, offers.length)} txRefs={job.txRefs} />
-              <TxRecord txRefs={job.txRefs} />
-            </div>
-
             <JobFactsCard job={job} nowSec={nowSec} />
-            <FrozenSpecCard job={job} />
 
             {/* ── Offers (the buyer chooses; providers submit on /market/work) ── */}
             <div className="mt-4 rounded-xl border border-line-base bg-surface-1 p-6">
@@ -253,7 +255,7 @@ export default function JobDetail() {
                 </div>
               ) : (
                 <p className="font-mono text-xs text-ink-2">
-                  No offers yet. Curated pilot providers are notified of approved jobs and submit
+                  No offers yet. The pilot providers are notified of approved jobs and make their
                   offers on the provider view.
                 </p>
               )}
@@ -261,6 +263,14 @@ export default function JobDetail() {
                 Prices are in {job.budgetAsset}.
               </p>
             </div>
+
+            <FrozenSpecCard job={job} />
+
+            {/* ── Every step with its transaction, for those who want to check ── */}
+            <TechDetails title="Technical details: every step and its transaction" className="mt-4">
+              <FlowRail steps={buildBuyerSteps(job, offers.length)} txRefs={job.txRefs} />
+              <TxRecord txRefs={job.txRefs} />
+            </TechDetails>
 
             {/* ── Cross-link to the provider view ── */}
             <p className="mt-6 font-mono text-xs text-ink-2">
@@ -273,7 +283,7 @@ export default function JobDetail() {
         )}
       </section>
 
-      <section className="relative z-10 mx-auto max-w-5xl px-6 py-6 pb-24">
+      <section className="relative z-10 mx-auto max-w-5xl px-4 py-6 pb-24 md:px-6">
         <HonestyBox />
       </section>
     </div>

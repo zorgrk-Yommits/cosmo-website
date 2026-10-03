@@ -165,3 +165,15 @@ Quelle der Regeln: `cosmo-contracts-move/compute-rfq/sources/` auf Branch `feat/
 - Sieben "All jobs"-Links zeigen jetzt auf `/market/` statt auf die Startseite.
 - Waechter-Liste 44 → 32 Dateien.
 - Offen fuer spaeter: `HonestyBox` im Live-jobs-Abschnitt spricht noch Fachsprache (Etappe 2); Evidence-Kacheln fuehren teils noch auf Verzeichnislistings (Etappe 5); Abschnitte mit `Reveal` erscheinen erst beim Scrollen (bestehendes Verhalten).
+
+### Etappe 2: umgesetzt 03.10.2026 (lokal, NICHT deployt; Deploy erst nach GO)
+
+- `/market`: `PageIntro` mit dem 6-Schritte-Kaeuferbild, Button "Post a job"; PILOT-001 als "First paid job" mit Klartext-Schritten, Vertragsaufrufe und Hash in TechDetails.
+- `/market/post`: Ablaufbild (Schritt 1 markiert), Feld "What counts as done", Hinweise und Fehlermeldungen als ganze Saetze mit Abhilfe.
+- `/market/job`: `StatusTrack` (Waiting → Accepted → Running → Checking → Paid) mit Zeile "wer ist dran"; Endzustaende Not approved / Not delivered / In dispute / Refunded / Closed before it started. Detail-Leiste mit on/off-chain und Transaktionen in TechDetails. Abbildung: `buyerStageView` in `market/lib/marketStatus.ts`, getestet; der On-chain-Endzustand schlaegt einen veralteten Server-Status.
+- Buttons: "Choose this offer", "Lock <Betrag> <Token>", "Confirm and start", "View result", "Approve and pay provider".
+- Vor dem Sperren: `TokenPosition` (wird gesperrt / bleibt im Wallet, Guthaben live per `faBalance`), Warnung bei zu wenig Guthaben, Liefer- und Prueffrist.
+- Ehrliche Texte: kein "cancel any time" mehr (Rueckholung nach Ablauf ueber My tokens, "There is no cancel button before that"); Nichtlieferung verweist auf `/portfolio/`; Reklamation = nicht freigeben + auf unsere E-Mail antworten, "no button for this yet"; automatische Zahlung nach Ablauf der Prueffrist steht jetzt sichtbar da.
+- Echter Transaktionsstatus: `useMarketFlow.sendTracked` liest nach dem Senden den Ausgang von der Chain (`waitForTx` 45 s) und zeigt ihn ueber `TxStatus`; ein Abort erscheint als "Failed" mit Klartext (`explainAbort`, neue Texte fuer compute_rfq 12-46). Tx-Builder und Argumente unveraendert.
+- Waechter: Vergleichs-Strings (`stage === 'escrow'`) zaehlen nicht mehr als Text; Liste 32 → 24.
+- NICHT geprueft: ein echter Signiervorgang auf Mainnet mit dem neuen Statuspfad (nur Vorschau mit Mock-Daten und die bezahlte Job-Seite gegen die Live-API). Kontaktweg "reply to our email" stuetzt sich auf den bestehenden Hinweis im Job-Formular.

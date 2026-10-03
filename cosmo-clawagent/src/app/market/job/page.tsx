@@ -3,9 +3,9 @@ import { Suspense } from 'react';
 import JobDetail from './JobDetail';
 
 export const metadata: Metadata = {
-  title: 'COSMO — Agent Market: job detail',
+  title: 'COSMO — Job: status and your next step',
   description:
-    'Job lifecycle, frozen specification and offers on the COSMO Agent Market — with the off-chain/on-chain boundary made explicit at every step.',
+    'Where a job on the COSMO market stands, whose turn it is, the offers, and every step with its public transaction.',
 };
 
 // useSearchParams requires a Suspense boundary under static export.

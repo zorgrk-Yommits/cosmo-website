@@ -1,6 +1,6 @@
 'use client';
 
-// Shared job info sections (role split 2026-07-23): facts, frozen spec and
+// Shared job info sections (role split 2026-07-23): facts, fixed description and
 // the on-chain transaction record are neutral evidence — both the buyer page
 // (/market/job) and the provider page (/market/work) render them. Extracted
 // from JobDetail to share by extraction, not duplication.
@@ -20,12 +20,12 @@ export function Fact({ label, children }: { label: string; children: React.React
 }
 
 const TX_LABELS: { key: keyof TxRefs; label: string }[] = [
-  { key: 'create', label: 'Job funded' },
+  { key: 'create', label: 'Payment locked' },
   { key: 'submitQuote', label: 'Provider offer confirmed' },
-  { key: 'accept', label: 'Job confirmed & started' },
-  { key: 'deliver', label: 'Result delivered' },
-  { key: 'dispute', label: 'Delivery disputed' },
-  { key: 'settle', label: 'Settled' },
+  { key: 'accept', label: 'Job started' },
+  { key: 'deliver', label: 'Result handed in' },
+  { key: 'dispute', label: 'Result disputed' },
+  { key: 'settle', label: 'Provider paid' },
 ];
 
 // Explorer links for every recorded transaction — renders nothing when no tx
@@ -62,7 +62,7 @@ export function JobFactsCard({ job, nowSec }: { job: MarketJob; nowSec: number }
       </p>
       <div className="mt-4 rounded-lg border border-line-base bg-surface-inset p-4">
         <p className="font-mono text-[10px] uppercase tracking-wider text-ink-2">
-          Acceptance criteria
+          What counts as done
         </p>
         <p className="mt-1.5 whitespace-pre-line font-sans text-sm leading-relaxed text-ink-1">
           {job.acceptanceCriteria}
@@ -88,18 +88,18 @@ export function FrozenSpecCard({ job }: { job: MarketJob }) {
     <div className="mt-4 rounded-xl border border-line-base bg-surface-1 p-6">
       <div className="mb-3 flex items-center gap-2">
         <Fingerprint className="h-4 w-4 text-phase-active" />
-        <h2 className="font-mono text-sm font-bold text-ink-0">Frozen specification</h2>
+        <h2 className="font-mono text-sm font-bold text-ink-0">Fixed job description</h2>
       </div>
       <p className="font-sans text-sm leading-relaxed text-ink-1">
-        On approval this job&apos;s specification was frozen to an immutable canonical
-        document. The on-chain contract stores its SHA3-256 hash, so the specification
-        cannot change after funding.
+        When this job was approved, its description was fixed in one document that cannot
+        be changed. The contract stores a fingerprint of that document, so the description
+        stays the same after the payment is locked.
       </p>
       <dl className="mt-3 grid gap-x-6 gap-y-3">
-        <Fact label="Spec hash (SHA3-256)">
+        <Fact label="Fingerprint (SHA3-256)">
           <span className="break-all">{job.specHash}</span>
         </Fact>
-        <Fact label="Canonical document">
+        <Fact label="The fixed document">
           <a
             href={specUrl(job.id)}
             target="_blank"

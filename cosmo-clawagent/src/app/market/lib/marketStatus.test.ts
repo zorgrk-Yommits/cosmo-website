@@ -6,6 +6,7 @@ import {
   fmtRel,
   fmtDelivery,
   STATUS_BADGE,
+  buyerStageView,
 } from './marketStatus';
 
 describe('buildBuyerSteps', () => {
@@ -134,5 +135,64 @@ describe('STATUS_BADGE', () => {
       expect(badge.label.length).toBeGreaterThan(0);
       expect(badge.cls.length).toBeGreaterThan(0);
     }
+  });
+});
+
+describe('buyerStageView: the five-stage picture', () => {
+  const base = { offersCount: 0 } as const;
+
+  it('walks the happy path in order', () => {
+    expect(buyerStageView({ ...base, status: 'submitted' }).current).toBe('waiting');
+    expect(buyerStageView({ ...base, status: 'approved' }).current).toBe('waiting');
+    expect(buyerStageView({ ...base, status: 'selected', selectedOfferId: 'o1' }).current).toBe('accepted');
+    expect(buyerStageView({ ...base, status: 'selected', selectedOfferId: 'o1', requestId: 4 }).current).toBe('accepted');
+    expect(buyerStageView({ ...base, status: 'onchain', requestId: 4, jobIdOnchain: 9 }).current).toBe('running');
+    expect(buyerStageView({ ...base, status: 'delivered', requestId: 4, jobIdOnchain: 9 }).current).toBe('checking');
+    expect(buyerStageView({ ...base, status: 'settled', requestId: 4, jobIdOnchain: 9 }).current).toBe('paid');
+  });
+
+  it('says whose turn it is', () => {
+    expect(buyerStageView({ ...base, status: 'approved' }).yourTurn).toBe(false);
+    expect(buyerStageView({ status: 'approved', offersCount: 2 }).yourTurn).toBe(true);
+    expect(buyerStageView({ ...base, status: 'selected', selectedOfferId: 'o1' }).note).toContain('lock the payment');
+    expect(buyerStageView({ ...base, status: 'selected', selectedOfferId: 'o1', requestId: 4 }).note).toContain('confirm the offer');
+    expect(buyerStageView({ ...base, status: 'onchain', jobIdOnchain: 9 }).yourTurn).toBe(false);
+    expect(buyerStageView({ ...base, status: 'delivered', jobIdOnchain: 9 }).yourTurn).toBe(true);
+  });
+
+  it('tells the buyer that doing nothing pays the provider', () => {
+    const v = buyerStageView({ ...base, status: 'delivered', jobIdOnchain: 9, checkBySecs: 1_800_000_000 });
+    expect(v.note).toContain('paid automatically');
+    expect(v.note).toContain('2027-01-15');
+  });
+
+  it('never presses an off-path job into the five stages: it gets an end state', () => {
+    expect(buyerStageView({ ...base, status: 'rejected' }).end?.label).toBe('Not approved');
+    const slashed = buyerStageView({ ...base, status: 'onchain', jobIdOnchain: 9, onchainStatus: 3 });
+    expect(slashed.end?.tone).toBe('bad');
+    expect(slashed.current).toBe('running');
+    expect(buyerStageView({ ...base, status: 'delivered', jobIdOnchain: 9, onchainStatus: 4 }).end?.label).toBe('In dispute');
+    expect(buyerStageView({ ...base, status: 'delivered', jobIdOnchain: 9, onchainStatus: 5 }).end?.label).toBe('Refunded');
+    expect(buyerStageView({ ...base, status: 'selected', selectedOfferId: 'o1', requestId: 4, requestClosed: true }).end?.label).toBe('Closed before it started');
+  });
+
+  it('MUTATION: the on-chain end state wins over a stale off-chain status', () => {
+    // The server record can lag the chain; a slashed job must not read "Paid".
+    const v = buyerStageView({ ...base, status: 'settled', jobIdOnchain: 9, onchainStatus: 3 });
+    expect(v.current).not.toBe('paid');
+    expect(v.end).toBeDefined();
+  });
+
+  it('a missed deadline points at the place where the payment can be taken back', () => {
+    const v = buyerStageView({ ...base, status: 'onchain', jobIdOnchain: 9, onchainStatus: 0, deliverDueSecs: 100, nowSec: 200 });
+    expect(v.yourTurn).toBe(true);
+    expect(v.note).toContain('My tokens');
+    expect(v.end).toBeUndefined();
+  });
+
+  it('active on-chain job (status 0) is plain Running with no end state', () => {
+    const v = buyerStageView({ ...base, status: 'onchain', jobIdOnchain: 9, onchainStatus: 0, deliverDueSecs: 300, nowSec: 200 });
+    expect(v.current).toBe('running');
+    expect(v.end).toBeUndefined();
   });
 });

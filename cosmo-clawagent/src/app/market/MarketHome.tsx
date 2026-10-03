@@ -30,6 +30,9 @@ import { useMarketJobs } from './useMarketData';
 import { STATUS_BADGE, fmtRel, fmtTs } from './lib/marketStatus';
 import { getMyJobs, type MyJobEntry } from './lib/myJobs';
 import HonestyBox from './components/HonestyBox';
+import PageIntro from '@/components/cosmo/PageIntro';
+import TechDetails from '@/components/cosmo/TechDetails';
+import { BUYER_FLOW } from '@/components/cosmo/flows';
 import pilot001 from '@/data/market-pilot001-2026-07-17.json';
 
 const shortHash = (h: string) => `${h.slice(0, 10)}…${h.slice(-8)}`;
@@ -44,6 +47,16 @@ export const STATUS_TONE: Record<string, ChipTone> = {
   delivered: 'warn',
   settled: 'settled',
 };
+
+// Plain names for the five recorded steps of PILOT-001, in order. The
+// original step names (with the contract calls) are in the technical details.
+const LEG_PLAIN = [
+  'Payment locked',
+  'Offer prepared (automatic)',
+  'Job started',
+  'Result handed in',
+  'Result approved, provider paid',
+];
 
 const ACTOR: Record<string, { label: string; tone: ChipTone; icon: 'user' | 'bot' }> = {
   buyer: { label: 'buyer', tone: 'proof', icon: 'user' },
@@ -71,46 +84,17 @@ export default function MarketHome() {
     <div className="terminal-container terminal-theme-scope">
       <div className="grid-bg" />
 
-      {/* ── Hero ── */}
-      <section className="relative z-10 mx-auto max-w-5xl px-5 pb-8 pt-20 md:px-6 md:pt-24">
-        <div className="inline-flex items-center gap-2.5 rounded-full border border-line-base bg-surface-1 px-3 py-1.5">
-          <span className="inline-flex h-1.5 w-1.5 animate-pulse rounded-full bg-phase-settled" />
-          <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-1">
-            Agent Market · pilot · settles on Supra Mainnet
-          </span>
-        </div>
-
-        <div className="mt-7 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h1 className="text-balance text-4xl font-semibold leading-[1.1] tracking-tight text-ink-0 md:text-5xl">
-              Post a job. Agents deliver. The chain settles.
-            </h1>
-            <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-ink-1 md:text-lg">
-              A marketplace for digital work: describe the job, curated pilot providers make
-              offers, and from your selection onward funding, delivery and payout run as
-              verifiable transactions on Supra Mainnet.
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            {lastUpdated && (
-              <span className="font-mono text-[11px] tabular text-ink-2">
-                Updated {new Date(lastUpdated).toLocaleTimeString('en-US')}
-              </span>
-            )}
-            <button
-              type="button"
-              onClick={() => void refresh()}
-              disabled={refreshing}
-              className="inline-flex items-center gap-2 rounded-lg border border-line-base px-3 py-1.5 font-mono text-[11px] text-ink-2 transition-colors hover:border-line-strong hover:text-ink-0 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <RefreshCw className={cn('h-3 w-3', refreshing && 'animate-spin')} />
-              Refresh
-            </button>
-          </div>
-        </div>
-
-        <div className="mt-7 flex flex-wrap gap-3">
-          <CtaLink href="/market/post/" variant="primary" size="md">
+      {/* ── Intro: what this is, the picture, the next action ── */}
+      <section className="relative z-10 mx-auto max-w-5xl px-4 pb-8 pt-20 md:px-6 md:pt-24">
+        <PageIntro
+          maturity="pilot"
+          maturityDetail="payments on Supra Mainnet"
+          title="Post a job. A provider does it. You pay after checking."
+          lead="A marketplace for digital work. Describe the job, hand-picked pilot providers make offers, and your payment stays locked until you have checked the result."
+          flow={BUYER_FLOW.map(({ id, icon, label }) => ({ id, icon, label }))}
+          flowLabel="How it works for you: post job, get offer, lock payment, work happens, check result, pay provider."
+        >
+          <CtaLink href="/market/post/" variant="primary" size="lg">
             <PlusCircle className="h-4 w-4" />
             Post a job
           </CtaLink>
@@ -120,14 +104,31 @@ export default function MarketHome() {
           </CtaLink>
           <CtaLink href="/buy/" variant="secondary" size="md">
             <Coins className="h-4 w-4" />
-            Buy wCOSMO (capped pilot)
+            Buy wCOSMO
           </CtaLink>
+        </PageIntro>
+
+        <div className="mt-6 flex items-center gap-3">
+          {lastUpdated && (
+            <span className="font-mono text-[11px] tabular text-ink-2">
+              Updated {new Date(lastUpdated).toLocaleTimeString('en-US')}
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={() => void refresh()}
+            disabled={refreshing}
+            className="inline-flex items-center gap-2 rounded-lg border border-line-base px-3 py-1.5 font-mono text-[11px] text-ink-2 transition-colors hover:border-line-strong hover:text-ink-0 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <RefreshCw className={cn('h-3 w-3', refreshing && 'animate-spin')} />
+            Refresh
+          </button>
         </div>
       </section>
 
       {/* ── My jobs (browser-local) ── */}
       {mine.length > 0 && (
-        <section className="relative z-10 mx-auto max-w-5xl px-5 py-4 md:px-6">
+        <section className="relative z-10 mx-auto max-w-5xl px-4 py-4 md:px-6">
           <Surface className="p-6">
             <div className="mb-4 flex items-center gap-2.5">
               <Bookmark className="h-4 w-4 text-ink-2" aria-hidden="true" />
@@ -165,17 +166,17 @@ export default function MarketHome() {
       )}
 
       {/* ── Job board ── */}
-      <section className="relative z-10 mx-auto max-w-5xl px-5 py-4 md:px-6">
+      <section className="relative z-10 mx-auto max-w-5xl px-4 py-4 md:px-6">
         <Surface className="p-6">
           <div className="mb-4 flex items-center gap-2.5">
             <Briefcase className="h-4 w-4 text-ink-2" aria-hidden="true" />
             <h2 className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-2">
-              Open jobs
+              Jobs
             </h2>
           </div>
           {jobs.error && (
             <div className="mb-4 rounded-lg border border-phase-fault/30 bg-phase-fault/[0.06] px-4 py-2.5 font-mono text-xs text-phase-fault">
-              Live data unavailable: {jobs.error} — listings below may be stale.
+              Live data is unavailable right now ({jobs.error}). The list below may be out of date.
             </div>
           )}
           {list && nowSec !== null ? (
@@ -217,7 +218,7 @@ export default function MarketHome() {
               })}
               {list.length === 0 && (
                 <p className="text-sm text-ink-1">
-                  No open jobs yet.{' '}
+                  No jobs yet.{' '}
                   <Link href="/market/post/" className="text-phase-active hover:text-ink-0">
                     Be the first to post one.
                   </Link>
@@ -230,19 +231,19 @@ export default function MarketHome() {
         </Surface>
       </section>
 
-      {/* ── Settled proof: PILOT-001 ── */}
-      <section className="relative z-10 mx-auto max-w-5xl px-5 py-4 md:px-6">
+      {/* ── Proof: the first job that ran from posting to payment ── */}
+      <section className="relative z-10 mx-auto max-w-5xl px-4 py-4 md:px-6">
         <Surface className="p-6">
           <div className="mb-2 flex items-center gap-2.5">
             <ShieldCheck className="h-4 w-4 text-phase-settled" aria-hidden="true" />
             <h2 className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-2">
-              Settled proof — PILOT-001 ({pilot001.date})
+              First paid job: PILOT-001 ({pilot001.date})
             </h2>
           </div>
           <p className="mb-5 text-sm leading-relaxed text-ink-1">
-            The first marketplace trade settled end-to-end on Supra Mainnet: {pilot001.price}{' '}
-            {pilot001.asset} from buyer to {pilot001.solverName}, on-chain job #
-            {pilot001.jobIdOnchain}. Every step is a transaction:
+            The first job on this marketplace that ran from posting to payment on Supra Mainnet:{' '}
+            {pilot001.price} {pilot001.asset} from the buyer to {pilot001.solverName}. Every step
+            is a public transaction you can open:
           </p>
           <div className="space-y-2">
             {pilot001.legs.map((leg, i) => {
@@ -252,9 +253,9 @@ export default function MarketHome() {
                   key={leg.tx}
                   className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-line-subtle bg-surface-inset px-4 py-2.5"
                 >
-                  <span className="flex items-center gap-2.5 font-mono text-xs text-ink-1">
-                    <span className="tabular text-ink-2">{i + 1}</span>
-                    {leg.step}
+                  <span className="flex items-center gap-2.5 text-sm text-ink-1" title={leg.step}>
+                    <span className="font-mono text-xs tabular text-ink-2">{i + 1}</span>
+                    {LEG_PLAIN[i] ?? leg.step}
                     <Chip tone={actor.tone} size="sm">
                       {actor.icon === 'bot' ? (
                         <Bot className="h-2.5 w-2.5" />
@@ -277,9 +278,6 @@ export default function MarketHome() {
               );
             })}
           </div>
-          <p className="mt-3 break-all font-mono text-[11px] text-ink-2">
-            On-chain result_hash {pilot001.result_hash} = SHA3-256 of the attestation document.
-          </p>
           <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
             <Link
               href={pilot001.job_url}
@@ -295,7 +293,7 @@ export default function MarketHome() {
               className="inline-flex items-center gap-1.5 font-mono text-xs text-phase-proof transition-colors hover:text-ink-0"
             >
               <FileJson className="h-3 w-3" />
-              Attestation document
+              The delivered result
             </a>
             <a
               href={pilot001.public_evidence}
@@ -304,14 +302,27 @@ export default function MarketHome() {
               className="inline-flex items-center gap-1.5 font-mono text-xs text-phase-proof transition-colors hover:text-ink-0"
             >
               <ShieldCheck className="h-3 w-3" />
-              Evidence artifacts
+              Evidence files
             </a>
           </div>
+          <TechDetails className="mt-5">
+            <p className="break-all font-mono text-[11px]">
+              On-chain job #{pilot001.jobIdOnchain}. result_hash {pilot001.result_hash} = SHA3-256
+              of the delivered document.
+            </p>
+            <ol className="mt-3 space-y-1 font-mono text-[11px]">
+              {pilot001.legs.map((leg, i) => (
+                <li key={leg.tx}>
+                  {i + 1}. {leg.step}
+                </li>
+              ))}
+            </ol>
+          </TechDetails>
         </Surface>
       </section>
 
       {/* ── Honesty box ── */}
-      <section className="relative z-10 mx-auto max-w-5xl px-5 py-6 pb-24 md:px-6">
+      <section className="relative z-10 mx-auto max-w-5xl px-4 py-6 pb-24 md:px-6">
         <HonestyBox />
       </section>
     </div>

@@ -12,6 +12,8 @@ import { cn } from '@/lib/utils';
 import { ApiError, submitJob } from '../lib/marketApi';
 import { addMyJob } from '../lib/myJobs';
 import HonestyBox from '../components/HonestyBox';
+import FlowStrip from '@/components/cosmo/FlowStrip';
+import { BUYER_FLOW } from '@/components/cosmo/flows';
 
 // Mirror of the server-side rail constraint: deadlines at most 7 days out
 // (the on-chain job window is clamped to [now+60s, now+7d] at escrow time).
@@ -87,28 +89,28 @@ export default function PostJobForm() {
 
   function validate(): Record<string, string> {
     const errs: Record<string, string> = {};
-    if (form.title.trim().length < 8) errs.title = 'At least 8 characters.';
-    if (form.title.trim().length > 120) errs.title = 'At most 120 characters.';
+    if (form.title.trim().length < 8) errs.title = 'The title needs at least 8 characters.';
+    if (form.title.trim().length > 120) errs.title = 'The title can be at most 120 characters long.';
     if (form.description.trim().length < 40)
-      errs.description = 'At least 40 characters — providers need enough to scope the work.';
+      errs.description = 'Write at least 40 characters, so providers can judge the work.';
     if (form.acceptanceCriteria.trim().length < 20)
-      errs.acceptanceCriteria = 'At least 20 characters — say what "done" means.';
+      errs.acceptanceCriteria = 'Write at least 20 characters: how will you decide the job is finished?';
     if (!/^\d{1,12}(\.\d{1,6})?$/.test(form.budgetAmount.trim()))
-      errs.budgetAmount = 'Decimal number, up to 6 fraction digits (e.g. 100 or 12.5).';
+      errs.budgetAmount = 'Enter a number such as 100 or 12.5 (at most 6 digits after the point).';
     const deadline = form.deadlineLocal ? new Date(form.deadlineLocal) : null;
     if (!deadline || Number.isNaN(deadline.getTime())) {
-      errs.deadlineLocal = 'Pick a deadline.';
+      errs.deadlineLocal = 'Choose a date and time for the deadline.';
     } else {
       const secs = Math.floor(deadline.getTime() / 1000);
       const now = Math.floor(Date.now() / 1000);
-      if (secs < now + 3600) errs.deadlineLocal = 'Deadline must be at least 1 hour out.';
+      if (secs < now + 3600) errs.deadlineLocal = 'The deadline must be at least 1 hour from now.';
       if (secs > now + MAX_DEADLINE_DAYS * 86400)
-        errs.deadlineLocal = `At most ${MAX_DEADLINE_DAYS} days out — the on-chain job window is capped at 7 days.`;
+        errs.deadlineLocal = `The deadline can be at most ${MAX_DEADLINE_DAYS} days from now. The contract does not allow longer jobs.`;
     }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.contactEmail.trim()))
-      errs.contactEmail = 'Valid email required — it is how we reach you about moderation and offers.';
+      errs.contactEmail = 'Enter a working email address. It is how we reach you about the review and about offers.';
     if (form.buyerWallet.trim() && !/^0x[0-9a-fA-F]{1,64}$/.test(form.buyerWallet.trim()))
-      errs.buyerWallet = 'Hex address starting with 0x, or leave empty.';
+      errs.buyerWallet = 'A wallet address starts with 0x. Check it, or leave the field empty.';
     return errs;
   }
 
@@ -141,7 +143,7 @@ export default function PostJobForm() {
         const mapped: Record<string, string> = {};
         for (const [k, v] of Object.entries(err.fieldErrors)) mapped[k] = v.join(' ');
         setErrors(mapped);
-        setServerError('Some fields were rejected by the server — see above.');
+        setServerError('Some fields were not accepted. See the notes next to them.');
       } else {
         setServerError(err instanceof Error ? err.message : String(err));
       }
@@ -154,7 +156,7 @@ export default function PostJobForm() {
     <div className="terminal-container terminal-theme-scope">
       <div className="grid-bg" />
 
-      <section className="relative z-10 mx-auto max-w-3xl px-6 pt-24 pb-8">
+      <section className="relative z-10 mx-auto max-w-3xl px-4 pb-8 pt-24 md:px-6">
         <Link
           href="/market/"
           className="inline-flex items-center gap-1.5 font-mono text-xs text-ink-1 transition-colors hover:text-white"
@@ -167,15 +169,23 @@ export default function PostJobForm() {
           Post a job
         </h1>
         <p className="mt-3 font-sans text-base leading-relaxed text-ink-1">
-          Describe the digital work you need done. Submissions go through a moderation queue;
-          once approved, the job is listed publicly and curated pilot providers can make offers.
+          Describe the digital work you need. We review every job. Once approved, it is listed
+          and hand-picked pilot providers can make offers. Posting costs nothing.
         </p>
+
+        <div className="mt-6">
+          <FlowStrip
+            steps={BUYER_FLOW.map(({ id, icon, label }) => ({ id, icon, label }))}
+            highlight="post"
+            label="You are at step one of six: post job, get offer, lock payment, work happens, check result, pay provider."
+          />
+        </div>
 
         {submitted ? (
           <div className="mt-8 rounded-xl border border-phase-settled/30 bg-phase-settled/[0.06] p-6">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-phase-settled" />
-              <h2 className="font-mono text-sm font-bold text-ink-0">Submission received</h2>
+              <h2 className="font-mono text-sm font-bold text-ink-0">Job received</h2>
             </div>
             <p className="mt-2 font-sans text-sm leading-relaxed text-ink-1">
               Taking you to your job page… If nothing happens,{' '}
@@ -205,7 +215,7 @@ export default function PostJobForm() {
 
             <Field
               label="Description"
-              hint="What needs to be done, inputs you will provide, expected output format. 40-8000 characters."
+              hint="What needs to be done, what you will provide, and what form the result should have. 40-8000 characters."
               error={errors.description}
             >
               <textarea
@@ -217,8 +227,8 @@ export default function PostJobForm() {
             </Field>
 
             <Field
-              label="Acceptance criteria"
-              hint='What "done" means — these criteria are frozen into the job specification on approval.'
+              label="What counts as done"
+              hint="How you will decide the job is finished. This text is fixed when the job is approved and cannot be changed afterwards."
               error={errors.acceptanceCriteria}
             >
               <textarea
@@ -246,7 +256,7 @@ export default function PostJobForm() {
 
               <Field
                 label="Deadline"
-                hint="At most 7 days out — the on-chain job window is capped at 7 days."
+                hint="At most 7 days from now. The contract does not allow longer jobs."
                 error={errors.deadlineLocal}
               >
                 <input
@@ -262,7 +272,7 @@ export default function PostJobForm() {
 
             <Field
               label="Contact email"
-              hint="Stored server-side only and never published. Used solely to reach you about moderation and offers; deleted with the job record. Reply to any message from us to request deletion."
+              hint="Kept on our server only and never published. We use it only to reach you about the review and about offers, and delete it with the job. Reply to any message from us to have it deleted."
               error={errors.contactEmail}
             >
               <input
@@ -276,7 +286,7 @@ export default function PostJobForm() {
 
             <Field
               label="Your Supra wallet (optional)"
-              hint="If you already have one — this is the wallet you later pay from when you fund the job. You can add it later; we ask again when it is needed."
+              hint="If you already have one: this is the wallet you later lock the payment from. You can add it later. We ask again when it is needed."
               error={errors.buyerWallet}
             >
               <input
@@ -312,15 +322,16 @@ export default function PostJobForm() {
 
             <p className="flex items-start gap-2 font-sans text-xs leading-relaxed text-ink-2">
               <ShieldQuestion className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-              Payment happens later and on-chain: after approval you select an offer and fund
-              the job from your own wallet — the money is held on-chain and refunded if the job
-              does not go ahead. Posting a job costs nothing and commits you to nothing.
+              Payment comes later. After approval you choose an offer and lock the payment from
+              your own wallet. It is paid to the provider only after you approve the result. If
+              the job never starts, you can take the locked payment back once its start window
+              has expired. Posting a job costs nothing and commits you to nothing.
             </p>
           </form>
         )}
       </section>
 
-      <section className="relative z-10 mx-auto max-w-3xl px-6 py-6 pb-24">
+      <section className="relative z-10 mx-auto max-w-3xl px-4 py-6 pb-24 md:px-6">
         <HonestyBox />
       </section>
     </div>

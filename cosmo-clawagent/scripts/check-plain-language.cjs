@@ -127,6 +127,19 @@ function isVisible(node) {
       const name = ts.isIdentifier(p.name) || ts.isStringLiteral(p.name) ? p.name.text : '';
       if (VISIBLE_PROPS.has(name)) viaProp = true;
     }
+    // a string that is only compared against (stage === 'escrow') is a state id, not copy
+    if (
+      ts.isBinaryExpression(p) &&
+      (p.left === child || p.right === child) &&
+      [
+        ts.SyntaxKind.EqualsEqualsEqualsToken,
+        ts.SyntaxKind.ExclamationEqualsEqualsToken,
+        ts.SyntaxKind.EqualsEqualsToken,
+        ts.SyntaxKind.ExclamationEqualsToken,
+      ].includes(p.operatorToken.kind)
+    ) {
+      return false;
+    }
     // a string used as a key, an import path or a type is never copy
     if (ts.isImportDeclaration(p) || ts.isLiteralTypeNode(p) || ts.isElementAccessExpression(p)) return false;
   }

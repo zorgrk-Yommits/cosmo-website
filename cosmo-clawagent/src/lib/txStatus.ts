@@ -52,7 +52,8 @@ export function parseVmAbort(vmStatus: string | null | undefined): VmAbort | nul
   return { module: m[1], symbol: m[2] ?? null, code };
 }
 
-// Keyed by module:code. Codes verified against the Move sources on 2026-10-02:
+// Keyed by module:code. Codes verified against the Move sources on 2026-10-02
+// (return paths) and 2026-10-03 (compute_rfq 12-46, buyer and provider flow):
 // maker_vault.move:111-114, provider_vault.move:46-60, rfq_engine.move:83-126,
 // compute_rfq.move:100-154.
 const ABORT_TEXT: Record<string, string> = {
@@ -73,6 +74,22 @@ const ABORT_TEXT: Record<string, string> = {
   'compute_rfq:10': 'Compute request not found on chain.',
   'compute_rfq:11': 'The request is no longer open: a job may have started, or it was already reclaimed.',
   'compute_rfq:18': 'The quoting window has not closed on chain time. Try again after expiry.',
+  'compute_rfq:12': 'The job request has expired on chain time, so it can no longer be started.',
+  'compute_rfq:13': 'This wallet is not the buyer of this job. Switch to the buyer wallet.',
+  'compute_rfq:16': 'The delivery deadline is outside the range the contract allows.',
+  'compute_rfq:21': 'The offer expired before the transaction arrived. A fresh one is prepared automatically.',
+  'compute_rfq:22': 'The offer is above the amount you locked.',
+  'compute_rfq:24': 'No offer is ready on chain yet.',
+  'compute_rfq:25': 'The offer changed between your click and the transaction, so the contract refused it. Nothing was paid.',
+  'compute_rfq:26': 'The delivery deadline has already passed on chain time.',
+  'compute_rfq:27': 'Too little time is left before the delivery deadline to start the job.',
+  'compute_rfq:30': 'New provider sign-ups are paused in the contract right now.',
+  'compute_rfq:31': 'The provider does not have the required safety deposit right now.',
+  'compute_rfq:32': 'The contract is paused right now. Nothing new can be started; taking funds back still works.',
+  'compute_rfq:33': 'The provider already has the maximum number of active jobs.',
+  'compute_rfq:42': 'The job is not active any more, so nothing can be handed in.',
+  'compute_rfq:44': 'No result has been handed in yet, so there is nothing to approve.',
+  'compute_rfq:46': 'The time to check the result has ended.',
   'compute_rfq:40': 'Compute job not found on chain.',
   'compute_rfq:48': 'The provider delivered before you claimed. The review window applies now.',
   'compute_rfq:49': 'The delivery deadline has not passed on chain time. Try again after the deadline.',

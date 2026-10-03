@@ -21,10 +21,17 @@ describe('abort mapping', () => {
     expect(explainAbort('Move abort in 0xabc::compute_rfq: E_JOB_NOT_DISPUTED(0x32)')).toContain('not in dispute');
   });
   it('unknown codes are shown verbatim, never invented', () => {
-    const t = explainAbort('Move abort in 0xabc::compute_rfq: E_PAUSED(0x20)');
-    expect(t).toContain('E_PAUSED(0x20)');
+    const t = explainAbort('Move abort in 0xabc::compute_rfq: E_NOT_ADMIN(0x2)');
+    expect(t).toContain('E_NOT_ADMIN(0x2)');
     expect(t).toContain('only gas was spent');
     expect(explainAbort('Out of gas')).toContain('Out of gas');
+  });
+});
+
+describe('buyer-flow aborts', () => {
+  it('explains a paused contract and a drifted offer', () => {
+    expect(explainAbort('Move abort in 0xabc::compute_rfq: E_PAUSED(0x20)')).toContain('paused');
+    expect(explainAbort('Move abort in 0xabc::compute_rfq: E_QUOTE_DRIFT(0x19)')).toContain('Nothing was paid');
   });
 });
 

@@ -40,7 +40,8 @@ import {
 } from './marketApi';
 import { connectWallet, signChallenge, sameWallet, getAccountSilent, markWalletSeen } from './marketWallet';
 import { connectMainnetWallet, signAndSendCompute } from './computeSend';
-import { acceptQuoteV2, approveDeliveryV2, createOutcomeRequestV2 } from './computeTx';
+import { acceptQuoteV2, approveDeliveryV2, createOutcomeRequestV2, type ComputeEntryCall } from './computeTx';
+import { explainSignError, outcomeOf, waitForTx, type TxStage } from '@/lib/txStatus';
 import {
   fetchOnchainJob,
   fetchOnchainQuote,
@@ -58,6 +59,18 @@ export type FlowBusy =
   | 'accepting'
   | 'confirming-accept'
   | 'approving';
+
+// What happened to the transaction the buyer just signed. Read from the chain,
+// not assumed: a transaction that was sent and then failed says `failed`.
+export interface FlowTx {
+  stage: TxStage;
+  hash?: string;
+  message?: string;
+}
+
+// Thrown after a transaction was sent and the chain reported it as failed. The
+// outcome is already shown through `tx`, so run() must not repeat it as an error.
+class TxFailed extends Error {}
 
 export type ArmState = 'idle' | 'arming' | 'armed' | 'failed' | 'expired';
 
@@ -77,6 +90,7 @@ export interface MarketFlow {
   busy: FlowBusy;
   error: string | null;
   info: string | null;
+  tx: FlowTx; // outcome of the last signed transaction, read from the chain
   wallet: string | null;
   lastArm: ArmResult | null;
   armState: ArmState;
@@ -103,6 +117,7 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
   const [busy, setBusy] = useState<FlowBusy>(null);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+  const [tx, setTx] = useState<FlowTx>({ stage: 'idle' });
   const [wallet, setWallet] = useState<string | null>(null);
   const [lastArm, setLastArm] = useState<ArmResult | null>(null);
   const [armState, setArmState] = useState<ArmState>('idle');
@@ -223,19 +238,40 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
       setBusy(phase);
       setError(null);
       setInfo(null);
+      setTx({ stage: 'idle' });
       try {
         const msg = await fn();
         if (msg) setInfo(msg);
         await refreshFlow();
         changedRef.current?.();
       } catch (e) {
-        setError((e as Error).message ?? String(e));
+        if (!(e instanceof TxFailed)) setError((e as Error).message ?? String(e));
       } finally {
         setBusy(null);
       }
     },
     [refreshFlow],
   );
+
+  // Sign, send, then read the real outcome from the chain. Returns the hash for
+  // a confirmed OR not-yet-confirmed transaction (a timeout proves nothing, the
+  // server's chain poller still picks it up); throws only when the wallet did
+  // not send or the chain reported a failure.
+  const sendTracked = useCallback(async (call: ComputeEntryCall, account: string): Promise<string> => {
+    setTx({ stage: 'signing' });
+    let hash: string;
+    try {
+      hash = await signAndSendCompute(call, account);
+    } catch (e) {
+      setTx({ stage: 'idle' });
+      throw new Error(explainSignError(e));
+    }
+    setTx({ stage: 'sent', hash });
+    const outcome = outcomeOf(await waitForTx(hash, 45_000));
+    setTx({ stage: outcome.stage, hash, message: outcome.message });
+    if (outcome.stage === 'failed') throw new TxFailed(outcome.message);
+    return hash;
+  }, []);
 
   // Arm runs outside run(): it has its own state channel (armState/armError)
   // so a failed arm never clobbers select/escrow/accept errors and vice versa.
@@ -255,7 +291,7 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
       setArmState('failed');
       setArmError(
         e instanceof ApiError && e.status === 503
-          ? 'Preparing the offer is temporarily unavailable on our server. Your funds are safe in the on-chain contract — retry in a moment.'
+          ? 'Preparing the offer is temporarily unavailable on our server. Your payment stays locked and is not lost. Retry in a moment.'
           : ((e as Error).message ?? String(e)),
       );
     } finally {
@@ -317,7 +353,7 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
         const challenge = await requestSelectChallenge(jobId, offerId);
         const proof = await signChallenge(challenge.hexMessage, challenge.nonce);
         await submitSelect(jobId, offerId, { message: challenge.challenge, ...proof });
-        return 'Offer selected and signed. Next step: fund the job.';
+        return 'Offer chosen. Next step: lock the payment.';
       });
     },
     [jobId, run],
@@ -327,10 +363,10 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
     if (!jobId) return;
     await run('escrowing', async () => {
       const f = await fetchFlow(jobId); // fresh params — never stale ones
-      if (!f.escrowParams) throw new Error('No selected offer / funding details available.');
-      if (f.rail.paused) throw new Error('The on-chain contract is paused — funding is disabled right now.');
+      if (!f.escrowParams) throw new Error('No offer chosen yet, so the amount to lock is not known.');
+      if (f.rail.paused) throw new Error('The contract is paused right now, so payments cannot be locked.');
       if (f.providerChecks && !(f.providerChecks.eligible && f.providerChecks.bondCoversMinimum && f.providerChecks.hasCapacity)) {
-        throw new Error('The selected provider does not currently meet the on-chain requirements — funding would be lost.');
+        throw new Error('The chosen provider does not meet the contract requirements right now, so the job could not start. Nothing was locked.');
       }
       const account = await connectMainnetWallet();
       markWalletSeen();
@@ -339,7 +375,7 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
         throw new Error('Connected wallet is not the buyer wallet for this job.');
       }
       const p = f.escrowParams;
-      const txHash = await signAndSendCompute(
+      const txHash = await sendTracked(
         createOutcomeRequestV2({
           workloadUri: p.workloadUri,
           inputHash: p.inputHash,
@@ -358,29 +394,29 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
         await sleep(3_000);
         try {
           const r = await confirmRequest(jobId, txHash);
-          return `Funding confirmed on-chain (request #${r.requestId}). Preparing the final step…`;
+          return `Payment locked (request #${r.requestId}). Getting the job ready…`;
         } catch {
           // retry quietly
         }
       }
-      return `Funding transaction ${txHash} sent — the server syncs it automatically; this page updates in a moment.`;
+      return 'This page updates by itself in a moment.';
     });
-  }, [jobId, run]);
+  }, [jobId, run, sendTracked]);
 
   const accept = useCallback(async () => {
     if (!jobId) return;
     await run('accepting', async () => {
       const f = await fetchFlow(jobId);
-      if (typeof f.requestId !== 'number') throw new Error('No on-chain request to accept against.');
+      if (typeof f.requestId !== 'number') throw new Error('There is no locked payment for this job yet.');
       // Anti-drift: the expected tuple comes from the CHAIN, never local state.
       const q = await fetchOnchainQuote(f.requestId);
-      if (!q.hasQuote) throw new Error('No offer is ready on-chain — a fresh one is being prepared.');
+      if (!q.hasQuote) throw new Error('The offer is not ready yet. A fresh one is being prepared.');
       const now = Math.floor(Date.now() / 1000);
       const ttl = f.rail.quoteTtlSecs || 300;
       if (now > q.signedAtSecs + ttl - QUOTE_SAFETY_SECS) {
         // Flag expiry so the auto-arm effect fetches a fresh quote once idle.
         setArmState('expired');
-        throw new Error("The offer's validity window ran out before confirmation — a fresh one is being prepared.");
+        throw new Error('The offer expired before you confirmed. A fresh one is being prepared.');
       }
       const account = await connectMainnetWallet();
       markWalletSeen();
@@ -388,7 +424,7 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
       if (f.buyerWallet && !sameWallet(account, f.buyerWallet)) {
         throw new Error('Connected wallet is not the buyer wallet for this job.');
       }
-      const txHash = await signAndSendCompute(
+      const txHash = await sendTracked(
         acceptQuoteV2({
           requestId: f.requestId,
           expectedPriceQuants: q.price,
@@ -402,14 +438,14 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
         await sleep(3_000);
         try {
           const r = await confirmAccept(jobId, txHash);
-          return `Job confirmed — on-chain job #${r.jobIdOnchain} is active.`;
+          return `Job started (job #${r.jobIdOnchain}). The provider can begin.`;
         } catch {
           // retry quietly
         }
       }
-      return `Confirmation transaction ${txHash} sent — the server syncs it automatically; this page updates in a moment.`;
+      return 'This page updates by itself in a moment.';
     });
-  }, [jobId, run]);
+  }, [jobId, run, sendTracked]);
 
   // M5: buyer approves the delivery — approve_delivery_v2 settles atomically
   // (price + dispute bond are paid out to the solver in this one tx).
@@ -417,15 +453,15 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
     if (!jobId) return;
     await run('approving', async () => {
       const f = await fetchFlow(jobId);
-      if (typeof f.jobIdOnchain !== 'number') throw new Error('No on-chain job to approve.');
+      if (typeof f.jobIdOnchain !== 'number') throw new Error('This job has not started, so there is nothing to approve.');
       // Anti-drift: the chain decides whether there is anything to approve.
       const jv = await fetchOnchainJob(f.jobIdOnchain);
       if (jv.status === JOB_ONCHAIN_STATUS.SETTLED) {
         await confirmSettle(jobId).catch(() => undefined);
-        return 'Already settled on-chain.';
+        return 'The provider has already been paid.';
       }
       if (jv.status !== JOB_ONCHAIN_STATUS.DELIVERED) {
-        throw new Error('No delivered result on-chain yet — nothing to approve.');
+        throw new Error('No result has been handed in yet, so there is nothing to approve.');
       }
       const account = await connectMainnetWallet();
       markWalletSeen();
@@ -436,23 +472,20 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
       if (!sameWallet(account, jv.buyer)) {
         throw new Error('Connected wallet is not the on-chain buyer for this job.');
       }
-      const txHash = await signAndSendCompute(
-        approveDeliveryV2({ jobIdOnchain: f.jobIdOnchain }),
-        account,
-      );
+      const txHash = await sendTracked(approveDeliveryV2({ jobIdOnchain: f.jobIdOnchain }), account);
       // Fast path only — the chain poller (L1) is the sync guarantee.
       for (let i = 0; i < 3; i++) {
         await sleep(3_000);
         try {
           await confirmSettle(jobId, txHash);
-          return 'Delivery approved — job settled, payout released to the provider.';
+          return 'Result approved. The provider was paid.';
         } catch {
           // retry quietly
         }
       }
-      return `Approve transaction ${txHash} sent — the server syncs the settlement automatically; funds are safe.`;
+      return 'This page updates by itself in a moment.';
     });
-  }, [jobId, run]);
+  }, [jobId, run, sendTracked]);
 
   return {
     flow,
@@ -463,6 +496,7 @@ export function useMarketFlow(jobId: string | null, onChanged?: () => void): Mar
     busy,
     error,
     info,
+    tx,
     wallet,
     lastArm,
     armState,

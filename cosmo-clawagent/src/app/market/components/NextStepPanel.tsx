@@ -6,7 +6,9 @@
 // action" (deriveStage() removed, L2 Lifecycle-Neuschnitt); only the arm/
 // quote-countdown overlays stay client-side because auto-arm lives in the
 // browser by design. Exactly ONE CTA or an explicit waiting card renders per
-// state. Buyer copy avoids escrow/quote/arm jargon (Sprachpass, Etappe 5).
+// state. Buyer copy follows src/components/cosmo/terms.ts (site-clarity plan):
+// buttons name the real action and amount, promises match what the page can
+// do, and what was signed is reported from the chain through <TxStatus>.
 
 import { useEffect, useState } from 'react';
 import {
@@ -22,7 +24,10 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { EXPLORER_TX } from '@/lib/mainnetOnchain';
+import { EXPLORER_TX, faBalance } from '@/lib/mainnetOnchain';
+import TechDetails from '@/components/cosmo/TechDetails';
+import TokenPosition from '@/components/cosmo/TokenPosition';
+import TxStatus from '@/components/cosmo/TxStatus';
 import {
   attestationUrl,
   type MarketJob,
@@ -118,7 +123,7 @@ function OfferPicker({
             {ownWallet && (
               <p className="mt-1 flex items-start gap-1.5 pl-1 font-mono text-xs text-phase-warn">
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                This is the wallet you are connected with — you cannot buy from yourself.
+                This is the wallet you are connected with. You cannot buy from yourself.
               </p>
             )}
             {picked && readiness && readiness.blockers.length > 0 && (
@@ -273,6 +278,29 @@ export default function NextStepPanel({
   const stage = deriveStage();
   const stepNo = STAGE_STEP[stage];
 
+  // Before locking: what the buyer's wallet holds of the payment token, so the
+  // panel can show what gets locked and what stays. Read-only; null = unknown.
+  const payFa = flow?.escrowParams?.paymentFa ?? null;
+  // The balance is stored with the wallet+token it was read for, so a stale
+  // value is never shown after the wallet or the token changes.
+  const balKey = stage === 'escrow' && f.wallet && payFa ? `${f.wallet}|${payFa}` : null;
+  const [balRead, setBalRead] = useState<{ key: string; bal: bigint } | null>(null);
+  useEffect(() => {
+    if (!balKey || !f.wallet || !payFa) return;
+    let stop = false;
+    faBalance(f.wallet, payFa)
+      .then((bal) => {
+        if (!stop) setBalRead({ key: balKey, bal });
+      })
+      .catch(() => {
+        /* unknown stays unknown */
+      });
+    return () => {
+      stop = true;
+    };
+  }, [balKey, f.wallet, payFa]);
+  const walletBal = balRead && balRead.key === balKey ? balRead.bal : null;
+
   const serverBlockers = buyerBlock?.blockers ?? [];
   const escrowBlocked = stage === 'escrow' && (buyerBlock ? buyerBlock.action === null : false);
 
@@ -302,7 +330,7 @@ export default function NextStepPanel({
         {stage === 'loading' && (
           <div className="flex items-center gap-2 font-mono text-xs text-ink-1">
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            Loading flow state…
+            Loading your next step…
           </div>
         )}
 
@@ -311,7 +339,7 @@ export default function NextStepPanel({
             <span className="mt-1 inline-flex h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-ink-2" />
             <p className="font-sans text-sm leading-relaxed text-ink-1">
               Your job is <span className="font-bold text-ink-0">in review</span>. Once
-              approved it opens for offers from curated pilot providers — we also reach out by
+              approved, hand-picked pilot providers can make offers. We also write to you by
               email. Nothing to do right now.
             </p>
           </div>
@@ -319,7 +347,7 @@ export default function NextStepPanel({
 
         {stage === 'rejected' && (
           <p className="font-sans text-sm leading-relaxed text-ink-1">
-            This job was not approved for the pilot board.{' '}
+            This job was not approved for the pilot board. Nothing was charged.{' '}
             <Link href="/market/post/" className="text-phase-proof hover:text-phase-proof">
               Post a new job
             </Link>{' '}
@@ -331,9 +359,9 @@ export default function NextStepPanel({
           <div className="flex items-start gap-3">
             <span className="mt-1 inline-flex h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-phase-active" />
             <p className="font-sans text-sm leading-relaxed text-ink-1">
-              <span className="font-bold text-ink-0">Open for offers</span> — curated pilot
-              providers have been notified. As soon as the first offer arrives, you pick one here
-              and take the job on-chain. Nothing to do right now.
+              <span className="font-bold text-ink-0">Open for offers.</span> The pilot providers
+              have been notified. As soon as the first offer arrives, you choose one here.
+              Nothing to do right now.
             </p>
           </div>
         )}
@@ -342,8 +370,8 @@ export default function NextStepPanel({
           <div className="space-y-3">
             <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-phase-warn/90">
               <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-              Market service is unreachable — the flow is paused. Your on-chain state is safe;
-              nothing is lost.
+              Our server cannot be reached right now, so this page cannot show your next step.
+              Anything already locked stays locked and is not lost.
             </p>
             <button type="button" className={BTN_GHOST} onClick={() => void f.refreshFlow()}>
               <RefreshCw className="h-3 w-3" />
@@ -355,8 +383,9 @@ export default function NextStepPanel({
         {stage === 'select' && (
           <div className="space-y-4">
             <p className="font-sans text-sm leading-relaxed text-ink-1">
-              Pick the offer you want. Your selection is signed with your StarKey wallet and
-              binds it as the buyer wallet for this job.
+              Choose the offer you want. You confirm the choice with your wallet: this costs
+              nothing and moves no tokens. The wallet you sign with becomes the buyer wallet for
+              this job.
             </p>
             <OfferPicker
               offers={offers}
@@ -378,7 +407,7 @@ export default function NextStepPanel({
               ) : (
                 <Wallet className="h-5 w-5" />
               )}
-              Select offer &amp; sign with StarKey
+              Choose this offer
             </button>
           </div>
         )}
@@ -387,7 +416,7 @@ export default function NextStepPanel({
           <div className="space-y-4">
             {selectedOffer && (
               <p className="font-sans text-sm leading-relaxed text-ink-1">
-                Selected:{' '}
+                Chosen:{' '}
                 <span className="font-bold text-ink-0">
                   {selectedProvider?.name ?? selectedOffer.providerId}
                 </span>{' '}
@@ -396,24 +425,87 @@ export default function NextStepPanel({
               </p>
             )}
             {flow.escrowParams ? (
-              <p className="font-sans text-sm leading-relaxed text-ink-1">
-                Funding the job locks{' '}
-                <span className="font-bold text-ink-0">
-                  {fmtQuants(flow.escrowParams.maxPriceQuants, flow.escrowParams.assetDecimals)}{' '}
-                  {flow.escrowParams.assetSymbol}
-                </span>{' '}
-                on-chain against the frozen job specification. The money is held by the on-chain
-                contract — not by us and not by the provider. Any unused part comes back to you
-                when you confirm, and you can cancel and get everything back at any time before
-                you confirm. Need {flow.escrowParams.assetSymbol}? See the{' '}
-                <a href="/wcosmo/" className="text-phase-proof hover:text-phase-proof">
-                  conversion guide
-                </a>
-                .
-              </p>
+              (() => {
+                const ep = flow.escrowParams;
+                const lockQ = BigInt(ep.maxPriceQuants);
+                const unit = Number(BigInt(10) ** BigInt(ep.assetDecimals));
+                const short = walletBal !== null && walletBal < lockQ;
+                return (
+                  <>
+                    <p className="font-sans text-sm leading-relaxed text-ink-1">
+                      Locking moves{' '}
+                      <span className="font-bold text-ink-0">
+                        {fmtQuants(ep.maxPriceQuants, ep.assetDecimals)} {ep.assetSymbol}
+                      </span>{' '}
+                      out of your wallet into the job&apos;s contract. It is held there, not by us
+                      and not by the provider, and nobody is paid yet. If the offer is lower than
+                      this amount, the difference comes back to you when you confirm.
+                    </p>
+                    <TokenPosition
+                      parts={[
+                        {
+                          kind: 'locked',
+                          label: 'Will be locked for this job',
+                          amount: `${fmtQuants(ep.maxPriceQuants, ep.assetDecimals)} ${ep.assetSymbol}`,
+                          value: Number(lockQ) / unit,
+                          hint: 'Paid to the provider only after you approve the result.',
+                        },
+                        {
+                          kind: 'wallet',
+                          label: 'Stays in your wallet',
+                          amount:
+                            walletBal === null || short
+                              ? null
+                              : `${fmtQuants((walletBal - lockQ).toString(), ep.assetDecimals)} ${ep.assetSymbol}`,
+                          value: walletBal === null || short ? undefined : Number(walletBal - lockQ) / unit,
+                          hint: f.wallet
+                            ? undefined
+                            : 'Connect your wallet to see what stays.',
+                        },
+                      ]}
+                    />
+                    {short && (
+                      <p className="flex items-start gap-1.5 font-sans text-sm leading-relaxed text-phase-warn">
+                        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                        <span>
+                          Your wallet holds {fmtQuants(walletBal!.toString(), ep.assetDecimals)}{' '}
+                          {ep.assetSymbol}, which is less than the amount to lock. See the{' '}
+                          <a href="/wcosmo/" className="text-phase-proof hover:text-phase-proof">
+                            conversion guide
+                          </a>{' '}
+                          or{' '}
+                          <a href="/buy/" className="text-phase-proof hover:text-phase-proof">
+                            buy {ep.assetSymbol}
+                          </a>
+                          .
+                        </span>
+                      </p>
+                    )}
+                    <ul className="space-y-1.5 font-sans text-sm leading-relaxed text-ink-1">
+                      <li>
+                        Result due by{' '}
+                        <span className="text-ink-0">{fmtTs(ep.jobDeadlineSecs)}</span>.
+                      </li>
+                      <li>
+                        After the result arrives you have{' '}
+                        <span className="text-ink-0">{fmtDelivery(ep.reviewWindowSecs)}</span> to
+                        check it.
+                      </li>
+                      <li>
+                        If the job never starts, you can take the full amount back on{' '}
+                        <Link href="/portfolio/" className="text-phase-proof hover:text-phase-proof">
+                          My tokens
+                        </Link>{' '}
+                        once this job&apos;s start window has expired. There is no cancel button
+                        before that.
+                      </li>
+                    </ul>
+                  </>
+                );
+              })()
             ) : (
               <p className="font-mono text-xs text-phase-warn">
-                Funding details are not available yet — refresh in a moment.
+                The amount to lock is not available yet. Refresh in a moment.
               </p>
             )}
             <BlockerCards blockers={serverBlockers} />
@@ -428,21 +520,22 @@ export default function NextStepPanel({
               ) : (
                 <Send className="h-5 w-5" />
               )}
-              Fund the job with StarKey
+              {flow.escrowParams
+                ? `Lock ${fmtQuants(flow.escrowParams.maxPriceQuants, flow.escrowParams.assetDecimals)} ${flow.escrowParams.assetSymbol}`
+                : 'Lock payment'}
             </button>
-            <p className="font-mono text-[11px] text-ink-2">
-              Held on-chain, refunded if the job does not go ahead. After this signature
-              everything is prepared automatically — your next action is Confirm &amp; start; your
-              last step, approving the delivery, comes once the provider delivers.
+            <p className="font-sans text-xs leading-relaxed text-ink-2">
+              After this, the job is prepared automatically. Your next action is Confirm and
+              start. Your last one, checking the result, comes once the provider hands it in.
             </p>
             {/* B7 escape hatch: a blocked funding stage is never a dead end
                 while nothing is on-chain — the buyer can re-select here. */}
             {escrowBlocked && requestId == null && offers.length > 0 && (
               <div className="border-t border-line-base pt-4">
-                <h3 className="font-mono text-xs font-bold text-ink-0">Change selection</h3>
+                <h3 className="font-mono text-xs font-bold text-ink-0">Choose a different offer</h3>
                 <p className="mt-1 mb-3 font-sans text-sm leading-relaxed text-ink-1">
-                  You can pick a different offer — nothing is locked yet. Selecting again also
-                  re-binds the buyer wallet to the account you sign with.
+                  You can choose a different offer. Nothing is locked yet. Choosing again also
+                  makes the account you sign with the buyer wallet.
                 </p>
                 <OfferPicker
                   offers={offers}
@@ -464,7 +557,7 @@ export default function NextStepPanel({
                   ) : (
                     <Wallet className="h-4 w-4" />
                   )}
-                  Select this offer instead &amp; sign with StarKey
+                  Choose this offer instead
                 </button>
               </div>
             )}
@@ -475,10 +568,9 @@ export default function NextStepPanel({
           <div className="flex items-start gap-3">
             <Loader2 className="mt-0.5 h-4 w-4 shrink-0 animate-spin text-phase-active" />
             <p className="font-sans text-sm leading-relaxed text-ink-1">
-              <span className="font-bold text-ink-0">Preparing the final step…</span> We
-              verify your funding on-chain and set up the provider&apos;s offer for
-              confirmation. No action needed from you — the Confirm &amp; start button appears
-              here in a moment.
+              <span className="font-bold text-ink-0">Getting the job ready…</span> We check
+              your locked payment and prepare the provider&apos;s offer. Nothing to do: the
+              Confirm and start button appears here in a moment.
             </p>
           </div>
         )}
@@ -486,7 +578,7 @@ export default function NextStepPanel({
         {stage === 'accept' && (
           <div className="space-y-4">
             <p className="font-sans text-sm leading-relaxed text-ink-1">
-              The provider&apos;s offer is ready on-chain
+              The provider&apos;s offer is ready
               {f.quote && flow?.escrowParams && (
                 <>
                   :{' '}
@@ -497,9 +589,9 @@ export default function NextStepPanel({
                   from provider {f.quote.solver.slice(0, 10)}…
                 </>
               )}
-              . Confirming starts the job and returns any unused funds to you. The chain checks
-              your confirmation against the exact offer terms — if the terms changed in the
-              meantime, the chain rejects it.
+              . Confirming starts the job and returns any part of the locked payment that is
+              above the offer. The contract compares your confirmation with the exact offer: if
+              the offer changed in the meantime, it refuses and nothing is paid.
             </p>
             <div className="flex items-center gap-2 font-mono text-sm">
               <Clock3
@@ -508,7 +600,7 @@ export default function NextStepPanel({
               <span className={cn(secsLeft < 60 ? 'text-phase-warn' : 'text-phase-settled')}>
                 Offer valid {fmtCountdown(secsLeft)}
               </span>
-              <span className="text-[11px] text-ink-2">— renews automatically</span>
+              <span className="text-[11px] text-ink-2">renews automatically</span>
             </div>
             <button
               type="button"
@@ -521,7 +613,7 @@ export default function NextStepPanel({
               ) : (
                 <CheckCircle2 className="h-5 w-5" />
               )}
-              Confirm &amp; start with StarKey
+              Confirm and start
             </button>
           </div>
         )}
@@ -530,8 +622,8 @@ export default function NextStepPanel({
           <div className="space-y-4">
             <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-phase-fault">
               <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-              Preparing the final step failed. Your funds are safe in the on-chain contract —
-              you can retry below at no cost.
+              Getting the job ready failed. Your payment stays locked and is not lost. You can
+              retry below at no cost.
             </p>
             {f.armError && (
               <p className="font-mono text-[11px] text-ink-2">
@@ -554,8 +646,7 @@ export default function NextStepPanel({
           <div className="space-y-4">
             <p className="flex items-start gap-1.5 font-sans text-sm leading-relaxed text-ink-1">
               <Hourglass className="mt-0.5 h-4 w-4 shrink-0 text-phase-warn" />
-              The offer&apos;s validity window ran out. Get a fresh one — it is free and needs
-              no wallet signature.
+              The offer expired. Get a fresh one: it is free and needs no wallet signature.
             </p>
             <button
               type="button"
@@ -575,10 +666,10 @@ export default function NextStepPanel({
               <Hourglass className="mt-0.5 h-5 w-5 shrink-0 text-phase-active" />
               <p className="font-sans text-sm leading-relaxed text-ink-1">
                 <span className="font-bold text-ink-0">
-                  On-chain job #{jobIdOnchain} is active — the provider is working.
+                  The provider is working (job #{jobIdOnchain}).
                 </span>{' '}
-                Nothing to do right now; the approval button appears here once the result is
-                delivered.
+                Nothing to do right now. The result and the button to approve it appear here
+                once the provider hands it in.
                 {txAccept && (
                   <>
                     {' '}
@@ -588,7 +679,7 @@ export default function NextStepPanel({
                       rel="noopener noreferrer"
                       className="text-phase-proof hover:text-phase-proof"
                     >
-                      View the accept transaction
+                      View the start transaction
                     </a>
                     .
                   </>
@@ -598,16 +689,21 @@ export default function NextStepPanel({
             {oj && nowSec <= oj.jobDeadlineSecs && (
               <p className="flex items-center gap-2 font-mono text-xs text-ink-1">
                 <Clock3 className="h-3.5 w-3.5 text-phase-settled" />
-                Delivery due {fmtTs(oj.jobDeadlineSecs)}{' '}
+                Result due by {fmtTs(oj.jobDeadlineSecs)}{' '}
                 <span className="text-ink-2">({fmtRel(oj.jobDeadlineSecs, nowSec)})</span>
               </p>
             )}
             {oj && oj.status === JOB_ONCHAIN_STATUS.ACTIVE && nowSec > oj.jobDeadlineSecs && (
               <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-phase-warn">
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                The delivery deadline has passed without a result. Delivery is no longer possible
-                on-chain, and you can get your locked funds back. Contact us and we will guide
-                you through the steps.
+                <span>
+                  The deadline has passed without a result. The provider can no longer hand one
+                  in. Take your locked payment back on{' '}
+                  <Link href="/portfolio/" className="font-bold text-phase-proof hover:text-phase-proof">
+                    My tokens
+                  </Link>
+                  : connect this wallet there and use the button next to this job.
+                </span>
               </p>
             )}
           </div>
@@ -616,38 +712,30 @@ export default function NextStepPanel({
         {stage === 'approve' && (
           <div className="space-y-4">
             <p className="font-sans text-sm leading-relaxed text-ink-1">
-              The provider delivered a result. The chain stores a fingerprint (SHA3-256 hash) of
-              this attestation document, so the document cannot be changed afterwards:
+              The provider handed in a result. Look at it and compare it with what you said
+              counts as done.
             </p>
-            <div className="rounded-lg border border-line-base bg-surface-inset p-4">
-              <a
-                href={flow?.deliver?.attestationUri ?? attestationUrl(job.id)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 font-mono text-xs text-phase-proof hover:text-phase-proof"
-              >
-                <FileJson className="h-3.5 w-3.5" />
-                View the attestation document
-              </a>
-              {(job.attestationHash ?? flow?.deliver?.attestationHash) && (
-                <p className="mt-2 break-all font-mono text-[11px] text-ink-1">
-                  SHA3-256: {job.attestationHash ?? flow?.deliver?.attestationHash}
-                  <span className="text-ink-2"> — the hash on-chain equals the SHA3-256 of that document.</span>
-                </p>
-              )}
-            </div>
+            <a
+              href={flow?.deliver?.attestationUri ?? attestationUrl(job.id)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg border border-line-base bg-surface-inset px-4 py-3 font-mono text-sm text-phase-proof transition-colors hover:border-line-strong hover:text-ink-0"
+            >
+              <FileJson className="h-4 w-4" />
+              View result
+            </a>
             {oj && oj.deliveredAt > 0 && (
-              <p className="flex items-center gap-2 font-mono text-xs text-ink-1">
-                <Clock3 className="h-3.5 w-3.5 text-phase-warn" />
-                Review window until {fmtTs(oj.deliveredAt + oj.reviewWindowSecs)} — it is your
-                turn to approve. After that time, settlement can be triggered by anyone, without
-                your signature.
+              <p className="flex items-start gap-2 font-sans text-sm leading-relaxed text-ink-1">
+                <Clock3 className="mt-0.5 h-4 w-4 shrink-0 text-phase-warn" />
+                <span>
+                  You have until{' '}
+                  <span className="font-bold text-ink-0">
+                    {fmtTs(oj.deliveredAt + oj.reviewWindowSecs)}
+                  </span>{' '}
+                  to check it. If you do nothing by then, the provider is paid automatically.
+                </span>
               </p>
             )}
-            <p className="font-mono text-[11px] leading-relaxed text-ink-2">
-              Something wrong with the result? You can dispute it on-chain — contact us before
-              the review window ends and do not approve.
-            </p>
             <button
               type="button"
               className={CTA_BIG}
@@ -659,12 +747,33 @@ export default function NextStepPanel({
               ) : (
                 <CheckCircle2 className="h-5 w-5" />
               )}
-              Approve delivery with StarKey
+              Approve and pay provider
             </button>
-            <p className="font-mono text-[11px] text-ink-2">
-              Approval settles everything in one transaction: the provider is paid and their
-              security deposit is released.
+            <p className="font-sans text-xs leading-relaxed text-ink-2">
+              Approving pays the provider in one transaction. It cannot be undone.
             </p>
+            <p className="font-sans text-sm leading-relaxed text-ink-1">
+              <span className="font-bold text-ink-0">Not happy with the result?</span> Do not
+              approve. Reply to one of our emails about this job before the time above runs out.
+              There is no button for this on the page yet.
+            </p>
+            {(job.attestationHash ?? flow?.deliver?.attestationHash) && (
+              <TechDetails title="Technical details: how the result is pinned">
+                <p>
+                  The chain stores a fingerprint (SHA3-256 hash) of the result document, so the
+                  document cannot be changed after delivery. The hash on-chain equals the
+                  SHA3-256 of the document linked above.
+                </p>
+                <p className="mt-2 break-all font-mono text-[11px] text-ink-1">
+                  SHA3-256: {job.attestationHash ?? flow?.deliver?.attestationHash}
+                </p>
+                <p className="mt-2">
+                  A dispute exists in the contract (dispute_delivery_v2) but is not wired into
+                  this page. After the review window, anyone can trigger settlement
+                  (timeout_settle_v2) without the buyer&apos;s signature.
+                </p>
+              </TechDetails>
+            )}
           </div>
         )}
 
@@ -679,10 +788,9 @@ export default function NextStepPanel({
           <div className="flex items-start gap-3">
             <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-phase-settled" />
             <p className="font-sans text-sm leading-relaxed text-ink-1">
-              <span className="font-bold text-phase-settled">Job settled on-chain.</span>{' '}
-              {selectedOffer ? `${selectedOffer.price} ${job.budgetAsset}` : 'The payment'} was
-              paid out to the provider and their security deposit was released. This job is
-              complete — nothing more to do.
+              <span className="font-bold text-phase-settled">Paid.</span>{' '}
+              {selectedOffer ? `${selectedOffer.price} ${job.budgetAsset}` : 'The payment'} went
+              to the provider. This job is complete. Nothing more to do.
               {txRefs.deliver && (
                 <>
                   {' '}
@@ -705,7 +813,7 @@ export default function NextStepPanel({
                     rel="noopener noreferrer"
                     className="text-phase-proof hover:text-phase-proof"
                   >
-                    Settlement transaction
+                    Payment transaction
                   </a>
                 </>
               )}
@@ -721,12 +829,15 @@ export default function NextStepPanel({
           {f.error}
         </p>
       )}
-      {f.info && !f.error && <p className="mt-4 font-mono text-[11px] text-phase-settled">{f.info}</p>}
+      <TxStatus stage={f.tx.stage} message={f.tx.message} txHash={f.tx.hash} className="mt-4" />
+      {f.info && !f.error && f.tx.stage !== 'failed' && (
+        <p className="mt-3 font-sans text-sm text-phase-settled">{f.info}</p>
+      )}
 
       {WALLET_STAGES.has(stage) && (
         <p className="mt-4 border-t border-line-subtle pt-3 font-mono text-[11px] text-ink-2">
-          You sign with your own StarKey wallet; this site never holds funds or keys. Every
-          on-chain step is a verifiable Supra Mainnet transaction.
+          You sign with your own StarKey wallet. This site never holds your tokens or keys.
+          Every step from locking the payment onward is a public transaction on Supra Mainnet.
         </p>
       )}
     </div>
