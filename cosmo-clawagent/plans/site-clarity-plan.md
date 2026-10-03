@@ -198,7 +198,7 @@ Quelle der Regeln: `cosmo-contracts-move/compute-rfq/sources/` auf Branch `feat/
 - Waechter-Liste 17 → 6 (Rest: Assurance, Mandates, CosmoStory + drei nur dort benutzte Komponenten).
 - NICHT geprueft: echte Signaturen (Withdraw/Claim, Kauf, Unwrap) mit den neuen Statusanzeigen; `/portfolio` live nur lesend mit der Adresse von Operator M2 gesehen.
 
-### Etappe 5: umgesetzt 03.10.2026 (lokal, NICHT deployt; Deploy erst nach GO)
+### Etappe 5: umgesetzt und DEPLOYT 03.10.2026 (GO Rene; Rollback-Kopie `out.pre-site-clarity-e5`)
 
 - `/mandates` neu: H1 "Let an agent manage liquidity without giving it unlimited control.", Bild Your wallet → Rules → Agent acts → Proof, `RulesDiagram` mit den echten Regeln von VLM-001, Tabelle "Allowed / What happened", Kennzeichnung Tested ("No run is active now"), sechs Stufen in Klartext mit den kanonischen Namen im Aufklapper. Produktname "Verifiable Liquidity Mandates" bleibt sichtbar (im Waechter als Eigenname zugelassen), das Wort "mandate" sonst nur in Klammern oder im Aufklapper.
 - `/assurance`: Einstieg "Do not take our word for it. Check it.", Zahl der Belege wird gezaehlt statt geschrieben (jetzt 8: VLM-001 neu aufgenommen, 002-G war vorher nicht mitgezaehlt), je Beleg ein Klartext-Satz und der technische Text im Aufklapper, "private verifier" durch den Hinweis auf den veroeffentlichten Verifier ersetzt (auch in `/institutional`, zwei Stellen).
@@ -207,3 +207,14 @@ Quelle der Regeln: `cosmo-contracts-move/compute-rfq/sources/` auf Branch `feat/
 - Archiv: `ProtocolNotice` ist jetzt der einheitliche Kopf (Archive-Kennzeichnung, ein Satz je Seite, Weg zurueck) auf /rfq, /demo, /community-rfq, /maker-capital, /access; `/protocol` nennt die neuen Navigationsnamen; `/founder` sagt nicht mehr "live".
 - Abweichung vom Plan: `/institutional` hat KEINEN Archiv-Kopf bekommen (die Seite ist das Rahmenwerk, auf das /mandates und /assurance verweisen, nicht eingestellt). `/cosmo` samt drei nur dort benutzten Diagrammen steht auf der Ausnahmeliste des Waechters (v5-Rahmung, braucht einen eigenen Umbau).
 - Waechter-Liste: 0 Dateien offen.
+
+### Stand nach Etappe 5
+
+Alle sechs Etappen sind umgesetzt und live. Offen (ausserhalb der Etappen):
+
+- Echter 10-Sekunden-Test mit einer Person ohne Krypto-Wissen (Rene; bisher nur ein Vortest mit einem frischen Agenten auf der Startseite).
+- Echte Signiertests der neuen Statuspfade: Markt (Sperren, Bestaetigen, Freigeben), Deposit, Hand-in, Abheben/Zurueckholen, Kauf, Unwrap. Bisher nur Mock-Vorschauen und lesende Live-Pruefung.
+- `/cosmo` passt noch nicht zur neuen Leitstory (Ausnahmeliste).
+- Texte aus dem Market-Backend (`headline`, Blocker) sprechen teils noch Fachsprache.
+- Erster Bildschirm der Startseite nennt kein Beispiel, welche Art Arbeit gemeint ist.
+- Commits lokal auf `master`, nicht gepusht. Rollback-Kopien `out.pre-site-clarity-e1` bis `-e5` liegen im Repo-Ordner (git-ignoriert).
