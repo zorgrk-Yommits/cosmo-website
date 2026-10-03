@@ -189,7 +189,7 @@ Quelle der Regeln: `cosmo-contracts-move/compute-rfq/sources/` auf Branch `feat/
 - `FlowStrip`: gleich breite Spalten, sechs Schritte passen bei 390 und 360 px in eine Zeile.
 - NICHT geprueft: echter Signiervorgang (Deposit, Angebot, Hand-in) mit den neuen Statuspfaden; die Deposit-Uebersicht mit Wallet nur als Mock-Vorschau gesehen. Server-Texte (`headline`, Blocker `cause`/`remedy`) kommen vom Market-Backend und sind unveraendert; nur die Zeile fuer bezahlte Jobs wird im Client ersetzt.
 
-### Etappe 4: umgesetzt 03.10.2026 (lokal, NICHT deployt; Deploy erst nach GO)
+### Etappe 4: umgesetzt und DEPLOYT 03.10.2026 (GO Rene; Rollback-Kopie `out.pre-site-clarity-e4`)
 
 - `/portfolio`: `TokenPosition` als Kopf (wCOSMO im Wallet / gesperrt / frei zum Zurueckholen), Zeilentitel in Klartext (Safety deposits, Locked in open jobs and offers, Ready to take back, Gone with the reason), Buttons "Withdraw deposit" / "Take tokens back", Payload im offenen Aufklapper, `TxStatus`; Positionssaetze in `positions.ts` umgeschrieben; Hinweis, dass Provider-Seite eines Jobs nicht gelistet ist; Scan-Fenster-Details im Aufklapper.
 - `/vault`: `PageIntro` "Where deposits are held.", Abschnitte und Kacheln in Klartext, Adressen und View-Namen im Aufklapper; Diagramm sagt jetzt "unless a penalty lock runs" statt "after lock".
