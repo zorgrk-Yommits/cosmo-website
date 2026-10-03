@@ -155,7 +155,7 @@ Vertragsfakten, am 03.10.2026 live von Mainnet gelesen (alle vier sind Views, sp
 
 Quelle der Regeln: `cosmo-contracts-move/compute-rfq/sources/` auf Branch `feat/gpu-provider-poc`; ob dieser Stand byte-gleich deployt ist, wurde nicht geprueft, die vier Werte oben stammen von der Chain.
 
-### Etappe 1: umgesetzt 03.10.2026 (lokal, NICHT deployt; Deploy erst nach GO)
+### Etappe 1: umgesetzt und mit Etappe 0 DEPLOYT 03.10.2026 (GO Rene; Rollback-Kopie `out.pre-site-clarity-e1`)
 
 - Hero: "AI needs work done. COSMO gets it done." + Ablaufbild AI Agent → COSMO → Provider → Result → Payment im ersten Bildschirm (390 px und 1440 px geprueft), Buttons "Post a job" / "Earn as a provider", Pflicht-Zusatz (COSMO macht die Arbeit nicht selbst, Pilot) darunter. WebGL-Szene, `PhaseRail`, `usePhase` geloescht (three.js steht noch in package.json, wird nicht mehr importiert).
 - Reihenfolge: Hero → Why it is needed (Vorher/Nachher) → How a job works (6 Karten, Move-Aufrufe in TechDetails) → Live jobs → Liquidity → Three ways in → Proof → Treasury sale → Closing.
