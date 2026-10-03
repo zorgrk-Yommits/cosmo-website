@@ -142,7 +142,7 @@ Storno- und Dispute-Button, Provider-Einnahmen im Portfolio, Zusammenlegen der v
 - `src/lib/txStatus.ts`: `fetchTxStatus`, `waitForTx`, `parseVmAbort`, `explainAbort` aus `portfolio/lib` hierher verschoben (alte Importe laufen ueber Re-Exports weiter), neu `outcomeOf` und `explainSignError`.
 - `terms.ts` + `scripts/check-plain-language.cjs`, in `npm test` eingehaengt. 44 Dateien stehen in `scripts/plain-language-pending.json`; die Liste darf nur schrumpfen. Grenze des Waechters: er sieht JSX-Text, Strings in JSX und Copy-Properties, nicht Saetze, die eine Hilfsfunktion zusammenbaut.
 - `docs/POSITIONING.md` v6.1.
-- 6-Schritte-Ablaeufe passen bei 390 px nicht in eine Zeile: dort `layout="stack"` nehmen oder Umbruch akzeptieren. 5 Schritte passen.
+- 6-Schritte-Ablaeufe passen seit Etappe 3 bei 390 und 360 px in eine Zeile (gleich breite Spalten, 10-px-Labels).
 
 Vertragsfakten, am 03.10.2026 live von Mainnet gelesen (alle vier sind Views, spaetere Etappen lesen sie live statt Zahlen in Texte zu schreiben):
 
@@ -177,3 +177,14 @@ Quelle der Regeln: `cosmo-contracts-move/compute-rfq/sources/` auf Branch `feat/
 - Echter Transaktionsstatus: `useMarketFlow.sendTracked` liest nach dem Senden den Ausgang von der Chain (`waitForTx` 45 s) und zeigt ihn ueber `TxStatus`; ein Abort erscheint als "Failed" mit Klartext (`explainAbort`, neue Texte fuer compute_rfq 12-46). Tx-Builder und Argumente unveraendert.
 - Waechter: Vergleichs-Strings (`stage === 'escrow'`) zaehlen nicht mehr als Text; Liste 32 → 24.
 - NICHT geprueft: ein echter Signiervorgang auf Mainnet mit dem neuen Statuspfad (nur Vorschau mit Mock-Daten und die bezahlte Job-Seite gegen die Live-API). Kontaktweg "reply to our email" stuetzt sich auf den bestehenden Hinweis im Job-Formular.
+
+### Etappe 3: umgesetzt 03.10.2026 (lokal, NICHT deployt; Deploy erst nach GO)
+
+- `/compute` neu geschrieben: `PageIntro` mit dem Provider-Bild (Wallet → Safety deposit → Make an offer → Do work → Get paid → Withdraw deposit) im ersten Bildschirm, fuenf Klartext-Schritte, sichtbare Karte "What can go wrong", Live-Zahlen als Liste, drei bezahlte Jobs mit je einem Klartext-Satz und allen Details/Transaktionen im Aufklapper. Abschnitte "How a job settles" und die SupraFX-Abgrenzung entfernt (Abwehr-Ton, Dopplung mit der Startseite).
+- Live statt fest im Text: Strafe (`slash_comp_bps`), Sperre nach Strafe (`bond_cooldown_secs`), Jobs gleichzeitig (`get_max_active_jobs_per_provider`), Dispute-Bond (`dispute_bond_bps`). Auszahlungsregel ueberall: frei, sobald kein Job aktiv ist; nur eine Strafe sperrt.
+- `/compute/bond`: Titel "Safety deposit", Ablaufbild (Schritt 2 markiert), `TokenPosition` (im Wallet / Deposit frei oder gesperrt mit Grund / im Risiko pro versaeumtem Job), aktive Jobs und Strafen sichtbar, Buttons "Convert <Betrag> $COSMO" / "Deposit <Betrag> wCOSMO", Roh-Payload im (offenen) Aufklapper, Link "Withdraw on My tokens". Signier-Ablauf liest jetzt das Urteil der Chain: ein Abort erscheint als "Failed" mit Grund (`TxStatus`), statt bis zum Timeout auf eine Saldo-Aenderung zu warten. Payload-Bau unveraendert.
+- `/market/work`: `StatusTrack` (`providerStageView`, getestet), Detail-Leiste im Aufklapper, "Make this offer", "Register result", "Hand in result"; Endzustaende in Klartext statt roher Zustandszahl; Hand-in mit echtem Transaktionsstatus.
+- `/market/providers`: Klartext, Titel "The providers who do the jobs".
+- Waechter: Inhalte, die ueber ein Prop `technical` in einen Aufklapper gereicht werden, zaehlen als Technik; Liste 24 → 17.
+- `FlowStrip`: gleich breite Spalten, sechs Schritte passen bei 390 und 360 px in eine Zeile.
+- NICHT geprueft: echter Signiervorgang (Deposit, Angebot, Hand-in) mit den neuen Statuspfaden; die Deposit-Uebersicht mit Wallet nur als Mock-Vorschau gesehen. Server-Texte (`headline`, Blocker `cause`/`remedy`) kommen vom Market-Backend und sind unveraendert; nur die Zeile fuer bezahlte Jobs wird im Client ersetzt.

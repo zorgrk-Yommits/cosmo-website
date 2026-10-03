@@ -58,7 +58,7 @@ export default function FlowStrip({
               className={cn(
                 stack
                   ? 'flex flex-1 items-center gap-3 rounded-xl border bg-surface-1 px-3 py-3 md:flex-col md:gap-2 md:text-center'
-                  : 'flex min-w-[3rem] max-w-[7rem] flex-1 flex-col items-center gap-1.5 text-center',
+                  : 'flex min-w-[2.5rem] max-w-[7rem] flex-1 basis-0 flex-col items-center gap-1.5 text-center',
                 stack && (on ? 'border-phase-active/50' : 'border-line-base'),
               )}
             >
@@ -77,7 +77,7 @@ export default function FlowStrip({
                 <span
                   className={cn(
                     'text-balance font-medium leading-tight text-ink-0',
-                    stack ? 'text-sm' : 'text-[11px] sm:text-sm',
+                    stack ? 'text-sm' : 'text-[10px] sm:text-sm',
                   )}
                 >
                   {step.label}

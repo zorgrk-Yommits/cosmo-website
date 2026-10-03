@@ -29,6 +29,9 @@ import { deliverResultV2 } from '../lib/computeTx';
 import { fetchOnchainJob, JOB_ONCHAIN_STATUS, type OnchainJob } from '../lib/computeViews';
 import { sameWallet, signChallenge } from '../lib/marketWallet';
 import { BlockerCards } from './NextStepPanel';
+import { explainSignError, outcomeOf, waitForTx, type TxStage } from '@/lib/txStatus';
+import TxStatus from '@/components/cosmo/TxStatus';
+import TechDetails from '@/components/cosmo/TechDetails';
 import { CTA_BIG, BTN_GHOST } from './cta';
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -61,6 +64,8 @@ export default function DeliverPanel({
   const [phase, setPhase] = useState<'idle' | 'sending'>('idle');
   const [hashConfirmed, setHashConfirmed] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // outcome of the hand-in transaction, read from the chain
+  const [tx, setTx] = useState<{ stage: TxStage; hash?: string; message?: string }>({ stage: 'idle' });
   const [nowSec, setNowSec] = useState(() => Math.floor(Date.now() / 1000));
 
   useEffect(() => {
@@ -89,7 +94,7 @@ export default function DeliverPanel({
       const hash = regHash.trim();
       const uri = regUri.trim();
       if (!/^0x[0-9a-fA-F]{64}$/.test(hash)) {
-        throw new Error('Result hash must be 0x + 64 hex chars (SHA3-256 of the artifact bytes).');
+        throw new Error('The fingerprint must be 0x followed by 64 hex characters (SHA3-256 of the result file).');
       }
       const challenge = await requestResultChallenge(job.id, hash, uri);
       const proof = await signChallenge(challenge.hexMessage, challenge.nonce);
@@ -135,24 +140,40 @@ export default function DeliverPanel({
     if (!hashToCommit || !resultUri || !hashConfirmed) return;
     setPhase('sending');
     setError(null);
+    setTx({ stage: 'idle' });
     try {
       const account = await connectMainnetWallet();
       setWallet(account);
       const jv = await fetchOnchainJob(jobIdOnchain); // fresh chain truth
       if (!sameWallet(account, jv.solver)) {
-        throw new Error('Connected wallet is not the solver for this job.');
+        throw new Error('The connected wallet is not the chosen provider for this job.');
       }
       if (jv.status !== JOB_ONCHAIN_STATUS.ACTIVE) {
-        throw new Error('The on-chain job is not active — nothing to deliver.');
+        throw new Error('The job is not active any more, so nothing can be handed in.');
       }
-      const txHash = await signAndSendCompute(
-        deliverResultV2({
-          jobIdOnchain,
-          resultHash: hashToCommit,
-          resultUri,
-        }),
-        account,
-      );
+      setTx({ stage: 'signing' });
+      let txHash: string;
+      try {
+        txHash = await signAndSendCompute(
+          deliverResultV2({
+            jobIdOnchain,
+            resultHash: hashToCommit,
+            resultUri,
+          }),
+          account,
+        );
+      } catch (e) {
+        setTx({ stage: 'idle' });
+        throw new Error(explainSignError(e));
+      }
+      // Read the real outcome: a hand-in that failed on chain must say so.
+      setTx({ stage: 'sent', hash: txHash });
+      const outcome = outcomeOf(await waitForTx(txHash, 45_000));
+      setTx({ stage: outcome.stage, hash: txHash, message: outcome.message });
+      if (outcome.stage === 'failed') {
+        setPhase('idle');
+        return;
+      }
       // Fast path only — the server's chain poller (L1) is the sync guarantee.
       for (let i = 0; i < 3; i++) {
         await sleep(3_000);
@@ -180,17 +201,17 @@ export default function DeliverPanel({
     <div className="rounded-xl border border-line-base bg-surface-1 p-6">
       <div className="mb-1 flex items-center gap-2">
         <Package className="h-4 w-4 text-phase-active" />
-        <h2 className="font-mono text-sm font-bold text-ink-0">Provider: deliver the result</h2>
+        <h2 className="font-mono text-sm font-bold text-ink-0">Hand in the result</h2>
       </div>
       <p className="mb-4 font-sans text-xs leading-relaxed text-ink-1">
         {block?.headline ??
-          `The assigned provider${solverName ? ` (${solverName})` : ''} delivers by committing the result hash on-chain.`}
+          `The chosen provider${solverName ? ` (${solverName})` : ''} hands in the result. A fingerprint of it is recorded on-chain.`}
       </p>
 
       {oj === null && (
         <p className="flex items-center gap-2 font-mono text-xs text-ink-1">
           <Loader2 className="h-3.5 w-3.5 animate-spin" />
-          Reading on-chain job state…
+          Reading the job from the chain…
         </p>
       )}
 
@@ -201,11 +222,11 @@ export default function DeliverPanel({
           {needsRegistration && (
             <div className="space-y-3 rounded-lg border border-line-base bg-surface-inset p-4">
               <p className="font-mono text-[10px] uppercase tracking-wider text-phase-active">
-                Step 1: register your artifact result (wallet signature, no gas)
+                Step 1: register your result (wallet signature, no fee)
               </p>
               <label className="block">
                 <span className="font-mono text-[11px] text-ink-1">
-                  SHA3-256 of the exact artifact bytes (0x + 64 hex)
+                  Fingerprint of the exact result file (SHA3-256: 0x + 64 hex characters)
                 </span>
                 <input
                   type="text"
@@ -217,7 +238,7 @@ export default function DeliverPanel({
               </label>
               <label className="block">
                 <span className="font-mono text-[11px] text-ink-1">
-                  Result URI (where the artifact bytes will be served)
+                  Web address where the result file can be downloaded
                 </span>
                 <input
                   type="url"
@@ -234,11 +255,11 @@ export default function DeliverPanel({
                 onClick={() => void doRegister()}
               >
                 {regBusy ? <Loader2 className="h-5 w-5 animate-spin" /> : <Wallet className="h-5 w-5" />}
-                Register result with StarKey
+                Register result
               </button>
               <p className="font-mono text-[11px] leading-relaxed text-ink-2">
-                Only the solver wallet can register. The deliver step unlocks afterwards and will
-                commit exactly the hash you register here — nothing else.
+                Only the chosen provider&apos;s wallet can register. The next step then records
+                exactly the fingerprint you register here, nothing else.
               </p>
             </div>
           )}
@@ -246,7 +267,7 @@ export default function DeliverPanel({
           {hashToCommit && resultUri && (
             <div className="rounded-lg border border-phase-fault/25 bg-phase-fault/[0.04] p-4">
               <p className="font-mono text-[10px] uppercase tracking-wider text-phase-fault">
-                This exact hash will be committed on-chain — irreversibly
+                This exact fingerprint will be recorded on-chain. It cannot be changed afterwards.
               </p>
               <p className="mt-2 break-all font-mono text-[11px] text-ink-1">{hashToCommit}</p>
               <a
@@ -256,7 +277,7 @@ export default function DeliverPanel({
                 className="mt-2 inline-flex items-center gap-1.5 font-mono text-xs text-phase-proof hover:text-phase-proof"
               >
                 <FileJson className="h-3.5 w-3.5" />
-                Open the document behind it (result_uri)
+                Open the result file behind it
               </a>
               <label className="mt-3 flex cursor-pointer items-start gap-2 font-mono text-[11px] text-ink-1">
                 <input
@@ -265,8 +286,8 @@ export default function DeliverPanel({
                   onChange={(e) => setHashConfirmed(e.target.checked)}
                   className="mt-0.5"
                 />
-                I opened the document, recomputed or verified this hash, and want to commit
-                exactly this hash as the delivery result.
+                I opened the file, checked this fingerprint, and want to hand in exactly this
+                result.
               </label>
             </div>
           )}
@@ -275,28 +296,28 @@ export default function DeliverPanel({
             <p className="flex items-center gap-2 font-mono text-xs">
               <Clock3 className={cn('h-3.5 w-3.5', deadlineLeft < 3600 ? 'text-phase-warn' : 'text-phase-settled')} />
               <span className={cn(deadlineLeft < 3600 ? 'text-phase-warn' : 'text-ink-1')}>
-                Deliver before {new Date(oj.jobDeadlineSecs * 1000).toISOString().slice(0, 16).replace('T', ' ')} UTC
-                — {fmtCountdown(deadlineLeft)} left
+                Hand in before {new Date(oj.jobDeadlineSecs * 1000).toISOString().slice(0, 16).replace('T', ' ')} UTC:{' '}
+                {fmtCountdown(deadlineLeft)} left
               </span>
             </p>
           )}
           {deadlinePassed && (
             <p className="flex items-start gap-1.5 font-mono text-xs leading-relaxed text-phase-warn">
               <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-              The delivery deadline has passed — the on-chain rail no longer accepts a delivery
-              for this job.
+              The deadline has passed. The contract no longer accepts a result for this job. The
+              buyer can take the payment back, and part of the safety deposit goes to the buyer.
             </p>
           )}
 
           {wallet === null ? (
             <button type="button" className={BTN_GHOST} onClick={() => void connect()}>
               <Wallet className="h-3 w-3" />
-              Connect StarKey (solver wallet)
+              Connect the chosen provider&apos;s wallet
             </button>
           ) : !isSolver ? (
             <p className="font-mono text-xs text-ink-2">
-              Only the solver wallet ({oj.solver.slice(0, 10)}…) can deliver this job. Switch
-              accounts in StarKey and reconnect.
+              Only the chosen provider&apos;s wallet ({oj.solver.slice(0, 10)}…) can hand in this
+              job. Switch the account in StarKey and connect again.
             </p>
           ) : (
             <button
@@ -306,7 +327,7 @@ export default function DeliverPanel({
               onClick={() => void doDeliver()}
             >
               {phase === 'sending' ? <Loader2 className="h-5 w-5 animate-spin" /> : <Package className="h-5 w-5" />}
-              Deliver result with StarKey
+              Hand in result
             </button>
           )}
         </div>
@@ -315,7 +336,8 @@ export default function DeliverPanel({
       {oj !== null && oj.status === JOB_ONCHAIN_STATUS.DELIVERED && (
         <p className="flex items-start gap-2 font-mono text-xs text-phase-settled">
           <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          Result delivered — waiting for the buyer&apos;s approval.
+          Result handed in. The buyer is checking it: the provider is paid when the buyer
+          approves, or automatically when the time to check runs out.
           {job.txRefs.deliver && (
             <a
               href={`${EXPLORER_TX}${job.txRefs.deliver}`}
@@ -332,7 +354,7 @@ export default function DeliverPanel({
       {oj !== null && oj.status === JOB_ONCHAIN_STATUS.SETTLED && (
         <p className="flex items-start gap-2 font-mono text-xs text-phase-settled">
           <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          Job settled — payout received.
+          Paid. The payment was released to the provider.
         </p>
       )}
 
@@ -340,11 +362,28 @@ export default function DeliverPanel({
         oj.status !== JOB_ONCHAIN_STATUS.ACTIVE &&
         oj.status !== JOB_ONCHAIN_STATUS.DELIVERED &&
         oj.status !== JOB_ONCHAIN_STATUS.SETTLED && (
-          <p className="font-mono text-xs text-phase-warn">
-            The on-chain job is in state {oj.status} (slashed/disputed/refunded) — delivery is not
-            possible.
+          <p className="font-sans text-sm leading-relaxed text-phase-warn">
+            {oj.status === JOB_ONCHAIN_STATUS.SLASHED
+              ? 'No result was handed in by the deadline. The buyer took the payment back, and part of the safety deposit went to the buyer.'
+              : oj.status === JOB_ONCHAIN_STATUS.DISPUTED
+                ? 'The buyer disputed the result. The payment stays locked until the dispute is decided.'
+                : oj.status === JOB_ONCHAIN_STATUS.REFUNDED
+                  ? 'The payment went back to the buyer. Nothing more can be handed in.'
+                  : 'This job has ended. Nothing more can be handed in.'}
           </p>
         )}
+
+      <TxStatus stage={tx.stage} message={tx.message} txHash={tx.hash} className="mt-4" />
+      <TechDetails className="mt-4">
+        <p>
+          Hand-in calls <code className="font-mono text-xs">deliver_result_v2(job_id, result_hash, result_uri)</code>{' '}
+          on Supra Mainnet for on-chain job #{jobIdOnchain}. The hash and the address come from
+          the server&apos;s next-steps document; nothing is derived in the browser.
+        </p>
+        {oj !== null && (
+          <p className="mt-2 font-mono text-[11px]">on-chain job status code: {oj.status}</p>
+        )}
+      </TechDetails>
 
       {error && (
         <p className="mt-4 flex items-start gap-1.5 font-mono text-[11px] text-phase-fault">

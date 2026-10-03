@@ -3,7 +3,8 @@
 //
 // Fails when a technical term from src/components/cosmo/terms.ts shows up in
 // copy a visitor reads. The term is fine:
-//   - inside <TechDetails>, <code> or <pre>   (that is where it belongs)
+//   - inside <TechDetails>, <code> or <pre>, or in a prop named `technical`
+//                                              (that is where it belongs)
 //   - alone in brackets: "Rules (mandate)"     (the one pointer for experts)
 //   - in files under EXEMPT                    (archive / operator pages)
 //
@@ -150,6 +151,9 @@ function inTechContainer(node) {
   for (let p = node.parent; p; p = p.parent) {
     const t = tagName(p);
     if (t && TECH_TAGS.has(t)) return true;
+    // content handed to a component through a prop named `technical` is rendered
+    // inside that component's <TechDetails>
+    if (ts.isJsxAttribute(p) && p.name.getText() === 'technical') return true;
   }
   return false;
 }

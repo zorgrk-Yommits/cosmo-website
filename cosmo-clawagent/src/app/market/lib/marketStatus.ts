@@ -271,6 +271,73 @@ export function buyerStageView(j: StageInput): StageView {
   return { current: 'waiting', yourTurn: false, note: 'Your job is in review. Nothing to do right now.' };
 }
 
+// The same five stages seen from the provider page. Written neutrally ("the
+// provider"), because the page is open to every provider, not only the chosen one.
+export function providerStageView(j: StageInput): StageView {
+  if (j.status === 'rejected') {
+    return { current: 'waiting', yourTurn: false, note: 'This job was not approved for the pilot board.', end: { label: 'Not approved', tone: 'neutral' } };
+  }
+  if (j.onchainStatus === ONCHAIN.SLASHED) {
+    return {
+      current: 'running',
+      yourTurn: false,
+      note: 'No result was handed in by the deadline. The buyer got the payment back and part of the provider\u2019s safety deposit.',
+      end: { label: 'Not delivered: deposit penalty applied', tone: 'bad' },
+    };
+  }
+  if (j.onchainStatus === ONCHAIN.DISPUTED) {
+    return {
+      current: 'checking',
+      yourTurn: false,
+      note: 'The buyer disputed the result. The payment stays locked until the dispute is decided.',
+      end: { label: 'In dispute', tone: 'neutral' },
+    };
+  }
+  if (j.onchainStatus === ONCHAIN.REFUNDED) {
+    return { current: 'checking', yourTurn: false, note: 'The payment went back to the buyer.', end: { label: 'Refunded', tone: 'neutral' } };
+  }
+  if (j.status === 'settled') {
+    return { current: 'paid', yourTurn: false, note: 'The provider was paid. This job is complete.' };
+  }
+  if (j.status === 'delivered') {
+    return {
+      current: 'checking',
+      yourTurn: false,
+      note: j.checkBySecs
+        ? `The buyer is checking the result. The provider is paid when the buyer approves, or automatically after ${fmtTs(j.checkBySecs)}.`
+        : 'The buyer is checking the result. The provider is paid when the buyer approves, or automatically when the time to check runs out.',
+    };
+  }
+  if (j.jobIdOnchain != null) {
+    const late = !!j.deliverDueSecs && j.nowSec !== undefined && j.nowSec > j.deliverDueSecs;
+    if (late) {
+      return {
+        current: 'running',
+        yourTurn: false,
+        note: 'The deadline has passed without a result. The contract no longer accepts one, and the buyer can take the payment back.',
+      };
+    }
+    return {
+      current: 'running',
+      yourTurn: false,
+      note: j.deliverDueSecs
+        ? `The payment is locked and the job has started. The chosen provider hands in the result by ${fmtTs(j.deliverDueSecs)}.`
+        : 'The payment is locked and the job has started. The chosen provider does the work now.',
+    };
+  }
+  if (j.selectedOfferId || j.requestId != null) {
+    return {
+      current: 'accepted',
+      yourTurn: false,
+      note: 'The buyer chose an offer and is locking the payment. Nothing to do until the job starts.',
+    };
+  }
+  if (j.status === 'approved') {
+    return { current: 'waiting', yourTurn: false, note: 'Open for offers. Providers on the list can make an offer now.' };
+  }
+  return { current: 'waiting', yourTurn: false, note: 'This job is in review and not open for offers yet.' };
+}
+
 export const fmtTs = (secs: number) =>
   new Date(secs * 1000).toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 

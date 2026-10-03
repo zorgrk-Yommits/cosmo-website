@@ -17,7 +17,7 @@ export default function ProvidersView() {
     <div className="terminal-container terminal-theme-scope">
       <div className="grid-bg" />
 
-      <section className="relative z-10 mx-auto max-w-5xl px-6 pt-24 pb-8">
+      <section className="relative z-10 mx-auto max-w-5xl px-4 pb-8 pt-24 md:px-6">
         <Link
           href="/market/"
           className="inline-flex items-center gap-1.5 font-mono text-xs text-ink-1 transition-colors hover:text-white"
@@ -26,25 +26,25 @@ export default function ProvidersView() {
           All jobs
         </Link>
 
-        <h1 className="mt-6 font-mono text-3xl font-bold tracking-tight text-ink-0 md:text-4xl">
-          Curated pilot providers
+        <h1 className="mt-6 text-3xl font-semibold tracking-tight text-ink-0 md:text-4xl">
+          The providers who do the jobs
         </h1>
         <p className="mt-3 max-w-2xl font-sans text-base leading-relaxed text-ink-1">
-          Providers in this pilot are hand-picked by the operator. Each one works from a named
-          Supra wallet and posts a security deposit on-chain before taking jobs — skin in the
-          game, verifiable on the explorer.
+          In this pilot we choose the providers by hand. Each one works from a wallet you can
+          look up, and puts down a safety deposit before taking jobs. If a provider does not
+          deliver, part of that deposit goes to the buyer.
         </p>
       </section>
 
-      <section className="relative z-10 mx-auto max-w-5xl px-6 py-4">
+      <section className="relative z-10 mx-auto max-w-5xl px-4 py-4 md:px-6">
         <div className="rounded-xl border border-line-base bg-surface-1 p-6">
           <div className="mb-4 flex items-center gap-2">
             <Users className="h-4 w-4 text-phase-active" />
-            <h2 className="font-mono text-sm font-bold text-ink-0">Active roster</h2>
+            <h2 className="font-mono text-sm font-bold text-ink-0">Providers right now</h2>
           </div>
           {section.error && (
             <div className="mb-4 rounded-lg border border-phase-fault/30 bg-phase-fault/10 px-4 py-2.5 font-mono text-xs text-phase-fault">
-              Live data unavailable: {section.error}
+              The list cannot be loaded right now ({section.error}).
             </div>
           )}
           {providers ? (
@@ -97,7 +97,7 @@ export default function ProvidersView() {
               </div>
             ) : (
               <p className="font-mono text-xs text-ink-2">
-                The pilot roster is being onboarded — first named providers appear here shortly.
+                No provider is listed yet. The first ones appear here once they are onboarded.
               </p>
             )
           ) : (
@@ -107,28 +107,27 @@ export default function ProvidersView() {
       </section>
 
       {/* ── Roadmap box ── */}
-      <section className="relative z-10 mx-auto max-w-5xl px-6 py-4">
+      <section className="relative z-10 mx-auto max-w-5xl px-4 py-4 md:px-6">
         <div className="rounded-xl border border-phase-proof/20 bg-phase-proof/[0.04] p-5">
           <div className="mb-2 flex items-center gap-2">
             <Map className="h-4 w-4 text-phase-proof" />
             <h3 className="font-mono text-sm text-ink-0">Want to become a provider?</h3>
           </div>
           <p className="font-sans text-sm leading-relaxed text-ink-1">
-            Open, permissionless provider registration is on the roadmap — it requires reputation
-            and self-service bonding tooling that this pilot deliberately does not claim to have
-            yet. Today the operator onboards providers individually: if you run an agent or offer
-            digital services and want in,{' '}
+            Open sign-up for providers is planned, not built: it needs a track-record system
+            this pilot does not have yet. Today we onboard providers one by one. If you run an
+            agent or offer digital services and want in,{' '}
             {/* plain <a>, not next/link: cross-route #hash links don't reliably
                 navigate via the client router in this static export */}
             <a href="/compute/#journey" className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof">
               see how providers get onboarded
-            </a>{' '}
-            — deposit, personal onboarding and the proposal template are all there.
+            </a>
+            . The safety deposit, the personal onboarding and the template are all there.
           </p>
         </div>
       </section>
 
-      <section className="relative z-10 mx-auto max-w-5xl px-6 py-6 pb-24">
+      <section className="relative z-10 mx-auto max-w-5xl px-4 py-6 pb-24 md:px-6">
         <HonestyBox />
       </section>
     </div>

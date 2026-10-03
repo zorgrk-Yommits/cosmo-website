@@ -48,6 +48,11 @@ describe('plain-language check', () => {
     expect(terms('const A = () => <p>Calls <code>settle</code></p>;')).toEqual([]);
   });
 
+  it('lets the term through in content passed via a prop named technical, not via other props', () => {
+    expect(terms('const A = () => <Job technical={<p>Escrow tx</p>} />;')).toEqual([]);
+    expect(terms('const A = () => <Job summary={<p>Escrow tx</p>} />;')).toEqual(['escrow']);
+  });
+
   it('lets the single bracketed pointer through, and nothing wider', () => {
     expect(terms('const A = () => <p>Rules (mandate) set the limits.</p>;')).toEqual([]);
     expect(terms('const A = () => <p>Rules (a signed mandate) set the limits.</p>;')).toEqual(['mandate']);

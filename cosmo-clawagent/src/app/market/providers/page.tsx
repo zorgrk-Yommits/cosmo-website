@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import ProvidersView from './ProvidersView';
 
 export const metadata: Metadata = {
-  title: 'COSMO — Agent Market: curated pilot providers',
+  title: 'COSMO — The providers who do the jobs',
   description:
-    'The curated provider roster of the COSMO Agent Market pilot: named Supra wallets with on-chain security deposits. Open registration is roadmap.',
+    'The hand-picked providers of the COSMO pilot market: named Supra wallets, each with a safety deposit. Open sign-up is planned, not built.',
 };
 
 export default function ProvidersPage() {

@@ -59,7 +59,7 @@ export default function OfferForm({
     if (!provider) return;
     setError(null);
     if (!/^\d{1,12}(\.\d{1,6})?$/.test(price.trim())) {
-      setError('Price must be a decimal number with up to 6 fraction digits.');
+      setError('Enter the price as a number such as 45 or 12.5 (at most 6 digits after the point).');
       return;
     }
     setPhase('signing');
@@ -104,19 +104,19 @@ export default function OfferForm({
         <PenLine className="h-4 w-4 text-phase-active" />
         <h3 className="font-mono text-sm font-bold text-ink-0">Make an offer</h3>
         <span className="rounded-full border border-line-base bg-white/[0.02] px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-1">
-          pilot providers only
+          providers on the list only
         </span>
       </div>
 
       {!wallet && (
         <div>
           <p className="font-sans text-sm leading-relaxed text-ink-1">
-            Offers are signed with the provider&apos;s registered Supra wallet. Connect StarKey to
-            continue — only wallets on the{' '}
+            An offer is confirmed with the provider&apos;s registered wallet. Connect your wallet
+            to continue. Only wallets on the{' '}
             <Link href="/market/providers/" className="text-phase-proof hover:text-phase-proof">
-              curated pilot roster
+              provider list
             </Link>{' '}
-            can submit.
+            can make offers.
           </p>
           <button
             type="button"
@@ -124,7 +124,7 @@ export default function OfferForm({
             className="mt-3 inline-flex items-center gap-2 rounded-lg border border-phase-active/40 bg-phase-active/15 px-4 py-2 font-mono text-sm text-phase-active transition-all hover:border-phase-active hover:bg-phase-active/25"
           >
             <Wallet className="h-4 w-4" />
-            Connect StarKey
+            Connect wallet
           </button>
         </div>
       )}
@@ -135,7 +135,7 @@ export default function OfferForm({
           <span className="font-mono text-xs text-ink-1">
             {wallet.slice(0, 10)}…{wallet.slice(-6)}
           </span>{' '}
-          is not on the curated pilot roster, so it cannot submit offers. Want in? See{' '}
+          is not on the provider list, so it cannot make offers. Want in? See{' '}
           <Link href="/market/providers/" className="text-phase-proof hover:text-phase-proof">
             how providers are onboarded
           </Link>
@@ -146,7 +146,7 @@ export default function OfferForm({
       {wallet && provider && (
         <form onSubmit={onSubmit} className="space-y-4">
           <p className="font-sans text-sm text-ink-1">
-            Signing as <span className="font-mono text-ink-0">{provider.name}</span>{' '}
+            Making the offer as <span className="font-mono text-ink-0">{provider.name}</span>{' '}
             <span className="font-mono text-xs text-ink-2">
               ({wallet.slice(0, 10)}…{wallet.slice(-6)})
             </span>
@@ -199,11 +199,12 @@ export default function OfferForm({
             className="inline-flex items-center gap-2 rounded-lg border border-phase-active/40 bg-phase-active/15 px-4 py-2 font-mono text-sm text-phase-active transition-all hover:border-phase-active hover:bg-phase-active/25 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <PenLine className="h-4 w-4" />
-            {phase === 'signing' ? 'Waiting for wallet signature…' : 'Sign offer with StarKey'}
+            {phase === 'signing' ? 'Waiting for your wallet…' : 'Make this offer'}
           </button>
           <p className="font-sans text-xs leading-relaxed text-ink-2">
-            StarKey will ask you to approve a signature over the exact offer terms (job, price,
-            delivery, one-time nonce). Nothing is broadcast on-chain at this step.
+            Your wallet asks you to confirm the exact offer (job, price, delivery time). This
+            costs nothing and moves no tokens. If the buyer chooses your offer and approves your
+            result, you receive the price you named here.
           </p>
         </form>
       )}

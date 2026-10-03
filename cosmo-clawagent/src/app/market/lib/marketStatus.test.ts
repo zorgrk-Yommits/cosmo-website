@@ -7,6 +7,7 @@ import {
   fmtDelivery,
   STATUS_BADGE,
   buyerStageView,
+  providerStageView,
 } from './marketStatus';
 
 describe('buildBuyerSteps', () => {
@@ -194,5 +195,24 @@ describe('buyerStageView: the five-stage picture', () => {
     const v = buyerStageView({ ...base, status: 'onchain', jobIdOnchain: 9, onchainStatus: 0, deliverDueSecs: 300, nowSec: 200 });
     expect(v.current).toBe('running');
     expect(v.end).toBeUndefined();
+  });
+});
+
+describe('providerStageView', () => {
+  const base = { offersCount: 0 } as const;
+  it('follows the same five stages as the buyer view', () => {
+    expect(providerStageView({ ...base, status: 'approved' }).current).toBe('waiting');
+    expect(providerStageView({ ...base, status: 'selected', selectedOfferId: 'o1' }).current).toBe('accepted');
+    expect(providerStageView({ ...base, status: 'onchain', jobIdOnchain: 3 }).current).toBe('running');
+    expect(providerStageView({ ...base, status: 'delivered', jobIdOnchain: 3 }).current).toBe('checking');
+    expect(providerStageView({ ...base, status: 'settled', jobIdOnchain: 3 }).current).toBe('paid');
+  });
+  it('tells the provider that payment also comes automatically', () => {
+    expect(providerStageView({ ...base, status: 'delivered', jobIdOnchain: 3 }).note).toContain('automatically');
+  });
+  it('a missed deadline is an end state with the penalty named, never Paid', () => {
+    const v = providerStageView({ ...base, status: 'settled', jobIdOnchain: 3, onchainStatus: 3 });
+    expect(v.current).not.toBe('paid');
+    expect(v.end?.tone).toBe('bad');
   });
 });

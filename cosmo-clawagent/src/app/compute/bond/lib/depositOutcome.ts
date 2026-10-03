@@ -60,23 +60,23 @@ export function depositOutcomeLines(o: DepositOutcome): string[] {
   const lines = [
     `${amt} wCOSMO move from your wallet into the provider vault.`,
     `Your wallet will show ${amt} wCOSMO less: ${fmtAmt(o.walletBefore)} now, ${fmtAmt(o.walletAfter)} after. The deposit is held in the vault, not spent.`,
-    `Your security deposit: ${fmtAmt(o.bondBefore)} now, ${fmtAmt(o.bondAfter)} wCOSMO after.`,
+    `Your safety deposit: ${fmtAmt(o.bondBefore)} now, ${fmtAmt(o.bondAfter)} wCOSMO after.`,
   ];
   if (o.activeJobs > BigInt(0)) {
     lines.push(
-      `Withdrawal is blocked while a job is active (${o.activeJobs.toString()} active). It opens again when the job settles.`,
+      `Withdrawal is blocked while a job is active (${o.activeJobs.toString()} active). It opens again when the job is paid.`,
     );
   } else if (o.lockedUntilSecs !== null) {
-    lines.push(`Withdrawable from ${fmtUtc(o.lockedUntilSecs)} (a penalty deduction set this lock).`);
+    lines.push(`Withdrawable from ${fmtUtc(o.lockedUntilSecs)} (a deposit penalty set this lock).`);
   } else {
     lines.push(
       'Withdrawable any time, in full or down to the required minimum, as long as no job is active.',
     );
   }
   lines.push(
-    `A penalty deduction locks withdrawal for ${o.cooldownDays} days from that moment. This deposit itself starts no lock.`,
+    `A deposit penalty locks withdrawal for ${o.cooldownDays} days from that moment. This deposit itself starts no lock.`,
   );
-  lines.push('Gas is paid in SUPRA and is not refunded.');
+  lines.push('The transaction fee is paid in SUPRA and is not refunded.');
   return lines;
 }
 
@@ -104,11 +104,11 @@ export function depositReceiptLines(r: DepositReceipt, nowSecs: number): string[
   const locked = r.lockedUntilSecs > BigInt(0) && Number(r.lockedUntilSecs) > nowSecs;
   const lines = [
     `Deposit of ${amt} wCOSMO confirmed on-chain.`,
-    `Security deposit: ${fmtAmt(r.bondBefore)} before, ${fmtAmt(r.bondAfter)} wCOSMO now (held in the vault).`,
+    `Safety deposit: ${fmtAmt(r.bondBefore)} before, ${fmtAmt(r.bondAfter)} wCOSMO now (held in the vault).`,
     `wCOSMO in wallet: ${fmtAmt(r.walletBefore)} before, ${fmtAmt(r.walletAfter)} now.`,
   ];
   if (r.activeJobs > BigInt(0)) {
-    lines.push(`Withdrawable once the active job settles (${r.activeJobs.toString()} active).`);
+    lines.push(`Withdrawable once the active job is paid (${r.activeJobs.toString()} active).`);
   } else if (locked) {
     lines.push(`Withdrawable from ${fmtUtc(r.lockedUntilSecs)}.`);
   } else {
