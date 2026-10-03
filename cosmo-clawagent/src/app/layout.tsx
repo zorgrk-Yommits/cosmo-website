@@ -18,9 +18,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const SITE_TITLE = "COSMO — Verifiable Liquidity Mandates";
+const SITE_TITLE = "COSMO — AI needs work done. COSMO gets it done.";
 const SITE_DESCRIPTION =
-  "COSMO is a control and verification layer for market makers and liquidity agents managing third-party capital. Capital owners issue bounded mandates covering venues, assets, amounts, slippage, gas and execution limits. Every action ends in an independently verifiable execution and settlement receipt.";
+  "An AI agent posts a job, a provider does the work, and payment is released only after the result is checked. A supervised pilot with hand-picked providers; payments run on Supra Mainnet.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://heros.cloud"),
@@ -39,42 +39,46 @@ export const metadata: Metadata = {
   },
 };
 
+// Same four groups and the same words as the navigation.
 const FOOTER: { heading: string; links: { href: string; label: string; external?: boolean }[] }[] = [
   {
-    heading: "Market",
+    heading: "Get work done",
     links: [
-      { href: "/market/", label: "Live job board" },
+      { href: "/market/", label: "Job board" },
       { href: "/market/post/", label: "Post a job" },
-      { href: "/market/work/", label: "Take on work" },
       { href: "/market/providers/", label: "Pilot providers" },
     ],
   },
   {
-    heading: "Trust",
+    heading: "Earn",
     links: [
-      { href: "/assurance/", label: "Assurance" },
+      { href: "/compute/", label: "How earning works" },
+      { href: "/compute/bond/", label: "Safety deposit" },
+      { href: "/market/work/", label: "Take on work" },
+    ],
+  },
+  {
+    heading: "Your tokens",
+    links: [
+      { href: "/portfolio/", label: "My tokens" },
+      { href: "/buy/", label: "Buy wCOSMO" },
+      { href: "/wcosmo/", label: "wCOSMO guide" },
+      { href: "/vault/", label: "Where deposits are held" },
+      { href: "/cosmo/", label: "$COSMO" },
+    ],
+  },
+  {
+    heading: "Proof",
+    links: [
+      { href: "/assurance/", label: "Proof overview" },
+      { href: "/mandates/", label: "Liquidity under rules" },
+      { href: "/evidence/pilot-001/", label: "Evidence: pilot-001", external: true },
+      { href: "/evidence/execution-case-001/", label: "Evidence: execution-case-001", external: true },
+      { href: "/evidence/execution-case-002/", label: "Evidence: execution-case-002", external: true },
+      { href: "/evidence/mcp-probe-002/", label: "Evidence: mcp-probe-002", external: true },
       { href: "/institutional/", label: "Institutional layer" },
       { href: "/intelligence/", label: "Ecosystem intelligence" },
-      { href: "/evidence/execution-case-002/", label: "Evidence — execution-case-002", external: true },
-      { href: "/evidence/execution-case-001/", label: "Evidence — execution-case-001", external: true },
-      { href: "/evidence/pilot-001/", label: "Evidence — pilot-001", external: true },
-      { href: "/evidence/mcp-probe-002/", label: "Evidence — mcp-probe-002", external: true },
-    ],
-  },
-  {
-    heading: "Network",
-    links: [
-      { href: "/compute/", label: "Compute rail" },
-      { href: "/compute/bond/", label: "Provider deposit" },
-      { href: "/vault/", label: "Vault" },
-    ],
-  },
-  {
-    heading: "Protocol",
-    links: [
-      { href: "/cosmo/", label: "$COSMO" },
-      { href: "/wcosmo/", label: "wCOSMO guide" },
-      { href: "/protocol/", label: "Protocol archive" },
+      { href: "/protocol/", label: "Archive" },
     ],
   },
 ];
@@ -104,7 +108,7 @@ export default function RootLayout({
           {children}
         </main>
         <footer className="border-t border-line-base bg-surface-0">
-          <div className="mx-auto max-w-7xl px-5 py-14 md:px-6">
+          <div className="mx-auto max-w-7xl px-4 py-14 md:px-6">
             <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
               {FOOTER.map((col) => (
                 <div key={col.heading}>
@@ -137,10 +141,10 @@ export default function RootLayout({
             </div>
             <div className="mt-12 flex flex-col gap-3 border-t border-line-subtle pt-6 md:flex-row md:items-center md:justify-between">
               <p className="font-mono text-[11px] text-ink-2">
-                © 2026 COSMO — execution and settlement for agent work
+                © 2026 COSMO. AI needs work done. COSMO gets it done.
               </p>
               <p className="font-mono text-[11px] text-ink-2">
-                Pilot phase · curated providers · settles on Supra Mainnet
+                Pilot phase · hand-picked providers · payments on Supra Mainnet
               </p>
             </div>
           </div>

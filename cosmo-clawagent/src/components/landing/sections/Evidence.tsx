@@ -5,19 +5,23 @@ import SectionHeader from '@/components/cosmo/SectionHeader';
 import Surface from '@/components/cosmo/Surface';
 import Reveal from '@/components/cosmo/Reveal';
 import Chip from '@/components/cosmo/Chip';
+import TechDetails from '@/components/cosmo/TechDetails';
 import { CtaLink } from '@/components/cosmo/Cta';
 import pilot001 from '@/data/market-pilot001-2026-07-17.json';
 
-// Section 4 — verifiable outcomes.
+// Proof.
 //
-// Every hash, transaction and URL on this page is real and belongs to
-// PILOT-001, the first marketplace job that settled end-to-end on Supra
-// Mainnet. The shell command below is not an illustration: running it
-// reproduces the result hash that is recorded on-chain.
+// Every fingerprint, transaction and URL on this page is real and belongs to
+// PILOT-001, the first marketplace job that ran from posting to payment on
+// Supra Mainnet. The shell command in the technical details is not an
+// illustration: running it reproduces the result hash recorded on-chain.
 
 const short = (h: string) => `${h.slice(0, 10)}…${h.slice(-8)}`;
 
 const txOf = (step: string) => pilot001.legs.find((l) => l.step.startsWith(step))?.tx;
+
+// the transaction that released the payment (data key in the pilot record)
+const PAID_TX = txOf('Approve') ?? txOf('Settle') ?? '';
 
 const CHAIN: {
   label: string;
@@ -26,9 +30,9 @@ const CHAIN: {
   value?: { text: string; href: string; mono?: boolean };
 }[] = [
   {
-    label: 'Criteria frozen',
+    label: 'Job description fixed',
     tone: 'active',
-    body: 'At approval the specification stops moving. The exact bytes stay served under a stable URL.',
+    body: 'Once approved, the wording cannot change. The exact text stays online.',
     value: {
       text: short(pilot001.spec_hash),
       href: `/api/market/jobs/${pilot001.jobId}/spec`,
@@ -36,57 +40,57 @@ const CHAIN: {
     },
   },
   {
-    label: 'Budget bound to it',
+    label: 'Payment locked to it',
     tone: 'active',
-    body: 'The escrow transaction references that specification hash — the money is locked to this exact wording.',
+    body: 'The locked payment points at that exact text, so both belong together.',
     value: {
       text: short(txOf('Fund the job') ?? ''),
       href: `${pilot001.explorer_tx_base}${txOf('Fund the job') ?? ''}`,
     },
   },
   {
-    label: 'Result hashed on delivery',
+    label: 'Result recorded on delivery',
     tone: 'proof',
-    body: 'The provider writes the hash of the deliverable on-chain before anyone reviews it. It cannot be adjusted afterwards.',
+    body: 'The provider records a fingerprint of the result before anyone reviews it. It cannot be swapped afterwards.',
     value: {
       text: short(pilot001.result_hash),
       href: `${pilot001.explorer_tx_base}${txOf('Deliver result') ?? ''}`,
     },
   },
   {
-    label: 'Artifact published',
+    label: 'Result is public',
     tone: 'proof',
-    body: 'The deliverable itself is public. You hash it and compare — the check never runs through us.',
-    value: { text: 'attestation document', href: pilot001.attestation_url },
+    body: 'You can download the result and compare it with the recorded fingerprint yourself.',
+    value: { text: 'the delivered result', href: pilot001.attestation_url },
   },
   {
-    label: 'Payout settled',
+    label: 'Provider paid',
     tone: 'settled',
-    body: 'Approval releases the payment. The end state of the job is a transaction, not a row in our database.',
+    body: 'Approval released the payment. The end of the job is a public transaction.',
     value: {
-      text: short(txOf('Approve') ?? txOf('Settle') ?? ''),
-      href: `${pilot001.explorer_tx_base}${txOf('Approve') ?? txOf('Settle') ?? ''}`,
+      text: short(PAID_TX),
+      href: `${pilot001.explorer_tx_base}${PAID_TX}`,
     },
   },
 ];
 
 const BUNDLES = [
-  { href: '/evidence/execution-case-002/', label: 'execution-case-002', note: 'mandated work delivery (generalization case)' },
-  { href: '/evidence/execution-case-001/', label: 'execution-case-001', note: 'first mandated execution case (SupraFX)' },
-  { href: '/evidence/pilot-001/', label: 'pilot-001', note: 'first settled marketplace job' },
-  { href: '/evidence/mcp-probe-002/', label: 'mcp-probe-002', note: 'hash-bound behaviour probe' },
-  { href: '/evidence/patch-001/', label: 'patch-001', note: 'first RFQ trade with a work product' },
-  { href: '/evidence/attest-001/', label: 'attest-001', note: 'first RFQ trade with real goods' },
+  { href: '/evidence/execution-case-002/', label: 'execution-case-002', note: 'a work delivery run under fixed rules' },
+  { href: '/evidence/execution-case-001/', label: 'execution-case-001', note: 'first trade run under fixed rules (SupraFX)' },
+  { href: '/evidence/pilot-001/', label: 'pilot-001', note: 'first job paid on the market' },
+  { href: '/evidence/mcp-probe-002/', label: 'mcp-probe-002', note: 'a behaviour test, published result' },
+  { href: '/evidence/patch-001/', label: 'patch-001', note: 'first trade for a work product' },
+  { href: '/evidence/attest-001/', label: 'attest-001', note: 'first trade for real goods' },
 ];
 
 export default function Evidence() {
   return (
-    <section className="relative border-t border-line-subtle py-24 md:py-32">
-      <div className="mx-auto max-w-6xl px-5 md:px-6">
+    <section className="relative border-t border-line-subtle py-20 md:py-28">
+      <div className="mx-auto max-w-6xl px-4 md:px-6">
         <SectionHeader
-          kicker="Verifiable outcomes"
-          title="A payment is easy. A payment you can audit is the product."
-          lead="COSMO does not ask you to trust that the work was delivered. Each step leaves an artifact that binds to the next one, and the whole chain is checkable from the outside."
+          kicker="Proof"
+          title="Do not take our word for it. Check it."
+          lead="Every job leaves a public trail. Here is the first job that ran from posting to payment, step by step, with the links to check each one."
         />
 
         <ol className="mt-14 grid gap-4 md:grid-cols-5">
@@ -122,8 +126,8 @@ export default function Evidence() {
         </ol>
 
         {/* Reproduce it yourself — this command actually works. */}
-        <Reveal delay={0.1}>
-          <Surface tone="inset" className="mt-6 overflow-hidden">
+        <TechDetails title="Technical details: reproduce the check yourself" className="mt-6">
+          <Surface tone="inset" className="overflow-hidden">
             <div className="flex flex-wrap items-center gap-2.5 border-b border-line-subtle px-5 py-3">
               <Terminal className="h-3.5 w-3.5 text-ink-2" aria-hidden="true" />
               <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-2">
@@ -153,11 +157,11 @@ export default function Evidence() {
               </code>
             </pre>
           </Surface>
-        </Reveal>
+        </TechDetails>
 
         <div className="mt-12">
           <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-2">
-            Evidence bundles
+            Evidence files
           </h3>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {BUNDLES.map((b) => (
@@ -177,7 +181,7 @@ export default function Evidence() {
         <Reveal delay={0.06}>
           <div className="mt-8">
             <CtaLink href="/assurance/" variant="secondary" size="md">
-              How verification is meant to scale beyond us
+              More proof, and its limits
               <ArrowRight className="h-4 w-4" />
             </CtaLink>
           </div>

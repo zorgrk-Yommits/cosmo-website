@@ -154,3 +154,14 @@ Vertragsfakten, am 03.10.2026 live von Mainnet gelesen (alle vier sind Views, sp
 | `compute_rfq::dispute_ttl_secs` | 604800 | 7 Tage bis zur Rueckabwicklung einer Reklamation |
 
 Quelle der Regeln: `cosmo-contracts-move/compute-rfq/sources/` auf Branch `feat/gpu-provider-poc`; ob dieser Stand byte-gleich deployt ist, wurde nicht geprueft, die vier Werte oben stammen von der Chain.
+
+### Etappe 1: umgesetzt 03.10.2026 (lokal, NICHT deployt; Deploy erst nach GO)
+
+- Hero: "AI needs work done. COSMO gets it done." + Ablaufbild AI Agent → COSMO → Provider → Result → Payment im ersten Bildschirm (390 px und 1440 px geprueft), Buttons "Post a job" / "Earn as a provider", Pflicht-Zusatz (COSMO macht die Arbeit nicht selbst, Pilot) darunter. WebGL-Szene, `PhaseRail`, `usePhase` geloescht (three.js steht noch in package.json, wird nicht mehr importiert).
+- Reihenfolge: Hero → Why it is needed (Vorher/Nachher) → How a job works (6 Karten, Move-Aufrufe in TechDetails) → Live jobs → Liquidity → Three ways in → Proof → Treasury sale → Closing.
+- `phases.ts`: Schritte heissen Post job / Get offer / Lock payment / Work happens / Check result / Pay provider; Feld `proof` heisst jetzt `technical` und wird nur in TechDetails gezeigt.
+- Navigation: Get work done · Earn · Liquidity · My tokens · Proof, dahinter leiser "Buy wCOSMO", Button "Post a job"; volle Leiste ab 1024 px, darunter Menue mit Scroll-Sperre und Fokusfalle; "$COSMO" im Menue und Footer.
+- Footer nach denselben vier Gruppen, Titel/Description/OG auf die Job-Story, `app/not-found.tsx` neu.
+- Sieben "All jobs"-Links zeigen jetzt auf `/market/` statt auf die Startseite.
+- Waechter-Liste 44 → 32 Dateien.
+- Offen fuer spaeter: `HonestyBox` im Live-jobs-Abschnitt spricht noch Fachsprache (Etappe 2); Evidence-Kacheln fuehren teils noch auf Verzeichnislistings (Etappe 5); Abschnitte mit `Reveal` erscheinen erst beim Scrollen (bestehendes Verhalten).

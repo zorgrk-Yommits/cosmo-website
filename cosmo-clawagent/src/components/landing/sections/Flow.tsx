@@ -1,168 +1,99 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { cn } from '@/lib/utils';
-import Chip, { ChainChip } from '@/components/cosmo/Chip';
-import PhaseRail from '@/components/cosmo/PhaseRail';
+import { Banknote, Hammer, Lock, Search, Send, Tags, type LucideIcon } from 'lucide-react';
+import { ChainChip } from '@/components/cosmo/Chip';
+import FlowStrip from '@/components/cosmo/FlowStrip';
 import SectionHeader from '@/components/cosmo/SectionHeader';
 import Surface from '@/components/cosmo/Surface';
+import TechDetails from '@/components/cosmo/TechDetails';
 import { PHASES, type Phase } from '@/components/cosmo/phases';
-import { usePhase } from '@/components/cosmo/usePhase';
-import { useChoreography } from '@/components/cosmo/useReducedMotion';
 
-// The centrepiece: one job walked through all six phases.
-//
-// The pinning is done with CSS `position: sticky`, not with GSAP's pin — no
-// pin-spacer, no layout surprises after hydration. GSAP only reports scroll
-// progress and that progress becomes the active phase index, which the rail,
-// the card and the WebGL core all read from the same context.
-//
-// Without choreography (reduced motion, or a narrow viewport) the section
-// degrades into six plain cards. Same content, no movement, no tall spacer
-// to scroll past.
+// How a job works: the six real steps (phases.ts, held against the buyer
+// lifecycle by phases.test.ts) as a picture, then one plain sentence per
+// step. What each step records on-chain sits in the technical details below.
+
+const ICON: Record<string, LucideIcon> = {
+  request: Send,
+  quote: Tags,
+  fund: Lock,
+  deliver: Hammer,
+  verify: Search,
+  settle: Banknote,
+};
+
+const WHO: Record<Phase['actor'], string> = {
+  Buyer: 'You',
+  Provider: 'Provider',
+  Marketplace: 'COSMO',
+  Chain: 'Automatic',
+};
 
 export default function Flow() {
-  const choreographed = useChoreography();
-  const { active, setActive } = usePhase();
-  const trackRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!choreographed) return;
-    const track = trackRef.current;
-    if (!track) return;
-
-    let cancelled = false;
-    let ctx: { revert: () => void } | undefined;
-
-    void (async () => {
-      const [{ gsap }, { ScrollTrigger }] = await Promise.all([
-        import('gsap'),
-        import('gsap/ScrollTrigger'),
-      ]);
-      if (cancelled) return;
-      gsap.registerPlugin(ScrollTrigger);
-      ctx = gsap.context(() => {
-        ScrollTrigger.create({
-          trigger: track,
-          start: 'top top',
-          end: 'bottom bottom',
-          onUpdate: (self) => {
-            const i = Math.min(PHASES.length - 1, Math.floor(self.progress * PHASES.length));
-            setActive(i);
-          },
-        });
-      }, track);
-    })();
-
-    return () => {
-      cancelled = true;
-      ctx?.revert();
-    };
-  }, [choreographed, setActive]);
-
-  const phase = PHASES[active] ?? PHASES[0];
-
   return (
-    <section id="flow" className="relative border-t border-line-subtle">
-      <div className="mx-auto max-w-6xl px-5 pt-24 md:px-6 md:pt-32">
+    <section id="flow" className="relative scroll-mt-16 border-t border-line-subtle py-20 md:py-28">
+      <div className="mx-auto max-w-6xl px-4 md:px-6">
         <SectionHeader
-          kicker="The COSMO flow"
-          title="Six phases. Each one has a status, an action and something you can check."
-          lead="This is the actual lifecycle of a job on the market — the same steps the buyer and provider pages walk through, not an illustration of them."
+          kicker="How a job works"
+          title="Six steps from posting a job to paying for it."
+          lead="These are the same steps the job page walks you through. At every step it says whose turn it is."
         />
-      </div>
 
-      {choreographed ? (
-        <div
-          ref={trackRef}
-          style={{ height: `${PHASES.length * 72}vh` }}
-          className="relative mt-12"
-        >
-          <div className="sticky top-16 flex min-h-[calc(100svh-4rem)] flex-col justify-center">
-            <div className="mx-auto w-full max-w-6xl px-5 md:px-6">
-              <div className="mb-6 flex items-center justify-between gap-4">
-                <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-2">
-                  Job lifecycle · scroll to advance
-                </span>
-                <span className="font-mono text-[11px] tabular text-ink-2">
-                  {String(active + 1).padStart(2, '0')} / {String(PHASES.length).padStart(2, '0')}
-                </span>
-              </div>
-              <PhaseRail active={active} onSelect={setActive} />
-              <div className="mt-10">
-                <PhaseCard key={phase.id} phase={phase} index={active} animate />
-              </div>
-            </div>
-          </div>
+        {/* The picture. On small screens the cards below are the picture. */}
+        <div className="mt-12 hidden md:block">
+          <FlowStrip
+            steps={PHASES.map((p) => ({ id: p.id, icon: ICON[p.id], label: p.label }))}
+            label="The six steps of a job: post job, get offer, lock payment, work happens, check result, pay provider."
+          />
         </div>
-      ) : (
-        <div className="mx-auto max-w-6xl px-5 pb-24 md:px-6">
-          <div className="mt-10 hidden md:block">
-            <PhaseRail active={PHASES.length - 1} showBoundary />
-          </div>
-          <ol className="mt-10 space-y-4">
-            {PHASES.map((p, i) => (
+
+        <ol className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {PHASES.map((p, i) => {
+            const Icon = ICON[p.id];
+            return (
               <li key={p.id}>
-                <PhaseCard phase={p} index={i} />
+                <Surface className="flex h-full flex-col p-6">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-line-base bg-surface-2 text-ink-0">
+                      <Icon className="h-5 w-5" aria-hidden="true" />
+                    </span>
+                    <div>
+                      <span className="block font-mono text-[11px] tabular-nums text-ink-2">
+                        Step {i + 1} of {PHASES.length}
+                      </span>
+                      <h3 className="text-lg font-semibold leading-tight text-ink-0">{p.label}</h3>
+                    </div>
+                  </div>
+                  <p className="mt-4 flex-1 text-[15px] leading-relaxed text-ink-1">{p.action}</p>
+                  <p className="mt-4 text-xs text-ink-2">
+                    Whose turn: <span className="font-medium text-ink-0">{WHO[p.actor]}</span>
+                  </p>
+                </Surface>
+              </li>
+            );
+          })}
+        </ol>
+
+        <TechDetails title="Technical details: what each step records" className="mt-6">
+          <ol className="space-y-4">
+            {PHASES.map((p, i) => (
+              <li key={p.id} className="flex flex-col gap-1.5">
+                <span className="flex flex-wrap items-center gap-2">
+                  <span className="font-medium text-ink-0">
+                    {i + 1}. {p.label}
+                  </span>
+                  <ChainChip onchain={p.onchain} />
+                  {p.call && (
+                    <code className="rounded-md border border-line-subtle bg-surface-inset px-2 py-0.5 font-mono text-xs text-phase-settled">
+                      {p.call}
+                    </code>
+                  )}
+                </span>
+                <span>{p.technical}</span>
               </li>
             ))}
           </ol>
-        </div>
-      )}
+        </TechDetails>
+      </div>
     </section>
-  );
-}
-
-function PhaseCard({
-  phase,
-  index,
-  animate = false,
-}: {
-  phase: Phase;
-  index: number;
-  animate?: boolean;
-}) {
-  return (
-    <Surface
-      className={cn('p-7 md:p-9', animate && 'animate-in fade-in slide-in-from-bottom-2 duration-500')}
-    >
-      <div className="flex flex-wrap items-center gap-3">
-        <span className="font-mono text-[11px] tabular text-ink-2">
-          {String(index + 1).padStart(2, '0')} / {String(PHASES.length).padStart(2, '0')}
-        </span>
-        <h3 className="font-mono text-xl font-bold tracking-tight text-ink-0">{phase.label}</h3>
-        <Chip tone={phase.tone}>{phase.status}</Chip>
-        <ChainChip onchain={phase.onchain} size="md" />
-        <span className="w-full font-mono text-[11px] uppercase tracking-[0.16em] text-ink-2 md:ml-auto md:w-auto">
-          Whose turn: <span className="text-ink-0">{phase.actor}</span>
-        </span>
-      </div>
-
-      <div className="mt-7 grid gap-7 md:grid-cols-2">
-        <div>
-          <h4 className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink-2">Action</h4>
-          <p className="mt-2.5 text-[15px] leading-relaxed text-ink-0 md:text-base">
-            {phase.action}
-          </p>
-        </div>
-        <div>
-          <h4 className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink-2">Proof</h4>
-          <p className="mt-2.5 text-[15px] leading-relaxed text-ink-1 md:text-base">
-            {phase.proof}
-          </p>
-        </div>
-      </div>
-
-      {phase.call && (
-        <div className="mt-7 flex flex-wrap items-center gap-2.5 border-t border-line-subtle pt-5">
-          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink-2">
-            On-chain call
-          </span>
-          <code className="rounded-md border border-line-subtle bg-surface-inset px-2.5 py-1 font-mono text-xs text-phase-settled">
-            {phase.call}
-          </code>
-        </div>
-      )}
-    </Surface>
   );
 }

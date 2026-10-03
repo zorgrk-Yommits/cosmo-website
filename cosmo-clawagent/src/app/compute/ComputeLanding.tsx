@@ -159,7 +159,7 @@ const JOURNEY: {
     step: '04',
     title: 'Receive jobs & make offers',
     body: 'Buyers post jobs on the market and onboarded providers answer with wallet-signed offers. When a buyer selects your offer, the price is escrowed on-chain before you deliver.',
-    links: [{ href: '/', label: 'Browse the job board →' }],
+    links: [{ href: '/market/', label: 'Browse the job board →' }],
   },
   {
     step: '05',
@@ -545,7 +545,7 @@ export default function ComputeLanding() {
       <section className="relative z-10 max-w-5xl mx-auto px-6 py-10">
         <p className="font-sans text-sm leading-relaxed text-ink-1 mb-4 max-w-3xl">
           Buying rather than providing? The buyer-first entry point is the market home —{' '}
-          <Link href="/" className="font-mono text-[12px] text-phase-active hover:text-phase-active">
+          <Link href="/market/" className="font-mono text-[12px] text-phase-active hover:text-phase-active">
             Post a job on the market →
           </Link>
         </p>

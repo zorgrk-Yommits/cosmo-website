@@ -13,7 +13,8 @@ import {
   type SaleStatusLike,
 } from "@/lib/saleStatus";
 
-// Treasury sale — the discoverability block, directly under the hero.
+// Treasury sale — the discoverability block (below the proof section since
+// the site-clarity refactor; the nav keeps a direct link to /buy).
 //
 // SCOPE: a signpost to /buy with a glanceable picture of the treasury --
 // three live figures (available, current price, SUPRA in treasury) and a
@@ -56,7 +57,7 @@ export default function TreasurySale() {
       aria-labelledby="treasury-sale-title"
       className="relative border-t border-line-subtle py-12 md:py-16"
     >
-      <div className="mx-auto max-w-6xl px-5 md:px-6">
+      <div className="mx-auto max-w-6xl px-4 md:px-6">
         <div className="rounded-xl border border-line-base bg-surface-1 p-6 md:p-7">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between md:gap-8">
             <div className="min-w-0">

@@ -67,7 +67,7 @@ export default function WorkDetail() {
 
       <section className="relative z-10 mx-auto max-w-5xl px-6 pt-24 pb-8">
         <Link
-          href="/"
+          href="/market/"
           className="inline-flex items-center gap-1.5 font-mono text-xs text-ink-1 transition-colors hover:text-white"
         >
           <ArrowLeft className="h-3 w-3" />
@@ -77,7 +77,7 @@ export default function WorkDetail() {
         {!id && (
           <p className="mt-8 font-mono text-sm text-ink-1">
             No job selected — pick one from{' '}
-            <Link href="/" className="text-phase-proof hover:text-phase-proof">
+            <Link href="/market/" className="text-phase-proof hover:text-phase-proof">
               the job board
             </Link>
             .

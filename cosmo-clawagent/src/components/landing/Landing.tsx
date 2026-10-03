@@ -1,40 +1,36 @@
 'use client';
 
-import { PhaseProvider } from '@/components/cosmo/usePhase';
 import Hero from './sections/Hero';
-import TreasurySale from './sections/TreasurySale';
 import Problem from './sections/Problem';
 import Flow from './sections/Flow';
-import Evidence from './sections/Evidence';
 import LiveMarket from './sections/LiveMarket';
+import Liquidity from './sections/Liquidity';
 import Audiences from './sections/Audiences';
+import Evidence from './sections/Evidence';
+import TreasurySale from './sections/TreasurySale';
 import Closing from './sections/Closing';
 
-// The landing. One PhaseProvider wraps the whole page, so the hero core and
-// the flow section are always describing the same phase — scroll into the
-// flow and the visual behind the headline has already moved with you.
+// The landing, in the order a first-time visitor needs it (positioning v6.1):
+// what this is -> why it is needed -> how a job works -> that it is real ->
+// the second use (liquidity) -> where you come in -> proof -> token -> close.
 
 export default function Landing() {
   return (
-    <PhaseProvider>
-      <div className="terminal-theme-scope relative">
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="grid-bg absolute inset-x-0 top-0 h-[140vh]" />
-        </div>
-        <div className="relative">
-          <Hero />
-          {/* Discoverability, not a second thesis: the sale sits directly
-              under the hero so it is reachable without hunting, while the
-              headline above it stays the institutional layer. */}
-          <TreasurySale />
-          <Problem />
-          <Flow />
-          <Evidence />
-          <LiveMarket />
-          <Audiences />
-          <Closing />
-        </div>
+    <div className="terminal-theme-scope relative">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="grid-bg absolute inset-x-0 top-0 h-[140vh]" />
       </div>
-    </PhaseProvider>
+      <div className="relative">
+        <Hero />
+        <Problem />
+        <Flow />
+        <LiveMarket />
+        <Liquidity />
+        <Audiences />
+        <Evidence />
+        <TreasurySale />
+        <Closing />
+      </div>
+    </div>
   );
 }

@@ -7,7 +7,6 @@
     "src/app/compute/bond/page.tsx",
     "src/app/compute/page.tsx",
     "src/app/cosmo/CosmoStory.tsx",
-    "src/app/layout.tsx",
     "src/app/mandates/Mandates.tsx",
     "src/app/market/MarketHome.tsx",
     "src/app/market/components/DeliverPanel.tsx",
@@ -20,7 +19,6 @@
     "src/app/market/post/PostJobForm.tsx",
     "src/app/market/providers/ProvidersView.tsx",
     "src/app/market/providers/page.tsx",
-    "src/app/page.tsx",
     "src/app/portfolio/PortfolioView.tsx",
     "src/app/portfolio/lib/positions.ts",
     "src/app/portfolio/page.tsx",
@@ -33,16 +31,6 @@
     "src/app/wcosmo/page.tsx",
     "src/components/IntelligenceLoop.tsx",
     "src/components/LayerStack.tsx",
-    "src/components/PrimitiveChain.tsx",
-    "src/components/cosmo/PhaseRail.tsx",
-    "src/components/cosmo/core/CosmoCore.tsx",
-    "src/components/cosmo/phases.ts",
-    "src/components/landing/sections/Audiences.tsx",
-    "src/components/landing/sections/Closing.tsx",
-    "src/components/landing/sections/Evidence.tsx",
-    "src/components/landing/sections/Hero.tsx",
-    "src/components/landing/sections/LiveMarket.tsx",
-    "src/components/landing/sections/Problem.tsx",
-    "src/components/navigation.tsx"
+    "src/components/PrimitiveChain.tsx"
   ]
 }

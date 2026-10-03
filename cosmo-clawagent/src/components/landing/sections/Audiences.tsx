@@ -1,109 +1,88 @@
 'use client';
 
-import { ArrowRight, Boxes, Landmark, ShieldCheck, Terminal, Users } from 'lucide-react';
+import { ArrowRight, Send, SlidersHorizontal, Wrench } from 'lucide-react';
 import Link from 'next/link';
+import MaturityBadge, { type Maturity } from '@/components/cosmo/MaturityBadge';
 import SectionHeader from '@/components/cosmo/SectionHeader';
 import Surface from '@/components/cosmo/Surface';
 import Reveal from '@/components/cosmo/Reveal';
-import Chip from '@/components/cosmo/Chip';
 
-const AUDIENCES = [
+// Three ways in, one per thing a visitor can actually do today. Each card
+// names the next action and says how real that path is.
+
+const WAYS: {
+  icon: typeof Send;
+  role: string;
+  line: string;
+  points: string[];
+  href: string;
+  cta: string;
+  maturity: Maturity;
+  detail?: string;
+}[] = [
   {
-    // Positioning v6.0: the primary audience leads — capital owners delegating
-    // to market makers / liquidity agents under a bounded, provable mandate.
-    icon: Landmark,
-    role: 'Capital owners & market makers',
-    line: 'Delegate liquidity operations without delegating blind trust.',
+    icon: Send,
+    role: 'Get work done',
+    line: 'Post a job and pay only for a result you have checked.',
     points: [
-      'The capital owner defines venues, assets, amounts, slippage, gas and execution limits in a signed mandate.',
-      'The operator executes within those hard limits; every action ends in an independently verifiable receipt.',
-    ],
-    href: '/mandates/',
-    cta: 'Verifiable Liquidity Mandates',
-    status: { tone: 'active' as const, label: 'controlled liquidity pilot' },
-  },
-  {
-    icon: Users,
-    role: 'Buyers',
-    line: 'Publish tasks and receive results you can check.',
-    points: [
-      'Write acceptance criteria once; they are frozen before your budget moves.',
-      'Funding is held on-chain and released on approval — or refunded when delivery fails.',
+      'Describe the job and what counts as done.',
+      'Your payment is locked until you have looked at the result.',
     ],
     href: '/market/post/',
     cta: 'Post a job',
-    status: null,
+    maturity: 'pilot',
   },
   {
-    icon: Terminal,
-    role: 'Providers',
-    line: 'Take on tasks and get paid without an invoice.',
+    icon: Wrench,
+    role: 'Earn',
+    line: 'Take on jobs and get paid without sending an invoice.',
     points: [
-      'Offer a price and a delivery window; selection binds both sides.',
-      'Deliver with a hash. Payout is a transaction, not a payment-terms negotiation.',
-    ],
-    href: '/market/work/',
-    cta: 'See open work',
-    status: { tone: 'active' as const, label: 'curated pilot' },
-  },
-  {
-    icon: ShieldCheck,
-    role: 'Protocols',
-    line: 'Attach external checks to settlement.',
-    points: [
-      'Verification is a separate role from execution — that is the point of the layer.',
-      'Assurance modules read the same frozen specs and result hashes the chain does.',
-    ],
-    href: '/assurance/',
-    cta: 'Assurance',
-    status: null,
-  },
-  {
-    icon: Boxes,
-    role: 'Agent builders',
-    line: 'Give an autonomous agent somewhere to finish paid work.',
-    points: [
-      'A running rail on Supra Mainnet: escrow, delivery, approval, payout, dispute.',
-      'Your agent brings the capability; COSMO supplies the accountability around it.',
+      'Put down a safety deposit, then make offers on open jobs.',
+      'Hand in the result and the locked payment is released to you.',
     ],
     href: '/compute/',
-    cta: 'The compute rail',
-    status: null,
+    cta: 'Earn as a provider',
+    maturity: 'pilot',
+    detail: 'hand-picked providers',
+  },
+  {
+    icon: SlidersHorizontal,
+    role: 'Manage liquidity',
+    line: 'Let an agent act for you, inside limits you set.',
+    points: [
+      'You name the market, the limit and the end date.',
+      'The agent acts inside those rules and every action is recorded.',
+    ],
+    href: '/mandates/',
+    cta: 'See how the rules work',
+    maturity: 'tested',
   },
 ];
 
 export default function Audiences() {
   return (
-    <section className="relative border-t border-line-subtle py-24 md:py-32">
-      <div className="mx-auto max-w-6xl px-5 md:px-6">
+    <section className="relative border-t border-line-subtle py-20 md:py-28">
+      <div className="mx-auto max-w-6xl px-4 md:px-6">
         <SectionHeader
           kicker="Where you come in"
-          title="Five ways onto the rail."
-          lead="The same discipline, seen from five sides. Pick the side you are on."
+          title="Three ways in."
+          lead="Pick what you want to do. Each one starts with a single step."
         />
 
-        <div className="mt-14 grid gap-4 md:grid-cols-2">
-          {AUDIENCES.map((a, i) => {
+        <div className="mt-12 grid gap-4 md:grid-cols-3">
+          {WAYS.map((a, i) => {
             const Icon = a.icon;
             return (
               <Reveal key={a.role} delay={i * 0.06}>
                 <Link href={a.href} className="group block h-full">
-                  <Surface interactive className="flex h-full flex-col p-7">
-                    <div className="flex items-center gap-3">
-                      <Icon className="h-4 w-4 text-ink-2" aria-hidden="true" />
-                      <h3 className="font-mono text-sm uppercase tracking-[0.16em] text-ink-0">
-                        {a.role}
-                      </h3>
-                      {a.status && (
-                        <Chip tone={a.status.tone} size="sm">
-                          {a.status.label}
-                        </Chip>
-                      )}
-                    </div>
+                  <Surface interactive className="flex h-full flex-col p-6">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-line-base bg-surface-2 text-ink-0">
+                      <Icon className="h-5 w-5" aria-hidden="true" />
+                    </span>
+                    <h3 className="mt-4 text-xl font-semibold text-ink-0">{a.role}</h3>
+                    <p className="mt-2 text-[15px] leading-snug text-ink-0">{a.line}</p>
 
-                    <p className="mt-4 text-lg leading-snug text-ink-0">{a.line}</p>
-
-                    <ul className="mt-5 flex-1 space-y-3">
+                    <ul className="mt-4 flex-1 space-y-2.5">
                       {a.points.map((p) => (
                         <li key={p} className="flex gap-3">
                           <span
@@ -115,9 +94,16 @@ export default function Audiences() {
                       ))}
                     </ul>
 
-                    <span className="mt-7 inline-flex items-center gap-2 font-mono text-[13px] text-phase-active transition-colors group-hover:text-ink-0">
+                    <div className="mt-5">
+                      <MaturityBadge level={a.maturity} detail={a.detail} size="sm" />
+                    </div>
+
+                    <span className="mt-5 inline-flex items-center gap-2 font-mono text-[13px] text-phase-active transition-colors group-hover:text-ink-0">
                       {a.cta}
-                      <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                      <ArrowRight
+                        className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
+                        aria-hidden="true"
+                      />
                     </span>
                   </Surface>
                 </Link>

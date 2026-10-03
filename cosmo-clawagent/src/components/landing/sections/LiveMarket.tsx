@@ -58,13 +58,13 @@ export default function LiveMarket() {
     .slice(0, 3);
 
   return (
-    <section className="relative border-t border-line-subtle py-24 md:py-32">
-      <div className="mx-auto max-w-6xl px-5 md:px-6">
+    <section className="relative border-t border-line-subtle py-20 md:py-28">
+      <div className="mx-auto max-w-6xl px-4 md:px-6">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <SectionHeader
-            kicker="Live market"
+            kicker="Live jobs"
             title="Real jobs, in a supervised pilot."
-            lead="Small budgets, curated providers, every settled job auditable. This is what exists today — not a projection of what the network could be."
+            lead="Small budgets, hand-picked providers, every paid job open to inspection. This is what exists today, read live from the job board."
           />
           <div className="flex items-center gap-3">
             {lastUpdated && (
@@ -86,17 +86,17 @@ export default function LiveMarket() {
 
         {/* counters */}
         <div className="mt-12 grid gap-4 sm:grid-cols-3">
-          <Stat label="Settled end-to-end" value={summary?.settled} tone="settled" />
+          <Stat label="Paid" value={summary?.settled} tone="settled" />
           <Stat label="Open for offers" value={summary?.open} tone="active" />
-          <Stat label="In execution" value={summary?.inExecution} tone="proof" />
+          <Stat label="In progress" value={summary?.inExecution} tone="proof" />
         </div>
 
         {section.error && (
           <div className="mt-4 flex items-start gap-2.5 rounded-xl border border-phase-fault/30 bg-phase-fault/[0.06] px-5 py-4">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-phase-fault" aria-hidden="true" />
             <p className="font-mono text-xs leading-relaxed text-phase-fault">
-              Live market data unavailable ({section.error}). Nothing above is being estimated —
-              figures are shown only while the market API answers.
+              Live job data is unavailable right now ({section.error}). Nothing above is estimated:
+              numbers are shown only while the job board answers.
             </p>
           </div>
         )}
@@ -116,7 +116,7 @@ export default function LiveMarket() {
                   <Link href="/market/post/" className="text-phase-active hover:text-ink-0">
                     Post one
                   </Link>{' '}
-                  and providers can bid on it.
+                  and providers can make offers on it.
                 </p>
               ) : (
                 open.map((job) => (
@@ -157,13 +157,13 @@ export default function LiveMarket() {
           {/* settled proofs */}
           <Surface className="p-6">
             <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-ink-2">
-              Settled — with transactions
+              Paid, with the transaction
             </h3>
             <div className="mt-5 space-y-3">
               {section.data === null ? (
                 <div className="h-20 animate-pulse rounded-lg bg-white/[0.03]" />
               ) : settled.length === 0 ? (
-                <p className="text-sm text-ink-1">No settled jobs recorded yet.</p>
+                <p className="text-sm text-ink-1">No paid jobs recorded yet.</p>
               ) : (
                 settled.map((job) => (
                   <Surface key={job.id} tone="raised" className="p-4">
@@ -174,7 +174,7 @@ export default function LiveMarket() {
                       >
                         {job.title}
                       </Link>
-                      <Chip tone="settled">settled</Chip>
+                      <Chip tone="settled">paid</Chip>
                     </div>
                     <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 font-mono text-[11px] text-ink-2">
                       <span className="tabular">
@@ -187,7 +187,7 @@ export default function LiveMarket() {
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 text-phase-proof hover:text-ink-0"
                         >
-                          settlement tx
+                          payment transaction
                           <ExternalLink className="h-2.5 w-2.5" aria-hidden="true" />
                         </a>
                       )}
@@ -205,7 +205,7 @@ export default function LiveMarket() {
 
         <div className="mt-8 flex flex-wrap gap-3">
           <CtaLink href="/market/" variant="primary" size="md">
-            Explore the live market
+            See all jobs
             <ArrowRight className="h-4 w-4" />
           </CtaLink>
           <CtaLink href="/market/providers/" variant="secondary" size="md">

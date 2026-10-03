@@ -7,44 +7,33 @@ import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { ctaClasses } from '@/components/cosmo/Cta';
 
-// 4-area nav. Retired tracks (/rfq, /community-rfq, /maker-capital, /access,
-// /demo) stay reachable via the archive hub at /protocol and direct URLs.
-//
-// Redesign 2026-07-27: `/` is the landing again, so the Market tab points at
-// /market/ and the wordmark carries the home state.
-const navLinks: {
+// Navigation by what a visitor wants to do (site-clarity plan, positioning
+// v6.1), not by product name: get work done, earn, liquidity, my tokens,
+// proof. Retired tracks stay reachable via the archive hub at /protocol.
+type NavLink = {
   href: string;
   label: string;
   // Extra path prefixes that also highlight this tab (href itself always matches).
   match?: string[];
-}[] = [
-  { href: '/market/', label: 'Market' },
-  { href: '/mandates/', label: 'Mandates' },
-  { href: '/assurance/', label: 'Trust' },
-  { href: '/compute/', label: 'Network', match: ['/vault', '/maker-onboarding'] },
-  { href: '/cosmo/', label: '$COSMO', match: ['/wcosmo'] },
-  // 2026-10-02 (D-PV-1): read-only position snapshot "where are my tokens?".
-  { href: '/portfolio/', label: 'Portfolio' },
-  // 2026-08-20: the treasury sale was live on mainnet but reachable only by
-  // typing the URL. It gets a real top-level entry — /buy is a product, not a
-  // hidden path. It stays a plain nav link, not a second primary CTA: the
-  // headline action on this site is still the market, not the token.
-  { href: '/buy/', label: 'Buy wCOSMO' },
+};
+
+const navLinks: NavLink[] = [
+  { href: '/market/', label: 'Get work done' },
+  { href: '/compute/', label: 'Earn', match: ['/maker-onboarding'] },
+  { href: '/mandates/', label: 'Liquidity' },
+  { href: '/portfolio/', label: 'My tokens', match: ['/vault', '/wcosmo'] },
+  { href: '/assurance/', label: 'Proof', match: ['/institutional'] },
 ];
 
-const SALE_HREF = '/buy/';
-
-// The mobile sheet opens under a 64px header on short phones, so the last
-// entry can sit below the fold. The sale link is hoisted to the top there —
-// on desktop it keeps its natural place at the end of the row.
-const mobileLinks = [
-  ...navLinks.filter((l) => l.href === SALE_HREF),
-  ...navLinks.filter((l) => l.href !== SALE_HREF),
-];
+// The token is a product with a real page, but not the headline action: it
+// sits after the five tasks, visually quieter. /cosmo is linked from the
+// mobile sheet and the footer.
+const SALE: NavLink = { href: '/buy/', label: 'Buy wCOSMO' };
+const TOKEN: NavLink = { href: '/cosmo/', label: '$COSMO' };
 
 const norm = (p: string) => p.replace(/\/+$/, '') || '/';
 
-function isActive(pathname: string, link: (typeof navLinks)[number]): boolean {
+function isActive(pathname: string, link: NavLink): boolean {
   const path = norm(pathname);
   return [link.href, ...(link.match ?? [])].map(norm).some((t) => path === t || path.startsWith(t + '/'));
 }
@@ -75,6 +64,7 @@ export default function Navigation() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const navRef = useRef<HTMLElement>(null);
   const home = norm(pathname) === '/';
 
   // The sheet is closed from the link handlers below, not from a route
@@ -86,20 +76,46 @@ export default function Navigation() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // While the sheet is open: Escape closes it, Tab stays inside the nav (the
+  // sheet plus its toggle), and the page behind does not scroll.
   useEffect(() => {
     if (!menuOpen) return;
+    const nav = navRef.current;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setMenuOpen(false);
         toggleRef.current?.focus();
+        return;
+      }
+      if (e.key !== 'Tab' || !nav) return;
+      const items = Array.from(nav.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')).filter(
+        (el) => el.offsetParent !== null,
+      );
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      const current = document.activeElement;
+      if (e.shiftKey && current === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && current === last) {
+        e.preventDefault();
+        first.focus();
       }
     };
     document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prevOverflow;
+    };
   }, [menuOpen]);
 
   return (
     <nav
+      ref={navRef}
+      aria-label="Main"
       className={cn(
         'fixed inset-x-0 top-0 z-50 border-b transition-colors duration-300',
         scrolled || menuOpen
@@ -107,7 +123,7 @@ export default function Navigation() {
           : 'border-transparent bg-surface-0/40 backdrop-blur-md',
       )}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 md:px-6">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
         <Link
           href="/"
           aria-current={home ? 'page' : undefined}
@@ -120,7 +136,7 @@ export default function Navigation() {
           <span className="font-mono text-sm font-bold tracking-[0.16em]">COSMO</span>
         </Link>
 
-        <div className="hidden items-center gap-1 md:flex">
+        <div className="hidden items-center gap-1 lg:flex">
           {navLinks.map((link) => {
             const active = isActive(pathname, link);
             return (
@@ -129,17 +145,28 @@ export default function Navigation() {
                 href={link.href}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'rounded-lg px-3.5 py-2 font-mono text-[13px] transition-colors',
+                  'rounded-lg px-3.5 py-2 text-sm font-medium transition-colors',
                   active
                     ? 'bg-white/[0.06] text-ink-0'
-                    : 'text-ink-2 hover:bg-white/[0.03] hover:text-ink-0',
+                    : 'text-ink-1 hover:bg-white/[0.03] hover:text-ink-0',
                 )}
               >
                 {link.label}
               </Link>
             );
           })}
-          <Link href="/market/post/" className={cn(ctaClasses('primary', 'sm'), 'ml-3')}>
+          <span className="mx-2 h-5 w-px bg-line-base" aria-hidden="true" />
+          <Link
+            href={SALE.href}
+            aria-current={isActive(pathname, SALE) ? 'page' : undefined}
+            className={cn(
+              'rounded-lg px-2.5 py-2 font-mono text-[12px] transition-colors',
+              isActive(pathname, SALE) ? 'text-ink-0' : 'text-ink-2 hover:text-ink-0',
+            )}
+          >
+            {SALE.label}
+          </Link>
+          <Link href="/market/post/" className={cn(ctaClasses('primary', 'sm'), 'ml-2')}>
             Post a job
           </Link>
         </div>
@@ -150,7 +177,7 @@ export default function Navigation() {
           aria-expanded={menuOpen}
           aria-controls="mobile-nav"
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-          className="rounded-md p-1.5 text-ink-1 transition-colors hover:text-ink-0 md:hidden"
+          className="rounded-md p-2.5 text-ink-1 transition-colors hover:text-ink-0 lg:hidden"
           onClick={() => setMenuOpen((v) => !v)}
         >
           {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -160,9 +187,9 @@ export default function Navigation() {
       {menuOpen && (
         <div
           id="mobile-nav"
-          className="flex flex-col gap-1 border-t border-line-base bg-surface-0/95 px-5 py-4 md:hidden"
+          className="flex max-h-[calc(100svh-4rem)] flex-col gap-1 overflow-y-auto border-t border-line-base bg-surface-0/95 px-4 py-4 lg:hidden"
         >
-          {mobileLinks.map((link) => {
+          {navLinks.map((link) => {
             const active = isActive(pathname, link);
             return (
               <Link
@@ -171,7 +198,25 @@ export default function Navigation() {
                 onClick={() => setMenuOpen(false)}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'rounded-lg px-3 py-3 font-mono text-sm transition-colors',
+                  'rounded-lg px-3 py-3 text-base font-medium transition-colors',
+                  active ? 'bg-white/[0.06] text-ink-0' : 'text-ink-1 hover:text-ink-0',
+                )}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+          <div className="my-1 h-px bg-line-subtle" aria-hidden="true" />
+          {[SALE, TOKEN].map((link) => {
+            const active = isActive(pathname, link);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                aria-current={active ? 'page' : undefined}
+                className={cn(
+                  'rounded-lg px-3 py-2.5 font-mono text-sm transition-colors',
                   active ? 'bg-white/[0.06] text-ink-0' : 'text-ink-2 hover:text-ink-0',
                 )}
               >
