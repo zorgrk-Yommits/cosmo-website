@@ -178,7 +178,7 @@ Quelle der Regeln: `cosmo-contracts-move/compute-rfq/sources/` auf Branch `feat/
 - Waechter: Vergleichs-Strings (`stage === 'escrow'`) zaehlen nicht mehr als Text; Liste 32 → 24.
 - NICHT geprueft: ein echter Signiervorgang auf Mainnet mit dem neuen Statuspfad (nur Vorschau mit Mock-Daten und die bezahlte Job-Seite gegen die Live-API). Kontaktweg "reply to our email" stuetzt sich auf den bestehenden Hinweis im Job-Formular.
 
-### Etappe 3: umgesetzt 03.10.2026 (lokal, NICHT deployt; Deploy erst nach GO)
+### Etappe 3: umgesetzt und DEPLOYT 03.10.2026 (GO Rene; Rollback-Kopie `out.pre-site-clarity-e3`)
 
 - `/compute` neu geschrieben: `PageIntro` mit dem Provider-Bild (Wallet → Safety deposit → Make an offer → Do work → Get paid → Withdraw deposit) im ersten Bildschirm, fuenf Klartext-Schritte, sichtbare Karte "What can go wrong", Live-Zahlen als Liste, drei bezahlte Jobs mit je einem Klartext-Satz und allen Details/Transaktionen im Aufklapper. Abschnitte "How a job settles" und die SupraFX-Abgrenzung entfernt (Abwehr-Ton, Dopplung mit der Startseite).
 - Live statt fest im Text: Strafe (`slash_comp_bps`), Sperre nach Strafe (`bond_cooldown_secs`), Jobs gleichzeitig (`get_max_active_jobs_per_provider`), Dispute-Bond (`dispute_bond_bps`). Auszahlungsregel ueberall: frei, sobald kein Job aktiv ist; nur eine Strafe sperrt.
