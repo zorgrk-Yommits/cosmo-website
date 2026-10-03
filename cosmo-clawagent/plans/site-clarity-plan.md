@@ -166,7 +166,7 @@ Quelle der Regeln: `cosmo-contracts-move/compute-rfq/sources/` auf Branch `feat/
 - Waechter-Liste 44 → 32 Dateien.
 - Offen fuer spaeter: `HonestyBox` im Live-jobs-Abschnitt spricht noch Fachsprache (Etappe 2); Evidence-Kacheln fuehren teils noch auf Verzeichnislistings (Etappe 5); Abschnitte mit `Reveal` erscheinen erst beim Scrollen (bestehendes Verhalten).
 
-### Etappe 2: umgesetzt 03.10.2026 (lokal, NICHT deployt; Deploy erst nach GO)
+### Etappe 2: umgesetzt und DEPLOYT 03.10.2026 (GO Rene; Rollback-Kopie `out.pre-site-clarity-e2`)
 
 - `/market`: `PageIntro` mit dem 6-Schritte-Kaeuferbild, Button "Post a job"; PILOT-001 als "First paid job" mit Klartext-Schritten, Vertragsaufrufe und Hash in TechDetails.
 - `/market/post`: Ablaufbild (Schritt 1 markiert), Feld "What counts as done", Hinweise und Fehlermeldungen als ganze Saetze mit Abhilfe.
