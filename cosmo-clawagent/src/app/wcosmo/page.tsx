@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import WcosmoGuide from './WcosmoGuide';
 
 export const metadata: Metadata = {
-  title: 'COSMO — wCOSMO: the security-deposit asset',
+  title: 'COSMO — wCOSMO: $COSMO in a form contracts can hold',
   description:
-    'wCOSMO is the plain 1:1 wrapper around $COSMO that denominates every security deposit in the COSMO system. Permissionless wrap/unwrap, on-chain verifiable peg, and the honest answer on obtaining $COSMO (OTC / community — no public listing).',
+    'wCOSMO is $COSMO wrapped 1 to 1. Safety deposits are held in it. Anyone can wrap and unwrap at any time, the backing can be checked on-chain, and this page says honestly how to get $COSMO.',
 };
 
 export default function WcosmoPage() {

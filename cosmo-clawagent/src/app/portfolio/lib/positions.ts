@@ -70,20 +70,20 @@ export function bondState(
     return {
       withdrawableNow: false,
       lockedUntilSecs: locked ? b.lockedUntilSecs : null,
-      next: `Withdrawal blocked while a job is active (${b.activeJobs.toString()} active). Opens again when the job settles.`,
+      next: `Withdrawal blocked while a job is active (${b.activeJobs.toString()} active). Opens again when the job is paid.`,
     };
   }
   if (locked) {
     return {
       withdrawableNow: false,
       lockedUntilSecs: b.lockedUntilSecs,
-      next: `Withdrawable from ${fmtUtc(b.lockedUntilSecs)} (a penalty deduction set this lock).`,
+      next: `Withdrawable from ${fmtUtc(b.lockedUntilSecs)} (a deposit penalty set this lock).`,
     };
   }
   return {
     withdrawableNow: true,
     lockedUntilSecs: null,
-    next: 'Withdrawable now, in full or down to the required minimum.',
+    next: 'Free to withdraw now, in full or down to the minimum deposit.',
   };
 }
 
@@ -254,7 +254,7 @@ export function classifyRfqRequest(
       role: 'requester',
       amount: req.requestFeeQuants,
       token: feeToken,
-      next: 'Request fee, paid to the fee account at creation. Not refundable.',
+      next: 'Fee for creating the trade request, paid to the fee account. Not refundable.',
       returnFn: null,
       returnAfterSecs: null,
       actionable: false,
@@ -271,8 +271,8 @@ export function classifyRfqRequest(
       amount: quote.amountOut,
       token: tokenOf(req.tokenOut),
       next: expired
-        ? 'Request expired without acceptance. You (the maker) can reclaim this leg now.'
-        : `Your funded quote leg. Returned if nobody accepts by ${fmtUtc(req.expiresAt)}; otherwise it settles.`,
+        ? 'Nobody accepted your offer before it expired. You can take these tokens back now.'
+        : `Tokens you put behind your offer. Returned if nobody accepts by ${fmtUtc(req.expiresAt)}; otherwise the trade completes.`,
       returnFn: 'rfq_engine::reclaim_unaccepted_quote',
       returnAfterSecs: req.expiresAt,
       actionable: expired,
@@ -294,14 +294,14 @@ export function classifyRfqAccepted(
 ): Position[] {
   if (acc.status !== RFQ_ACC.PENDING && acc.status !== RFQ_ACC.FREEZE) return [];
   const out: Position[] = [];
-  const ref = `quote #${acc.quoteId.toString()} (request #${acc.requestId.toString()})`;
+  const ref = `trade #${acc.quoteId.toString()} (request #${acc.requestId.toString()})`;
   const due = nowSecs >= acc.settlementDeadlineSecs;
   const frozen = acc.status === RFQ_ACC.FREEZE;
   const next = due
-    ? 'Settlement deadline passed. Anyone can call claim_unwind; both legs return to their owners.'
+    ? 'The trade was not completed in time. It can be undone now and both sides get their tokens back.'
     : frozen
-      ? `Frozen by council. If not settled by ${fmtUtc(acc.settlementDeadlineSecs)}, it unwinds and your leg returns.`
-      : `Awaiting settlement by ${fmtUtc(acc.settlementDeadlineSecs)}. If the deadline passes, your leg returns via claim_unwind.`;
+      ? `Frozen by council. If the trade is not completed by ${fmtUtc(acc.settlementDeadlineSecs)}, it is undone and your tokens return.`
+      : `Waiting for the trade to complete by ${fmtUtc(acc.settlementDeadlineSecs)}. If that time passes, your tokens can be taken back.`;
   const base = {
     bucket: (due ? 'claimable' : 'escrow') as Bucket,
     source: 'rfq_accepted' as const,
@@ -401,14 +401,14 @@ export function classifyCmpRequest(
     {
       bucket: expired ? 'claimable' : 'escrow',
       source: 'compute_request',
-      ref: `compute request #${req.requestId.toString()}`,
+      ref: `job request #${req.requestId.toString()}`,
       id: req.requestId,
       role: 'buyer',
       amount: req.maxPrice,
       token: tokenOf(req.paymentFa),
       next: expired
-        ? 'Quoting window closed without a job. You can reclaim the escrowed price now.'
-        : `Escrowed max price while providers quote, until ${fmtUtc(req.expiresAt)}. Returned if no job starts.`,
+        ? 'The job never started. You can take your locked payment back now.'
+        : `Your payment is locked while the job waits to start, until ${fmtUtc(req.expiresAt)}. If no job starts by then, you can take it back.`,
       returnFn: 'compute_rfq::reclaim_expired_request_v2',
       returnAfterSecs: req.expiresAt,
       actionable: expired,
@@ -429,7 +429,7 @@ export function classifyCmpJob(
 ): Position[] {
   if (!eq(job.buyer, addr)) return [];
   const token = tokenOf(job.paymentFa);
-  const ref = `compute job #${job.jobId.toString()}`;
+  const ref = `job #${job.jobId.toString()}`;
   if (job.status === CMP_JOB.ACTIVE) {
     const due = nowSecs >= job.jobDeadlineSecs;
     return [
@@ -442,8 +442,8 @@ export function classifyCmpJob(
         amount: job.price,
         token,
         next: due
-          ? 'Delivery deadline passed with no result. You can claim the price back now (provider is penalised).'
-          : `Job price escrowed until delivery, due by ${fmtUtc(job.jobDeadlineSecs)}. If nothing is delivered, you can claim it back.`,
+          ? 'The deadline passed with no result. You can take your payment back now (the provider pays a deposit penalty).'
+          : `Locked for a running job. The result is due by ${fmtUtc(job.jobDeadlineSecs)}. If nothing is handed in, you can take it back.`,
         returnFn: 'compute_rfq::claim_no_delivery_v2',
         returnAfterSecs: job.jobDeadlineSecs,
         actionable: due,
@@ -461,7 +461,7 @@ export function classifyCmpJob(
         role: 'buyer',
         amount: job.price,
         token,
-        next: `Result delivered. Review window until ${fmtUtc(settleAt)}; then the price settles to the provider unless you dispute.`,
+        next: `The result was handed in. You have until ${fmtUtc(settleAt)} to check it. After that the provider is paid automatically.`,
         returnFn: null,
         returnAfterSecs: null,
         actionable: false,
@@ -481,8 +481,8 @@ export function classifyCmpJob(
         amount,
         token,
         next: due
-          ? 'Dispute window passed unresolved. You can unwind and get price and dispute bond back now.'
-          : `Disputed. Price plus your dispute bond stay escrowed until resolution or ${fmtUtc(job.disputedAt + DISPUTE_TTL_SECS)}.`,
+          ? 'The dispute was not decided in time. You can take back the payment and the amount you put down for the dispute.'
+          : `In dispute. The payment and the amount you put down for the dispute stay locked until it is decided, or until ${fmtUtc(job.disputedAt + DISPUTE_TTL_SECS)}.`,
         returnFn: 'compute_rfq::claim_dispute_unwind_v2',
         returnAfterSecs: job.disputedAt + DISPUTE_TTL_SECS,
         actionable: due,

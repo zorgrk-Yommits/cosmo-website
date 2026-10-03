@@ -7,6 +7,8 @@
 import Link from 'next/link';
 import { ArrowRight, Landmark, RefreshCw, Scale, Server } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import PageIntro from '@/components/cosmo/PageIntro';
+import TechDetails from '@/components/cosmo/TechDetails';
 import {
   COSMOCLAW_ADDR,
   COMPUTE_PKG_ADDR,
@@ -178,7 +180,7 @@ export default function VaultDashboard() {
     if (rest > ZERO) {
       bondSegments.push({
         key: 'rest',
-        label: 'Unattributed / penalty remainder',
+        label: 'Not assigned to an operator (incl. penalty remainder)',
         value: rest,
         color: '#4A5260',
       });
@@ -189,51 +191,40 @@ export default function VaultDashboard() {
     <div className="terminal-container terminal-theme-scope">
       <div className="grid-bg" />
 
-      {/* ── Hero ── */}
-      <section className="relative z-10 mx-auto max-w-6xl px-6 pt-24 pb-8">
-        <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-phase-active/25 bg-phase-active/10 px-3 py-1.5">
-          <span className="inline-flex h-2 w-2 rounded-full bg-phase-active" />
-          <span className="font-mono text-xs uppercase tracking-[0.2em] text-ink-1">
-            Vault · Supra Mainnet (chain 8)
-          </span>
-        </div>
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h1 className="font-mono text-4xl font-bold tracking-tight text-ink-0 md:text-5xl">
-              Custody, verifiable.
-            </h1>
-            <p className="mt-4 max-w-2xl font-sans text-lg leading-relaxed text-ink-1">
-              Every security deposit, every limit, every peg — read live from mainnet view
-              functions, in three clearly separated sections.
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            {lastUpdated && (
-              <span className="font-mono text-[11px] text-ink-2">
-                Updated {new Date(lastUpdated).toLocaleTimeString('en-US')}
-              </span>
-            )}
-            <button
-              type="button"
-              onClick={() => void refresh()}
-              disabled={refreshing}
-              className="inline-flex items-center gap-2 rounded-lg border border-line-base px-3 py-1.5 font-mono text-[11px] text-ink-1 transition-all hover:border-line-strong hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <RefreshCw className={cn('h-3 w-3', refreshing && 'animate-spin')} />
-              Refresh
-            </button>
-          </div>
+      {/* ── Intro ── */}
+      <section className="relative z-10 mx-auto max-w-6xl px-4 pb-8 pt-24 md:px-6">
+        <PageIntro
+          maturity="live"
+          maturityDetail="read from Supra Mainnet"
+          title="Where deposits are held."
+          lead="Safety deposits sit in contract accounts that have no private key. Tokens can leave only through a withdrawal by their owner or through a deposit penalty. This page reads the balances and limits live."
+        />
+        <div className="mt-6 flex items-center gap-3">
+          {lastUpdated && (
+            <span className="font-mono text-[11px] text-ink-2">
+              Updated {new Date(lastUpdated).toLocaleTimeString('en-US')}
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={() => void refresh()}
+            disabled={refreshing}
+            className="inline-flex items-center gap-2 rounded-lg border border-line-base px-3 py-1.5 font-mono text-[11px] text-ink-1 transition-all hover:border-line-strong hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <RefreshCw className={cn('h-3 w-3', refreshing && 'animate-spin')} />
+            Refresh
+          </button>
         </div>
       </section>
 
       {/* ── 1 · Maker vault ── */}
-      <section className="relative z-10 mx-auto max-w-6xl px-6 py-6">
+      <section className="relative z-10 mx-auto max-w-6xl px-4 py-6 md:px-6">
         <div className="rounded-xl border border-line-base bg-surface-1 p-6">
           <SectionHeader
             icon={Landmark}
             index="1"
-            title="Maker security deposits — operators K1 & M2"
-            subtitle="Held in the maker vault; movable only through maker_vault entry functions. This section shows the RFQ maker side only — compute providers are section 2."
+            title="Maker deposits: operators K1 and M2"
+            subtitle="Held by the maker contract. Tokens can leave only through its functions. This section covers the trading side only; provider deposits are section 2."
           >
             <StatusLamp state={invariant.state} label={invariant.label} detail={invariant.detail} />
           </SectionHeader>
@@ -249,13 +240,13 @@ export default function VaultDashboard() {
             />
           </div>
           <p className="mb-5 font-sans text-sm leading-relaxed text-ink-1">
-            The bar is the live wCOSMO held in the vault, split by which operator deposited it.
-            Operator K1 runs autonomously —{' '}
+            The bar is the wCOSMO held right now, split by the operator who deposited it. Operator
+            K1 runs by itself:{' '}
             <Link
               href="/rfq/"
               className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof"
             >
-              see its live quoting activity
+              see its live trading activity
             </Link>
             .
           </p>
@@ -264,7 +255,7 @@ export default function VaultDashboard() {
               total={m.custodyBalance}
               segments={bondSegments}
               format={wc}
-              ariaLabel={`Maker vault custody composition: ${bondSegments
+              ariaLabel={`Who deposited the wCOSMO held by the maker contract: ${bondSegments
                 .map((s) => `${s.label} ${fmtAmt(s.value)} wCOSMO`)
                 .join(', ')}`}
             />
@@ -284,13 +275,13 @@ export default function VaultDashboard() {
       </section>
 
       {/* ── Provider vault ── */}
-      <section className="relative z-10 mx-auto max-w-6xl px-6 py-6">
+      <section className="relative z-10 mx-auto max-w-6xl px-4 py-6 md:px-6">
         <div className="rounded-xl border border-line-base bg-surface-1 p-6">
           <SectionHeader
             icon={Server}
             index="2"
-            title="Compute provider security deposits"
-            subtitle="A separate vault with its own custody account — providers place deposits to become eligible for compute jobs. Not related to the maker vault above."
+            title="Provider safety deposits"
+            subtitle="A separate contract with its own account. Providers put down deposits here to be able to take jobs. Not connected to the maker deposits above."
           >
             <div className="flex flex-wrap items-center gap-2">
               <StatusLamp
@@ -301,7 +292,7 @@ export default function VaultDashboard() {
               {pv && (
                 <StatusLamp
                   state={pv.paused ? 'warning' : 'good'}
-                  label={pv.paused ? 'Onboarding paused' : 'Onboarding open'}
+                  label={pv.paused ? 'Sign-up paused' : 'Sign-up open'}
                 />
               )}
             </div>
@@ -316,35 +307,35 @@ export default function VaultDashboard() {
               <UtilizationMeter
                 value={pv.totalBonded}
                 max={pv.globalCap}
-                label="Global deposit limit — utilization"
+                label="Limit for all providers together: how much is used"
                 format={wc}
                 markers={[
-                  { label: 'required minimum', value: pv.minBond },
+                  { label: 'minimum deposit', value: pv.minBond },
                   ...(pv.maxPerProvider > ZERO
-                    ? [{ label: 'per-provider limit', value: pv.maxPerProvider }]
+                    ? [{ label: 'limit per provider', value: pv.maxPerProvider }]
                     : []),
                 ]}
               />
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 <StatTile
-                  label="Held in the vault (live balance)"
+                  label="Held by the contract (live balance)"
                   value={wc(pv.custodyBalance)}
-                  sub="faBalance of the custody account"
+                  sub="balance of the contract account"
                 />
                 <StatTile
-                  label="Total deposited (bookkeeping)"
+                  label="Total deposited (the contract's own count)"
                   value={wc(pv.totalBonded)}
-                  sub="get_total_bonded"
+                  sub="what the contract has recorded"
                 />
                 <StatTile
-                  label="Required minimum deposit"
+                  label="Minimum deposit"
                   value={wc(pv.minBond)}
-                  sub="self-service entry"
+                  sub="anyone can place it"
                 />
                 <StatTile
-                  label="Per-provider limit"
-                  value={pv.maxPerProvider > ZERO ? wc(pv.maxPerProvider) : 'uncapped'}
-                  sub="guarded-launch limit"
+                  label="Limit per provider"
+                  value={pv.maxPerProvider > ZERO ? wc(pv.maxPerProvider) : 'no limit'}
+                  sub="pilot limit"
                 />
               </div>
             </>
@@ -355,24 +346,24 @@ export default function VaultDashboard() {
             href="/compute/bond/"
             className="mt-5 inline-flex items-center gap-1 font-mono text-xs text-phase-proof hover:text-phase-proof"
           >
-            Place your security deposit <ArrowRight className="h-3 w-3" />
+            Place your safety deposit <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
       </section>
 
       {/* ── wCOSMO peg ── */}
-      <section className="relative z-10 mx-auto max-w-6xl px-6 py-6">
+      <section className="relative z-10 mx-auto max-w-6xl px-4 py-6 md:px-6">
         <div className="rounded-xl border border-line-base bg-surface-1 p-6">
           <SectionHeader
             icon={Scale}
             index="3"
-            title="wCOSMO reserve — 1:1 backing"
-            subtitle="Every wCOSMO is backed by exactly one $COSMO held in the reserve. This backs the ENTIRE supply — including both vaults above — and is not a security deposit itself."
+            title="wCOSMO reserve: backed 1 to 1"
+            subtitle="Every wCOSMO is backed by exactly one $COSMO in the reserve. That covers all wCOSMO in existence, including both deposit accounts above. The reserve itself is not a safety deposit."
           >
             {pg && (
               <StatusLamp
                 state={pg.pegHolds ? 'good' : 'critical'}
-                label={pg.pegHolds ? 'Peg holds — 1:1 verified' : 'Peg broken'}
+                label={pg.pegHolds ? 'Backed 1 to 1, checked live' : 'Backing is broken'}
               />
             )}
           </SectionHeader>
@@ -403,30 +394,36 @@ export default function VaultDashboard() {
               href="/buy/"
               className="inline-flex items-center gap-1 font-mono text-xs text-phase-proof hover:text-phase-proof"
             >
-              Buy wCOSMO (capped pilot) <ArrowRight className="h-3 w-3" />
+              Buy wCOSMO <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── Address footer ── */}
-      <section className="relative z-10 mx-auto max-w-6xl px-6 py-6 pb-24">
-        <div className="rounded-xl border border-dashed border-line-base bg-surface-inset p-5">
-          <p className="mb-3 font-sans text-sm leading-relaxed text-ink-1">
-            No private key exists for either custody account; movements are only possible through
-            the vaults&apos; entry functions.
-          </p>
-          <dl className="space-y-1.5 font-mono text-[11px] text-ink-2">
-            <div className="text-ink-1">Maker vault (section 1):</div>
+      {/* ── Addresses, for those who want to check ── */}
+      <section className="relative z-10 mx-auto max-w-6xl px-4 py-6 pb-24 md:px-6">
+        <p className="mb-3 font-sans text-sm leading-relaxed text-ink-1">
+          Neither deposit account has a private key. Tokens can move only through the functions of
+          the contract that owns the account.
+        </p>
+        <TechDetails title="Technical details: contract and account addresses">
+          <dl className="space-y-1.5 font-mono text-[11px]">
+            <div className="text-ink-0">Maker vault (section 1):</div>
             <div className="break-all pl-3">Module: {COSMOCLAW_ADDR}::maker_vault</div>
             <div className="break-all pl-3">Custody account: {MAKER_VAULT_RESOURCE_ADDR}</div>
-            <div className="mt-2 text-ink-1">Provider vault (section 2):</div>
+            <div className="mt-2 text-ink-0">Provider vault (section 2):</div>
             <div className="break-all pl-3">Module: {COMPUTE_PKG_ADDR}::provider_vault</div>
             <div className="break-all pl-3">Custody account: {PROVIDER_VAULT_RESOURCE_ADDR}</div>
             <div className="mt-2 break-all">wCOSMO FA: {WCOSMO_META}</div>
             {m?.admin && <div className="break-all">Admin: {m.admin} (2-of-3 multisig)</div>}
           </dl>
-        </div>
+          <p className="mt-3">
+            Provider values come from provider_vault views (get_total_bonded, get_min_provider_bond,
+            get_max_bond_per_provider, get_global_bond_cap, is_onboarding_paused) and the fungible
+            asset balance of the custody account. The reserve check reads wcosmo::peg_holds,
+            wcosmo_supply and reserve_balance.
+          </p>
+        </TechDetails>
       </section>
     </div>
   );

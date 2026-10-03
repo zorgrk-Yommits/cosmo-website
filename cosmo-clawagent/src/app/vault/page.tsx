@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import VaultDashboard from './VaultDashboard';
 
 export const metadata: Metadata = {
-  title: 'COSMO — Vault: custody, verifiable',
+  title: 'COSMO — Where deposits are held',
   description:
-    'Live vault dashboard for the COSMO system on Supra Mainnet: maker operator security deposits, compute provider security deposits with their limits, and the wCOSMO 1:1 reserve — all read from on-chain view functions.',
+    'Where safety deposits on COSMO are held, read live from Supra Mainnet: maker deposits, provider deposits with their limits, and the reserve that backs wCOSMO 1 to 1.',
 };
 
 export default function VaultPage() {

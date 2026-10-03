@@ -43,7 +43,6 @@ import { cn } from '@/lib/utils';
 import {
   CHAIN_ID,
   COSMOCLAW_ADDR,
-  EXPLORER_TX,
   WCOSMO_META,
   type SupraProvider,
   bcsBytes,
@@ -58,6 +57,12 @@ import {
   shortAddr,
 } from '@/lib/mainnetOnchain';
 import { pingSaleTelemetry } from './telemetry';
+import { ArrowLeftRight, Coins, Tag, Wallet as WalletIcon } from 'lucide-react';
+import { explainAbort, explainSignError, fetchTxStatus, type TxStage } from '@/lib/txStatus';
+import FlowStrip from '@/components/cosmo/FlowStrip';
+import MaturityBadge from '@/components/cosmo/MaturityBadge';
+import TechDetails from '@/components/cosmo/TechDetails';
+import TxStatus from '@/components/cosmo/TxStatus';
 
 const SALE_LIVE = process.env.NEXT_PUBLIC_SALE_LIVE === '1';
 const ZERO = BigInt(0);
@@ -124,22 +129,22 @@ async function requestQuote(buyer: string, amountInSupra: string): Promise<Quote
 function PriceTerms({ tiles }: { tiles: SaleTiles }) {
   const rows: Array<{ label: string; value: string; hint?: string; won: boolean }> = [
     {
-      label: 'Atmos TWAP (30 min median)',
+      label: 'Market price on Atmos (30-minute middle value)',
       value: `${tiles.twap} SUPRA / COSMO`,
       won: false,
     },
     {
-      label: 'Maker spread',
-      value: `+${tiles.spreadBps} bps -> ${tiles.marketAsk}`,
+      label: 'Plus the seller markup',
+      value: `+${Number(tiles.spreadBps) / 100}% = ${tiles.marketAsk}`,
       won: tiles.askSource === 'market',
     },
     {
-      label: 'Protected minimum (on-chain floor)',
+      label: 'Minimum price, fixed in the contract',
       value: `${tiles.floor} SUPRA / COSMO`,
       won: tiles.askSource === 'floor',
     },
     {
-      label: 'Effective ask',
+      label: 'Your price',
       value: `${tiles.effectiveAsk} SUPRA / COSMO`,
       won: false,
     },
@@ -147,7 +152,7 @@ function PriceTerms({ tiles }: { tiles: SaleTiles }) {
   return (
     <div className="rounded-lg border border-line-base bg-surface-inset p-4">
       <p className="mb-2 font-mono text-[11px] uppercase tracking-wider text-ink-1">
-        Atmos-referenced seller ask with protected minimum
+        How the price is formed
       </p>
       <dl className="space-y-1.5">
         {rows.map((r) => (
@@ -156,7 +161,7 @@ function PriceTerms({ tiles }: { tiles: SaleTiles }) {
               {r.label}
               {r.won && (
                 <span className="ml-2 rounded-full border border-phase-active/40 bg-phase-active/10 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-phase-active">
-                  binding term
+                  decides the price
                 </span>
               )}
             </dt>
@@ -165,7 +170,7 @@ function PriceTerms({ tiles }: { tiles: SaleTiles }) {
         ))}
       </dl>
       <p className="mt-2 font-mono text-[10px] text-ink-2">
-        ask source: {tiles.askSource} · the higher of market ask and floor wins
+        The higher of the two wins: market price plus markup, or the minimum price.
       </p>
     </div>
   );
@@ -194,6 +199,9 @@ export default function BuySaleHelper() {
   const [payloadText, setPayloadText] = useState<string | null>(null);
   const [busy, setBusy] = useState<null | 'quote' | 'prepare' | 'sign'>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
+  // outcome of the purchase transaction, read from the chain
+  const [txStage, setTxStage] = useState<TxStage>('idle');
+  const [txMessage, setTxMessage] = useState<string | null>(null);
   const [log, setLog] = useState<{ text: string; tone: 'info' | 'ok' | 'bad' } | null>(null);
 
   // -- status ----------------------------------------------------------------------
@@ -226,7 +234,7 @@ export default function BuySaleHelper() {
         setQuote(null);
         setPayloadText(null);
         preparedRef.current = null;
-        setLog({ text: 'Quote expired — request a fresh one.', tone: 'info' });
+        setLog({ text: 'The price expired. Ask for a new one.', tone: 'info' });
       }
     };
     tick();
@@ -274,14 +282,14 @@ export default function BuySaleHelper() {
         }
       }
       if (cid !== CHAIN_ID) {
-        setChainMsg(`Chain ${cid ?? '?'} — please switch StarKey to Supra Mainnet (8)`);
+        setChainMsg(`Wrong network (${cid ?? '?'}). Switch StarKey to Supra Mainnet.`);
         setAccount(null);
         return;
       }
       setAccount(addr);
       pingSaleTelemetry('connect', 'starkey-connected');
     } catch (e) {
-      setLog({ text: `Connect error: ${(e as Error).message ?? e}`, tone: 'bad' });
+      setLog({ text: `Could not connect: ${(e as Error).message ?? e}`, tone: 'bad' });
     } finally {
       setConnecting(false);
     }
@@ -361,9 +369,9 @@ export default function BuySaleHelper() {
         ].join('\n'),
       );
       pingSaleTelemetry('review', 'payload-prepared');
-      setLog({ text: 'Payload ready. Review it, then sign in StarKey.', tone: 'info' });
+      setLog({ text: 'Ready. Check what will be signed, then pay.', tone: 'info' });
     } catch (e) {
-      setLog({ text: `Payload error: ${(e as Error).message ?? e}`, tone: 'bad' });
+      setLog({ text: `Could not prepare the transaction: ${(e as Error).message ?? e}`, tone: 'bad' });
     } finally {
       setBusy(null);
     }
@@ -374,9 +382,12 @@ export default function BuySaleHelper() {
     const prepared = preparedRef.current;
     if (!SALE_LIVE || !p || !account || !prepared || !quote) return;
     setBusy('sign');
+    let sent = false;
     try {
       const before = await faBalance(account, WCOSMO_META).catch(() => ZERO);
-      setLog({ text: 'Waiting for signature in StarKey …', tone: 'info' });
+      setTxStage('signing');
+      setTxMessage(null);
+      setLog(null);
       const hash = await p.sendTransaction({
         data: prepared.data,
         from: account,
@@ -388,21 +399,39 @@ export default function BuySaleHelper() {
       setPayloadText(null);
       setTxHash(hash);
       pingSaleTelemetry('sign', 'tx-sent');
-      setLog({ text: 'TX sent. Waiting for on-chain confirmation …', tone: 'info' });
+      sent = true;
+      setTxStage('sent');
       for (let i = 0; i < 20; i++) {
         await new Promise((r) => setTimeout(r, 3000));
+        // The chain's own verdict first: a failed purchase must say so.
+        const verdict = await fetchTxStatus(hash).catch(() => null);
+        if (verdict?.status === 'Fail') {
+          pingSaleTelemetry('error', 'tx-failed');
+          setTxStage('failed');
+          setTxMessage(explainAbort(verdict.vmStatus));
+          setQuote(null);
+          return;
+        }
         const bal = await faBalance(account, WCOSMO_META).catch(() => null);
         if (bal !== null && bal > before) {
           pingSaleTelemetry('settle', 'wcosmo-received');
-          setLog({ text: 'Settled — wCOSMO received.', tone: 'ok' });
+          setTxStage('confirmed');
+          setTxMessage('Done. The wCOSMO arrived in your wallet.');
           setQuote(null);
           return;
         }
       }
-      setLog({ text: 'TX sent — confirmation still pending, check the explorer.', tone: 'info' });
+      setTxStage('unconfirmed');
+      setTxMessage('Sent, but not confirmed yet. Open the transaction to check. Nothing is assumed.');
     } catch (e) {
       pingSaleTelemetry('error', 'sign-failed');
-      setLog({ text: `Sign/send error: ${(e as Error).message ?? e}`, tone: 'bad' });
+      if (sent) {
+        setTxStage('unconfirmed');
+        setTxMessage('Sent, but the result could not be read. Open the transaction to check.');
+      } else {
+        setTxStage('idle');
+        setLog({ text: explainSignError(e), tone: 'bad' });
+      }
     } finally {
       setBusy(null);
     }
@@ -416,23 +445,29 @@ export default function BuySaleHelper() {
     <div className="terminal-theme-scope min-h-screen">
       <div className="terminal-container">
         <div className="grid-bg" />
-        <div className="relative z-10 mx-auto max-w-3xl px-5 py-16 md:py-24">
+        <div className="relative z-10 mx-auto max-w-3xl px-4 py-16 md:px-6 md:py-24">
           <header className="max-w-2xl">
-            <div className="mb-5 flex items-center gap-3">
-              <span className="inline-flex h-2 w-2 rounded-full bg-phase-active shadow-[0_0_10px_rgba(168,85,247,0.8)]" />
-              <span className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
-                Seller sale · SUPRA -&gt; wCOSMO · Mainnet (chain 8)
-              </span>
-            </div>
-            <h1 className="font-mono text-2xl font-bold text-ink-0 md:text-3xl">
-              Buy wCOSMO from the project treasury
+            <MaturityBadge level="pilot" detail="capped sale on Supra Mainnet" />
+            <h1 className="mt-5 text-3xl font-semibold tracking-tight text-ink-0 md:text-5xl">
+              Buy wCOSMO with SUPRA
             </h1>
-            <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
-              A capped, floor-protected seller sale: you pay SUPRA, the on-chain contract
-              pays out wCOSMO from a pre-funded inventory. Every trade needs a signed
-              server quote AND passes the on-chain floor, limit and signature checks.
+            <p className="mt-4 text-pretty text-base leading-relaxed text-ink-1 md:text-lg">
+              You pay SUPRA and get wCOSMO from the project&apos;s own stock. The price can never
+              go below a fixed minimum, and the amounts are capped. The contract enforces both.
             </p>
           </header>
+          <div className="mt-6">
+            <FlowStrip
+              steps={[
+                { id: 'wallet', icon: WalletIcon, label: 'Connect wallet' },
+                { id: 'price', icon: Tag, label: 'Get a price' },
+                { id: 'pay', icon: ArrowLeftRight, label: 'Pay SUPRA' },
+                { id: 'receive', icon: Coins, label: 'Receive wCOSMO' },
+              ]}
+              label="How buying works: connect your wallet, get a price, pay SUPRA, receive wCOSMO."
+              className="justify-start"
+            />
+          </div>
 
           {/* Buy path disabled banner — build-time gate.
               HONESTY RULE: this banner may only describe THIS BUILD, never the
@@ -447,10 +482,9 @@ export default function BuySaleHelper() {
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                 <span>
                   <span className="font-bold">Buy path disabled in this build.</span> The
-                  connect, quote and sign steps are switched off at build time, so no
-                  transaction is reachable from this page. This is a property of the
-                  build, not a statement about the sale — the live status below is read
-                  from the chain and remains authoritative.
+                  connect, price and pay steps are switched off in this version of the site,
+                  so no transaction can be started from this page. That says nothing about
+                  the sale itself: the live status below is read from the chain.
                 </span>
               </p>
             </div>
@@ -472,19 +506,19 @@ export default function BuySaleHelper() {
             <div className="mt-3 space-y-2">
               {statusErr && (
                 <p className="font-mono text-xs text-phase-warn">
-                  Quote service unreachable ({statusErr}) — no price can be shown.
+                  The price service cannot be reached ({statusErr}). No price can be shown.
                 </p>
               )}
               {status && !status.chain.available && (
                 <p className="font-mono text-xs text-phase-warn">
-                  Sale contract not readable on-chain
-                  {status.chain.reason ? ` (${status.chain.reason.slice(0, 90)}…)` : ''} —
-                  no price is shown while the venue is unavailable.
+                  The sale contract cannot be read right now
+                  {status.chain.reason ? ` (${status.chain.reason.slice(0, 90)}…)` : ''}. No price
+                  is shown until it can.
                 </p>
               )}
               {status && status.probe.ok === false && status.chain.available && (
                 <p className="font-mono text-xs text-phase-warn">
-                  Quoting gated: {status.probe.gateReason}
+                  No price right now: {status.probe.gateReason}
                 </p>
               )}
               {probeTiles && <PriceTerms tiles={probeTiles} />}
@@ -493,7 +527,7 @@ export default function BuySaleHelper() {
 
           {/* flow */}
           <section className="mt-6 rounded-xl border border-line-base bg-surface-1 p-5">
-            <h2 className="font-mono text-sm font-bold text-ink-0">Buy flow</h2>
+            <h2 className="font-mono text-sm font-bold text-ink-0">Buy</h2>
 
             {/* connect */}
             <div className="mt-4">
@@ -515,12 +549,12 @@ export default function BuySaleHelper() {
                   )}
                 >
                   {connecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plug className="h-4 w-4" />}
-                  {SALE_LIVE ? 'Connect StarKey' : 'Connect (disabled — not live)'}
+                  {SALE_LIVE ? 'Connect wallet' : 'Connect (switched off in this build)'}
                 </button>
               )}
               {notFound && (
                 <p className="mt-2 font-mono text-xs text-phase-warn">
-                  StarKey not found —{' '}
+                  The StarKey wallet was not found:{' '}
                   <a href="https://starkey.app" target="_blank" rel="noopener noreferrer" className="text-phase-proof">
                     install it
                   </a>{' '}
@@ -554,12 +588,12 @@ export default function BuySaleHelper() {
                       : 'cursor-not-allowed border-line-base bg-surface-inset text-ink-2',
                   )}
                 >
-                  {busy === 'quote' ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Request quote'}
+                  {busy === 'quote' ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Get price'}
                 </button>
               </div>
               {amountInput !== '' && !amountValid && (
                 <p className="mt-1.5 font-mono text-[11px] text-phase-warn">
-                  Positive number, up to 8 fraction digits.
+                  Enter a number above zero (at most 8 digits after the point).
                 </p>
               )}
             </div>
@@ -569,7 +603,7 @@ export default function BuySaleHelper() {
               <div className="mt-4 rounded-lg border border-phase-warn/40 bg-phase-warn/10 p-3">
                 <p className="flex items-start gap-2 font-mono text-xs text-phase-warn">
                   <ShieldAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                  No quote: {gateReason}
+                  No price: {gateReason}
                 </p>
                 {gates.filter((g) => g.hit).length > 0 && (
                   <ul className="mt-2 space-y-0.5 font-mono text-[10px] text-ink-1">
@@ -602,7 +636,7 @@ export default function BuySaleHelper() {
                     .
                   </p>
                   <p className={cn('mt-1', secsLeft < 30 ? 'text-phase-warn' : 'text-phase-settled')}>
-                    Quote valid {secsLeft}s (ask version {quote.quote.askVersion})
+                    This price is valid for {secsLeft} more seconds (price version {quote.quote.askVersion})
                   </p>
                 </div>
                 {!payloadText && (
@@ -619,12 +653,14 @@ export default function BuySaleHelper() {
               </div>
             )}
 
-            {/* payload + sign */}
-            {payloadText && (
+            {/* what will be signed + pay */}
+            {payloadText && quote && (
               <div className="mt-4 space-y-3">
-                <pre className="overflow-x-auto whitespace-pre-wrap rounded-lg border border-dashed border-line-base bg-surface-inset p-4 font-mono text-[11px] leading-relaxed text-ink-1">
-                  {payloadText}
-                </pre>
+                <TechDetails title="Technical details: exactly what you will sign" defaultOpen>
+                  <pre className="overflow-x-auto whitespace-pre-wrap rounded-lg border border-dashed border-line-base bg-surface-inset p-4 font-mono text-[11px] leading-relaxed text-ink-1">
+                    {payloadText}
+                  </pre>
+                </TechDetails>
                 <button
                   type="button"
                   disabled={!SALE_LIVE || busy !== null}
@@ -632,24 +668,12 @@ export default function BuySaleHelper() {
                   className="inline-flex items-center gap-2 rounded-lg border border-phase-settled/50 bg-phase-settled/10 px-4 py-2 font-mono text-xs text-phase-settled hover:bg-phase-settled/20"
                 >
                   {busy === 'sign' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Lock className="h-4 w-4" />}
-                  Sign with StarKey
+                  Pay {fmtSupraAmt(quote.quote.amountInRaw)} SUPRA
                 </button>
               </div>
             )}
 
-            {txHash && (
-              <p className="mt-4 font-mono text-xs text-ink-1">
-                TX:{' '}
-                <a
-                  href={`${EXPLORER_TX}${txHash}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-phase-proof hover:text-phase-proof"
-                >
-                  {shortAddr(txHash)}
-                </a>
-              </p>
-            )}
+            <TxStatus stage={txStage} message={txMessage ?? undefined} txHash={txHash} className="mt-4" />
             {log && (
               <p
                 className={cn(
@@ -669,46 +693,46 @@ export default function BuySaleHelper() {
             <h2 className="font-mono text-sm font-bold text-ink-0">
               Read this before buying anything
             </h2>
-            <ul className="mt-3 space-y-2 font-sans text-xs leading-relaxed text-ink-1">
+            <ul className="mt-3 space-y-2 font-sans text-sm leading-relaxed text-ink-1">
               <li>
-                <span className="text-ink-0">This is a seller sale.</span> You are buying
-                wCOSMO from the project treasury, not on an order book. The seller sets a
-                protected minimum price (on-chain floor) below which no trade can settle.
+                <span className="text-ink-0">This is a sale by the project.</span> You buy wCOSMO
+                from the project&apos;s own stock, not from other traders. The seller fixed a
+                minimum price in the contract. No trade can happen below it.
               </li>
               <li>
-                <span className="text-ink-0">The price terms are shown individually</span>{' '}
-                — Atmos TWAP, maker spread, floor and effective ask — plus which term won.
-                The Atmos pool is a small market reference (~$9.4k TVL at design time;
-                moving its spot ~1% costs roughly $23), NOT an oracle. The floor and the
-                hard caps are the actual protection.
+                <span className="text-ink-0">The price is shown piece by piece:</span> the market
+                price on Atmos, the seller markup, the minimum price and the price you get, plus
+                which of them decided. The Atmos pool is small (about $9.4k at design time; moving
+                its price by 1% costs roughly $23). It is a reference, not a reliable price
+                source. The minimum price and the caps are what actually protect.
               </li>
               <li>
-                <span className="text-ink-0">Hard on-chain caps:</span> 250,000 wCOSMO per
-                trade, 1,000,000 per rolling 24h, 2,000,000 lifetime — then the contract
-                closes itself permanently. No admin can raise these without a package
-                upgrade.
+                <span className="text-ink-0">Caps fixed in the contract:</span> 250,000 wCOSMO per
+                trade, 1,000,000 per rolling 24 hours, 2,000,000 in total. Then the contract
+                closes itself for good. No admin can raise these without publishing a new
+                contract version.
               </li>
               <li>
-                <span className="text-ink-0">What the server signs vs. what the chain enforces:</span>{' '}
-                the quote server only signs offers. The chain independently re-checks
-                buyer, chain id, module address, floor, all caps, quote expiry and the
-                signature — a quote that violates any of them cannot settle.
+                <span className="text-ink-0">What our server does and what the contract checks:</span>{' '}
+                the server only signs prices. The contract checks the buyer, the network, its own
+                address, the minimum price, all caps, the expiry of the price and the signature
+                by itself. A price that breaks any of these cannot go through.
               </li>
               <li>
-                <span className="text-ink-0">Residual risk, stated plainly:</span> if the
-                quote server key were compromised, an attacker could sell the remaining
-                capped inventory AT the floor price (never below). Worst case equals the
-                remaining cap times the gap between market price and floor — bounded, and
-                bounded only because floor and caps are on-chain.
+                <span className="text-ink-0">Remaining risk, stated plainly:</span> if the
+                server&apos;s signing key were stolen, an attacker could sell the remaining capped
+                stock at the minimum price, never below. The worst case is the remaining cap
+                times the gap between market price and minimum price. It is limited only because
+                minimum and caps are in the contract.
               </li>
               <li>
-                <span className="text-ink-0">Exit path:</span> wCOSMO can be unwrapped 1:1
-                to $COSMO at any time (see the{' '}
+                <span className="text-ink-0">Getting out:</span> wCOSMO can be turned back into
+                $COSMO 1 to 1 at any time (see the{' '}
                 <Link href="/wcosmo/" className="text-phase-proof hover:text-phase-proof">
                   wCOSMO guide
                 </Link>
-                ); selling is only possible on Atmos at whatever liquidity exists there.
-                There is NO buy-back commitment.
+                ). Selling is only possible on Atmos, at whatever liquidity exists there. There
+                is no promise to buy back.
               </li>
             </ul>
           </section>

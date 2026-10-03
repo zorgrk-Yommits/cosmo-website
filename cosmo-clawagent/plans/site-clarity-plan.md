@@ -188,3 +188,12 @@ Quelle der Regeln: `cosmo-contracts-move/compute-rfq/sources/` auf Branch `feat/
 - Waechter: Inhalte, die ueber ein Prop `technical` in einen Aufklapper gereicht werden, zaehlen als Technik; Liste 24 → 17.
 - `FlowStrip`: gleich breite Spalten, sechs Schritte passen bei 390 und 360 px in eine Zeile.
 - NICHT geprueft: echter Signiervorgang (Deposit, Angebot, Hand-in) mit den neuen Statuspfaden; die Deposit-Uebersicht mit Wallet nur als Mock-Vorschau gesehen. Server-Texte (`headline`, Blocker `cause`/`remedy`) kommen vom Market-Backend und sind unveraendert; nur die Zeile fuer bezahlte Jobs wird im Client ersetzt.
+
+### Etappe 4: umgesetzt 03.10.2026 (lokal, NICHT deployt; Deploy erst nach GO)
+
+- `/portfolio`: `TokenPosition` als Kopf (wCOSMO im Wallet / gesperrt / frei zum Zurueckholen), Zeilentitel in Klartext (Safety deposits, Locked in open jobs and offers, Ready to take back, Gone with the reason), Buttons "Withdraw deposit" / "Take tokens back", Payload im offenen Aufklapper, `TxStatus`; Positionssaetze in `positions.ts` umgeschrieben; Hinweis, dass Provider-Seite eines Jobs nicht gelistet ist; Scan-Fenster-Details im Aufklapper.
+- `/vault`: `PageIntro` "Where deposits are held.", Abschnitte und Kacheln in Klartext, Adressen und View-Namen im Aufklapper; Diagramm sagt jetzt "unless a penalty lock runs" statt "after lock".
+- `/buy`: Ablaufbild (Connect wallet → Get a price → Pay SUPRA → Receive wCOSMO), Preisbildung in Klartext ("How the price is formed"), Button "Pay <Betrag> SUPRA", `TxStatus` mit echtem Urteil der Chain, Hinweisliste umgeschrieben. Marker "Buy path disabled in this build" fuer den Postbuild-Check unveraendert. Caps (250k / 1M / 2M) gegen `/api/sale/status` geprueft: 24h-Rest 1.000.000, Lifetime-Rest + verkauft = 2.000.000.
+- `/wcosmo`: `PageIntro` mit Bild $COSMO ⇄ wCOSMO, Erklaerung in Klartext, Technik (dispatchable FA, Adressen) im Aufklapper, "The backing, checked live"; Unwrap-Werkzeug mit `TxStatus`.
+- Waechter-Liste 17 → 6 (Rest: Assurance, Mandates, CosmoStory + drei nur dort benutzte Komponenten).
+- NICHT geprueft: echte Signaturen (Withdraw/Claim, Kauf, Unwrap) mit den neuen Statusanzeigen; `/portfolio` live nur lesend mit der Adresse von Operator M2 gesehen.

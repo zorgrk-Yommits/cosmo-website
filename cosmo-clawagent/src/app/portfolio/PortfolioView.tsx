@@ -23,7 +23,6 @@ import { cn } from '@/lib/utils';
 import {
   CHAIN_ID,
   EXPLORER_ADDR,
-  EXPLORER_TX,
   bcsU64,
   fetchSeqNum,
   getSupra,
@@ -50,6 +49,11 @@ import {
   type WalletSnapshot,
 } from './lib/portfolioData';
 import { fmtTokenAmt, fmtUtc, sumByToken, type Position } from './lib/positions';
+import type { TxStage } from '@/lib/txStatus';
+import MaturityBadge from '@/components/cosmo/MaturityBadge';
+import TechDetails from '@/components/cosmo/TechDetails';
+import TokenPosition, { type PositionPart } from '@/components/cosmo/TokenPosition';
+import TxStatus from '@/components/cosmo/TxStatus';
 import {
   buildCall,
   buttonsLocked,
@@ -71,6 +75,42 @@ type Snapshot = {
   takenAtMs: number;
   clockSkewSecs: number;
 };
+
+// The four places wCOSMO can be, for the picture at the top. Sums the rows
+// already classified below; a deposit counts as free only if it can be
+// withdrawn right now.
+function glance(
+  snap: Snapshot,
+  rows: { bonded: Position[]; escrow: Position[]; claimable: Position[] },
+): PositionPart[] {
+  const isW = (p: Position) => p.token.symbol === 'wCOSMO';
+  const sum = (ps: Position[]) => ps.filter(isW).reduce((t, p) => t + p.amount, BigInt(0));
+  const num = (q: bigint) => Number(q) / 1e6;
+  const amt = (q: bigint) => `${fmtAmt(q)} wCOSMO`;
+  const dep = rows.bonded.filter(isW);
+  const depFree = sum(dep.filter((p) => p.actionable));
+  const depLocked = sum(dep.filter((p) => !p.actionable));
+  const locked = sum(rows.escrow) + depLocked;
+  const free = sum(rows.claimable) + depFree;
+  const walletKnown = !snap.wallet.errors.includes('wCOSMO balance unavailable');
+  return [
+    { kind: 'wallet', amount: walletKnown ? amt(snap.wallet.wcosmo) : null, value: walletKnown ? num(snap.wallet.wcosmo) : undefined },
+    {
+      kind: 'locked',
+      label: 'Locked (jobs, offers, locked deposits)',
+      amount: amt(locked),
+      value: num(locked),
+      hint: locked > BigInt(0) ? 'Each row below says when it comes free.' : undefined,
+    },
+    {
+      kind: 'free',
+      label: 'Free to take back (deposits, expired jobs)',
+      amount: amt(free),
+      value: num(free),
+      hint: free > BigInt(0) ? 'Use the buttons in rows 2 and 4 with your own wallet connected.' : undefined,
+    },
+  ];
+}
 
 type Signer = { addr: string; chainOk: boolean; chainId: string | null };
 
@@ -198,11 +238,11 @@ export default function PortfolioView() {
   // Why buttons are hidden or locked for this snapshot (null = buttons allowed).
   const signBlock: string | null = useMemo(() => {
     if (!snap) return 'no snapshot';
-    if (!signer) return 'Connect StarKey to see claim and withdraw buttons for your own address.';
-    if (!sameAddr(signer.addr, snap.addr)) return `Buttons appear only for the connected StarKey address (${shortAddr(signer.addr)}); this snapshot is for another address.`;
-    if (!signer.chainOk) return `StarKey is on chain ${signer.chainId ?? '?'}; switch to Supra Mainnet (8) and reconnect to sign.`;
-    if (Math.abs(snap.clockSkewSecs) > MAX_SKEW_SECS) return `Your device clock differs from chain time by ${Math.abs(snap.clockSkewSecs)} s. Buttons stay locked until the clocks agree (plan kill condition).`;
-    if (buttonsLocked(abortsAfterGreen)) return 'Two transactions aborted although the live check was green. Buttons are locked on this page until it is reloaded; the cause is being investigated (stage 3).';
+    if (!signer) return 'Connect your wallet to get the buttons for taking tokens back. They appear only for your own address.';
+    if (!sameAddr(signer.addr, snap.addr)) return `Buttons appear only for the connected wallet (${shortAddr(signer.addr)}). You are looking at another address.`;
+    if (!signer.chainOk) return `Your wallet is on the wrong network (${signer.chainId ?? '?'}). Switch StarKey to Supra Mainnet and connect again.`;
+    if (Math.abs(snap.clockSkewSecs) > MAX_SKEW_SECS) return `Your device clock differs from chain time by ${Math.abs(snap.clockSkewSecs)} s. Buttons stay locked until the clocks agree.`;
+    if (buttonsLocked(abortsAfterGreen)) return 'Two transactions failed although the check before them passed. As a precaution the buttons are locked until you reload this page.';
     return null;
   }, [snap, signer, abortsAfterGreen]);
 
@@ -219,23 +259,16 @@ export default function PortfolioView() {
     <div className="terminal-theme-scope min-h-screen">
       <div className="terminal-container">
         <div className="grid-bg" />
-        <div className="relative z-10 mx-auto max-w-3xl px-5 py-16 md:py-24">
+        <div className="relative z-10 mx-auto max-w-3xl px-4 py-16 md:px-6 md:py-24">
           <header className="max-w-2xl">
-            <div className="mb-5 flex items-center gap-3">
-              <span className="inline-flex h-2 w-2 rounded-full bg-phase-active shadow-[0_0_10px_rgba(168,85,247,0.8)]" />
-              <span className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
-                Position snapshot · Mainnet (chain 8)
-              </span>
-            </div>
-            <h1 className="font-mono text-3xl font-bold tracking-tight text-ink-0 md:text-5xl">
+            <MaturityBadge level="live" detail="Supra Mainnet" />
+            <h1 className="mt-5 text-3xl font-semibold tracking-tight text-ink-0 md:text-5xl">
               Where are my tokens?
             </h1>
-            <p className="mt-4 font-sans text-base leading-relaxed text-ink-1">
-              One address, five places tokens can be: in the wallet, held as a security deposit,
-              held in escrow for an open quote or job, claimable now, or gone with a reason. Every
-              line is a live on-chain read. Reading needs no signature. Claim and withdraw buttons
-              appear only for the StarKey address you connected, after a live re-check, and every
-              payload is shown in full before you sign.
+            <p className="mt-4 text-pretty text-base leading-relaxed text-ink-1 md:text-lg">
+              Enter an address to see where its tokens are: in the wallet, in a safety deposit,
+              locked in a job, ready to take back, or gone, with the reason. Looking needs no
+              wallet. Buttons for taking tokens back appear only for your own connected wallet.
             </p>
           </header>
 
@@ -252,7 +285,7 @@ export default function PortfolioView() {
                 onKeyDown={(e) => e.key === 'Enter' && lookup()}
                 placeholder="0x…"
                 spellCheck={false}
-                className="min-w-0 flex-1 rounded-lg border border-line-base bg-surface-inset px-3 py-2 font-mono text-sm text-ink-0 outline-none focus:border-phase-active"
+                className="min-w-0 flex-1 basis-full rounded-lg border border-line-base bg-surface-inset px-3 py-2 font-mono text-sm text-ink-0 outline-none focus:border-phase-active sm:basis-0"
               />
               <button
                 type="button"
@@ -261,7 +294,7 @@ export default function PortfolioView() {
                 className="inline-flex items-center gap-2 rounded-lg border border-phase-proof/50 bg-phase-proof/20 px-4 py-2 font-mono text-xs text-phase-proof transition-all hover:border-phase-proof hover:bg-phase-proof/30 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Eye className="h-3.5 w-3.5" />
-                View
+                Show
               </button>
               <button
                 type="button"
@@ -270,12 +303,12 @@ export default function PortfolioView() {
                 className="inline-flex items-center gap-2 rounded-lg border border-line-base px-4 py-2 font-mono text-xs text-ink-1 transition-all hover:border-line-strong hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {connecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plug className="h-3.5 w-3.5" />}
-                Connect StarKey
+                Connect wallet
               </button>
             </div>
             {noWallet && (
               <p className="mt-3 font-sans text-xs text-phase-warn">
-                StarKey not found. You can still type any address above; reading needs no wallet.
+                The StarKey wallet was not found. You can still type any address above: looking needs no wallet.
               </p>
             )}
             {err && <p className="mt-3 font-mono text-xs text-phase-warn">{err}</p>}
@@ -297,7 +330,7 @@ export default function PortfolioView() {
                   · block {snap.chain.height.toLocaleString('en-US')} · chain time {fmtUtc(snap.chain.secs)}
                   {canSign && (
                     <span className="ml-2 inline-flex items-center gap-1 text-phase-settled">
-                      <ShieldCheck className="h-3 w-3" /> signer connected
+                      <ShieldCheck className="h-3 w-3" /> your wallet is connected
                     </span>
                   )}
                 </span>
@@ -317,25 +350,35 @@ export default function PortfolioView() {
                 </p>
               )}
               {snap.wallet.errors.length > 0 && (
-                <p className="mt-2 font-sans text-xs text-phase-warn">{snap.wallet.errors.join(' · ')} — shown as unavailable, not as 0.</p>
+                <p className="mt-2 font-sans text-xs text-phase-warn">{snap.wallet.errors.join(' · ')}. Shown as unavailable, not as 0.</p>
               )}
               {hasActionable && signBlock && signBlock !== 'no snapshot' && (
                 <p className="mt-2 font-sans text-xs text-ink-2">{signBlock}</p>
               )}
+
+              {/* at a glance: where the wCOSMO of this address is */}
+              <TokenPosition
+                className="mt-4"
+                title="wCOSMO of this address, at a glance"
+                parts={glance(snap, rows)}
+              />
+              <p className="mt-2 font-sans text-xs text-ink-2">
+                The picture counts wCOSMO only. Other tokens appear in the rows below.
+              </p>
 
               {/* 1 wallet */}
               <Row n="1" title="In your wallet" tone="active">
                 <KV k="COSMO" v={snap.wallet.errors.includes('COSMO balance unavailable') ? 'unavailable' : `${fmtAmt(snap.wallet.cosmo)} COSMO`} />
                 <KV k="wCOSMO" v={snap.wallet.errors.includes('wCOSMO balance unavailable') ? 'unavailable' : `${fmtAmt(snap.wallet.wcosmo)} wCOSMO`} />
                 <p className="mt-2 font-sans text-xs text-ink-2">
-                  Free to move. Everything below is also yours but not in the wallet.
+                  Free to use. Everything below is also yours, but not in the wallet.
                 </p>
               </Row>
 
               {/* 2 bonded */}
-              <Row n="2" title="Security deposits (held in a vault)" tone="proof" total={rows.bonded}>
+              <Row n="2" title="Safety deposits (held by a contract)" tone="proof" total={rows.bonded}>
                 {rows.bonded.length === 0 ? (
-                  <Empty>No security deposit for this address in the maker vault, provider vault or council.</Empty>
+                  <Empty>This address has no safety deposit.</Empty>
                 ) : (
                   rows.bonded.map((p, i) => (
                     <PositionLine key={i} p={p}>
@@ -353,24 +396,24 @@ export default function PortfolioView() {
                   ))
                 )}
                 <p className="mt-2 font-sans text-xs text-ink-2">
-                  A deposit makes you eligible; it is not spent. A penalty deduction locks withdrawal for 14 days; a deposit itself starts no lock.
-                  A partial withdrawal must leave at least the minimum deposit; a full exit is always allowed.
+                  A deposit is held, not spent. You can withdraw it whenever none of your jobs is active. Only a deposit
+                  penalty locks it for a while. If you take out only part, at least the minimum must stay; taking out everything is always allowed.
                 </p>
               </Row>
 
               {/* 3 escrow */}
-              <Row n="3" title="In escrow (open quotes and jobs)" tone="warn" total={rows.escrow}>
+              <Row n="3" title="Locked in open jobs and offers" tone="warn" total={rows.escrow}>
                 {rows.escrow.length === 0 ? (
-                  <Empty>No open leg for this address in the scanned window.</Empty>
+                  <Empty>Nothing locked for this address in the records that were checked.</Empty>
                 ) : (
                   rows.escrow.map((p, i) => <PositionLine key={i} p={p} />)
                 )}
               </Row>
 
               {/* 4 claimable */}
-              <Row n="4" title="Claimable now" tone="settled" total={rows.claimable}>
+              <Row n="4" title="Ready to take back" tone="settled" total={rows.claimable}>
                 {rows.claimable.length === 0 ? (
-                  <Empty>Nothing waiting for a claim in the scanned window.</Empty>
+                  <Empty>Nothing to take back in the records that were checked.</Empty>
                 ) : (
                   rows.claimable.map((p, i) => (
                     <PositionLine key={i} p={p}>
@@ -388,25 +431,25 @@ export default function PortfolioView() {
                   ))
                 )}
                 <p className="mt-2 font-sans text-xs text-ink-2">
-                  Only positions an on-chain function returns on a call are listed here. The function name is shown so you can
-                  also call it from any Supra tool; the button here re-checks the record live before it builds the payload.
+                  Only tokens the contract hands back when asked are listed here. The button checks the record again, live,
+                  before it prepares the transaction. The contract function is named in each row for those who use their own tools.
                 </p>
               </Row>
 
               {/* 5 gone */}
-              <Row n="5" title="Gone, with reason" tone="fault" total={rows.gone}>
+              <Row n="5" title="Gone, with the reason" tone="fault" total={rows.gone}>
                 {rows.gone.length === 0 ? (
-                  <Empty>No fees recorded for this address in the scanned window.</Empty>
+                  <Empty>No fees recorded for this address in the records that were checked.</Empty>
                 ) : (
                   rows.gone.map((p, i) => <PositionLine key={i} p={p} />)
                 )}
                 <KV
-                  k="Penalty deductions"
+                  k="Deposit penalties so far"
                   v={`${snap.wallet.makerSlashCount.toString()} (maker) · ${snap.wallet.providerSlashCount.toString()} (provider)`}
                 />
                 <p className="mt-2 font-sans text-xs text-ink-2">
-                  Penalty amounts are not recorded per address on-chain, only the count. Vault-wide totals are on the{' '}
-                  <Link href="/vault/" className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof">vault page</Link>.
+                  The chain records how many penalties an address had, not their amounts. Totals for all deposits are on the{' '}
+                  <Link href="/vault/" className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof">deposits page</Link>.
                 </p>
               </Row>
 
@@ -414,37 +457,43 @@ export default function PortfolioView() {
               <section className="mt-6 rounded-xl border border-phase-warn/20 bg-phase-warn/[0.04] p-5">
                 <div className="mb-2 flex items-center gap-2">
                   <Lock className="h-4 w-4 text-phase-warn" />
-                  <h3 className="font-mono text-sm text-ink-0">Not readable per address yet</h3>
+                  <h3 className="font-mono text-sm text-ink-0">What this page cannot show yet</h3>
                 </div>
                 <ul className="space-y-1.5 font-sans text-sm leading-relaxed text-ink-1">
-                  <li>· Stakes on agents: the chain exposes totals per agent, not per staker.</li>
-                  <li>· Yield accounting not active in v1: no position, no estimate, nothing claimable.</li>
-                  <li>· Penalty reserve: vault-wide only; no per-address claim exists.</li>
-                  <li>· Council bond: no withdraw function in v1.</li>
+                  <li>· Jobs you work on as a provider: only the buyer side of a job is listed. What you earn arrives in your wallet when the job is paid.</li>
+                  <li>· Stakes on agents: the chain shows totals per agent, not per person.</li>
+                  <li>· Yield: not active in this version. There is no position, no estimate and nothing to take back.</li>
+                  <li>· The penalty reserve: it exists for all deposits together, not per address.</li>
+                  <li>· Council deposits: this version has no function to withdraw them.</li>
                 </ul>
               </section>
 
-              {/* window label */}
-              <p className="mt-6 font-mono text-[11px] leading-relaxed text-ink-2">
-                Checked RFQ requests #{snap.report.rfqRequests.lo}–{Math.max(0, snap.report.rfqRequests.hi - 1)} of {snap.report.rfqRequests.total},
-                accepted quotes #{snap.report.rfqQuotes.lo}–{Math.max(0, snap.report.rfqQuotes.hi - 1)} of {snap.report.rfqQuotes.total},
-                compute requests #{snap.report.cmpRequests.lo}–{Math.max(0, snap.report.cmpRequests.hi - 1)} of {snap.report.cmpRequests.total},
-                compute jobs #{snap.report.cmpJobs.lo}–{Math.max(0, snap.report.cmpJobs.hi - 1)} of {snap.report.cmpJobs.total}
-                {' '}in {(snap.report.ms / 1000).toFixed(1)} s at {fmtUtc(snap.chain.secs)}.
+              {/* how much was checked */}
+              <p className="mt-6 font-sans text-xs leading-relaxed text-ink-2">
+                Only the most recent records are checked, so this is a window, not a full census: older records are
+                outside it. Read at {fmtUtc(snap.chain.secs)} in {(snap.report.ms / 1000).toFixed(1)} s.
                 {snap.report.unreadable > 0 && ` ${snap.report.unreadable} record(s) could not be read and are not shown.`}
-                {' '}This is a window, not a full census; older records are outside it.
               </p>
+              <TechDetails title="Technical details: which records were checked" className="mt-3">
+                <p className="font-mono text-[11px] leading-relaxed">
+                  RFQ requests #{snap.report.rfqRequests.lo}–{Math.max(0, snap.report.rfqRequests.hi - 1)} of {snap.report.rfqRequests.total},
+                  accepted quotes #{snap.report.rfqQuotes.lo}–{Math.max(0, snap.report.rfqQuotes.hi - 1)} of {snap.report.rfqQuotes.total},
+                  compute requests #{snap.report.cmpRequests.lo}–{Math.max(0, snap.report.cmpRequests.hi - 1)} of {snap.report.cmpRequests.total},
+                  compute jobs #{snap.report.cmpJobs.lo}–{Math.max(0, snap.report.cmpJobs.hi - 1)} of {snap.report.cmpJobs.total}.
+                  Block {snap.chain.height.toLocaleString('en-US')}.
+                </p>
+              </TechDetails>
             </>
           )}
 
           {!snap && !loading && (
             <p className="mt-8 font-sans text-sm text-ink-2">
-              Enter an address or connect StarKey to load a snapshot. Nothing is sent to a server; your browser reads Supra Mainnet directly.
+              Enter an address or connect your wallet. Nothing is sent to our server: your browser reads Supra Mainnet directly.
             </p>
           )}
           {loading && (
             <p className="mt-8 inline-flex items-center gap-2 font-mono text-xs text-ink-1">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" /> Reading chain time, balances, deposits and the scan window …
+              <Loader2 className="h-3.5 w-3.5 animate-spin" /> Reading balances, deposits and recent records from the chain …
             </p>
           )}
         </div>
@@ -478,6 +527,7 @@ function ClaimPanel({
   const [msg, setMsg] = useState<{ text: string; tone: 'info' | 'ok' | 'bad' } | null>(null);
   const [payloadText, setPayloadText] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
+  const [txStage, setTxStage] = useState<TxStage>('idle');
   const preparedRef = useRef<{ data: unknown; call: ClaimCall } | null>(null);
 
   const amountCheck = useMemo(() => {
@@ -497,7 +547,8 @@ function ClaimPanel({
     if (!provider) return;
     reset();
     setPhase('verifying');
-    setMsg({ text: 'Re-reading the record and chain time …', tone: 'info' });
+    setTxStage('idle');
+    setMsg({ text: 'Checking the record again, live …', tone: 'info' });
     try {
       const chain = await fetchChainTime();
       const fresh = await refetchPosition(p, signer, chain.secs);
@@ -516,7 +567,7 @@ function ClaimPanel({
       const call = buildCall(p, PACKAGE_ADDRS, amount ?? undefined);
       if (!call) {
         setPhase('idle');
-        setMsg({ text: 'No return call can be built for this position.', tone: 'bad' });
+        setMsg({ text: 'These tokens cannot be taken back from this page.', tone: 'bad' });
         return;
       }
       const seq = await fetchSeqNum(signer);
@@ -527,7 +578,7 @@ function ClaimPanel({
       const argHuman = call.kind === 'withdraw' ? fmtTokenAmt(call.arg, p.token) : '';
       setPayloadText(payloadLines({ sender: signer, call, seq, expiry, argHuman }).join('\n'));
       setPhase('ready');
-      setMsg({ text: `${v.reason} Review the payload, then sign.`, tone: 'ok' });
+      setMsg({ text: `${v.reason} Check what will be signed, then sign.`, tone: 'ok' });
     } catch (e) {
       setPhase('idle');
       setMsg({ text: `Could not prepare: ${(e as Error).message ?? e}`, tone: 'bad' });
@@ -538,7 +589,8 @@ function ClaimPanel({
     const prepared = preparedRef.current;
     if (!provider || !prepared) return;
     setPhase('signing');
-    setMsg({ text: 'Waiting for your signature in StarKey …', tone: 'info' });
+    setTxStage('signing');
+    setMsg(null);
     try {
       const hash = await provider.sendTransaction({
         data: prepared.data,
@@ -551,26 +603,30 @@ function ClaimPanel({
       setPayloadText(null);
       setTxHash(hash);
       setPhase('pending');
-      setMsg({ text: 'Sent. Waiting for on-chain confirmation (up to 90 s) …', tone: 'info' });
+      setTxStage('sent');
       const st = await waitForTx(hash);
       if (!st) {
         setPhase('failed');
-        setMsg({ text: 'Not confirmed within 90 s. Check the transaction on the explorer, then refresh this page; nothing is assumed.', tone: 'bad' });
+        setTxStage('unconfirmed');
+        setMsg({ text: 'Not confirmed within 90 seconds. Open the transaction, then refresh this page. Nothing is assumed.', tone: 'bad' });
         return;
       }
       if (st.status === 'Success') {
         setPhase('done');
-        setMsg({ text: 'Confirmed on chain. Refreshing the snapshot …', tone: 'ok' });
+        setTxStage('confirmed');
+        setMsg({ text: 'Done. Updating the view …', tone: 'ok' });
         onConfirmed();
         return;
       }
       setPhase('failed');
+      setTxStage('failed');
       setMsg({ text: explainAbort(st.vmStatus), tone: 'bad' });
       if (parseVmAbort(st.vmStatus)) onAbortAfterGreen();
     } catch (e) {
       const code = (e as { code?: number })?.code;
       setPhase(preparedRef.current ? 'ready' : 'idle');
-      setMsg({ text: code === 4001 ? 'Signature rejected in StarKey. Nothing was sent.' : `Send error: ${(e as Error).message ?? e}`, tone: 'bad' });
+      setTxStage('idle');
+      setMsg({ text: code === 4001 ? 'You declined in the wallet. Nothing was sent.' : `Could not send: ${(e as Error).message ?? e}`, tone: 'bad' });
     }
   }, [provider, signer, onConfirmed, onAbortAfterGreen]);
 
@@ -611,7 +667,7 @@ function ClaimPanel({
             <span className={cn('font-sans text-xs', amountCheck.ok ? 'text-ink-2' : 'text-phase-warn')}>{amountCheck.reason}</span>
           )}
           {minBond !== null && (
-            <span className="font-mono text-[11px] text-ink-2">min deposit {fmtTokenAmt(minBond, p.token)}</span>
+            <span className="font-mono text-[11px] text-ink-2">minimum {fmtTokenAmt(minBond, p.token)}</span>
           )}
         </div>
       )}
@@ -623,7 +679,7 @@ function ClaimPanel({
           className="inline-flex items-center gap-2 rounded-lg border border-phase-proof/50 bg-phase-proof/20 px-4 py-2 font-mono text-xs text-phase-proof transition-all hover:border-phase-proof hover:bg-phase-proof/30 disabled:cursor-not-allowed disabled:opacity-40"
         >
           {phase === 'verifying' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ShieldCheck className="h-3.5 w-3.5" />}
-          {phase === 'ready' ? 'Re-check and rebuild' : isWithdraw ? 'Check live and prepare withdrawal' : 'Check live and prepare claim'}
+          {phase === 'ready' ? 'Check again' : isWithdraw ? 'Check and prepare withdrawal' : 'Check and prepare'}
         </button>
         <button
           type="button"
@@ -632,7 +688,7 @@ function ClaimPanel({
           className="inline-flex items-center gap-2 rounded-lg border border-phase-warn/50 bg-phase-warn/20 px-4 py-2 font-mono text-xs text-phase-warn transition-all hover:border-phase-warn hover:bg-phase-warn/30 disabled:cursor-not-allowed disabled:opacity-40"
         >
           {phase === 'signing' || phase === 'pending' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <PenLine className="h-3.5 w-3.5" />}
-          Sign in StarKey
+          {isWithdraw ? 'Withdraw deposit' : 'Take tokens back'}
         </button>
       </div>
       {msg && (
@@ -641,23 +697,13 @@ function ClaimPanel({
         </p>
       )}
       {payloadText && (
-        <details open className="mt-3">
-          <summary className="cursor-pointer font-mono text-[11px] uppercase tracking-wider text-ink-2 hover:text-ink-1">
-            Raw transaction payload (exactly what you will sign)
-          </summary>
-          <pre className="mt-2 overflow-x-auto whitespace-pre-wrap break-all rounded-lg border border-dashed border-line-strong bg-surface-inset p-3 font-mono text-[11px] leading-relaxed text-ink-1">
+        <TechDetails title="Technical details: exactly what you will sign" defaultOpen className="mt-3">
+          <pre className="overflow-x-auto whitespace-pre-wrap break-all rounded-lg border border-dashed border-line-strong bg-surface-inset p-3 font-mono text-[11px] leading-relaxed text-ink-1">
             {payloadText}
           </pre>
-        </details>
+        </TechDetails>
       )}
-      {txHash && (
-        <p className="mt-2 break-all font-mono text-[11px] text-ink-1">
-          TX:{' '}
-          <a href={`${EXPLORER_TX}${txHash}`} target="_blank" rel="noopener noreferrer" className="text-phase-proof underline decoration-phase-proof/40 hover:text-phase-proof">
-            {txHash}
-          </a>
-        </p>
-      )}
+      <TxStatus stage={txStage} txHash={txHash} className="mt-3" />
     </div>
   );
 }
@@ -733,7 +779,7 @@ function PositionLine({ p, children }: { p: Position; children?: React.ReactNode
       <p className="mt-1 font-sans text-xs leading-relaxed text-ink-1">{p.next}</p>
       {p.returnFn && (
         <p className="mt-1 font-mono text-[11px] text-ink-2">
-          returns via <span className="text-ink-1">{p.returnFn}</span>
+          contract function: <span className="text-ink-1">{p.returnFn}</span>
           {p.returnAfterSecs !== null && p.bucket === 'escrow' && ` from ${fmtUtc(p.returnAfterSecs)}`}
         </p>
       )}
@@ -745,11 +791,11 @@ function PositionLine({ p, children }: { p: Position; children?: React.ReactNode
 function sourceLabel(s: Position['source']): string {
   switch (s) {
     case 'maker_vault':
-      return 'Maker vault (operator deposit)';
+      return 'Safety deposit as a maker';
     case 'provider_vault':
-      return 'Provider vault (compute deposit)';
+      return 'Safety deposit as a provider';
     case 'council_bond':
-      return 'Council bond';
+      return 'Council deposit';
     default:
       return s;
   }

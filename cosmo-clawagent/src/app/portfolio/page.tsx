@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import PortfolioView from './PortfolioView';
 
 export const metadata: Metadata = {
-  title: 'COSMO — Where are my tokens? (position snapshot)',
+  title: 'COSMO — Where are my tokens?',
   description:
-    'Snapshot of one address on Supra Mainnet: wallet balances, security deposits and when they can be withdrawn, legs held in escrow, what is claimable now, and what is gone with the reason. Built from public view functions, window-bounded. Reading needs no signature; claim and withdraw buttons appear only for your own connected StarKey address.',
+    'See where the tokens of one address are on Supra Mainnet: in the wallet, in a safety deposit, locked in a job, ready to take back, or gone, with the reason. Looking needs no wallet; buttons for taking tokens back appear only for your own connected wallet.',
 };
 
 export default function PortfolioPage() {

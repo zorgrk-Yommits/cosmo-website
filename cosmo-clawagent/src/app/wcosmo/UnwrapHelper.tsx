@@ -12,7 +12,6 @@ import { cn } from '@/lib/utils';
 import {
   CHAIN_ID,
   COSMOCLAW_ADDR,
-  EXPLORER_TX,
   WCOSMO_META,
   type SupraProvider,
   bcsU64,
@@ -23,6 +22,8 @@ import {
   parseAmount,
   shortAddr,
 } from '@/lib/mainnetOnchain';
+import { explainAbort, explainSignError, fetchTxStatus, type TxStage } from '@/lib/txStatus';
+import TxStatus from '@/components/cosmo/TxStatus';
 
 const ZERO = BigInt(0);
 
@@ -41,6 +42,8 @@ export default function UnwrapHelper() {
   const [busy, setBusy] = useState<null | 'prepare' | 'sign'>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [log, setLog] = useState<{ text: string; tone: 'info' | 'ok' | 'bad' } | null>(null);
+  // outcome of the unwrap transaction, read from the chain
+  const [tx, setTx] = useState<{ stage: TxStage; message?: string }>({ stage: 'idle' });
 
   useEffect(() => {
     preparedRef.current = null;
@@ -83,7 +86,7 @@ export default function UnwrapHelper() {
       setAccount(addr);
       setWcosmoBal(await faBalance(addr, WCOSMO_META).catch(() => ZERO));
     } catch (e) {
-      setLog({ text: `Connect error: ${(e as Error).message ?? e}`, tone: 'bad' });
+      setLog({ text: `Could not connect: ${(e as Error).message ?? e}`, tone: 'bad' });
     } finally {
       setConnecting(false);
     }
@@ -123,9 +126,9 @@ export default function UnwrapHelper() {
           'Chain           : 8 (Supra Mainnet)',
         ].join('\n'),
       );
-      setLog({ text: 'Unwrap payload ready. Review it, then sign.', tone: 'info' });
+      setLog({ text: 'Ready. Check what will be signed, then unwrap.', tone: 'info' });
     } catch (e) {
-      setLog({ text: `Payload error: ${(e as Error).message ?? e}`, tone: 'bad' });
+      setLog({ text: `Could not prepare the transaction: ${(e as Error).message ?? e}`, tone: 'bad' });
     } finally {
       setBusy(null);
     }
@@ -136,9 +139,11 @@ export default function UnwrapHelper() {
     const prepared = preparedRef.current;
     if (!p || !account || !prepared) return;
     setBusy('sign');
+    let sent = false;
     try {
       const before = wcosmoBal ?? ZERO;
-      setLog({ text: 'Waiting for signature in StarKey …', tone: 'info' });
+      setTx({ stage: 'signing' });
+      setLog(null);
       const hash = await p.sendTransaction({
         data: prepared.data,
         from: account,
@@ -149,19 +154,31 @@ export default function UnwrapHelper() {
       preparedRef.current = null;
       setPayloadText(null);
       setTxHash(hash);
-      setLog({ text: 'TX sent. Waiting for on-chain confirmation …', tone: 'info' });
+      sent = true;
+      setTx({ stage: 'sent' });
       for (let i = 0; i < 20; i++) {
         await new Promise((r) => setTimeout(r, 3000));
+        // The chain's own verdict first: a failed unwrap must say so.
+        const verdict = await fetchTxStatus(hash).catch(() => null);
+        if (verdict?.status === 'Fail') {
+          setTx({ stage: 'failed', message: explainAbort(verdict.vmStatus) });
+          return;
+        }
         const bal = await faBalance(account, WCOSMO_META).catch(() => null);
         if (bal !== null && bal < before) {
           setWcosmoBal(bal);
-          setLog({ text: 'Unwrapped — $COSMO released to your wallet.', tone: 'ok' });
+          setTx({ stage: 'confirmed', message: 'Done. The $COSMO is back in your wallet.' });
           return;
         }
       }
-      setLog({ text: 'TX sent — confirmation still pending, check the explorer.', tone: 'info' });
+      setTx({ stage: 'unconfirmed', message: 'Sent, but not confirmed yet. Open the transaction to check. Nothing is assumed.' });
     } catch (e) {
-      setLog({ text: `Sign/send error: ${(e as Error).message ?? e}`, tone: 'bad' });
+      if (sent) {
+        setTx({ stage: 'unconfirmed', message: 'Sent, but the result could not be read. Open the transaction to check.' });
+      } else {
+        setTx({ stage: 'idle' });
+        setLog({ text: explainSignError(e), tone: 'bad' });
+      }
     } finally {
       setBusy(null);
     }
@@ -169,10 +186,10 @@ export default function UnwrapHelper() {
 
   return (
     <div className="rounded-xl border border-line-base bg-surface-1 p-5">
-      <h3 className="font-mono text-sm text-ink-0">Unwrap here (self-service)</h3>
+      <h3 className="font-mono text-sm text-ink-0">Turn wCOSMO back into $COSMO here</h3>
       <p className="mt-2 font-sans text-xs leading-relaxed text-ink-1">
-        Burns wCOSMO 1:1 and releases $COSMO to your wallet. Permissionless — works for
-        any holder at any time, as long as the wCOSMO is not held in a vault.
+        Gives up wCOSMO and returns the same amount of $COSMO to your wallet. Works for anyone
+        at any time, as long as the wCOSMO is not placed as a safety deposit.
       </p>
 
       <div className="mt-4">
@@ -192,12 +209,12 @@ export default function UnwrapHelper() {
             className="inline-flex items-center gap-2 rounded-lg border border-phase-active/50 bg-phase-active/10 px-4 py-2 font-mono text-xs text-phase-active hover:bg-phase-active/20"
           >
             {connecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plug className="h-4 w-4" />}
-            Connect StarKey
+            Connect wallet
           </button>
         )}
         {notFound && (
           <p className="mt-2 font-mono text-xs text-phase-warn">
-            StarKey not found —{' '}
+            The StarKey wallet was not found:{' '}
             <a href="https://starkey.app" target="_blank" rel="noopener noreferrer" className="text-phase-proof">
               install it
             </a>{' '}
@@ -250,24 +267,12 @@ export default function UnwrapHelper() {
             className="inline-flex items-center gap-2 rounded-lg border border-phase-settled/50 bg-phase-settled/10 px-4 py-2 font-mono text-xs text-phase-settled hover:bg-phase-settled/20"
           >
             {busy === 'sign' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Lock className="h-4 w-4" />}
-            Sign with StarKey
+            Unwrap
           </button>
         </div>
       )}
 
-      {txHash && (
-        <p className="mt-4 font-mono text-xs text-ink-1">
-          TX:{' '}
-          <a
-            href={`${EXPLORER_TX}${txHash}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-phase-proof hover:text-phase-proof"
-          >
-            {shortAddr(txHash)}
-          </a>
-        </p>
-      )}
+      <TxStatus stage={tx.stage} message={tx.message} txHash={txHash} className="mt-4" />
       {log && (
         <p
           className={cn(

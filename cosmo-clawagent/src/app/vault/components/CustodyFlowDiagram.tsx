@@ -172,7 +172,7 @@ export default function CustodyFlowDiagram({ custodyBalance, operators }: Props)
         Held in the vault
       </div>
       <div className="font-mono text-[14px] font-bold leading-tight text-white">
-        Resource Account
+        Contract account
       </div>
       <div className="mt-0.5 font-mono text-[11px] text-ink-1">
         {shortAddr(MAKER_VAULT_RESOURCE_ADDR)}
@@ -183,7 +183,7 @@ export default function CustodyFlowDiagram({ custodyBalance, operators }: Props)
       <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full border border-line-base bg-surface-2 px-2 py-0.5">
         <Lock className="h-3 w-3 text-ink-1" />
         <span className="font-mono text-[9.5px] uppercase tracking-wider text-ink-1">
-          No private key — SignerCapability only
+          No private key: only the contract can move it
         </span>
       </div>
     </div>
@@ -208,7 +208,7 @@ export default function CustodyFlowDiagram({ custodyBalance, operators }: Props)
         <span className="font-mono text-[13px] font-bold text-white">Withdraw</span>
       </div>
       <div className="mt-0.5 font-mono text-[11px] leading-tight text-ink-1">
-        back to operator, after lock
+        back to the operator, unless a penalty lock runs
       </div>
     </div>
   );
@@ -217,7 +217,7 @@ export default function CustodyFlowDiagram({ custodyBalance, operators }: Props)
     <div className="rounded-md border border-phase-warn/40 bg-surface-0/80 p-3 backdrop-blur-sm">
       <div className="flex items-center gap-1.5">
         <Scissors className="h-3.5 w-3.5 text-phase-warn" />
-        <span className="font-mono text-[13px] font-bold text-white">Penalty deduction</span>
+        <span className="font-mono text-[13px] font-bold text-white">Deposit penalty</span>
       </div>
       <div className="mt-0.5 font-mono text-[11px] leading-tight text-ink-1">
         misbehavior → penalty pool
@@ -235,10 +235,10 @@ export default function CustodyFlowDiagram({ custodyBalance, operators }: Props)
     <div
       className="relative rounded-xl border border-line-base bg-surface-inset p-4 md:p-6"
       role="img"
-      aria-label="Maker vault flow: operator security deposits go into the maker vault resource account, which has no private key; funds only leave through withdraw after the lock period or through a penalty deduction."
+      aria-label="How maker deposits move: operators put their safety deposits into the maker contract account, which has no private key. Tokens leave only through a withdrawal (possible unless a penalty lock is running) or through a deposit penalty."
     >
       <p className="mb-2 font-mono text-[10px] uppercase tracking-wider text-ink-2">
-        Maker vault only — compute provider deposits live in a separate vault (section 2)
+        Maker deposits only. Provider deposits are held separately (section 2).
       </p>
       {/* Desktop graph */}
       <div className="relative hidden md:block" style={{ aspectRatio: '1000 / 520', minHeight: 420 }}>
@@ -275,7 +275,7 @@ export default function CustodyFlowDiagram({ custodyBalance, operators }: Props)
         </div>
         <div className="text-center font-mono text-xs text-phase-active/70">↓ deposit</div>
         {custodyCard}
-        <div className="text-center font-mono text-xs text-phase-active/70">↓ exit paths</div>
+        <div className="text-center font-mono text-xs text-phase-active/70">↓ two ways out</div>
         <div className="grid grid-cols-2 gap-2.5">
           {withdrawCard}
           {slashCard}

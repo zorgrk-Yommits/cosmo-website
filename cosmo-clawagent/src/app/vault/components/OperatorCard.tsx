@@ -39,16 +39,16 @@ export default function OperatorCard({ op, color }: { op: OperatorState; color: 
 
       {op.bond === null ? (
         <div className="space-y-3">
-          <p className="font-mono text-xs text-ink-2">No deposit entry on-chain.</p>
-          <StatusLamp state="unknown" label="No vault entry" />
+          <p className="font-mono text-xs text-ink-2">No deposit recorded for this operator.</p>
+          <StatusLamp state="unknown" label="No deposit" />
         </div>
       ) : (
         <>
           <div className="space-y-2">
-            <Row label="Security deposit" value={`${fmtAmt(op.bond.amount)} wCOSMO`} />
+            <Row label="Safety deposit" value={`${fmtAmt(op.bond.amount)} wCOSMO`} />
             <Row label="Available" value={`${fmtAmt(op.available)} wCOSMO`} />
-            <Row label="Penalty basis" value={`${fmtAmt(op.slashBasis)} wCOSMO`} />
-            <Row label="Penalty count" value={String(op.bond.slashCount)} />
+            <Row label="Amount penalties are based on" value={`${fmtAmt(op.slashBasis)} wCOSMO`} />
+            <Row label="Penalties so far" value={String(op.bond.slashCount)} />
             <Row
               label="Lock"
               value={
@@ -59,7 +59,7 @@ export default function OperatorCard({ op, color }: { op: OperatorState; color: 
           <div className="mt-4">
             <StatusLamp
               state={op.eligible ? 'good' : 'warning'}
-              label={op.eligible ? 'Quote eligible' : 'Not eligible'}
+              label={op.eligible ? 'Can make offers' : 'Cannot make offers now'}
             />
           </div>
         </>

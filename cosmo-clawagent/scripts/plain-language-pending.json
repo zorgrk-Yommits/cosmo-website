@@ -1,19 +1,8 @@
 {
   "files": [
     "src/app/assurance/Assurance.tsx",
-    "src/app/buy/BuySaleHelper.tsx",
     "src/app/cosmo/CosmoStory.tsx",
     "src/app/mandates/Mandates.tsx",
-    "src/app/portfolio/PortfolioView.tsx",
-    "src/app/portfolio/lib/positions.ts",
-    "src/app/portfolio/page.tsx",
-    "src/app/vault/VaultDashboard.tsx",
-    "src/app/vault/components/CustodyFlowDiagram.tsx",
-    "src/app/vault/components/OperatorCard.tsx",
-    "src/app/vault/components/StatusLamp.tsx",
-    "src/app/vault/page.tsx",
-    "src/app/wcosmo/WcosmoGuide.tsx",
-    "src/app/wcosmo/page.tsx",
     "src/components/IntelligenceLoop.tsx",
     "src/components/LayerStack.tsx",
     "src/components/PrimitiveChain.tsx"
