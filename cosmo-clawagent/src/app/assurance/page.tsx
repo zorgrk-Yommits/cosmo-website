@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import Assurance from './Assurance';
 
-const TITLE = 'COSMO Trust — Evidence, Honesty Principles, Assurance';
+const TITLE = 'COSMO — Proof: what really happened, and how to check it';
 const DESCRIPTION =
-  'Six settled proofs — four marketplace jobs and two mandated execution cases — the honesty rules this site holds itself to, and the Price Integrity Guard research module. Every claim links to a transaction or a hash.';
+  'What was actually paid or run for real on COSMO, with the links to check each one: paid jobs on Supra Mainnet, runs under fixed rules, and a liquidity run on Ethereum mainnet. Plus the rules this site holds itself to and a research tool that checks prices.';
 
 export const metadata: Metadata = {
   title: TITLE,

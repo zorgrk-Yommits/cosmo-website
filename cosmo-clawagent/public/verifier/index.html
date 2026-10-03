@@ -30,6 +30,8 @@
 <main>
   <h1>COSMO Execution-Case Verifier</h1>
   <p class="sub">A public, offline, single-file verifier for COSMO execution-case evidence bundles.</p>
+  <p><b>In plain words:</b> this is a small program you can download and run on your own computer. You give it a folder of evidence files from a COSMO run, and it answers ACCEPT or REJECT: do the records in that folder agree with each other and with the rules that were signed beforehand? It needs no internet connection.</p>
+  <p class="note">What it does not do: it is written by COSMO, not by a third party, and it checks that the records are consistent. It cannot tell whether the outside world matches them. Evidence folders are listed under <a href="/evidence/">/evidence/</a>; the proofs are explained on the <a href="/assurance/">proof overview</a>.</p>
 
   <div class="files">
     <a href="cosmo-verify.mjs">cosmo-verify.mjs</a>

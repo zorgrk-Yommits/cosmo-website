@@ -34,6 +34,9 @@ import {
   ArrowDown,
   FileCode2,
 } from 'lucide-react';
+import PageIntro from '@/components/cosmo/PageIntro';
+import TechDetails from '@/components/cosmo/TechDetails';
+import { CtaLink } from '@/components/cosmo/Cta';
 import Link from 'next/link';
 import pilot001 from '@/data/market-pilot001-2026-07-17.json';
 import patch001 from '@/data/compute-patch001-2026-07-10.json';
@@ -52,72 +55,92 @@ function quantsToWcosmo(q: number): number {
 // data JSONs so hashes and tx ids stay single-sourced.
 const PROOFS = [
   {
+    id: 'vlm-001',
+    title: 'VLM-001: liquidity under rules, a full run',
+    plain: 'A liquidity position on Ethereum mainnet, opened and closed by a program under rules fixed in advance. The budget cap held, only allowed actions ran, and the permission ended on the agreed date.',
+    date: '2026-09-05',
+    price: 'EUR 40 budget',
+    technical: 'Verifiable Liquidity Mandate vlm-001 on Ethereum mainnet, 2026-08-22 to 2026-09-05: OPEN, APPROVAL-RESET and CLOSE each verify ACCEPT 10/10 under two verifier implementations (standalone verifier 1.3.2, published). LP position minted directly to the sponsor; proceeds of the close paid directly to the sponsor; four lifetime transactions of the execution wallet; termination proof and seed retirement on 2026-09-05. Honest scope: one sponsor, micro scale, self-attestation; the verifier checks internal consistency.',
+    hashes: [
+      { label: 'rules file sha3-256', value: '0x25a991ae424a5de974135e0f7e6f7034384418841bb22164bbb9aa1c47669ec1' },
+    ],
+    links: [
+      { label: 'Proof page', href: '/mandates/vlm-001/', external: false },
+      { label: 'Evidence files', href: '/evidence/vlm-001/', external: true },
+      { label: 'How the rules work', href: '/mandates/', external: false },
+    ],
+  },
+  {
     id: 'execution-case-002g',
-    title: 'EXECUTION-CASE-002-G — mandated delivery and acceptance',
+    title: 'Case 002-G: delivery and approval, both under fixed rules',
+    plain: 'A job on the market where both the hand-in and the buyer\'s approval ran under rules fixed in advance. Both runs pass all ten checks of the checking program.',
     date: '2026-08-15',
-    price: '5 wCOSMO escrow released',
-    text: 'The double ceremony: the full economic arc of a marketplace job with BOTH irreversible legs under mandate. On live job 10, the solver agent (K1) committed a pre-mandated result hash on-chain under a provider mandate (deliver_result_v2), and the buyer acceptance — atomic escrow release via approve_delivery_v2 — was ALSO executed as its own case, under a one-shot mandate held by an agent-controlled buyer wallet. The approve policy re-verified delivered-and-unsettled, buyer-key binding, hash match, review window and escrow cap before release. Both cases verify offline through the same entry point: ACCEPT, ten of ten criteria each. Honest scope: both ceremonies armed by the same operator; authority separation is cryptographic, not organizational.',
+    price: '5 wCOSMO paid out',
+    technical: 'The double ceremony: the full economic arc of a marketplace job with BOTH irreversible legs under mandate. On live job 10, the solver agent (K1) committed a pre-mandated result hash on-chain under a provider mandate (deliver_result_v2), and the buyer acceptance — atomic escrow release via approve_delivery_v2 — was ALSO executed as its own case, under a one-shot mandate held by an agent-controlled buyer wallet. The approve policy re-verified delivered-and-unsettled, buyer-key binding, hash match, review window and escrow cap before release. Both cases verify offline through the same entry point: ACCEPT, ten of ten criteria each. Honest scope: both ceremonies armed by the same operator; authority separation is cryptographic, not organizational.',
     hashes: [
       { label: 'deliver mandate_hash', value: '0x7996b572a3ac017b9f1345df8de4d46de3978896eba4c27534867c2c17626652' },
       { label: 'approve mandate_hash', value: '0x93ba83d6f0f8cd1598f7153ea26a38bcf9f983a9651572b31baa07c00eaa712f' },
       { label: 'result_hash', value: '0xd71c14ce9c14cfa4d6a49337964926f4a01f543e1bc6d9648e7716d77104caf6' },
     ],
     links: [
-      { label: 'Evidence bundle', href: '/evidence/execution-case-002g/', external: true },
-      { label: 'Deliver tx', href: 'https://suprascan.io/tx/0x3d10048019fd33b6a4da1433b8aa6c8e0874781e959cb74609e26d46025e4bdb', external: true },
+      { label: 'Evidence files', href: '/evidence/execution-case-002g/', external: true },
+      { label: 'Hand-in transaction', href: 'https://suprascan.io/tx/0x3d10048019fd33b6a4da1433b8aa6c8e0874781e959cb74609e26d46025e4bdb', external: true },
       { label: 'Approve tx', href: 'https://suprascan.io/tx/0xa007c7962bbbddbc3787bee4866c5b58aca0d7410422f18ae8b9c20be00cceae', external: true },
-      { label: 'Institutional layer', href: '/institutional/', external: false },
+      { label: 'The framework', href: '/institutional/', external: false },
     ],
   },
   {
     id: 'execution-case-002',
-    title: 'EXECUTION-CASE-002 — mandated work delivery',
+    title: 'Case 002: a work delivery under fixed rules',
+    plain: 'A provider handed in work on the market under rules fixed in advance. The result recorded on-chain is exactly the one named in the rules.',
     date: '2026-08-14',
-    price: '5 wCOSMO escrow',
-    text: 'The generalization case, deliberately not a trade: a solver agent delivered marketplace work under the full execution-case framework — result hash pre-committed in a one-shot mandate, six policy criteria checked against live chain state, human ARM, on-chain commitment via deliver_result_v2 (job 9). On-chain hash == mandated hash exactly. Ends at DELIVERED; the buyer subsequently approved as a separate human step and job 9 settled on-chain (escrow payout to the solver). Ten-criteria offline consistency verification via the private COSMO verifier.',
+    price: '5 wCOSMO locked',
+    technical: 'The generalization case, deliberately not a trade: a solver agent delivered marketplace work under the full execution-case framework — result hash pre-committed in a one-shot mandate, six policy criteria checked against live chain state, human ARM, on-chain commitment via deliver_result_v2 (job 9). On-chain hash == mandated hash exactly. Ends at DELIVERED; the buyer subsequently approved as a separate human step and job 9 settled on-chain (escrow payout to the solver). Ten-criteria offline consistency verification with the COSMO verifier, published at /verifier/.',
     hashes: [
       { label: 'mandate_hash', value: '0x3ad166f7be905febe8be67ae057d84a487182bf5fe0fb2f7f3f4b1dd430b9d01' },
       { label: 'result_hash', value: '0x5429d3005db3382c8210d149e3bf0e77c2146b64d9ef263f2778f1f9e34ce055' },
       { label: 'evidence_root', value: '0x318fa77bdb67ccdea5d98c765b3d6c5cb804bb602ec737ade8463d6f3fd26d44' },
     ],
     links: [
-      { label: 'Evidence bundle', href: '/evidence/execution-case-002/', external: true },
-      { label: 'Deliver tx', href: 'https://suprascan.io/tx/0xbf2255576f546d95af98169647dfb66d413550e1f444d704bc26dd70e4d21af9', external: true },
-      { label: 'Settle tx', href: 'https://suprascan.io/tx/0xda138054fd4472901961906be7e06a7861780e44df3f3c68c0053cf2c1c39ad8', external: true },
-      { label: 'Institutional layer', href: '/institutional/', external: false },
+      { label: 'Evidence files', href: '/evidence/execution-case-002/', external: true },
+      { label: 'Hand-in transaction', href: 'https://suprascan.io/tx/0xbf2255576f546d95af98169647dfb66d413550e1f444d704bc26dd70e4d21af9', external: true },
+      { label: 'Payment transaction', href: 'https://suprascan.io/tx/0xda138054fd4472901961906be7e06a7861780e44df3f3c68c0053cf2c1c39ad8', external: true },
+      { label: 'The framework', href: '/institutional/', external: false },
     ],
   },
   {
     id: 'execution-case-001',
-    title: 'EXECUTION-CASE-001 — mandated execution case',
+    title: 'Case 001: a trade under fixed rules',
+    plain: 'A small trade on SupraFX under rules fixed in advance, with a person releasing the step that cannot be undone. It ended at exactly the agreed rate.',
     date: '2026-08-14',
     price: '1 SUPRA → 169 µUSDC',
-    text: 'First mandated micro-live execution case, not a marketplace job: delegated authority with on-chain caps and an on-chain revoke, a one-shot signed mandate, a pinned policy, a human ARM ceremony — closed EXECUTED at exactly the mandated rate (normalized to 169 micro-USDC from the platform’s float delta). Ten-criteria offline consistency verification currently requires the private COSMO verifier (SupraFX Mainnet).',
+    technical: 'First mandated micro-live execution case, not a marketplace job: delegated authority with on-chain caps and an on-chain revoke, a one-shot signed mandate, a pinned policy, a human ARM ceremony — closed EXECUTED at exactly the mandated rate (normalized to 169 micro-USDC from the platform’s float delta). Ten-criteria offline consistency verification with the COSMO verifier, published at /verifier/ (SupraFX Mainnet).',
     hashes: [
       { label: 'mandate_hash', value: '0xb0d3911a44b1a8e703394dd64bd23588b24b1430c77b955a02a65ccfa96bab11' },
       { label: 'policy_hash', value: '0x59f7c39fc7bbbe5acd15a92881cad314a284e54ee9dfbd014506f52dfa7dd75d' },
       { label: 'evidence_root', value: '0x5799bf59c188f13948af107dd9cf0dbd654ed940dc02aaa59e8f64ea5b1b50c2' },
     ],
     links: [
-      { label: 'Evidence bundle', href: '/evidence/execution-case-001/', external: true },
-      { label: 'Institutional layer', href: '/institutional/', external: false },
+      { label: 'Evidence files', href: '/evidence/execution-case-001/', external: true },
+      { label: 'The framework', href: '/institutional/', external: false },
     ],
   },
   {
     id: 'pilot-001',
-    title: 'PILOT-001 — marketplace trade',
+    title: 'PILOT-001: first job paid on the market',
+    plain: 'The first job on the market that ran from posting to payment. Every step is its own public transaction.',
     date: pilot001.date,
     price: `${pilot001.price} ${pilot001.asset}`,
-    text: 'First marketplace trade settled end-to-end: escrow, quote, accept, deliver, settle — every step its own mainnet transaction.',
+    technical: 'First marketplace trade settled end-to-end: escrow, quote, accept, deliver, settle — every step its own mainnet transaction.',
     hashes: [
       { label: 'spec_hash', value: pilot001.spec_hash },
       { label: 'result_hash', value: pilot001.result_hash },
     ],
     links: [
-      { label: 'Evidence bundle', href: pilot001.public_evidence, external: true },
+      { label: 'Evidence files', href: pilot001.public_evidence, external: true },
       { label: 'Job page', href: pilot001.job_url, external: false },
       {
-        label: 'Settle tx',
+        label: 'Payment transaction',
         href: pilot001.explorer_tx_base + pilot001.legs[pilot001.legs.length - 1].tx,
         external: true,
       },
@@ -125,17 +148,18 @@ const PROOFS = [
   },
   {
     id: 'patch-001',
-    title: 'PATCH-001 — machine-accepted patch',
+    title: 'PATCH-001: a software fix, checked automatically',
+    plain: 'A buyer paid for a software fix. Payment depended on an automatic ten-point check.',
     date: patch001.settled_at_utc.slice(0, 10),
     price: `${quantsToWcosmo(patch001.price_quants)} wCOSMO`,
-    text: 'A software patch fixing a real defect, paid only after a ten-criteria machine acceptance check returned ACCEPT.',
+    technical: 'A software patch fixing a real defect, paid only after a ten-criteria machine acceptance check returned ACCEPT.',
     hashes: [
       { label: 'input_hash', value: patch001.input_hash },
       { label: 'diff_hash', value: patch001.diff_hash },
       { label: 'result_hash', value: patch001.result_hash },
     ],
     links: [
-      { label: 'Evidence bundle', href: patch001.public_evidence, external: true },
+      { label: 'Evidence files', href: patch001.public_evidence, external: true },
       { label: 'Details', href: '/compute/', external: false },
       {
         label: 'Approve tx',
@@ -146,16 +170,17 @@ const PROOFS = [
   },
   {
     id: 'attest-001',
-    title: 'ATTEST-001 — first traded good',
+    title: 'ATTEST-001: a signed report, checked automatically',
+    plain: 'A buyer paid for a signed report on four live facts about the protocol, checked automatically before payment.',
     date: attest001.settled_at_utc.slice(0, 10),
     price: `${quantsToWcosmo(attest001.price_quants)} wCOSMO`,
-    text: 'The first traded good: a signed attestation of live protocol invariants, delivered against a security deposit and machine-accepted before approval.',
+    technical: 'The first traded good: a signed attestation of live protocol invariants, delivered against a security deposit and machine-accepted before approval.',
     hashes: [
       { label: 'input_hash', value: attest001.input_hash },
       { label: 'result_hash', value: attest001.result_hash },
     ],
     links: [
-      { label: 'Evidence bundle', href: attest001.public_evidence, external: true },
+      { label: 'Evidence files', href: attest001.public_evidence, external: true },
       { label: 'Details', href: '/compute/', external: false },
       {
         label: 'Approve tx',
@@ -166,10 +191,11 @@ const PROOFS = [
   },
   {
     id: 'job-001',
-    title: 'JOB-001 — foundation compute job',
+    title: 'JOB-001: the first compute job',
+    plain: 'The first compute job: a fixed calculation, paid after the buyer approved the result.',
     date: job001.settled_at_utc.slice(0, 10),
     price: `${quantsToWcosmo(job001.price_quants)} wCOSMO`,
-    text: 'The foundation: the first real compute job — a deterministic 1,000,000-step SHA3 workload — settled through the full escrow lifecycle.',
+    technical: 'The foundation: the first real compute job — a deterministic 1,000,000-step SHA3 workload — settled through the full escrow lifecycle.',
     hashes: [
       { label: 'input_hash', value: job001.input_hash },
       { label: 'result_hash', value: job001.result_hash },
@@ -190,14 +216,14 @@ const PROOFS = [
 // in place — each page keeps its own honesty box next to the claims it qualifies.
 const PRINCIPLES = [
   {
-    title: 'Fact and roadmap never mix.',
-    text: 'Settled means settled on-chain; planned means planned. Anything not yet live is labeled as research, prototype, or roadmap — in the same sentence, not in a footnote.',
-    applied: 'Applied: status labels on this page, /compute and the market.',
+    title: 'Facts and plans never mix.',
+    text: 'Paid means paid on-chain; planned means planned. Anything that is not live carries a label that says so (tested, experimental, planned), in the same place, not in a footnote.',
+    applied: 'Applied: the labels Live, Pilot, Tested, Experimental, Planned and Archive across the site.',
   },
   {
-    title: 'Every claim links to a transaction or a hash.',
-    text: 'Numbers on this site resolve to a mainnet transaction, an on-chain hash anchor, or a frozen artifact you can re-hash yourself.',
-    applied: 'Applied: the settled proofs above and the /evidence/ bundles.',
+    title: 'Every claim links to something you can check.',
+    text: 'Numbers on this site lead to a public transaction, a fingerprint recorded on-chain, or a published file whose fingerprint you can recompute yourself.',
+    applied: 'Applied: the proofs above and the files under /evidence/.',
   },
   {
     title: 'Limits are disclosed next to claims.',
@@ -206,7 +232,7 @@ const PRINCIPLES = [
   },
   {
     title: 'Evidence is frozen, not curated.',
-    text: 'Published artifacts are byte-identical copies of the originals, pinned by SHA3-256 to on-chain anchors. Verify with openssl dgst -sha3-256 against the hashes in each bundle’s index.txt.',
+    text: 'Published files are exact copies of the originals. Their SHA3-256 fingerprints are recorded on-chain, so a changed file would be noticed. Check with openssl dgst -sha3-256 against the list in each folder’s index.txt.',
     applied: 'Applied: /evidence/pilot-001/, /evidence/patch-001/, /evidence/attest-001/.',
   },
 ] as const;
@@ -313,68 +339,36 @@ export default function Assurance() {
       <div className="terminal-container">
         <div className="grid-bg" />
 
-        <div className="relative z-10 mx-auto max-w-4xl px-5 py-16 md:py-24">
+        <div className="relative z-10 mx-auto max-w-4xl px-4 py-16 md:px-6 md:py-24">
           {/* ── Trust hero ───────────────────────────────────────────────── */}
-          <header className="max-w-3xl">
-            <div className="mb-5 flex flex-wrap items-center gap-3">
-              <span className="inline-flex h-2 w-2 rounded-full bg-phase-proof shadow-[0_0_10px_rgba(56,189,248,0.8)]" />
-              <span className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
-                COSMO Trust
-              </span>
-            </div>
-
-            <h1 className="font-mono text-3xl font-bold tracking-tight text-ink-0 md:text-5xl">
-              Every claim links to a transaction or a hash.
-            </h1>
-
-            <div className="mt-5 flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-line-base bg-surface-2 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-ink-1">
-                6 settled proofs · Supra Mainnet &amp; SupraFX
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-phase-proof/40 bg-phase-proof/10 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-phase-proof">
-                Show, don&apos;t claim
-              </span>
-            </div>
-
-            <p className="mt-5 font-sans text-base leading-relaxed text-ink-1 md:text-lg">
-              This page collects what has actually settled on Supra Mainnet, the honesty rules
-              this site holds itself to, and the Price Integrity Guard — a read-only research
-              module. Facts and roadmap are kept separate; limits are stated next to the claims
-              they qualify.
-            </p>
-
-            <div className="mt-7 flex flex-wrap items-center gap-3">
-              <a
-                href="#evidence"
-                className="inline-flex items-center gap-2 rounded-xl border border-phase-active/40 bg-phase-active/10 px-6 py-3 font-mono text-sm text-phase-active transition-all hover:border-phase-active hover:bg-phase-active/15"
-              >
-                View the evidence
-                <ArrowDown className="h-4 w-4" />
-              </a>
-              <a
-                href="#principles"
-                className="inline-flex items-center gap-2 rounded-xl border border-line-base px-6 py-3 font-mono text-sm text-ink-1 transition-all hover:border-line-strong hover:text-white"
-              >
-                <ScrollText className="h-4 w-4" />
-                Honesty principles
-              </a>
-            </div>
-          </header>
+          <PageIntro
+            title="Do not take our word for it. Check it."
+            lead="This page lists what was actually paid or run for real, with the links to check each one, the rules this site holds itself to, and a research tool that checks prices. Facts and plans are kept apart."
+          >
+            <CtaLink href="#evidence" variant="primary" size="lg">
+              See the {PROOFS.length} proofs
+              <ArrowDown className="h-4 w-4" aria-hidden="true" />
+            </CtaLink>
+            <CtaLink href="#principles" variant="secondary" size="lg">
+              <ScrollText className="h-4 w-4" aria-hidden="true" />
+              The rules we hold ourselves to
+            </CtaLink>
+          </PageIntro>
 
           {/* ── Evidence index — settled proofs ──────────────────────────── */}
           <section id="evidence" className="mt-14 scroll-mt-24">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-ink-1" />
-              <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-ink-1">
-                Settled proofs
-              </h2>
-            </div>
+            <h2 className="text-2xl font-semibold tracking-tight text-ink-0">
+              {PROOFS.length} things that really happened
+            </h2>
             <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">
-              Six settled proofs, each backed by public evidence: four marketplace jobs on Supra
-              Mainnet and two mandated execution cases (a SupraFX trade and a marketplace work
-              delivery). Newest first. Marketplace proofs can be checked against on-chain
-              transactions and published hashes. Full 10/10 verification of the execution cases
-              currently requires the private COSMO verifier.
+              Newest first: one liquidity run on Ethereum mainnet, three runs under fixed rules on
+              Supra, and four jobs paid on Supra Mainnet. Each has public evidence. The runs
+              under fixed rules can be re-checked with the{' '}
+              <a href="/verifier/" className="text-phase-proof underline decoration-phase-proof/40 hover:text-ink-0">
+                published checking program
+              </a>
+              , which is written by us and checks that the records agree with each other, not
+              that the outside world matches them.
             </p>
 
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -394,15 +388,18 @@ export default function Assurance() {
                       {p.price}
                     </span>
                   </div>
-                  <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">{p.text}</p>
-                  <div className="mt-3 space-y-0.5 font-mono text-[11px] leading-relaxed text-ink-1">
-                    {p.hashes.map((h) => (
-                      <p key={h.label}>
-                        {h.label} {short(h.value)}
-                      </p>
-                    ))}
-                  </div>
-                  <div className="mt-auto flex flex-wrap gap-x-4 gap-y-1 pt-3 font-mono text-[11px]">
+                  <p className="mt-3 font-sans text-sm leading-relaxed text-ink-1">{p.plain}</p>
+                  <TechDetails className="mt-3">
+                    <p>{p.technical}</p>
+                    <div className="mt-3 space-y-0.5 font-mono text-[11px] leading-relaxed">
+                      {p.hashes.map((h) => (
+                        <p key={h.label}>
+                          {h.label} {short(h.value)}
+                        </p>
+                      ))}
+                    </div>
+                  </TechDetails>
+                  <div className="mt-auto flex flex-wrap gap-x-4 gap-y-1 pt-4 font-mono text-[11px]">
                     {p.links.map((l) =>
                       l.external ? (
                         <a
@@ -431,10 +428,10 @@ export default function Assurance() {
 
             <p className="mt-4 font-mono text-[11px] leading-relaxed text-ink-1">
               Buyer and provider on JOB-001, ATTEST-001 and PATCH-001 are operating-team
-              accounts, disclosed on their detail pages. PILOT-001 settled through the public
-              marketplace flow. EXECUTION-CASE-001 was run by the operating team under its own
-              mandate discipline; its receipt is a self-attestation, stated as such in the
-              bundle.
+              accounts, disclosed on their detail pages. PILOT-001 was paid through the public
+              market flow. The runs under fixed rules, including VLM-001, were run by the
+              operating team; their closing records are statements by us about ourselves, and
+              the evidence says so.
             </p>
 
             <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px] leading-relaxed text-ink-1">
@@ -442,7 +439,7 @@ export default function Assurance() {
               <span>
                 Earlier milestones: the{' '}
                 <a href="/rfq/" className="text-phase-active hover:text-phase-active">
-                  first autonomous RFQ trade
+                  first automatic token trade
                 </a>{' '}
                 and the{' '}
                 <a href="/demo/" className="text-phase-active hover:text-phase-active">
@@ -808,18 +805,18 @@ export default function Assurance() {
           {/* ── Closing ──────────────────────────────────────────────────── */}
           <section className="mt-14 rounded-2xl border border-phase-active/20 bg-surface-1 p-6 md:p-8">
             <h2 className="max-w-2xl font-mono text-xl font-bold leading-snug text-white md:text-2xl">
-              Economic safety needs a second line of verification.
+              Checking the data is one thing. Checking the decision is the next.
             </h2>
             <p className="mt-4 max-w-2xl font-sans text-sm leading-relaxed text-ink-1 md:text-base">
-              COSMO publishes settled proofs instead of projections. Assurance explores how
-              protocols and autonomous agents can verify not only whether data is authentic, but
-              whether acting on it is safe.
+              COSMO publishes what happened instead of forecasts. The research on this page asks
+              how protocols and agents can check not only whether data is real, but whether
+              acting on it is safe.
             </p>
             <Link
               href="/compute/"
               className="mt-6 inline-flex items-center gap-2 rounded-xl border border-phase-active/40 bg-phase-active/10 px-6 py-3 font-mono text-sm text-phase-active transition-all hover:border-phase-active hover:bg-phase-active/15"
             >
-              Explore COSMO
+              How earning works
               <ArrowRight className="h-4 w-4" />
             </Link>
           </section>
@@ -829,9 +826,9 @@ export default function Assurance() {
               to be readable. */}
           <p className="mt-10 font-mono text-[11px] leading-relaxed text-ink-1">
             Static research content. No wallet actions and no on-chain interaction on this page.
-            The evidence index links settled mainnet transactions and frozen artifacts; the Price
-            Integrity Guard is the first module under COSMO Assurance — it reads public data and
-            frozen evidence and issues recommendations only.
+            The proofs link to public transactions and published files. The Price Integrity
+            Guard is a research tool: it reads public data and published evidence and only
+            makes recommendations.
           </p>
         </div>
       </div>

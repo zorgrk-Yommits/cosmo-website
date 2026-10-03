@@ -101,7 +101,7 @@ export default function AccessGate() {
         <div className="grid-bg" />
 
         <div className="relative z-10 mx-auto max-w-3xl px-5 py-16 md:py-24">
-          <ProtocolNotice />
+          <ProtocolNotice what="A check whether a wallet holds a COSMO NFT, from the first access stage." />
           {/* ── header ── */}
           <header className="max-w-2xl">
             <div className="mb-5 flex items-center gap-3">

@@ -70,6 +70,11 @@ describe('plain-language check', () => {
     expect(terms("const A = () => <p>{busy !== 'settled' ? 'Open' : 'Settled'}</p>;")).toEqual(['settlement']);
   });
 
+  it('lets the product name through, but not the common noun next to it', () => {
+    expect(terms('const A = () => <p>The technical name is Verifiable Liquidity Mandates.</p>;')).toEqual([]);
+    expect(terms('const A = () => <p>Verifiable Liquidity Mandates: one mandate binds it all.</p>;')).toEqual(['mandate']);
+  });
+
   it('does not flag ordinary words that only contain a term', () => {
     expect(terms('const A = () => <p>A mandatory field. Vagabonds welcome.</p>;')).toEqual([]);
   });

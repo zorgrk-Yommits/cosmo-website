@@ -33,7 +33,7 @@ function short(h: string): string {
 
 // The exact, limited verification wording (approved 2026-08-14). Keep verbatim.
 const VERIFY_WORDING =
-  'Public evidence bundle. Offline verification currently requires the COSMO verifier, whose implementation remains private.';
+  'Public evidence bundle. Anyone can run the published offline verifier against it. It is written by COSMO and checks internal consistency, not third-party attestation.';
 
 // The seven primitives, in ceremony order. `proved` states only what actually
 // happened in Execution Case 001 — no futures.
@@ -90,7 +90,7 @@ const PRIMITIVES = [
     icon: SearchCheck,
     title: 'Verification',
     what: 'A separate offline verification of internal consistency: key pin, signatures, time bounds, policy pin, mandate binding, manifest, journal chain, envelope, statement re-derivation, outcome consistency. It is run apart from execution — not by an independent third party.',
-    proved: 'Case 001: ACCEPT on all ten criteria, exit code 0 — using the COSMO verifier, whose implementation remains private.',
+    proved: 'Case 001: ACCEPT on all ten criteria, exit code 0 — using the COSMO verifier, published at /verifier/.',
   },
 ] as const;
 

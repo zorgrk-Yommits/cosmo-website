@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>VLM-001 — One Mandate, Three Transactions | COSMO</title>
+<title>VLM-001 — One Mandate, Four Transactions | COSMO</title>
 <style>
   :root{
     --surface-0:#08090b; --surface-1:#0d0f13; --surface-2:#14171d; --surface-inset:#050608;
@@ -140,6 +140,15 @@
   <span>status as of 2026-09-05</span>
 </div></div>
 
+<!-- PLAIN SUMMARY (site-clarity plan): what this page shows, without the vocabulary -->
+<div class="wrap" style="padding-top:28px">
+  <div style="border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:18px 20px;max-width:820px">
+    <div style="font:600 12px/1.4 ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;opacity:.7">In plain words</div>
+    <p style="margin:.6em 0 0;font-size:17px;line-height:1.55">An owner let a program manage a small liquidity position for two weeks, under rules fixed in advance: how much, which actions, until when. The program opened the position, reset its permissions and closed the position, and did nothing else. The tokens went straight back to the owner, and the permission ended on 5 September 2026.</p>
+    <p style="margin:.6em 0 0;font-size:14px;line-height:1.55;opacity:.8">Everything below is the evidence for those sentences, in technical terms. A shorter version without the vocabulary is on <a href="/mandates/">the liquidity page</a>.</p>
+  </div>
+</div>
+
 <!-- S1 · HERO -->
 <div class="wrap hero">
   <div class="kicker">VLM-001 · Verifiable Liquidity Mandate · Ethereum Mainnet</div>
@@ -174,9 +183,9 @@
     <tr><td>Budget: <b>EUR 20 per leg</b>, EUR 40 total — a pinned cap, not a market value</td><td>Funded by the sponsor to the exact wei; settled fully into the position</td><td class="chk">✓</td></tr>
     <tr><td>Max WETH: <b>0.009635489434685834 ETH</b> (pinned in wei)</td><td>Used: <b>0.009635489434685834 ETH</b> — equal to the cap, not a wei above it</td><td class="chk">✓</td></tr>
     <tr><td>Max SUPRA: <b>119,060.897… SUPRA</b> (pinned in wei)</td><td>Used: <b>114,556.177… SUPRA</b> — under the cap</td><td class="chk">✓</td></tr>
-    <tr><td>Gas: fee cap pinned; reserve ceiling 0.02 ETH</td><td>Remainder after all three transactions: <b>0.004941 ETH ≤ reserve</b></td><td class="chk">✓</td></tr>
-    <tr><td>Allowed actions: <b>1×OPEN · ≤1×COLLECT (day 7+) · 1×CLOSE · APPROVAL-RESET</b> — nothing else has an active policy pin</td><td>Executed: OPEN and RESET. COLLECT and CLOSE: <b>unused — still null in the lifecycle ledger</b></td><td class="chk">✓</td></tr>
-    <tr><td>Term: until <b>2026-09-05</b></td><td>Executed 2026-08-22 — inside the term</td><td class="chk">✓</td></tr>
+    <tr><td>Gas: fee cap pinned; reserve ceiling 0.02 ETH</td><td>Remainder after the close (block 25852377): <b>0.004914 ETH ≤ reserve</b></td><td class="chk">✓</td></tr>
+    <tr><td>Allowed actions: <b>1×OPEN · ≤1×COLLECT (day 7+) · 1×CLOSE · APPROVAL-RESET</b> — nothing else has an active policy pin</td><td>Executed: OPEN, RESET and CLOSE (2026-08-28). COLLECT: <b>unused</b></td><td class="chk">✓</td></tr>
+    <tr><td>Term: until <b>2026-09-05</b></td><td>Opened 2026-08-22, closed 2026-08-28 — inside the term</td><td class="chk">✓</td></tr>
     <tr><td>Position owner: <b>the sponsor</b></td><td>LP-NFT <b>#59 minted directly to the sponsor's wallet</b> — the engine never held it</td><td class="chk">✓</td></tr>
   </table></div>
   <p class="caption">Every row: actual ≤ cap. No row asks for trust in COSMO — each is checkable at a pinned block (full values in the <a href="#evidence">evidence index</a>).</p>

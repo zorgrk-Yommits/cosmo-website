@@ -70,9 +70,19 @@ const EXEMPT = [
   // paid research product with its own vocabulary; outside the plan's page list
   'src/app/intelligence/',
   'src/components/ProtocolNotice.tsx',
+  // the $COSMO token story and the three diagrams only it uses: v5 framing,
+  // not in the plan's page list; needs its own rewrite, not a word swap
+  'src/app/cosmo/',
+  'src/components/IntelligenceLoop.tsx',
+  'src/components/LayerStack.tsx',
+  'src/components/PrimitiveChain.tsx',
   // the vocabulary table itself
   'src/components/cosmo/terms.ts',
 ];
+
+// Proper names that contain a technical term. They are removed before the
+// check, so the name may be shown; the common noun still may not.
+const PROPER_NAMES = [/Verifiable Liquidity Mandates?/g];
 
 const VISIBLE_ATTRS = new Set([
   'title', 'aria-label', 'alt', 'placeholder', 'label', 'lead', 'kicker', 'note', 'hint',
@@ -164,6 +174,7 @@ function scanSource(source, fileName = 'file.tsx', patterns = activePatterns()) 
   const findings = [];
   const check = (node, text) => {
     if (!text || !isVisible(node) || inTechContainer(node)) return;
+    for (const name of PROPER_NAMES) text = text.replace(name, (m) => ' '.repeat(m.length));
     for (const [term, re] of patterns) {
       re.lastIndex = 0;
       for (let m = re.exec(text); m; m = re.exec(text)) {

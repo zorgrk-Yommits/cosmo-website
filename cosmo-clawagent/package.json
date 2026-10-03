@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/build-evidence-index.cjs",
     "build": "next build",
     "postbuild": "node scripts/check-sale-live-consistency.cjs",
     "check:sale-live": "node scripts/check-sale-live-consistency.cjs",

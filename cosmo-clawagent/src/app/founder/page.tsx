@@ -14,7 +14,7 @@ function Shell({ children }: { children: React.ReactNode }) {
       <header className="mb-8">
         <h1 className="text-2xl font-semibold tracking-tight">COSMO RFQ — Founder Cockpit</h1>
         <p className="mt-1 text-sm text-zinc-400">
-          Wallet-signed taker actions against the live RFQ engine. Target:{" "}
+          Wallet-signed taker actions against the RFQ engine on the network shown here. Target:{" "}
           <span className="font-mono text-zinc-300">
             {RFQ_TARGET} (chain {RFQ_CHAIN_ID})
           </span>

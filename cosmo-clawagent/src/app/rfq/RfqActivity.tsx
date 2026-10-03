@@ -78,7 +78,7 @@ export default function RfqActivity() {
 
       {/* ── Hero ── */}
       <section className="relative z-10 mx-auto max-w-5xl px-6 pt-24 pb-8">
-        <ProtocolNotice />
+        <ProtocolNotice what="A live view of the automatic operator that offers token trades on a test pair." />
         <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-phase-active/25 bg-phase-active/10 px-3 py-1.5">
           <span className="inline-flex h-2 w-2 animate-pulse rounded-full bg-phase-settled" />
           <span className="font-mono text-xs uppercase tracking-[0.2em] text-ink-1">

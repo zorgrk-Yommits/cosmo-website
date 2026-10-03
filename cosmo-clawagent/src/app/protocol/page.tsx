@@ -68,8 +68,8 @@ export default function ProtocolArchivePage() {
             <p className="mt-5 text-sm leading-relaxed text-ink-1">
               These pages document earlier stages of the COSMO protocol. They stay
               online as a record — every link keeps working — but they are not the
-              current product surface. For that, use Market, Trust and Network in
-              the navigation.
+              current product. For that, use Get work done, Earn, Liquidity and
+              Proof in the navigation.
             </p>
           </header>
 

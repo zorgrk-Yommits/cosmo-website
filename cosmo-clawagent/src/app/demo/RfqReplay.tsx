@@ -100,7 +100,7 @@ export default function RfqReplay() {
         <div className="grid-bg" />
 
         <div className="relative z-10 mx-auto max-w-6xl px-5 py-16 md:py-20">
-          <ProtocolNotice />
+          <ProtocolNotice what="A step-by-step replay of the first token trade that completed on Supra Mainnet." />
           <NarrativeHeader />
 
           {/* ── honest status banner (controlled proof, not permissionless) ── */}
