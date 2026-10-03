@@ -1,5 +1,6 @@
 'use client';
 
+import { PhaseProvider } from '@/components/cosmo/usePhase';
 import Hero from './sections/Hero';
 import Problem from './sections/Problem';
 import Flow from './sections/Flow';
@@ -13,24 +14,30 @@ import Closing from './sections/Closing';
 // The landing, in the order a first-time visitor needs it (positioning v6.1):
 // what this is -> why it is needed -> how a job works -> that it is real ->
 // the second use (liquidity) -> where you come in -> proof -> token -> close.
+//
+// The PhaseProvider carries one number, the job step currently shown: the hero
+// animation and the picture next to the headline both read it, so they can
+// never show different steps.
 
 export default function Landing() {
   return (
-    <div className="terminal-theme-scope relative">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="grid-bg absolute inset-x-0 top-0 h-[140vh]" />
+    <PhaseProvider>
+      <div className="terminal-theme-scope relative">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="grid-bg absolute inset-x-0 top-0 h-[140vh]" />
+        </div>
+        <div className="relative">
+          <Hero />
+          <Problem />
+          <Flow />
+          <LiveMarket />
+          <Liquidity />
+          <Audiences />
+          <Evidence />
+          <TreasurySale />
+          <Closing />
+        </div>
       </div>
-      <div className="relative">
-        <Hero />
-        <Problem />
-        <Flow />
-        <LiveMarket />
-        <Liquidity />
-        <Audiences />
-        <Evidence />
-        <TreasurySale />
-        <Closing />
-      </div>
-    </div>
+    </PhaseProvider>
   );
 }

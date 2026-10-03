@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { ArrowDown, ArrowRight, Bot, Boxes, Coins, FileCheck2, UserCog } from 'lucide-react';
+import CosmoCore from '@/components/cosmo/core/CosmoCore';
 import FlowStrip, { type FlowStep } from '@/components/cosmo/FlowStrip';
 import MaturityBadge from '@/components/cosmo/MaturityBadge';
 import Surface from '@/components/cosmo/Surface';
 import { CtaLink } from '@/components/cosmo/Cta';
+import { PHASE_COUNT } from '@/components/cosmo/phases';
+import { usePhase } from '@/components/cosmo/usePhase';
 import { useReducedMotion } from '@/components/cosmo/useReducedMotion';
 
 // Positioning v6.1 (docs/POSITIONING.md): jobs lead. The first screen answers
@@ -21,20 +24,35 @@ const CORE_FLOW: FlowStep[] = [
   { id: 'payment', icon: Coins, label: 'Payment', note: 'goes to the provider' },
 ];
 
+// Which part of the five-part picture each of the six job steps belongs to:
+// post job -> agent, get offer and lock payment -> COSMO, work happens ->
+// provider, check result -> result, pay provider -> payment.
+const STEP_TO_PARTY = [0, 1, 1, 2, 3, 4];
+
 export default function Hero() {
   const reduced = useReducedMotion();
-  // The picture walks through its own steps, one at a time. Without motion it
-  // simply stays unhighlighted: the order already reads left to right.
-  const [at, setAt] = useState(0);
+  // One clock for both visuals: the animation behind the headline walks through
+  // the six job steps, and the picture highlights the party that step belongs
+  // to. Without motion both stay still: the order already reads left to right.
+  const { active, setActive } = usePhase();
+  const [tick, setTick] = useState(0);
   useEffect(() => {
     if (reduced) return;
-    const id = setInterval(() => setAt((i) => (i + 1) % CORE_FLOW.length), 1600);
+    const id = setInterval(() => setTick((i) => (i + 1) % PHASE_COUNT), 1600);
     return () => clearInterval(id);
   }, [reduced]);
+  useEffect(() => {
+    setActive(tick);
+  }, [tick, setActive]);
+  const at = STEP_TO_PARTY[active] ?? 0;
 
   return (
-    <section className="relative">
-      <div className="mx-auto w-full max-w-6xl px-4 pb-16 pt-12 md:px-6 md:pb-24 md:pt-20">
+    <section className="relative overflow-hidden">
+      {/* The animated job line. Decorative: it sits behind the copy, and the
+          picture below states the same thing in words. */}
+      <CosmoCore />
+
+      <div className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-16 pt-12 md:px-6 md:pb-24 md:pt-20">
         <MaturityBadge level="pilot" detail="curated providers" />
 
         <h1 className="mt-6 max-w-4xl text-[2rem] font-semibold leading-[1.08] tracking-tight text-ink-0 sm:text-6xl lg:text-[4.25rem]">
@@ -48,7 +66,7 @@ export default function Hero() {
           result is checked.
         </p>
 
-        <Surface tone="quiet" className="mt-8 max-w-4xl px-2 py-5 md:px-6 md:py-7">
+        <Surface tone="quiet" className="mt-8 max-w-2xl bg-surface-1/80 px-2 py-5 backdrop-blur-sm md:px-6 md:py-7">
           <FlowStrip
             steps={CORE_FLOW}
             label="How COSMO works: an AI agent posts a job, COSMO holds the payment, a provider does the work, the result gets checked, the payment goes to the provider."

@@ -223,3 +223,10 @@ Alle sechs Etappen sind umgesetzt und live. Offen (ausserhalb der Etappen):
 - Neu als Token-Seite: "$COSMO: the token behind the deposits and the payments." mit Bild $COSMO → wCOSMO → Safety deposit / Job payment, drei Verwendungen mit Reifegrad (Pilot, Pilot, Archive), "Built on Supra" in einem Absatz, "What the token does not do yet" (Staking-Rewards, Track-Record auf der Lizenz, sieben der acht Agenten, offener Markt: alle als Planned), Operator-Lizenz als Archiv-Karte mit den drei Checks im Aufklapper, "How to get it" und Hinweise vor dem Kauf.
 - Entfernt: v5-Hero "The Institutional Layer for Autonomous Economies", Stats-Leiste (u. a. "settled proofs: 5"), die Acht-Agenten-Kacheln mit dem Aufruf "Stake $COSMO ... earn protocol rewards" (Staking-Rewards sind nicht aktiv), die Diagramme `IntelligenceLoop`, `LayerStack`, `PrimitiveChain` und `ui/terminal-bento-grid` (geloescht, nur dort benutzt).
 - Die Ausnahme fuer `/cosmo` im Waechter ist wieder entfernt; Liste bleibt leer.
+
+### Nachtrag: Hero-Animation zurueck 03.10.2026 (Auftrag Rene)
+
+- In Etappe 1 hatte ich die WebGL-Szene (`cosmo/core/*`) aus dem Hero entfernt. Das war falsch gewichtet: Rene will sie haben. Sie ist aus dem Stand vor Etappe 1 wiederhergestellt und liegt wieder hinter dem Hero-Text (Desktop rechts, mobil die SVG-Variante im unteren Teil).
+- Animation und Ablaufbild laufen jetzt ueber eine gemeinsame Uhr (`PhaseProvider`): die Szene geht die sechs Job-Schritte durch, das Bild markiert dazu die zustaendige Partei. Das Ablaufbild ist auf Desktop schmaler (`max-w-2xl`), damit die Szene sichtbar bleibt.
+- Behoben: ein Laufzeitfehler in `scene.ts` (negativer Zeitschritt im ersten Frame liess die Schleife mit "Cannot read properties of undefined" abbrechen).
+- `PhaseRail` bleibt entfernt (das neue Ablaufbild ersetzt sie).
