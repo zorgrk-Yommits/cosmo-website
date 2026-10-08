@@ -44,3 +44,6 @@ next-env.d.ts
 /out.pre-*/
 /out.bak-*/
 /docs/screenshots/
+
+# Grosse Medien (Promo/Reel-MP4s) - liegen nur auf dem VPS, nie committen
+/public/media/
