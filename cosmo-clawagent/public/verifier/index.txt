@@ -31,7 +31,29 @@ AUTHENTICITY (verify this file before trusting it):
   trust_profile_id  cosmo-trust-v4
   trust_profile     sha3-256 0x0a9bb0439996f3d5fcf66fb53467b93b0aa847a1a37dd30fe794713d463856bf
 
+SECOND VERIFIER: SUPRAFX MAKER CASE BUNDLES
+Maker windows on SupraFX (evidence folders suprafx-maker-*) use a different
+bundle layout, schema cosmo.killer-demo.maker-case-bundle.v1. They are checked
+by a separate single-file program, cosmo-verify-maker.mjs, with its own
+PROVENANCE-maker.json. Same 12 checks (MB1-MB12) as the repository verifier:
+46 checks on a bundle with a fill, 29 on a declined case. cosmo-verify.mjs
+above is unchanged by this addition.
+
+  node cosmo-verify-maker.mjs <case-dir>      verify one maker case bundle
+  node cosmo-verify-maker.mjs --show-trust    embedded pins
+  node cosmo-verify-maker.mjs --version       version, trust hash, source sha3
+  openssl dgst -sha3-256 cosmo-verify-maker.mjs
+     must equal distributable.sha3 in PROVENANCE-maker.json
+
+  version           1.0.0
+  distributable     sha3-256 0x06d97f90f03767ec4393535aec00ca4514ef86256d164faebe7c90d2c06e6e50
+  trust_profile_id  cosmo-maker-trust-v1
+  trust_profile     sha3-256 0x5075b9ef6564c47c0fabec93a6c7958f5aa6fc8e2ccf434e794b724970c007f7
+  bundle schema     cosmo.killer-demo.maker-case-bundle.v1
+
 Files here:
-  cosmo-verify.mjs   the verifier (one file)
-  PROVENANCE.json    pinned hashes + vendored package versions + how to verify
-  index.html         this page, rendered
+  cosmo-verify.mjs         the execution-case verifier (one file)
+  PROVENANCE.json          pinned hashes + vendored package versions + how to verify
+  cosmo-verify-maker.mjs   the SupraFX maker case-bundle verifier (one file)
+  PROVENANCE-maker.json    its pinned hashes + embedded data + how to verify
+  index.html               this page, rendered

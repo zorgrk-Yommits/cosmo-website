@@ -36,6 +36,8 @@
   <div class="files">
     <a href="cosmo-verify.mjs">cosmo-verify.mjs</a>
     <a href="PROVENANCE.json">PROVENANCE.json</a>
+    <a href="cosmo-verify-maker.mjs">cosmo-verify-maker.mjs</a>
+    <a href="PROVENANCE-maker.json">PROVENANCE-maker.json</a>
     <a href="index.txt">index.txt</a>
   </div>
 
@@ -67,6 +69,24 @@ node cosmo-verify.mjs --version        # version, trust hash, source sha3</pre>
     <tr><td>distributable</td><td class="hash">sha3-256 0xfc513588768a28db0b828432c1d1274d0fe623582cbf0e5d8158357ee29fe2b5</td></tr>
     <tr><td>trust_profile_id</td><td>cosmo-trust-v4</td></tr>
     <tr><td>trust_profile</td><td class="hash">sha3-256 0x0a9bb0439996f3d5fcf66fb53467b93b0aa847a1a37dd30fe794713d463856bf</td></tr>
+  </table>
+
+  <h2>Second verifier: SupraFX maker case bundles</h2>
+  <p>Maker windows on SupraFX (evidence folders named <code>suprafx-maker-*</code>) use a different bundle layout,
+  schema <code>cosmo.killer-demo.maker-case-bundle.v1</code>. They are checked by a separate single-file program,
+  <a href="cosmo-verify-maker.mjs">cosmo-verify-maker.mjs</a>, with its own <a href="PROVENANCE-maker.json">PROVENANCE-maker.json</a>.
+  It runs the same 12 checks (MB1-MB12) as the repository verifier: 46 checks on a bundle with a fill, 29 on a declined case.
+  <code>cosmo-verify.mjs</code> above is unchanged by this addition.</p>
+  <pre>node cosmo-verify-maker.mjs &lt;case-dir&gt;     # verify one maker case bundle (cases/&lt;id&gt;/ under the evidence folder)
+node cosmo-verify-maker.mjs --show-trust   # embedded pins (policy, gates, proposer, authorizer, registers)
+node cosmo-verify-maker.mjs --version      # version, trust hash, source sha3
+openssl dgst -sha3-256 cosmo-verify-maker.mjs   # must equal distributable.sha3 in PROVENANCE-maker.json</pre>
+  <table>
+    <tr><td>version</td><td>1.0.0</td></tr>
+    <tr><td>distributable</td><td class="hash">sha3-256 0x06d97f90f03767ec4393535aec00ca4514ef86256d164faebe7c90d2c06e6e50</td></tr>
+    <tr><td>trust_profile_id</td><td>cosmo-maker-trust-v1</td></tr>
+    <tr><td>trust_profile</td><td class="hash">sha3-256 0x5075b9ef6564c47c0fabec93a6c7958f5aa6fc8e2ccf434e794b724970c007f7</td></tr>
+    <tr><td>bundle schema</td><td>cosmo.killer-demo.maker-case-bundle.v1</td></tr>
   </table>
 </main>
 </body>

@@ -14,8 +14,11 @@ arrived; the run ended NO_FILL at the 13:00 cutoff. 57 ticks, 0 errors.
   sum     -55876.46953569 SUPRA, +8.00000000 iUSDC; venue SUPRA 131252.38 -> 75375.91
 
 Offline re-verification of the five case bundles: ACCEPT (4 x 46/46, declined case
-29/29); tampered copy: REJECT. Self-attestation by the COSMO runner; the verifier
-program (commit 975241d) is not yet published. All four RFQs came from one taker
+29/29); tampered copy: REJECT (2 of 46). Self-attestation by the COSMO runner; the
+verifier program is published at heros.cloud/verifier/ (cosmo-verify-maker.mjs
+1.0.0, sha3-256 0x06d97f90f03767ec4393535aec00ca4514ef86256d164faebe7c90d2c06e6e50,
+same MB1-MB12 checks as the repository verifier at commit 4a28c82; run it on any
+cases/<id>/ folder here). All four RFQs came from one taker
 address. Delegate caps 15000 SUPRA / 3 iUSDC, maker only, no withdrawal.
 
 Byte-identical copies of the window directory and the case bundles.
