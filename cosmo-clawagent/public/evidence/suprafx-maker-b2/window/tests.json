@@ -1,0 +1,9 @@
+{
+  "schema": "cosmo.killer-demo.maker-m4-tests.v1",
+  "commit": "975241d06a8681f9595aa02315848e3ce28d4dc9",
+  "passed": true,
+  "jest_rc": 0,
+  "at": "2026-10-17T11:49:25Z",
+  "suites": "maker.test.ts execProofs.test.ts live.test.ts",
+  "summary": "Tests:       83 passed, 83 total"
+}

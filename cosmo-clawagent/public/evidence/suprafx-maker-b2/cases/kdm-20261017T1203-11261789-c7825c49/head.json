@@ -1,0 +1,8 @@
+{
+  "source": "supra-rpc:/rpc/v1/block",
+  "raw_sha256": "15207f4d4c000421d4ef4da0036fecb8f6c7ea16c223ce92364d080e775ff296",
+  "recv_ms": 1792238615039,
+  "height": 56350301,
+  "hash": "0x62f718ee01eefa1b5c33dbb9ebc98ad7524e8efc61dd302daf1ad7ea7c6b7631",
+  "chain_id": 8
+}

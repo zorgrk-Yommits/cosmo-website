@@ -61,6 +61,7 @@ const NOTES = {
   'evidence/execution-case-001': 'Case 001: a trade under fixed rules',
   'evidence/execution-case-002': 'Case 002: a work delivery under fixed rules',
   'evidence/execution-case-002g': 'Case 002-G: delivery and approval under fixed rules',
+  'evidence/suprafx-maker-b2': 'SupraFX maker B2: four verified live fills in one window',
 };
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

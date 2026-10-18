@@ -1,0 +1,31 @@
+{
+  "verdict": "PROVEN",
+  "checks": [
+    {
+      "id": "FP1",
+      "ok": true,
+      "why": "rfq matched fills 1 filled 200000000; our quote accepted"
+    },
+    {
+      "id": "FP2",
+      "ok": true,
+      "why": "SUPRA delta -1396657257221 (lock 1396796936914..1396796936915), iUSDC delta 200000000 (size 200000000, rebate <= 20000 / 139679694)"
+    },
+    {
+      "id": "FP3",
+      "ok": true,
+      "why": "no other asset moved"
+    },
+    {
+      "id": "FP4",
+      "ok": true,
+      "why": "no lock and no open order left"
+    }
+  ],
+  "data": {
+    "supra_delta": "-1396657257221",
+    "iusdc_delta": "200000000",
+    "lock_floor": "1396796936914",
+    "lock_ceil": "1396796936915"
+  }
+}

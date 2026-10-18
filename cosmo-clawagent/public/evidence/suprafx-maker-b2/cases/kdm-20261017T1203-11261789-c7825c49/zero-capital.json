@@ -1,0 +1,12 @@
+{
+  "id": "ZERO-CAPITAL",
+  "status": "PASS",
+  "why": "capital state identical (hash c6f2cfda78bee5ed)",
+  "source": [
+    "http-get:/api/council/account"
+  ],
+  "data": {
+    "before": "c6f2cfda78bee5ed7eaa6ab8ed2e85480da65c7afdf0ffd469e9946c3ec93132",
+    "after": "c6f2cfda78bee5ed7eaa6ab8ed2e85480da65c7afdf0ffd469e9946c3ec93132"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "arm": {
+    "schema": "cosmo.killer-demo.maker-live-arm.v1",
+    "go_text": "GO M4 B2 17.10. 14:00-15:30 mit 5 Fills und dApp-Abweichungen Paare/Ablauf",
+    "go_at": "2026-10-17T12:00:17.071Z",
+    "window_start": "2026-10-17T12:00:00Z",
+    "window_end": "2026-10-17T13:00:00Z",
+    "maker_delegate_pubkey": "d15adb158fe7b0de3428b27fc31d1a65026ddedacf6cbbea3b47e05ccd0a81ca",
+    "master": "0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb",
+    "max_fills": 5,
+    "created_by": "live.ts arm (COSMO on GO Rene)",
+    "allowed_other_delegates": [],
+    "deviations_accepted": [
+      "pairs_via_caps",
+      "venue_expiry"
+    ],
+    "bound_commit": "975241d06a8681f9595aa02315848e3ce28d4dc9"
+  },
+  "arm_hash": "0x4544f5c04c1ec6805ec8483fa5230ebac6fc0d0a929a88beb281619df05eba67",
+  "maker_delegate_address": "7957e54793e33074ed0e097c4ea34ec17910b120f76abcb4224b5055b3f0ef34"
+}

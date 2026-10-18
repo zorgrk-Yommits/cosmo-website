@@ -1,0 +1,83 @@
+{
+  "schema": "cosmo.killer-demo.maker-proposed-intent.v1",
+  "trigger": {
+    "kind": "foreign_open_rfq",
+    "rfq": {
+      "id": "d1a8e391-bdc3-eabf-c12c-7ff09d171ccd",
+      "display_id": "R-261017-113432-c8",
+      "taker_address": "0x988f73bbbc542824615270dcbf6080b07c6237885d5f4d307edaab861eea0e59",
+      "pair": "iUSDC/SUPRA",
+      "status": "open",
+      "source_chain": "supra-mainnet",
+      "dest_chain": "supra-mainnet",
+      "settlement_mode": "platform",
+      "auto_accept": true,
+      "allow_partial_fills": false,
+      "auto_accept_target_rate": "4664.832624109",
+      "size_base_units": "200000000",
+      "remaining_size_base_units": "200000000",
+      "total_filled_base_units": "0",
+      "fill_count": "0",
+      "expires_at_batch": "12556433",
+      "council_batch_number": "12552435",
+      "reference_price": "7073.119039209",
+      "created_at": "2026-10-17T11:34:33.060474+00:00",
+      "quote_count": "0"
+    },
+    "rfq_row_hash": "0xd7f1d195356bb266cdd7428e74a6df38d34e4ef311a084db0e79cb1f200bf992",
+    "list_source": "http-get:/api/suprafx/rfqs?scope=platform&status=open&limit=200",
+    "list_raw_sha256": "55d494724692407d12fc4d871f96b528c319f5287ee1e961c72026d433ad7fea",
+    "seen_ms": 1792238522925
+  },
+  "quote": {
+    "rfq_id": "d1a8e391-bdc3-eabf-c12c-7ff09d171ccd",
+    "pair": "iUSDC/SUPRA",
+    "fill_size_base": "200000000",
+    "rate_bft": "6986660734023149795442",
+    "lock_quants_ceil": "1397332146805",
+    "expires_in_batches": 60,
+    "fair_rate_bft": "7021769581932813864765",
+    "ref_1e18": "142414243066737",
+    "margin_bps": 50,
+    "quote_eval_hash": "0xe35c60cccd6e4441a9d87a886d3bb3d9ba8a21dc3b05653fedeea9a70d000f8a"
+  },
+  "intel_context": {
+    "status": "present",
+    "run_sha256": "b1efb31619349f314ae15bc488b2cb1319498dd31289f37b3c6f5939b545d6fa",
+    "as_of_hourly_bucket": "2026-10-17T11:00:00Z",
+    "ledger_sha256": "85cbe8fe2bc6d0cefc5d7d66701bdbdd78375a80799eb8ea72fa7c03fdee1a0b",
+    "note": "information only, never a gate or trigger (D-M1)"
+  },
+  "intent": {
+    "schema": "cosmo.execution-case.intent.v2",
+    "mode": "micro_live",
+    "action": {
+      "kind": "fx.quote_sell_base.v1",
+      "params": {
+        "pair": {
+          "base_chain": "supra-mainnet",
+          "base_symbol": "iUSDC",
+          "quote_chain": "supra-mainnet",
+          "quote_symbol": "SUPRA"
+        },
+        "side": "maker_pays_quote",
+        "rfq_id": "d1a8e391-bdc3-eabf-c12c-7ff09d171ccd",
+        "fill_size_base": "200000000",
+        "rate_bft": "6986660734023149795442",
+        "lock_quants_ceil": "1397332146805"
+      }
+    },
+    "ttl_ms": 60000,
+    "principal_ref": "principal:killer-demo-001",
+    "agent_ref": "proposer:killer-demo-001"
+  },
+  "config_pins": {
+    "maker_policy_sha256": "09bcaec38e1a37d02bdc5a598daf19a594c4b62bec14db5598463dfcd952d97b",
+    "maker_gates_sha256": "2d97f3f4a24873038c8bed4e2fa5bb18a7e2f454b3574186df7b3bd62855263a"
+  },
+  "proposer": {
+    "key": "e0c877c7ba331f329b348bedc04257a495a5eb3573dd4842c2a99b9b58fb30a0",
+    "signature": "4c1dbc255fc169876c2f49d6456b1cbbe4c091ecbfadc1be93ad8e6c6c2fcd25d2a7770fe2f31c42c3addec6987c43ec5bbfb6eae2a18262ff0594e8f54a380f"
+  },
+  "hash": "0x14259336ddff2d45dd473a4a28b37ec740377e0f4645d9d2aca30aca229a9b94"
+}

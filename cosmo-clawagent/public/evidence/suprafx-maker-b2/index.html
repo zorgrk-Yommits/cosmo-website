@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="index,follow">
+<title>SupraFX maker window B2 — four verified live fills | COSMO</title>
+<meta name="description" content="Public evidence bundle: COSMO as maker on SupraFX, 2026-10-17, four live fills in one window, each proven quant-exact and re-verified offline from its signed decision bundle.">
+<style>
+  :root { color-scheme: dark; }
+  body { margin:0; background:#08090B; color:#F2F4F7; font:15px/1.6 ui-sans-serif,system-ui,sans-serif; }
+  main { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; }
+  h1,h2 { font-family: ui-monospace,Menlo,Consolas,monospace; letter-spacing:-0.01em; }
+  h1 { font-size: 1.7rem; margin: 0 0 6px; }
+  h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .22em; color:#A7B0BC; margin: 40px 0 12px; }
+  p { color:#A7B0BC; margin: 10px 0; }
+  .ink0 { color:#F2F4F7; }
+  code, .mono { font-family: ui-monospace,Menlo,Consolas,monospace; font-size: 12.5px; }
+  .chip { display:inline-block; border:1px solid rgba(70,214,160,.4); background:rgba(70,214,160,.1); color:#46D6A0; border-radius:999px; padding:3px 12px; font-family:ui-monospace,monospace; font-size:12px; margin:0 6px 6px 0; }
+  .chip.neutral { border-color:rgba(255,255,255,.14); background:rgba(255,255,255,.04); color:#A7B0BC; }
+  .chip.amber { border-color:rgba(224,164,88,.4); background:rgba(224,164,88,.08); color:#E0A458; }
+  .panel { border:1px solid rgba(255,255,255,.1); background:#0D0F13; border-radius:12px; padding:16px 18px; margin:14px 0; overflow-x:auto; }
+  table { border-collapse: collapse; width:100%; font-family:ui-monospace,monospace; font-size:12px; }
+  td, th { text-align:left; padding:5px 14px 5px 0; vertical-align:top; white-space:nowrap; }
+  th { color:#757E8C; font-weight:600; text-transform:uppercase; font-size:10.5px; letter-spacing:.08em; }
+  td.hash { color:#757E8C; }
+  td.num { text-align:right; }
+  a { color:#6E8BFF; text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  ul { color:#A7B0BC; padding-left: 1.2em; } li { margin: 6px 0; }
+  .warnbox { border:1px solid rgba(224,164,88,.35); background:rgba(224,164,88,.06); border-radius:12px; padding:14px 18px; margin:14px 0; }
+  .warnbox p { color:#A7B0BC; margin:6px 0; }
+  .breakall { word-break: break-all; white-space: normal; }
+  .big { display:flex; flex-wrap:wrap; gap:12px; margin:18px 0; }
+  .big div { flex:1 1 150px; border:1px solid rgba(255,255,255,.1); background:#0D0F13; border-radius:12px; padding:14px 16px; }
+  .big b { display:block; font-family:ui-monospace,monospace; font-size:1.5rem; color:#F2F4F7; }
+  .big span { font-size:12px; color:#757E8C; text-transform:uppercase; letter-spacing:.08em; }
+</style>
+</head>
+<body>
+<main>
+  <p class="mono" style="color:#757E8C; font-size:11px; text-transform:uppercase; letter-spacing:.2em;">COSMO · public evidence bundle</p>
+  <h1>SupraFX maker window B2: four verified live fills</h1>
+  <p>
+    <span class="chip">4 FILLS PROVEN</span>
+    <span class="chip neutral">2026-10-17 · 12:00–13:00 UTC (14:00–15:00 Berlin)</span>
+    <span class="chip neutral">Supra chain 8 · SupraFX · iUSDC/SUPRA · maker side</span>
+    <span class="chip amber">GO allowed 5 · supply ran out after fill 4</span>
+  </p>
+
+  <div class="big">
+    <div><b>4 / 5</b><span>fills proven (limit set by the GO)</span></div>
+    <div><b>5 min 45 s</b><span>first to fourth fill</span></div>
+    <div><b>0</b><span>errors in 57 ticks</span></div>
+    <div><b>46 / 46</b><span>checks per fill bundle, offline re-verify</span></div>
+    <div><b>6</b><span>live fills over three windows, 16.–17.10.</span></div>
+  </div>
+
+  <p class="ink0">
+    Scope of this proof: COSMO ran as a maker on SupraFX for one armed window under one written GO. The runner decided every
+    open iUSDC/SUPRA request-for-quote (RFQ) against pinned policy and gates, placed a quote only after a FINAL AUTHORIZED
+    decision, and proved each fill quant-exact against the venue's own balance snapshot. Four fills were placed and proven, one
+    RFQ was declined with a named reason, and after minute six no new RFQ arrived until the quote cutoff. Capital was bounded by
+    the venue delegate's caps, not by trust in the runner.
+  </p>
+  <p>
+    Every file below is a byte-identical copy of the window directory and the five case bundles. The record that was written
+    from them is <a href="b2-record.md">b2-record.md</a> (German). Fingerprints are SHA-256; the list is also in
+    <a href="index.txt">index.txt</a>.
+  </p>
+  <p><a href="/media/">← Media (the showcase video of the first two fills)</a> · <a href="/evidence/">All evidence folders</a></p>
+
+  <h2>The window</h2>
+  <div class="panel"><table>
+    <tr><th>step</th><th>time (UTC)</th><th>result</th><th>file</th></tr>
+    <tr><td>Preflight G1–G10</td><td>11:50:35</td><td>READY_WITH_DEVIATIONS (G8 = two named dApp deviations, see limits)</td><td><a href="window/go-check.md">window/go-check.md</a></td></tr>
+    <tr><td>Policy check</td><td>11:53:56</td><td>PASS (P-ACTIVE … P-EXPIRY 10/10, F6 live: exactly the armed delegate, no open orders)</td><td><a href="window/policy-check.json">window/policy-check.json</a></td></tr>
+    <tr><td>Arm before window start</td><td>11:54:12</td><td>refused by code (ARM_WINDOW)</td><td>—</td></tr>
+    <tr><td>Arm</td><td>12:00:09</td><td>armed, max_fills 5, bound to commit 975241d, arm hash 0x4544f5c0…</td><td><a href="window/arm.json">window/arm.json</a></td></tr>
+    <tr><td>Run</td><td>12:00:28 – 13:00:16</td><td>57 ticks, 5 cases, 4 attempts, 0 errors, ended NO_FILL at the quote cutoff (no further RFQ)</td><td><a href="window/run-state.json">window/run-state.json</a></td></tr>
+    <tr><td>Unwind</td><td>13:10</td><td>nothing to do: 0 open RFQs, 0 open quotes, 0 locks</td><td><a href="window/unwind.json">window/unwind.json</a></td></tr>
+    <tr><td>Offline re-verify</td><td>13:1x</td><td>5 bundles ACCEPT; tampered copy REJECT</td><td><a href="window/b2-reverify-20261017.log">reverify.log</a> · <a href="window/b2-tamper-probe-20261017.log">tamper.log</a></td></tr>
+  </table></div>
+
+  <h2>The fills (quant-exact)</h2>
+  <div class="panel"><table>
+    <tr><th>#</th><th>quote placed (UTC)</th><th>RFQ</th><th>quote id</th><th class="num">rate SUPRA/iUSDC</th><th class="num">SUPRA</th><th class="num">iUSDC</th><th>proof</th><th>bundle</th></tr>
+    <tr><td>1</td><td>12:00:41</td><td>R-261017-113847-16</td><td class="hash">9c647c59-643e-36f0-6d3e-32b50ba1c448</td><td class="num">6984.12</td><td class="num">−13,966.85220925</td><td class="num">+2.00000000</td><td>PROVEN FP1–FP4</td><td><a href="cases/kdm-20261017T1200-11384716-4eee4645/">kdm-…-4eee4645</a></td></tr>
+    <tr><td>2</td><td>12:02:14</td><td>R-261017-113432-c8</td><td class="hash">c047fcf9-bc02-6c96-40f8-165da8260805</td><td class="num">6986.66</td><td class="num">−13,971.92413590</td><td class="num">+2.00000000</td><td>PROVEN FP1–FP4</td><td><a href="cases/kdm-20261017T1202-113432c8-14259336/">kdm-…-14259336</a></td></tr>
+    <tr><td>3</td><td>12:03:45</td><td>R-261017-112617-89</td><td class="hash">aa2e5453-63bc-f0f7-7698-f3b82d191dde</td><td class="num">6986.26</td><td class="num">−13,971.12061833</td><td class="num">+2.00000000</td><td>PROVEN FP1–FP4</td><td><a href="cases/kdm-20261017T1203-11261789-c7825c49/">kdm-…-c7825c49</a></td></tr>
+    <tr><td>–</td><td>12:05:13</td><td>R-261017-112313-45</td><td class="hash">(no quote)</td><td class="num">6986.22</td><td class="num">0</td><td class="num">0</td><td>NOT_AUTHORIZED V-3M: remaining batches 28 &lt; 60</td><td><a href="cases/kdm-20261017T1205-11231345-7e75046d/">kdm-…-7e75046d</a></td></tr>
+    <tr><td>4</td><td>12:06:26</td><td>R-261017-120543-a3</td><td class="hash">c5ff58dd-0504-ca06-f022-533a090c7be6</td><td class="num">6983.98</td><td class="num">−13,966.57257221</td><td class="num">+2.00000000</td><td>PROVEN FP1–FP4</td><td><a href="cases/kdm-20261017T1206-120543a3-1fcac31c/">kdm-…-1fcac31c</a></td></tr>
+    <tr><th>sum</th><td></td><td></td><td></td><td></td><td class="num ink0">−55,876.46953569</td><td class="num ink0">+8.00000000</td><td></td><td></td></tr>
+  </table></div>
+  <p class="mono" style="font-size:12px;">
+    Venue balance (COSMO master account, SupraFX council snapshot): SUPRA available 131,252.38 before the window (G6),
+    75,375.91 after fill 4 (batch 12555491, <a href="window/fill.json">window/fill.json</a>); the difference equals the sum of the four deltas.
+    Each quote = fair rate minus 50 bps (fair 7019–7022 from the SupraFX reference 7073.5 → 7021.2), 1.50× above the buyer floor 4664.83.
+    Each fill locked ~13,970 SUPRA (lock ceiling) and released it minus a 1 bp maker rebate (~1.397 SUPRA).
+    All four RFQs came from the same taker address on the venue (one counterparty).
+  </p>
+
+  <h2>What was checked, and by what</h2>
+  <ul class="mono" style="font-size:12.5px;">
+    <li><span class="ink0">G1–G10 (preflight, read-only)</span> — code pinned and tests green on the bound commit; policy, gates and SDK modules hash-pinned; chain id and lock-release state; one dry decision pass; rate/lock/margin sanity; funds; exactly the expected delegate; policy read; empty ledger, no arm; iUSDC backing ratio from an own L1 read.</li>
+    <li><span class="ink0">P-* (policy check, read-only)</span> — the venue delegate is active, bound to the master, maker-only, pair restriction carried by the asset caps, SUPRA cap 15,000 with room, iUSDC cap 3, every other asset 0, expiry known.</li>
+    <li><span class="ink0">V-1M … V-8M (per RFQ)</span> — the maker gates on each RFQ: side and pair, rfq state and remaining lifetime, rate vs. floor, lock vs. cap, funds, delegate set, venue attestation freshness; a FAIL is named, not skipped (see the V-3M row).</li>
+    <li><span class="ink0">FP1–FP4 (per fill)</span> — RFQ matched with our quote accepted; SUPRA delta = lock minus rebate and iUSDC delta = size, exact in quants; no other asset moved; no lock and no open order left.</li>
+    <li><span class="ink0">MB1–MB12 (offline re-verify of a bundle, 46 checks)</span> — hashes cover every file; pins match the repository; intent signature and trigger row; rate is the formula rate on the stored reads; preflights and zero-capital recomputed; provenance of every read; replay of every decision bound to the intent; manifest equals the last decision; arm valid at decision time; executed event equals the FINAL AUTHORIZED decision by the armed delegate; ledger consistent; fill proof recomputed from the stored before/after reads.</li>
+  </ul>
+  <p class="mono" style="font-size:12px;">Tamper probe: one word changed in a copy of a FINAL decision → REJECT (2 of 46 failed). Log: <a href="window/b2-tamper-probe-20261017.log">window/b2-tamper-probe-20261017.log</a>.</p>
+
+  <h2>Files (byte-identical copies)</h2>
+  <p class="mono" style="font-size:12px;">Check integrity with: <code>sha256sum &lt;file&gt;</code> · each case folder carries its own <code>SHA256SUMS</code> (<code>cd &lt;case&gt; &amp;&amp; sha256sum -c SHA256SUMS</code>) · full list in <a href="index.txt">index.txt</a></p>
+  <div class="panel"><table>
+    <tr><th>file</th><th>sha256</th></tr>
+    <tr><td><a href="b2-record.md">b2-record.md</a></td><td class="hash breakall">25f7c607aade682bee39e83ea6c6fe83b49ccb4b628942ac6e733c620fe81f87</td></tr>
+    <tr><td><a href="window/go-check.json">window/go-check.json</a></td><td class="hash breakall">01cbeaadf5e3f52ae52756c8f9ea732361e9c0bfe9160a54d7b4cecbeba69ac3</td></tr>
+    <tr><td><a href="window/go-check.md">window/go-check.md</a></td><td class="hash breakall">af65370580ef745ad689110cff952a912bb1bd8fd74297c497c952c68a1b662b</td></tr>
+    <tr><td><a href="window/policy-check.json">window/policy-check.json</a></td><td class="hash breakall">02862aff57e292a3e2ffdedbac120b941f2df1e765167c5fabe293367e00d85e</td></tr>
+    <tr><td><a href="window/arm.json">window/arm.json</a></td><td class="hash breakall">1bcba86649d950370d5bc3cf145a1fbd194485b6a04e85eafd6a1e43adfe1edc</td></tr>
+    <tr><td><a href="window/run-state.json">window/run-state.json</a></td><td class="hash breakall">3b8893659d099f0a3577148d4d3a89b00eda48cd3e15cda6d86c42a7eb29b4a7</td></tr>
+    <tr><td><a href="window/fill.json">window/fill.json</a> (fill 4, with the council snapshot)</td><td class="hash breakall">9425ede3211a4400d7afce0f9138ee69aaf7bee560fc69b8cbd58a717ad4adad</td></tr>
+    <tr><td><a href="window/fills-ledger.json">window/fills-ledger.json</a></td><td class="hash breakall">75fa86787d5a0ea37439bb1c7e0790bdfb6f63285b088cf76178450e6abd44f8</td></tr>
+    <tr><td><a href="window/unwind.json">window/unwind.json</a></td><td class="hash breakall">289dc535c8af861920e764130f3fe212b6f812f0adf43311d1ebd0d55075e80c</td></tr>
+    <tr><td><a href="window/live.ndjson">window/live.ndjson</a> (runner events)</td><td class="hash breakall">ad89564b22acc163c1cf19cfb755357a2764a17db5dcefb8a6d16830d4e57e52</td></tr>
+    <tr><td><a href="window/log.ndjson">window/log.ndjson</a> (watch and case log)</td><td class="hash breakall">2bd18c55557dd48284363f925ef57f11c80d004bfa40f9cada3bff692d9eee45</td></tr>
+    <tr><td><a href="window/decided.json">window/decided.json</a></td><td class="hash breakall">42d6b8795310c928bdba9216bdcef49413fdd0deec342160d833d49c7ca11ca0</td></tr>
+    <tr><td><a href="window/tests.json">window/tests.json</a></td><td class="hash breakall">8202674c8463f7400c5b16a47727fbe61eb64bfb7bb578c5e20fd38441c161e6</td></tr>
+    <tr><td><a href="window/expiry-calc.json">window/expiry-calc.json</a></td><td class="hash breakall">39196d334ac040677987cd8f32bb4cdab186a353b04d82d737500c0b2a4a9283</td></tr>
+    <tr><td><a href="window/b2-reverify-20261017.log">window/b2-reverify-20261017.log</a></td><td class="hash breakall">c9b59607db4d2cdd3583d60843c95f6adf558527364d86b9250d4f92433a16a4</td></tr>
+    <tr><td><a href="window/b2-tamper-probe-20261017.log">window/b2-tamper-probe-20261017.log</a></td><td class="hash breakall">1a434a924ae3a51f1b85ee858a2209bbea9420d3dc8e5335a84121542517f502</td></tr>
+    <tr><td><a href="cases/kdm-20261017T1200-11384716-4eee4645/SHA256SUMS">cases/…-4eee4645/SHA256SUMS</a> (fill 1)</td><td class="hash breakall">4791229fedb8461e4f15314cd9b0ddff7456f6f85341c8dcac15ad40641c255d</td></tr>
+    <tr><td><a href="cases/kdm-20261017T1202-113432c8-14259336/SHA256SUMS">cases/…-14259336/SHA256SUMS</a> (fill 2)</td><td class="hash breakall">2d8146473aa5f9c024a15e43caa3272f1a354a7e804108de26d16e2877b03cea</td></tr>
+    <tr><td><a href="cases/kdm-20261017T1203-11261789-c7825c49/SHA256SUMS">cases/…-c7825c49/SHA256SUMS</a> (fill 3)</td><td class="hash breakall">0a389eca3b2c06297e4b4e168e17dfd7a987214d489e654ca8d0be893401f3dd</td></tr>
+    <tr><td><a href="cases/kdm-20261017T1205-11231345-7e75046d/SHA256SUMS">cases/…-7e75046d/SHA256SUMS</a> (declined)</td><td class="hash breakall">83b6d3b580552a3004e378a05b352885c7ad03aa6b021dea2e7093c176e064ce</td></tr>
+    <tr><td><a href="cases/kdm-20261017T1206-120543a3-1fcac31c/SHA256SUMS">cases/…-1fcac31c/SHA256SUMS</a> (fill 4)</td><td class="hash breakall">1e8fdd9c4925f686e4b98ee158b138b8c54f3e50294be14fb9d95d8b2f7797a1</td></tr>
+  </table></div>
+  <p class="mono" style="font-size:12px;">
+    A case bundle holds the intent, both decisions (RESERVATION, FINAL), the stored venue reads the decisions were made on, the pins,
+    the zero-capital check and, for a placed quote, <code>live/</code> with the arm, the signed execution envelope, the ledger, the
+    funds snapshot after the fill and the fill proof. The bundle hash in the fills table is the sha256 of that folder's SHA256SUMS.
+  </p>
+
+  <h2>Honest limits</h2>
+  <div class="warnbox">
+    <p>· This is a self-attestation by the COSMO runner. The offline re-verification checks internal consistency against the venue reads the runner stored, not world truth, and the verifier program (commit 975241d) is not yet published; the checks it runs are listed above.</p>
+    <p>· All four RFQs came from one taker address. This proves a repeatable maker chain, not market depth and not a second counterparty.</p>
+    <p>· Economic size is pilot size: 2 iUSDC per fill at fair minus 50 bps, roughly 0.01 USD margin per fill.</p>
+    <p>· Two named deviations from the written policy were accepted in the GO text, because the venue's delegate form has no pair field and no expiry field: the pair restriction is carried by the asset caps (only SUPRA and iUSDC are capped, every other asset 0), and the delegate's venue expiry (~84 days) is longer than the window. Since the operator's decision after window 2, the delegate stays active between windows; the capital bound is the venue cap (15,000 SUPRA / 3 iUSDC, maker only, no withdrawal), plus the runner's own policy.</p>
+    <p>· The runner decides one case per 60-second tick. Fill 5 did not happen because no new iUSDC/SUPRA RFQ appeared between 12:06 and the 13:00 cutoff, not because of a refusal or an error.</p>
+    <p>· Fingerprints here are SHA-256 (the bundles' own convention); older evidence folders on this site use SHA3-256.</p>
+    <p>· Windows 1 and 2 (16.10., one fill each, −13,542.71 and −13,560.53 SUPRA for +2 iUSDC each) are recorded in the repository and shown in the <a href="/media/">showcase video</a>; their bundles are not published on this page.</p>
+  </div>
+
+  <p class="mono" style="color:#757E8C; font-size:11px; margin-top:36px;">
+    Frozen 2026-10-17. Originals are never modified after publication.
+    · <a href="/evidence/">All evidence folders</a> · <a href="/assurance/">Proof overview</a>
+  </p>
+</main>
+</body>
+</html>

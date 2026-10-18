@@ -1,0 +1,17 @@
+{
+  "schema": "cosmo.killer-demo.maker-expiry-calc.v1",
+  "target_iso": "2026-10-17T13:30:00.000Z",
+  "computed_at_iso": "2026-10-17T11:50:35.003Z",
+  "now_batch": 12553958,
+  "seconds_to_target": 5965,
+  "rate_per_s": 1.6076816349902,
+  "rate_sample": {
+    "per_s": 1.6076816349902,
+    "dbatch": 73,
+    "dt_s": 45.407,
+    "clock": "server"
+  },
+  "target_batch": "12563548",
+  "arrival_if_10pct_slower_iso": "2026-10-17T13:41:02.904Z",
+  "arrival_if_10pct_faster_iso": "2026-10-17T13:20:57.831Z"
+}

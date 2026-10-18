@@ -1,0 +1,13 @@
+{
+  "maker_config_sha256": {
+    "maker-policy.v1.json": "09bcaec38e1a37d02bdc5a598daf19a594c4b62bec14db5598463dfcd952d97b",
+    "maker-gates.v1.json": "2d97f3f4a24873038c8bed4e2fa5bb18a7e2f454b3574186df7b3bd62855263a"
+  },
+  "proposer_pubkey": "e0c877c7ba331f329b348bedc04257a495a5eb3573dd4842c2a99b9b58fb30a0",
+  "shadow_authorizer_pubkey": "b00f216bb36e534722313c1c362c086a7ddce207234a0ceaa7a2414d6108d059",
+  "val_core": {
+    "tag": "val-architecture-v1.7-frozen",
+    "commit": "311f1ef"
+  },
+  "repo_commit": "975241d06a8681f9595aa02315848e3ce28d4dc9"
+}

@@ -1,0 +1,73 @@
+{
+  "schema": "cosmo.killer-demo.maker-live-execution.v1",
+  "quote_id": "c5ff58dd-0504-ca06-f022-533a090c7be6",
+  "lifecycle": "applied",
+  "event": {
+    "kind": "PlaceQuoteV2",
+    "payload": {
+      "maker": "0x7957e54793e33074ed0e097c4ea34ec17910b120f76abcb4224b5055b3f0ef34",
+      "rfq_id": "1b75a7fa-99f5-24ce-3c02-e621439dfbfa",
+      "quote_id": "c5ff58dd-0504-ca06-f022-533a090c7be6",
+      "rate": "6983984684572609627488",
+      "fill_size": "200000000",
+      "user_sequence_number": "4",
+      "expires_at_batch": "12555524"
+    }
+  },
+  "envelope_bcs_hex": "71257957e54793e33074ed0e097c4ea34ec17910b120f76abcb4224b5055b3f0ef341b75a7fa99f524ce3c02e621439dfbfac5ff58dd0504ca06f022533a090c7be66045f0cee1eb419a7a0100000000000000c2eb0b00000000000000000000000004000000000000000495bf0000000000d15adb158fe7b0de3428b27fc31d1a65026ddedacf6cbbea3b47e05ccd0a81cae131856cfac9c5a5ad0fa41f7b97ac05a65993319e5b6739e25ad9ef8d29684d5dc8b02733207de69159a284a1a7308b7110bab81d4a058a7f9811f6d7341607",
+  "envelope_contains_event_bcs": true,
+  "submit": {
+    "ok": true,
+    "code": null
+  },
+  "rfq_after": {
+    "id": "1b75a7fa-99f5-24ce-3c02-e621439dfbfa",
+    "display_id": "R-261017-120543-a3",
+    "taker_address": "0x988f73bbbc542824615270dcbf6080b07c6237885d5f4d307edaab861eea0e59",
+    "pair": "iUSDC/SUPRA",
+    "size": "2",
+    "source_chain": "supra-mainnet",
+    "dest_chain": "supra-mainnet",
+    "max_slippage": "0",
+    "reference_price": "7021.178120617",
+    "status": "matched",
+    "expires_at": "2026-10-17T15:45:40.664+00:00",
+    "created_at": "2026-10-17T12:05:44.051496+00:00",
+    "quote_window_s": "15",
+    "quote_deadline": null,
+    "notifications_sent": "0",
+    "selected_quote_id": null,
+    "taker_signature": null,
+    "taker_payload_hash": null,
+    "cancelled_at": null,
+    "cancel_reason": null,
+    "cancel_trigger": null,
+    "reposted_from": null,
+    "settlement_mode": "platform",
+    "remaining_size": "0",
+    "min_fill_size": "0",
+    "allow_partial_fills": false,
+    "auto_accept": true,
+    "auto_accept_target_rate": "4664.834008879",
+    "total_filled": "2",
+    "fill_count": "1",
+    "expires_at_batch": "12559395",
+    "auto_accept_target_rate_bft": "4.664834008879e+21",
+    "council_batch_number": "12555397",
+    "size_base_units": "200000000",
+    "remaining_size_base_units": "0",
+    "min_fill_size_base_units": "0",
+    "total_filled_base_units": "200000000",
+    "quotes": [
+      {
+        "id": "c5ff58dd-0504-ca06-f022-533a090c7be6",
+        "rate": "6983.98468457261",
+        "status": "accepted",
+        "created_at": "2026-10-17T12:06:34.284+00:00",
+        "maker_address": "0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb"
+      }
+    ],
+    "quote_count": "1"
+  },
+  "at": "2026-10-17T12:06:46.257Z"
+}

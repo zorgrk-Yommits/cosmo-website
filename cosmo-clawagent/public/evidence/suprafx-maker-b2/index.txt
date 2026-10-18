@@ -1,0 +1,44 @@
+SUPRAFX-MAKER-B2 -- public evidence bundle (Supra chain 8, SupraFX, COSMO as maker, 2026-10-17 12:00-13:00 UTC)
+
+One armed window under one written GO (limit 5 fills). Four iUSDC/SUPRA RFQs were
+quoted after a FINAL AUTHORIZED decision each and filled; each fill is proven
+quant-exact (FP1-FP4) against the venue's balance snapshot. One RFQ was declined
+with a named reason (V-3M: remaining batches 28 < 60). After 12:06 UTC no new RFQ
+arrived; the run ended NO_FILL at the 13:00 cutoff. 57 ticks, 0 errors.
+
+  fill 1  12:00:41Z  R-261017-113847-16  quote 9c647c59  -13966.85220925 SUPRA  +2.00000000 iUSDC
+  fill 2  12:02:14Z  R-261017-113432-c8  quote c047fcf9  -13971.92413590 SUPRA  +2.00000000 iUSDC
+  fill 3  12:03:45Z  R-261017-112617-89  quote aa2e5453  -13971.12061833 SUPRA  +2.00000000 iUSDC
+  --      12:05:13Z  R-261017-112313-45  NOT_AUTHORIZED V-3M (no quote)
+  fill 4  12:06:26Z  R-261017-120543-a3  quote c5ff58dd  -13966.57257221 SUPRA  +2.00000000 iUSDC
+  sum     -55876.46953569 SUPRA, +8.00000000 iUSDC; venue SUPRA 131252.38 -> 75375.91
+
+Offline re-verification of the five case bundles: ACCEPT (4 x 46/46, declined case
+29/29); tampered copy: REJECT. Self-attestation by the COSMO runner; the verifier
+program (commit 975241d) is not yet published. All four RFQs came from one taker
+address. Delegate caps 15000 SUPRA / 3 iUSDC, maker only, no withdrawal.
+
+Byte-identical copies of the window directory and the case bundles.
+Check integrity with: sha256sum <file>; per case: cd <case> && sha256sum -c SHA256SUMS
+
+25f7c607aade682bee39e83ea6c6fe83b49ccb4b628942ac6e733c620fe81f87  b2-record.md
+1bcba86649d950370d5bc3cf145a1fbd194485b6a04e85eafd6a1e43adfe1edc  window/arm.json
+c9b59607db4d2cdd3583d60843c95f6adf558527364d86b9250d4f92433a16a4  window/b2-reverify-20261017.log
+1a434a924ae3a51f1b85ee858a2209bbea9420d3dc8e5335a84121542517f502  window/b2-tamper-probe-20261017.log
+42d6b8795310c928bdba9216bdcef49413fdd0deec342160d833d49c7ca11ca0  window/decided.json
+39196d334ac040677987cd8f32bb4cdab186a353b04d82d737500c0b2a4a9283  window/expiry-calc.json
+9425ede3211a4400d7afce0f9138ee69aaf7bee560fc69b8cbd58a717ad4adad  window/fill.json
+75fa86787d5a0ea37439bb1c7e0790bdfb6f63285b088cf76178450e6abd44f8  window/fills-ledger.json
+01cbeaadf5e3f52ae52756c8f9ea732361e9c0bfe9160a54d7b4cecbeba69ac3  window/go-check.json
+af65370580ef745ad689110cff952a912bb1bd8fd74297c497c952c68a1b662b  window/go-check.md
+ad89564b22acc163c1cf19cfb755357a2764a17db5dcefb8a6d16830d4e57e52  window/live.ndjson
+2bd18c55557dd48284363f925ef57f11c80d004bfa40f9cada3bff692d9eee45  window/log.ndjson
+02862aff57e292a3e2ffdedbac120b941f2df1e765167c5fabe293367e00d85e  window/policy-check.json
+3b8893659d099f0a3577148d4d3a89b00eda48cd3e15cda6d86c42a7eb29b4a7  window/run-state.json
+8202674c8463f7400c5b16a47727fbe61eb64bfb7bb578c5e20fd38441c161e6  window/tests.json
+289dc535c8af861920e764130f3fe212b6f812f0adf43311d1ebd0d55075e80c  window/unwind.json
+4791229fedb8461e4f15314cd9b0ddff7456f6f85341c8dcac15ad40641c255d  cases/kdm-20261017T1200-11384716-4eee4645/SHA256SUMS
+2d8146473aa5f9c024a15e43caa3272f1a354a7e804108de26d16e2877b03cea  cases/kdm-20261017T1202-113432c8-14259336/SHA256SUMS
+0a389eca3b2c06297e4b4e168e17dfd7a987214d489e654ca8d0be893401f3dd  cases/kdm-20261017T1203-11261789-c7825c49/SHA256SUMS
+83b6d3b580552a3004e378a05b352885c7ad03aa6b021dea2e7093c176e064ce  cases/kdm-20261017T1205-11231345-7e75046d/SHA256SUMS
+1e8fdd9c4925f686e4b98ee158b138b8c54f3e50294be14fb9d95d8b2f7797a1  cases/kdm-20261017T1206-120543a3-1fcac31c/SHA256SUMS
