@@ -45,10 +45,11 @@ above is unchanged by this addition.
   openssl dgst -sha3-256 cosmo-verify-maker.mjs
      must equal distributable.sha3 in PROVENANCE-maker.json
 
-  version           1.0.0
-  distributable     sha3-256 0x06d97f90f03767ec4393535aec00ca4514ef86256d164faebe7c90d2c06e6e50
+  version           1.0.1 (27.10.2026: pin set abfaebf4 appended, S_M 20000 SUPRA;
+                    1.0.0 bundles stay verifiable under the historical pins)
+  distributable     sha3-256 0xcc660657ae1386388c2d7e36bc52a22b05c47d4540bd9c930cfb8bff8e2dfef9
   trust_profile_id  cosmo-maker-trust-v1
-  trust_profile     sha3-256 0x5075b9ef6564c47c0fabec93a6c7958f5aa6fc8e2ccf434e794b724970c007f7
+  trust_profile     sha3-256 0x5e1bd374df7ffea8711ec940dea3243031c46006086b42d435879d12f69041dd
   bundle schema     cosmo.killer-demo.maker-case-bundle.v1
 
 Files here:
