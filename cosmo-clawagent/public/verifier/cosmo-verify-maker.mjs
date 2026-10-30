@@ -10,8 +10,8 @@
 //                             transpiled MECHANICALLY (typescript transpileModule, CommonJS, ES2020, no rewrite) and
 //                             embedded one block per source file with the sha3-256 of the ORIGINAL .ts bytes
 //
-// What this file is: the port of verifyMakerBundle (src/killerDemo/maker/makerBundle.ts, MB1..MB12 incl. the step-0 path
-// guards and the append-only config pin history) plus the ADR-001 additions (embedded trust profile cosmo-maker-trust-v1,
+// What this file is: the port of verifyMakerBundle (src/killerDemo/maker/makerBundle.ts, MB1..MB14 incl. the step-0 path
+// guards, the append-only config pin history, the Robinhood-demo on-chain settlement MB13 and customer mandate MB14) plus the ADR-001 additions (embedded trust profile cosmo-maker-trust-v1,
 // structure guard, CLI). Every module the repository verifier reads from disk (config loaders, register loader, proposer
 // pin, delegate pin) is replaced by an override module that serves the embedded data under the SAME pins; the three grant
 // profile evaluators of the VAL core that no maker bundle ever reaches are stubbed FAIL-CLOSED (they throw).
@@ -28,7 +28,7 @@ import { join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const VERIFIER_NAME = 'cosmo-standalone-maker-verifier';
-export const VERIFIER_VERSION = '1.0.1';
+export const VERIFIER_VERSION = '1.0.2';
 export const MAKER_BUNDLE_SCHEMA = 'cosmo.killer-demo.maker-case-bundle.v1';
 
 // ===========================================================================
@@ -96,8 +96,11 @@ const __DATA = {
   "config/killer-demo/maker/maker-gates.v1.json": "{\n  \"schema\": \"cosmo.killer-demo.maker-gates.v1\",\n  \"on_violation\": \"NOT_AUTHORIZED (FAIL) or UNDECIDABLE (UNPROVABLE); never a silent pass\",\n  \"gates\": [\n    { \"id\": \"V-1M\", \"name\": \"action\", \"rule\": \"intent kind fx.quote_sell_base.v1, pair in allowed_pairs, COSMO pays SUPRA (quote asset) and receives iUSDC (base asset)\" },\n    { \"id\": \"V-2M\", \"name\": \"counterparty\", \"rule\": \"RFQ taker is not in own_addresses (no self-trade)\" },\n    { \"id\": \"V-3M\", \"name\": \"rfq state\", \"rule\": \"status open, auto_accept true, settlement platform, no partial fills, supra-mainnet both legs, remaining == size, nothing filled, expires_at_batch - current batch >= min_remaining_batches\" },\n    { \"id\": \"V-4M\", \"name\": \"size\", \"rule\": \"fill_size <= max_fill_size_base; ceil lock <= max_lock_quants; USD value of the lock at the anchor <= max_notional_usd_1e8\" },\n    { \"id\": \"V-5M\", \"name\": \"fair price\", \"rule\": \"market rule (val/market.ts) OK; quote rate == quote_rate_bft formula; fair*(10000-max_margin)/10000 <= rate <= fair; margin in iUSDC units > 0\" },\n    { \"id\": \"V-6M\", \"name\": \"buyer floor\", \"rule\": \"rate >= auto_accept_target_rate (lossless decimal) of the RFQ\" },\n    { \"id\": \"V-7M\", \"name\": \"stable\", \"rule\": \"reserves iUSDC status fully_backed, ratio >= 1, invariant_holds, attestation age <= reserves_max_age_s; own Supra L1 read: vault_account iUSDC balance >= internal_total\" },\n    { \"id\": \"V-8M\", \"name\": \"funds\", \"rule\": \"maker funds preflight (F-ASSET, F1 on the ceil lock, F2..F6) PASS\" },\n    { \"id\": \"V-9M\", \"name\": \"single use\", \"rule\": \"RFQ id not decided before in this window; executed fills < max_fills_total\" }\n  ]\n}\n",
   "config/killer-demo/maker/history/maker-policy.v1.53eddf75.json": "{\n  \"schema\": \"cosmo.killer-demo.maker-policy.v1\",\n  \"policy_id\": \"cosmo.killer-demo.maker.iusdc-supra.v1\",\n  \"decided\": {\n    \"D-M1\": \"Rene 2026-10-12: trigger = foreign buyer demand only; Intel is context, never a trigger or gate\",\n    \"D-M2\": \"Rene 2026-10-14: only iUSDC/SUPRA\",\n    \"D-M3\": \"Rene 2026-10-14: target margin 50 bps, at most 100 bps below fair; never an economically adverse quote\",\n    \"D-M4\": \"Rene 2026-10-14: payout only after a successful fill and a positive payout proof (read-only is not enough)\",\n    \"D-M5\": \"Rene 2026-10-14: S5b runs unchanged in parallel, S6 stays on hold\",\n    \"D-M6\": \"Rene 2026-10-14: at most 15000 SUPRA per pilot trade (raised from 14000 on 2026-10-14 for price headroom: lock ~13650 SUPRA left ~2.5 %); USD value and available capital checked as well\"\n  },\n  \"master\": \"0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb\",\n  \"own_addresses\": [\n    \"0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb\",\n    \"0x6379678b03f4c6329c9de90fe9216ea404565510e8d0010060fb0658a449b1fe\"\n  ],\n  \"allowed_pairs\": [\"iUSDC/SUPRA\"],\n  \"assets\": {\n    \"SUPRA\": { \"id\": \"0xb3ba52f6fce09fa5b5f14506a7f489404fbacf95bec1c789dc7d6cd86b26cbf1\", \"decimals\": 8 },\n    \"iUSDC\": { \"id\": \"0x561c5f67f687947c3a669211e8617e85181ba55a3b6e31c3276f6e32e1925594\", \"decimals\": 8, \"l1_metadata\": \"0x90a8e901e02ac1539af4a865bbe4a6b96edc27375488803cfbbd6875ec57b281\" },\n    \"iUSDT\": { \"id\": \"0x0ec090a0f03020caea692cd00545639b458e077541fc93a1d09fd4e8409ca5d7\", \"decimals\": 8 },\n    \"USDC\": { \"id\": \"0x89271d558e025677e56eac70cdd09992e229302151702f66bc68625099bf1899\", \"decimals\": 6 },\n    \"ETH\": { \"id\": \"0xa940ea972e50f5c97e725f95dc7a04f97bdde0379b45753be910938cece2b31b\", \"decimals\": 18 },\n    \"provenance\": \"blake3 keyed SUPRAFX-ASSET-V1 over (supra-mainnet, token 32 B) per suprafx-agent-sdk@0.4.1 derive-ids.js; iUSDT/SUPRA/USDC/ETH equal the master account read 2026-10-14, iUSDC equals the cap map of the master delegate policy events (M0 evidence)\"\n  },\n  \"price\": {\n    \"anchor\": \"N-5 ref_1e18 = floor(x500*x48/x89), USD per SUPRA (DORA, killer-demo val/market.ts, unchanged K-9/K-10 venue checks)\",\n    \"fair_rate_bft\": \"floor(10^36 / ref_1e18)  (SUPRA per iUSDC * 10^18; both assets 8 decimals; iUSDC = 1 USD assumption TA-FX-3)\",\n    \"quote_rate_bft\": \"floor(10^36 * (10000 - margin_bps) / (ref_1e18 * 10000))\",\n    \"margin_bps\": 50,\n    \"max_margin_bps\": 100,\n    \"lock_rounding\": \"ceil(fill_size_base * rate_bft / 10^18) for every cap and funds check (chain rounding unknown)\"\n  },\n  \"size\": {\n    \"max_lock_quants\": \"1500000000000\",\n    \"max_fill_size_base\": \"300000000\",\n    \"max_notional_usd_1e8\": \"300000000\",\n    \"note\": \"D-M6: 15000 SUPRA; one 2-USD RFQ; USD value of the lock at the anchor <= 3 USD; lock <= available SUPRA (F1)\"\n  },\n  \"rfq\": {\n    \"require_status\": \"open\",\n    \"require_auto_accept\": true,\n    \"require_settlement_mode\": \"platform\",\n    \"require_no_partial_fills\": true,\n    \"require_chains\": \"supra-mainnet\",\n    \"min_remaining_batches\": 60,\n    \"quote_expires_in_batches\": 60\n  },\n  \"stable\": {\n    \"asset\": \"iUSDC\",\n    \"reserves_max_age_s\": 7200,\n    \"require_status\": \"fully_backed\",\n    \"require_invariant_holds\": true,\n    \"l1_vault_account\": \"0xc899f63fc2b2962faf60e32c3d156a1c65b8ce0f031fd6f4114e24ce43493d76\",\n    \"l1_vault_account_provenance\": \"resource 0x6e826b29...1c08::vault::FaStores.vault_account (Supra L1 read 2026-10-14); its iUSDC primary store == reserves on_chain_total\",\n    \"assumption\": \"TA-FX-3: 1 iUSDC = 1 USD (not provable on chain; the L1 read only proves the council backing of iUSDC)\"\n  },\n  \"delegates\": {\n    \"shadow_expected_active\": [\"542eca57e692deed2c0688c98cfa119e08202c44e7c5f096bc00fa973bca26d7\"],\n    \"shadow_expected_note\": \"Rene's dApp session 'suprafx-trading-session' (created 2026-10-12 18:21:53 MESZ, confirmed by Rene 2026-10-14). Shadow only: any other active delegate is F6 FAIL.\",\n    \"live_expected_active\": \"exactly [maker_delegate] (set in the live arm at M4 setup); Rene's dApp session must be revoked before the live window\"\n  },\n  \"single_use\": { \"max_fills_total\": 1 }\n}\n",
   "config/killer-demo/maker/history/maker-policy.v1.09bcaec3.json": "{\n  \"schema\": \"cosmo.killer-demo.maker-policy.v1\",\n  \"policy_id\": \"cosmo.killer-demo.maker.iusdc-supra.v1\",\n  \"decided\": {\n    \"D-M1\": \"Rene 2026-10-12: trigger = foreign buyer demand only; Intel is context, never a trigger or gate\",\n    \"D-M2\": \"Rene 2026-10-14: only iUSDC/SUPRA\",\n    \"D-M3\": \"Rene 2026-10-14: target margin 50 bps, at most 100 bps below fair; never an economically adverse quote\",\n    \"D-M4\": \"Rene 2026-10-14: payout only after a successful fill and a positive payout proof (read-only is not enough)\",\n    \"D-M5\": \"Rene 2026-10-14: S5b runs unchanged in parallel, S6 stays on hold\",\n    \"D-M6\": \"Rene 2026-10-14: at most 15000 SUPRA per pilot trade (raised from 14000 on 2026-10-14 for price headroom: lock ~13650 SUPRA left ~2.5 %); USD value and available capital checked as well\"\n  },\n  \"master\": \"0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb\",\n  \"own_addresses\": [\n    \"0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb\",\n    \"0x6379678b03f4c6329c9de90fe9216ea404565510e8d0010060fb0658a449b1fe\"\n  ],\n  \"allowed_pairs\": [\"iUSDC/SUPRA\"],\n  \"assets\": {\n    \"SUPRA\": { \"id\": \"0xb3ba52f6fce09fa5b5f14506a7f489404fbacf95bec1c789dc7d6cd86b26cbf1\", \"decimals\": 8 },\n    \"iUSDC\": { \"id\": \"0x561c5f67f687947c3a669211e8617e85181ba55a3b6e31c3276f6e32e1925594\", \"decimals\": 8, \"l1_metadata\": \"0x90a8e901e02ac1539af4a865bbe4a6b96edc27375488803cfbbd6875ec57b281\" },\n    \"iUSDT\": { \"id\": \"0x0ec090a0f03020caea692cd00545639b458e077541fc93a1d09fd4e8409ca5d7\", \"decimals\": 8 },\n    \"USDC\": { \"id\": \"0x89271d558e025677e56eac70cdd09992e229302151702f66bc68625099bf1899\", \"decimals\": 6 },\n    \"ETH\": { \"id\": \"0xa940ea972e50f5c97e725f95dc7a04f97bdde0379b45753be910938cece2b31b\", \"decimals\": 18 },\n    \"provenance\": \"blake3 keyed SUPRAFX-ASSET-V1 over (supra-mainnet, token 32 B) per suprafx-agent-sdk@0.4.1 derive-ids.js; iUSDT/SUPRA/USDC/ETH equal the master account read 2026-10-14, iUSDC equals the cap map of the master delegate policy events (M0 evidence)\"\n  },\n  \"price\": {\n    \"anchor\": \"N-5 ref_1e18 = floor(x500*x48/x89), USD per SUPRA (DORA, killer-demo val/market.ts, unchanged K-9/K-10 venue checks)\",\n    \"fair_rate_bft\": \"floor(10^36 / ref_1e18)  (SUPRA per iUSDC * 10^18; both assets 8 decimals; iUSDC = 1 USD assumption TA-FX-3)\",\n    \"quote_rate_bft\": \"floor(10^36 * (10000 - margin_bps) / (ref_1e18 * 10000))\",\n    \"margin_bps\": 50,\n    \"max_margin_bps\": 100,\n    \"lock_rounding\": \"ceil(fill_size_base * rate_bft / 10^18) for every cap and funds check (chain rounding unknown)\"\n  },\n  \"size\": {\n    \"max_lock_quants\": \"1500000000000\",\n    \"max_fill_size_base\": \"300000000\",\n    \"max_notional_usd_1e8\": \"300000000\",\n    \"note\": \"D-M6: 15000 SUPRA per fill (one quote open at a time); one 2-USD RFQ per fill; USD value of the lock at the anchor <= 3 USD; lock <= available SUPRA (F1); continuous-operation step 1 (Rene 16.10.2026): up to single_use.max_fills_total fills per armed window\"\n  },\n  \"rfq\": {\n    \"require_status\": \"open\",\n    \"require_auto_accept\": true,\n    \"require_settlement_mode\": \"platform\",\n    \"require_no_partial_fills\": true,\n    \"require_chains\": \"supra-mainnet\",\n    \"min_remaining_batches\": 60,\n    \"quote_expires_in_batches\": 60\n  },\n  \"stable\": {\n    \"asset\": \"iUSDC\",\n    \"reserves_max_age_s\": 7200,\n    \"require_status\": \"fully_backed\",\n    \"require_invariant_holds\": true,\n    \"l1_vault_account\": \"0xc899f63fc2b2962faf60e32c3d156a1c65b8ce0f031fd6f4114e24ce43493d76\",\n    \"l1_vault_account_provenance\": \"resource 0x6e826b29...1c08::vault::FaStores.vault_account (Supra L1 read 2026-10-14); its iUSDC primary store == reserves on_chain_total\",\n    \"assumption\": \"TA-FX-3: 1 iUSDC = 1 USD (not provable on chain; the L1 read only proves the council backing of iUSDC)\"\n  },\n  \"delegates\": {\n    \"shadow_expected_active\": [\"542eca57e692deed2c0688c98cfa119e08202c44e7c5f096bc00fa973bca26d7\"],\n    \"shadow_expected_note\": \"Rene's dApp session 'suprafx-trading-session' (created 2026-10-12 18:21:53 MESZ, confirmed by Rene 2026-10-14). Shadow only: any other active delegate is F6 FAIL.\",\n    \"live_expected_active\": \"exactly [maker_delegate] (set in the live arm at M4 setup); Rene's dApp session must be revoked before the live window\"\n  },\n  \"single_use\": { \"max_fills_total\": 5 }\n}\n",
+  "config/killer-demo/maker/maker-policy.v2.robinhood.json": "{\n  \"schema\": \"cosmo.killer-demo.maker-policy.v2\",\n  \"policy_id\": \"cosmo.killer-demo.maker.usdg-supra.robinhood.v2\",\n  \"decided\": {\n    \"D-M1\": \"Rene 2026-10-12: trigger = buyer demand only; Intel is context, never a trigger or gate\",\n    \"D-M3\": \"Rene 2026-10-14: target margin 50 bps, at most 100 bps below fair; never an economically adverse quote\",\n    \"D-M4\": \"Rene 2026-10-14: payout only after a successful fill and a positive payout proof (read-only is not enough)\",\n    \"D-M6\": \"Rene 2026-10-27: at most 20000 SUPRA per pilot trade; USD value and available capital checked as well\",\n    \"D-RH1\": \"Rene 2026-10-29 (plan robinhood-demo v0.1): Robinhood Chain demo USDG/SUPRA, source robinhood-mainnet -> dest supra-mainnet, 1.5 USDG per RFQ, at most 2 fills; the taker is a SECOND OWN StarKey master K1 (declared, no foreign Robinhood taker exists on SupraFX: 0 RFQs in 12000, vault 5.5 USDG); the demo proves the rail and COSMO's execution, not demand\",\n    \"D-RH2\": \"Rene 2026-10-29: evidence = bundle with onchain_settlement per leg (Supra L1 payout proof PP0-PP2 for the customer's SUPRA, Robinhood Chain withdraw receipt EL0-EL6 for the maker's USDG) + verifier MB13 + proof page; no video\"\n  },\n  \"master\": \"0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb\",\n  \"own_addresses\": [\n    \"0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb\",\n    \"0x6379678b03f4c6329c9de90fe9216ea404565510e8d0010060fb0658a449b1fe\"\n  ],\n  \"allowed_pairs\": [\"USDG/SUPRA\"],\n  \"pair\": { \"symbol\": \"USDG/SUPRA\", \"base\": \"USDG\", \"quote\": \"SUPRA\" },\n  \"chains\": { \"source\": \"robinhood-mainnet\", \"dest\": \"supra-mainnet\" },\n  \"counterparty\": {\n    \"declared_own_taker\": null,\n    \"note\": \"P2 step 1: the second own StarKey master K1 (customer account) is pinned here once Rene names it; V-2M then passes for exactly this address with the deviation 'declared_own_taker' in the check text and on the proof page. null = no declared taker, every own address is a refused self-trade (v1 rule)\"\n  },\n  \"assets\": {\n    \"SUPRA\": { \"id\": \"0xb3ba52f6fce09fa5b5f14506a7f489404fbacf95bec1c789dc7d6cd86b26cbf1\", \"decimals\": 8 },\n    \"iUSDC\": { \"id\": \"0x561c5f67f687947c3a669211e8617e85181ba55a3b6e31c3276f6e32e1925594\", \"decimals\": 8, \"l1_metadata\": \"0x90a8e901e02ac1539af4a865bbe4a6b96edc27375488803cfbbd6875ec57b281\" },\n    \"iUSDT\": { \"id\": \"0x0ec090a0f03020caea692cd00545639b458e077541fc93a1d09fd4e8409ca5d7\", \"decimals\": 8 },\n    \"USDC\": { \"id\": \"0x89271d558e025677e56eac70cdd09992e229302151702f66bc68625099bf1899\", \"decimals\": 6 },\n    \"ETH\": { \"id\": \"0xa940ea972e50f5c97e725f95dc7a04f97bdde0379b45753be910938cece2b31b\", \"decimals\": 18 },\n    \"USDG\": { \"id\": \"0x84f2da2b1609a29182ed95020b895b23efdd898b9a3f58da9ee6f7bb59e8ce18\", \"decimals\": 6, \"evm\": { \"chain_id\": 4663, \"contract\": \"0x5fc5360d0400a0fd4f2af552add042d716f1d168\", \"vault\": \"0xc03858631a160fa1baf6054d4ad734e386952d0e\" } },\n    \"provenance\": \"blake3 keyed SUPRAFX-ASSET-V1 over (chain, token) per suprafx-agent-sdk@0.4.1 derive-ids.js; SUPRA/iUSDC/iUSDT/USDC/ETH as in maker-policy.v1.json; USDG = registeredAssetId('robinhood','USDG') == deriveAssetId, read-only preflight 2026-10-29 (docs/killer-demo/robinhood/reads-20261029/preflight-ro.out); USDG contract and decimals from GET /api/assets (assets.json), vault from GET /api/council/chain-info robinhoodVault\"\n  },\n  \"evm\": {\n    \"chain_id\": 4663,\n    \"chain_name\": \"robinhood-mainnet\",\n    \"rpc_env\": \"ROBINHOOD_RPC_URL\",\n    \"rpc_public\": \"https://rpc.mainnet.chain.robinhood.com\",\n    \"explorer\": \"https://robinhoodchain.blockscout.com\",\n    \"min_confirmations\": 100,\n    \"vault\": \"0xc03858631a160fa1baf6054d4ad734e386952d0e\",\n    \"vault_withdraw_topic0\": \"0xe8b733aae0f3125a3c7b8995ff7c39bca352415111fa2b9ce648f6d2f59fd37b\",\n    \"note\": \"Robinhood Chain = Arbitrum L2 (eth_chainId 0x1237 = 4663, read 2026-10-29). The council vault pays USDG out with an ERC-20 Transfer(vault -> linked address) plus the vault event topic0 above (observed once, tx 0x8e88a98c... 2026-09-24, 165007 gas). min_confirmations 100 blocks (~10 s, soft finality); 'posted'/'final' stages need an Ethereum L1 read and are not claimed by EL6. The public RPC is rate-limited; the proof reads use ROBINHOOD_RPC_URL (Alchemy) when set\"\n  },\n  \"price\": {\n    \"anchor\": \"N-5 ref_1e18 = floor(x500*x48/x89), USD per SUPRA (DORA, killer-demo val/market.ts, unchanged K-9/K-10 venue checks against GET /api/oracle?pair=SUPRA/USDC)\",\n    \"fair_rate_bft\": \"floor(10^(36 + 8 - 6) / ref_1e18)  (SUPRA quants per USDG micro-unit * 10^18; SUPRA 8 decimals, USDG 6 decimals; USDG = 1 USD assumption TA-FX-3)\",\n    \"quote_rate_bft\": \"floor(10^38 * (10000 - margin_bps) / (ref_1e18 * 10000))\",\n    \"margin_bps\": 50,\n    \"max_margin_bps\": 100,\n    \"lock_rounding\": \"ceil(fill_size_base * rate_bft / 10^18) for every cap and funds check (chain rounding unknown)\",\n    \"note\": \"the venue oracle USDG/SUPRA is the SUPRA/USDT feed with conversionRate 1 (no USDG feed, read 2026-10-29); the anchor therefore stays the DORA USD/SUPRA rule and USDG = 1 USD is documented as an assumption\"\n  },\n  \"size\": {\n    \"max_lock_quants\": \"2000000000000\",\n    \"max_fill_size_base\": \"1500000\",\n    \"max_notional_usd_1e8\": \"200000000\",\n    \"note\": \"D-RH1: 1.5 USDG per RFQ (max_fill_size_base 1500000 = 1.5 USDG in 6 decimals); lock about 12900 SUPRA at 8548 SUPRA/USDG <= S_M 20000 SUPRA (D-M6) and <= available venue SUPRA (F1); USD value of the lock <= 2 USD; at most single_use.max_fills_total fills\"\n  },\n  \"rfq\": {\n    \"require_status\": \"open\",\n    \"require_auto_accept\": true,\n    \"require_settlement_mode\": \"platform\",\n    \"require_no_partial_fills\": true,\n    \"require_chains\": { \"source\": \"robinhood-mainnet\", \"dest\": \"supra-mainnet\" },\n    \"min_remaining_batches\": 60,\n    \"quote_expires_in_batches\": 60\n  },\n  \"stable\": {\n    \"asset\": \"USDG\",\n    \"backing\": \"evm\",\n    \"reserves_max_age_s\": 7200,\n    \"require_status\": \"fully_backed\",\n    \"require_invariant_holds\": true,\n    \"l1_vault_account\": \"0xc03858631a160fa1baf6054d4ad734e386952d0e\",\n    \"l1_vault_account_provenance\": \"GET /api/council/chain-info robinhoodVault (read 2026-10-29) == /api/reserves USDG chains[robinhood].vault; backing leg (b) = own Robinhood Chain read eth_call USDG.balanceOf(vault) >= internal_total (6 decimals)\",\n    \"assumption\": \"TA-FX-3 analogue: 1 USDG = 1 USD (Paxos stablecoin, not provable on chain; the EVM read only proves the council backing of USDG)\"\n  },\n  \"delegate_caps\": {\n    \"SUPRA\": { \"max_base_units\": \"2000000000000\", \"required\": true, \"note\": \"the maker locks SUPRA: cap > 0 and <= S_M, with room for the expected lock\" },\n    \"iUSDC\": { \"max_base_units\": \"300000000\", \"required\": false, \"note\": \"delegate v4 carries iUSDC 3 from the E1a series; idle in this policy (no iUSDC leg), tolerated up to 3\" },\n    \"USDG\": { \"max_base_units\": \"5000000\", \"required\": false, \"note\": \"only if the venue demands a cap on the received asset (delegate v5, plan risk 2); otherwise absent or zero\" }\n  },\n  \"delegates\": {\n    \"shadow_expected_active\": [\"d4098132bfbc64c0c778dba61ed5f048d9d675195eb01b8b6255d475ece04619\"],\n    \"shadow_expected_note\": \"delegate v4 'cosmo-f2-maker-v4' (created 2026-10-28, caps SUPRA 20000 / iUSDC 3, stays active per Rene 29.10.2026). Shadow only: any other active delegate is F6 FAIL.\",\n    \"live_expected_active\": \"exactly [maker_delegate] (v4 or v5, set in the live arm) plus the delegates Rene names in the GO text\"\n  },\n  \"single_use\": { \"max_fills_total\": 2 }\n}\n",
   "config/killer-demo/funds-preflight.v1.json": "{\n  \"schema\": \"cosmo.killer-demo.funds-preflight.v1\",\n  \"status\": \"DRAFT_NOT_ACTIVE\",\n  \"source\": \"plans/killer-demo-001-plan.md P0.4 (P0 FROZEN 2026-10-07)\",\n  \"runs\": [\"Preflight-1 immediately before ARM\", \"Preflight-2 immediately before Submit\"],\n  \"on_discrepancy\": \"STOP and HALT, no retry\",\n  \"data_sources_rule\": \"direct HTTP GET or suprafx-agent-sdk@0.4.1 only; never @suprafx/agent-sdk@0.1.1 (P0.7)\",\n  \"checks\": [\n    { \"id\": \"F0\", \"rule\": \"official runPreflight: ready_to_trade == true, 0 failures (K-9)\", \"source\": \"sdk:suprafx-agent-sdk@0.4.1\" },\n    { \"id\": \"F1\", \"rule\": \"available[SUPRA] (chain, integer) >= S\", \"source\": \"http-get:/api/council/account\" },\n    { \"id\": \"F2\", \"rule\": \"per asset: locked_in_rfq and locked_in_orders (chain) == sums from /api/council/my-open-orders (lockedRfqs/lockedOrders, chainChecked: true); lock without row = ghost lock -> STOP and report to SupraFX (K-7)\", \"source\": \"http-get:/api/council/account + /api/council/my-open-orders\" },\n    { \"id\": \"F3\", \"rule\": \"locked_in_orders == 0 and locked_in_withdraw == 0 for all assets\", \"source\": \"http-get:/api/council/account\" },\n    { \"id\": \"F4\", \"rule\": \"mirror balance (/api/platform/balances) == chain balance, scaled\", \"source\": \"http-get:/api/platform/balances + /api/council/account\" },\n    { \"id\": \"F5\", \"rule\": \"0 open RFQs on the master; any cancelled or expired RFQ without cancelled_at outside the pinned exception list -> STOP, EXCEPT a regularly expired V2 RFQ (status expired, SubmitRfqV2 with expires_in_batches) whose lock is provably released (F2/F3: locked_in_rfq/locked_in_orders == 0 for it, no my-open-orders row, chainChecked true); any unresolved lock -> STOP (F5 precision, Rene 2026-10-07)\", \"exception_list\": { \"append_only\": true, \"entries\": [\"R-260925-183346-6d\", \"R-260926-055506-56\"], \"reason\": \"legacy_upgrade (D-12)\" }, \"source\": \"http-get:/api/suprafx/rfqs\" },\n    { \"id\": \"F6\", \"rule\": \"active delegates (Created - Revoked from master events) == exactly {KILLER-DEMO delegate}; its policy fields == pinned caps; no earlier delegate holds open orders (K-14)\", \"source\": \"http-get:/api/council/events?user= + /api/council/my-open-orders\" },\n    { \"id\": \"F7\", \"rule\": \"no foreign master event between Preflight-1 and Preflight-2; no UI activity on the master during the window (D-11)\", \"source\": \"http-get:/api/council/events\" },\n    { \"id\": \"F8\", \"rule\": \"after fill: SUPRA delta == exactly -S; USDC delta == floor(S x rate) - fee (+-1 micro); all locked_* back to 0; matching by asset ID, never by symbol\", \"source\": \"http-get:/api/council/account\" },\n    { \"id\": \"F9\", \"rule\": \"no fill: no cancel write; RFQ expires after 300 batches (K-6); then F2/F3 again up to 2 x 300 batches after expiry; expired with lock released -> STOP 'no fill'; lock persists -> log FUNDS_LOCK_AFTER_EXPIRY, STOP, report, no new RFQ\", \"rfq_expires_in_batches\": \"300\", \"recheck_window_batches\": \"600\", \"source\": \"http-get:/api/council/account + /my-open-orders + /api/suprafx/rfqs\" },\n    { \"id\": \"F10\", \"rule\": \"sequence_in_sync: local delegate counter == get_sequence_number (chain) immediately before submit\", \"source\": \"sdk:suprafx-agent-sdk@0.4.1\" },\n    { \"id\": \"F11\", \"rule\": \"submit lifecycle: applied -> continue; rejected -> STOP (no correction, no retry); unknown -> read get_balances + my-open-orders, log, STOP + HALT; any RFQ status other than matched/settled = no fill (K-8, K-15)\", \"retry\": \"never\", \"source\": \"sdk:suprafx-agent-sdk@0.4.1 withLifecycle\" }\n  ],\n  \"not_checkable\": \"delegate earmark consumption has no endpoint; only proof of an active policy is a committed trade; covered conservatively by F6 + F11\",\n  \"asset_ids\": {\n    \"rule\": \"pin == deriveAssetId(0.4.1) == /api/council/account, else UNDECIDABLE and HALT (P0.7)\",\n    \"SUPRA\": \"0xb3ba52f6fce09fa5b5f14506a7f489404fbacf95bec1c789dc7d6cd86b26cbf1\",\n    \"USDC\": \"0x89271d558e025677e56eac70cdd09992e229302151702f66bc68625099bf1899\"\n  }\n}\n",
   "config/killer-demo/proposer-key.pin.json": "{\n  \"schema\": \"cosmo.killer-demo.proposer-key-pin.v1\",\n  \"role\": \"proposer\",\n  \"key_scheme\": \"ed25519\",\n  \"pubkey_hex\": \"e0c877c7ba331f329b348bedc04257a495a5eb3573dd4842c2a99b9b58fb30a0\",\n  \"root_pin_w2\": \"W2:a5f16a6e6e487a54b8591803bc38891075e7c56d6b4d0076c0746dd01f7de70f\",\n  \"created_at\": \"2026-10-10T12:29:46.476Z\",\n  \"seed_file\": \".keys/killer-demo-proposer.hex (VPS, 0600, gitignored)\",\n  \"signature_basis\": \"PRODUCTION_SIGNED\",\n  \"note\": \"KILLER-DEMO-001 proposer key (E-K-1, Rene 2026-10-07): signs cosmo.killer-demo.proposed-intent.v1 only; separate from the Intel writer and the execution-case engine key. Generated in P2 K1 on the VPS.\"\n}\n",
+  "config/killer-demo/customer/customer-policy.v1.json": "{\n  \"schema\": \"cosmo.killer-demo.customer-policy.v1\",\n  \"policy_id\": \"cosmo.killer-demo.customer.usdg-supra.robinhood.v1\",\n  \"decided\": {\n    \"D-RH1\": \"Rene 2026-10-29 (plan robinhood-demo v0.1): the customer account is a SECOND OWN StarKey master K1; it holds USDG on Robinhood Chain and gives the mandate 'buy SUPRA on Supra against USDG, not worse than rate X'. Declared self-trade: the demo proves the rail and COSMO's execution, not demand\",\n    \"D-RH3\": \"P2 step 4: the customer delegate 'cosmo-demo-taker-v1' is taker-only with cap USDG 3 (two RFQs of 1.5), expiry 7 days; it can post and cancel RFQs and nothing else (withdrawals are master-signed)\"\n  },\n  \"customer\": {\n    \"master\": null,\n    \"master_note\": \"K1 (pinned in P2 step 1 once Rene names it; equals maker-policy.v2.robinhood.json counterparty.declared_own_taker)\",\n    \"delegate_label\": \"cosmo-demo-taker-v1\",\n    \"delegate_role\": \"taker\",\n    \"delegate_cap\": { \"asset\": \"USDG\", \"max_base_units\": \"3000000\" }\n  },\n  \"principal_ref\": \"principal:robinhood-demo-customer-k1\",\n  \"agent_ref\": \"customer-agent:robinhood-demo-001\",\n  \"action_kind\": \"fx.sell_base_rfq.v1\",\n  \"pair\": { \"symbol\": \"USDG/SUPRA\", \"base\": \"USDG\", \"quote\": \"SUPRA\", \"base_chain\": \"robinhood-mainnet\", \"quote_chain\": \"supra-mainnet\" },\n  \"assets\": {\n    \"USDG\": { \"id\": \"0x84f2da2b1609a29182ed95020b895b23efdd898b9a3f58da9ee6f7bb59e8ce18\", \"decimals\": 6 },\n    \"SUPRA\": { \"id\": \"0xb3ba52f6fce09fa5b5f14506a7f489404fbacf95bec1c789dc7d6cd86b26cbf1\", \"decimals\": 8 }\n  },\n  \"rfq\": {\n    \"size_base_units\": \"1500000\",\n    \"max_rfqs_total\": 2,\n    \"settlement_mode\": \"platform\",\n    \"auto_accept\": true,\n    \"allow_partial_fills\": false,\n    \"floor_rule\": \"auto_accept_target_rate_bft = floor(venue oracle USDG/SUPRA rate_bft * (10000 - floor_discount_bps) / 10000); the venue oracle USDG/SUPRA is the SUPRA/USDT feed (no USDG feed), USDG = 1 USD assumed\",\n    \"floor_discount_bps\": 100,\n    \"expires_in_batches\": 600,\n    \"ttl_ms\": 1800000,\n    \"note\": \"1.5 USDG per RFQ (6 decimals), floor = oracle minus 1 percent (plan P3), expiry about 30 minutes at the observed batch rate, at most 2 RFQs in the demo (then the venue SUPRA of the maker is used up)\"\n  },\n  \"mandate\": {\n    \"execution_key_ref_prefix\": \"suprafx-delegate\",\n    \"rfq_id_rule\": \"rfq_id = first 16 bytes of the mandate hash (executionCase/mandate.ts caseCorrelationId): the RFQ on the venue IS the mandate\"\n  }\n}\n",
+  "config/killer-demo/customer/customer-engine.pin.json": "{\n  \"schema\": \"cosmo.killer-demo.customer-engine-pin.v1\",\n  \"role\": \"customer_attestor\",\n  \"pubkey_hex\": \"094f2c5d7081dd75e5502f1e597ee64dacf4619676ba56bdbaee2401550fa45d\",\n  \"created_at\": \"2026-10-30T06:44:19.700Z\",\n  \"seed_file\": \"/root/.kd-customer/customer-engine.hex (VPS, 0600, outside the repo)\",\n  \"note\": \"Robinhood demo customer attestor: signs the customer mandate (executionCase mandate v2 sign domain). Not a venue key; moves nothing.\"\n}\n",
 };
 // ==== END EMBEDDED DATA ====
 
@@ -141,8 +144,16 @@ __srcDefine('killerDemo/config.ts', function (exports) {
 // override of src/killerDemo/maker/config.ts + the pin-set selection of makerBundle.ts (selectMakerConfig)
 __srcDefine('killerDemo/maker/config.ts', function (exports, module, require) {
   const { ConfigPinError } = require('../config');
-  const current = TRUST_PROFILE.maker_config_pin_sets.find((s) => s.status === 'current');
-  exports.MAKER_CONFIG_PINS = { ...current.pins };
+  // 1.0.2: two policy files are CURRENT at once (maker-policy.v1.json iUSDC/SUPRA and maker-policy.v2.robinhood.json
+  // USDG/SUPRA); every current set = exactly one policy file + the gates file (config.ts MAKER_CONFIG_PINS, makerBundle.ts
+  // selectMakerConfig GUARD KD.M-MB2-CUR)
+  const currents = TRUST_PROFILE.maker_config_pin_sets.filter((s) => s.status === 'current');
+  exports.MAKER_POLICY_NAMES = ['maker-policy.v1.json', 'maker-policy.v2.robinhood.json'];
+  exports.DEFAULT_MAKER_POLICY = 'maker-policy.v1.json';
+  exports.isMakerPolicyName = (s) => exports.MAKER_POLICY_NAMES.includes(s);
+  exports.MAKER_CONFIG_PINS = Object.assign({}, ...currents.map((s) => s.pins));
+  const policyNameOf = (row) => Object.keys(row.pins).find((n) => exports.isMakerPolicyName(n));
+  const rowFor = (policyName) => currents.find((s) => policyNameOf(s) === policyName);
   const loadRow = (row, name) => {
     const bytes = Buffer.from(__dataText(row.files[name]), 'utf8');
     const actual = sha256Hex(bytes);
@@ -150,19 +161,37 @@ __srcDefine('killerDemo/maker/config.ts', function (exports, module, require) {
     if (actual !== row.pins[name]) throw new ConfigPinError(row.files[name], row.pins[name], actual);
     return { name, sha256: actual, value: JSON.parse(bytes.toString('utf8')) };
   };
-  exports.loadMakerPinned = (name) => loadRow(current, name);
-  exports.loadMakerAll = () => ({ policy: loadRow(current, 'maker-policy.v1.json'), gates: loadRow(current, 'maker-gates.v1.json') });
+  exports.loadMakerPinned = (name) => loadRow(exports.isMakerPolicyName(name) ? rowFor(name) : currents[0], name);
+  exports.loadMakerAll = (_dir, policyName = exports.DEFAULT_MAKER_POLICY) => {
+    // GUARD KD.M-CFG-NAME (embedded)
+    if (!exports.isMakerPolicyName(policyName) || !rowFor(policyName)) throw new ConfigPinError(String(policyName), '(known policy name)', 'unknown');
+    const row = rowFor(policyName);
+    return { policy: loadRow(row, policyName), gates: loadRow(row, 'maker-gates.v1.json') };
+  };
   const samePins = (a, b) => JSON.stringify(Object.entries(a).sort()) === JSON.stringify(Object.entries(b).sort());
   exports.MAKER_CONFIG_PIN_HISTORY = TRUST_PROFILE.maker_config_pin_sets.filter((s) => s.status === 'historical');
   exports.selectMakerConfig = function selectMakerConfig(pins) {
-    if (samePins(pins, exports.MAKER_CONFIG_PINS)) return { cfg: exports.loadMakerAll(), historical: false };
+    const names = Object.keys(pins); const policyName = names.find((n) => exports.isMakerPolicyName(n));
+    // GUARD KD.M-MB2-CUR (embedded)
+    if (policyName && names.length === 2 && pins['maker-gates.v1.json'] === exports.MAKER_CONFIG_PINS['maker-gates.v1.json'] && pins[policyName] === exports.MAKER_CONFIG_PINS[policyName]) return { cfg: exports.loadMakerAll(undefined, policyName), historical: false };
     const row = exports.MAKER_CONFIG_PIN_HISTORY.find((r) => samePins(pins, r.pins));
     if (!row) return null;
-    return { cfg: { policy: loadRow(row, 'maker-policy.v1.json'), gates: loadRow(row, 'maker-gates.v1.json') }, historical: true };
+    const pn = policyNameOf(row);
+    return { cfg: { policy: loadRow(row, pn), gates: loadRow(row, 'maker-gates.v1.json') }, historical: true };
   };
+  // pure helpers of src/killerDemo/maker/config.ts (same code; the differential harness proves parity on every bundle)
+  exports.policyPair = function policyPair(p) {
+    const base = p.pair?.base ?? 'iUSDC', quote = p.pair?.quote ?? 'SUPRA';
+    const symbol = p.pair?.symbol ?? `${base}/${quote}`;
+    const rc = p.rfq.require_chains;
+    const source = p.chains?.source ?? (typeof rc === 'string' ? rc : rc.source), dest = p.chains?.dest ?? (typeof rc === 'string' ? rc : rc.dest);
+    const pin = (s) => { const a = p.assets[s]; if (!a || typeof a !== 'object') throw new Error(`policy asset pin missing: ${s}`); return a; };
+    return { symbol, base, quote, source_chain: source, dest_chain: dest, baseAsset: pin(base), quoteAsset: pin(quote) };
+  };
+  exports.rateScale = (pp) => { const d = pp.quoteAsset.decimals - pp.baseAsset.decimals; return d >= 0 ? { mul: 10n ** BigInt(d), div: 1n } : { mul: 1n, div: 10n ** BigInt(-d) }; };
   exports.symbolsOf = (p) => {
     const out = {};
-    for (const s of ['SUPRA', 'iUSDC', 'iUSDT', 'USDC', 'ETH']) out[p.assets[s].id.toLowerCase()] = { symbol: s, decimals: p.assets[s].decimals };
+    for (const [s, a] of Object.entries(p.assets)) if (a && typeof a === 'object') out[a.id.toLowerCase()] = { symbol: s, decimals: a.decimals };
     return out;
   };
 });
@@ -232,7 +261,7 @@ __srcDefine('authority/profiles/synthetic-cell-tending/evaluator.ts', function (
 
 
 // ==== BEGIN EMBEDDED SOURCE CLOSURE (generated by build-maker.mjs -- do not edit by hand) ====
-// 36 TypeScript modules of cosmo-contracts-v2 src/ transpiled by typescript@5.9.3 (transpileModule,
+// 38 TypeScript modules of cosmo-contracts-v2 src/ transpiled by typescript@5.9.3 (transpileModule,
 // CommonJS, ES2020, comments kept, no rewrite). Each header carries the sha3-256 of the ORIGINAL .ts bytes.
 // ---- embedded: src/authority/authorize/authorize.ts source-sha3 0x2332645cb035fc87f2c8c89448dc19acd799662a121b0ca28ade6cd2d5b82f9c ----
 __srcDefine("authority/authorize/authorize.ts", function (exports, module, require) {
@@ -4520,7 +4549,140 @@ exports.OUTCOMES = [
 ];
 
 });
-// ---- embedded: src/killerDemo/funds/preflight.ts source-sha3 0xf6250916d0d445a8572d38dfc4a77bfe14e859ff443d69b5690aa1ae58ad3c46 ----
+// ---- embedded: src/killerDemo/customer/customerVerify.ts source-sha3 0x83a31a7ebfdd9c01e83df4cbd66228defc169c80c094c53d0876b5ed33d8d827 ----
+__srcDefine("killerDemo/customer/customerVerify.ts", function (exports, module, require) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.addressOfPubkey = exports.hexToUuid = exports.rfqIdOfHash = exports.mandateSignBytes = exports.mandateHashOf = exports.MANDATE_DOMAIN_V2 = exports.MANDATE_SCHEMA_V2 = exports.CUSTOMER_POLICY_NAME = exports.CUSTOMER_CASE_SCHEMA = void 0;
+exports.verifyCustomerCase = verifyCustomerCase;
+// KILLER-DEMO-001 Robinhood demo: the PURE verification side of the customer case (MB14). No fs, no clock, no key material:
+// the bundle verifier and the standalone verifier embed this module. The mandate primitives are the execution-case ones
+// (executionCase/mandate.ts: hash = canonical sha3, sign bytes "COSMO-EXECUTION-CASE MANDATE v2\ncase: <id>\nhash: <hash>",
+// rfq_id = first 16 bytes of the hash), re-stated here without the fs-bound key module; the signature check is the same
+// raw ed25519 verify as authority/crypto/ed25519.ts verifyHex (SPKI-wrapped 32-byte key, 64-byte signature).
+const canonical_1 = require("../../executionCase/canonical");
+const ed25519_1 = require("../../authority/crypto/ed25519");
+const node_crypto_1 = require("node:crypto");
+exports.CUSTOMER_CASE_SCHEMA = 'cosmo.killer-demo.customer-case.v1';
+exports.CUSTOMER_POLICY_NAME = 'customer-policy.v1.json';
+exports.MANDATE_SCHEMA_V2 = 'cosmo.execution-case.mandate.v2';
+exports.MANDATE_DOMAIN_V2 = 'COSMO-EXECUTION-CASE MANDATE v2';
+const mandateHashOf = (m) => (0, canonical_1.canonicalHash)(m);
+exports.mandateHashOf = mandateHashOf;
+const mandateSignBytes = (caseId, hash) => Buffer.from(`${exports.MANDATE_DOMAIN_V2}\ncase: ${caseId}\nhash: ${hash}`, 'utf8');
+exports.mandateSignBytes = mandateSignBytes;
+const rfqIdOfHash = (hash) => { if (!/^0x[0-9a-f]{64}$/.test(hash))
+    throw new Error(`malformed mandate hash: ${hash}`); return hash.slice(2, 34); };
+exports.rfqIdOfHash = rfqIdOfHash;
+const hexToUuid = (h) => `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20, 32)}`;
+exports.hexToUuid = hexToUuid;
+// 32-byte Supra address of an ed25519 public key (delegateKey.ts rule), repeated here to keep this module fs-free
+const addressOfPubkey = (pubHex) => { const pub = Buffer.from(pubHex.replace(/^0x/, ''), 'hex'); if (pub.length !== 32)
+    throw new Error('pubkey must be 32 bytes'); return (0, node_crypto_1.createHash)('sha3-256').update(Buffer.concat([pub, Buffer.from([0x00])])).digest('hex'); };
+exports.addressOfPubkey = addressOfPubkey;
+const verifySig = (pubHex, bytes, sigHex) => { if (!/^[0-9a-f]{64}$/.test(pubHex) || !/^[0-9a-f]{128}$/.test(sigHex))
+    return false; try {
+    return (0, ed25519_1.verifyHex)(pubHex, bytes, sigHex);
+}
+catch {
+    return false;
+} };
+function verifyCustomerCase(f, o) {
+    const out = [];
+    const add = (id, ok, why) => out.push({ id, ok, why });
+    const p = o.policy;
+    add('CM1', f.schema === exports.CUSTOMER_CASE_SCHEMA && f.policy_pin.name === exports.CUSTOMER_POLICY_NAME && f.policy_pin.sha256 === o.policySha256 && f.mandate.policy_hash === o.policySha256, `schema + customer policy pin ${f.policy_pin.sha256.slice(0, 8)} == repo ${o.policySha256.slice(0, 8)}`);
+    const h = (0, exports.mandateHashOf)(f.mandate);
+    // GUARD KD.C-MB14-SIG
+    const sigOk = f.mandate.schema === exports.MANDATE_SCHEMA_V2 && f.engine_pubkey === o.enginePubkey && f.mandate_sig.attestor_pubkey === o.enginePubkey && h === f.mandate_hash && verifySig(o.enginePubkey, (0, exports.mandateSignBytes)(f.mandate.case_id, h), f.mandate_sig.signature);
+    add('CM2', sigOk, `mandate hash recomputed ${h.slice(0, 10)}, signature under the pinned customer attestor ${o.enginePubkey.slice(0, 8)}`);
+    const rid = (0, exports.rfqIdOfHash)(h);
+    // GUARD KD.C-MB14-RFQ
+    add('CM3', f.rfq_id === rid && o.trigger.id.replace(/-/g, '').toLowerCase() === rid, `rfq_id ${rid} == trigger RFQ ${o.trigger.id} (first 16 bytes of the mandate hash)`);
+    const ap = f.mandate.action.params;
+    const pair = ap.pair;
+    const { pair_id_hex: _a, reference_rate_bft: _b, oracle: _c, expires_in_batches: _d, ...plain } = ap;
+    const termsOk = f.mandate.action.kind === p.action_kind && !!pair && pair.base_symbol === p.pair.base && pair.quote_symbol === p.pair.quote && pair.base_chain === p.pair.base_chain && pair.quote_chain === p.pair.quote_chain && ap.size_base === p.rfq.size_base_units
+        && o.trigger.pair === p.pair.symbol && o.trigger.source_chain === p.pair.base_chain && o.trigger.dest_chain === p.pair.quote_chain && o.trigger.size_base_units === p.rfq.size_base_units && o.trigger.settlement_mode === p.rfq.settlement_mode && o.trigger.auto_accept === p.rfq.auto_accept
+        && (0, canonical_1.canonicalHash)({ ...f.intent.action.params }) === (0, canonical_1.canonicalHash)({ ...plain });
+    add('CM4', termsOk, `mandate terms == customer policy == trigger RFQ (${o.trigger.pair} ${o.trigger.source_chain} -> ${o.trigger.dest_chain}, size ${o.trigger.size_base_units})`);
+    const taker = o.trigger.taker_address.toLowerCase();
+    // GUARD KD.C-MB14-TAKER
+    add('CM5', o.declaredTaker !== null && taker === o.declaredTaker.toLowerCase() && (f.customer_master === null || f.customer_master.toLowerCase() === taker), `trigger taker ${taker.slice(0, 10)} == declared own taker ${o.declaredTaker ? o.declaredTaker.slice(0, 10) : 'null'} (customer K1)`);
+    add('CM6', f.mandate.mode === 'micro_live' && f.intent.mode === 'micro_live' && !!f.submit && f.submit.lifecycle === 'posted' && f.submit.event.kind === 'SubmitRfqV2' && f.submit.event.payload.rfq_id === f.rfq_id && Date.parse(f.submit.at) < f.mandate.expires_at && f.mandate.execution_key_ref === `${p.mandate.execution_key_ref_prefix}:${f.delegate.address_hex}` && (0, exports.addressOfPubkey)(f.delegate.pubkey_hex) === f.delegate.address_hex, `micro_live mandate, SubmitRfqV2 posted by the customer delegate ${f.delegate.address_hex.slice(0, 10)} before the mandate expiry`);
+    return out;
+}
+
+});
+// ---- embedded: src/killerDemo/evm/evmLeg.ts source-sha3 0x9aa0da864ef2e393a112cf45b4ecf9ef3989b2f1bd7c8ca29129bc1c9b74c2f9 ----
+__srcDefine("killerDemo/evm/evmLeg.ts", function (exports, module, require) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.topicAddress = exports.EVM_LEG_SCHEMA = void 0;
+exports.evmLegProof = evmLegProof;
+exports.EVM_LEG_SCHEMA = 'cosmo.killer-demo.evm-leg-settlement.v1';
+const TRANSFER_TOPIC0 = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+const lc = (s) => String(s ?? '').toLowerCase();
+const isHexQ = (s) => typeof s === 'string' && /^0x[0-9a-fA-F]+$/.test(s);
+const hexToBig = (s) => (isHexQ(s) ? BigInt(s) : null);
+const topicAddress = (t) => `0x${lc(t).replace(/^0x/, '').padStart(64, '0').slice(24)}`;
+exports.topicAddress = topicAddress;
+const word = (data, i) => `0x${lc(data).replace(/^0x/, '').slice(i * 64, i * 64 + 64)}`;
+const bal = (s, asset) => s.balances[asset.toLowerCase()] ?? s.balances[asset] ?? { available: '0', locked_in_orders: '0', locked_in_rfq: '0', locked_in_withdraw: '0' };
+function evmLegProof(a) {
+    const checks = [];
+    const add = (id, ok, why) => checks.push({ id, ok, why });
+    const data = {};
+    const P = a.pins, W = a.withdraw, R = a.reads;
+    const amt = /^\d+$/.test(W.amount_base_units) ? BigInt(W.amount_base_units) : null;
+    const vault = lc(P.vault), token = lc(P.token_contract), linked = lc(W.linked_address), tx = lc(W.tx_hash);
+    // EL0 chain pin on every read
+    const cid = hexToBig(R.chain_id.value), txCid = R.tx.value?.chainId !== undefined ? hexToBig(R.tx.value.chainId) : null;
+    const readsOk = [R.chain_id, R.tx, R.receipt, R.head].every((r) => r.status === 200 && r.error === null && r.value !== null);
+    // GUARD KD.M-EL0
+    add('EL0', readsOk && cid === BigInt(P.chain_id) && (txCid === null || txCid === BigInt(P.chain_id)) && [R.chain_id, R.tx, R.receipt, R.head].every((r) => r.source.startsWith(`evm-rpc:${P.chain_id}:`)), `eth_chainId ${cid} (pinned ${P.chain_id}), tx.chainId ${txCid ?? 'n/a'}, reads ok ${readsOk}`);
+    const rc = R.receipt.value, t = R.tx.value;
+    // EL1 receipt
+    // GUARD KD.M-EL1
+    add('EL1', !!rc && lc(rc.status) === '0x1' && lc(rc.to) === vault && lc(rc.transactionHash) === tx && !!t && lc(t.hash) === tx && isHexQ(rc.blockNumber) && lc(t.blockHash) === lc(rc.blockHash), rc ? `receipt status ${rc.status}, to ${lc(rc.to).slice(0, 10)} (vault ${vault.slice(0, 10)}), block ${rc.blockNumber}` : 'no receipt');
+    // EL2 the one Transfer log vault -> linked address of the pinned token
+    const logs = rc?.logs ?? [];
+    const transfers = logs.filter((l) => lc(l.address) === token && lc(l.topics?.[0]) === TRANSFER_TOPIC0 && l.topics.length === 3 && (0, exports.topicAddress)(l.topics[1]) === vault && (0, exports.topicAddress)(l.topics[2]) === linked && !l.removed);
+    // GUARD KD.M-EL2
+    add('EL2', transfers.length === 1, `${transfers.length} Transfer log(s) of ${token.slice(0, 10)} from vault to ${linked.slice(0, 10)} (need exactly 1; ${logs.length} logs in the receipt)`);
+    // EL3 amount
+    const xfer = transfers.length === 1 ? hexToBig(transfers[0].data) : null;
+    data.transfer_amount = xfer === null ? 'unreadable' : xfer.toString();
+    // GUARD KD.M-EL3
+    add('EL3', amt !== null && amt > 0n && xfer !== null && xfer === amt, `Transfer amount ${data.transfer_amount} == withdraw ${W.amount_base_units} (${P.token_decimals} decimals)`);
+    // EL4 vault withdraw event bound to the council master and the same amount
+    const vev = logs.filter((l) => lc(l.address) === vault && lc(l.topics?.[0]) === lc(P.vault_withdraw_topic0) && !l.removed);
+    const master32 = `0x${lc(W.master).replace(/^0x/, '').padStart(64, '0')}`;
+    const evOk = vev.filter((l) => l.topics.length >= 3 && (0, exports.topicAddress)(l.topics[1]) === linked && (0, exports.topicAddress)(l.topics[2]) === token && word(l.data, 0) === master32 && hexToBig(word(l.data, 2)) === amt);
+    // GUARD KD.M-EL4
+    add('EL4', evOk.length === 1, `${evOk.length} vault withdraw event(s) with user ${linked.slice(0, 10)}, token ${token.slice(0, 10)}, master ${lc(W.master).slice(0, 10)}, amount ${W.amount_base_units} (${vev.length} vault event(s) in the receipt)`);
+    // EL5 council side (PP1 analogue): -amount, no withdraw lock; null = not read -> NOT proven
+    if (a.council && amt !== null) {
+        const cb = bal(a.council.before, a.council.asset_id), ca = bal(a.council.after, a.council.asset_id);
+        const dC = BigInt(ca.available) - BigInt(cb.available);
+        data.council_delta = dC.toString();
+        // GUARD KD.M-EL5
+        add('EL5', dC === -amt && BigInt(ca.locked_in_withdraw) === 0n, `council delta ${dC} (expected -${amt}), locked_in_withdraw ${ca.locked_in_withdraw}`);
+    }
+    else
+        add('EL5', false, 'council reads before/after the withdraw missing');
+    // EL6 soft finality on the L2
+    const head = hexToBig(R.head.value), blk = rc ? hexToBig(rc.blockNumber) : null;
+    const conf = head !== null && blk !== null ? head - blk : null;
+    data.confirmations = conf === null ? 'unreadable' : conf.toString();
+    data.finality = 'soft';
+    // GUARD KD.M-EL6
+    add('EL6', conf !== null && conf >= BigInt(P.min_confirmations), `confirmations ${data.confirmations} >= ${P.min_confirmations} (L2 soft finality; Ethereum posting/finality not claimed)`);
+    return { verdict: checks.every((c) => c.ok) ? 'PROVEN' : 'NOT_PROVEN', checks, data };
+}
+
+});
+// ---- embedded: src/killerDemo/funds/preflight.ts source-sha3 0x2d243efb8d73452ce9052ff0cb180bba1e7194fcc0bd129dc3f526fd4aa236bb ----
 __srcDefine("killerDemo/funds/preflight.ts", function (exports, module, require) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -4538,7 +4700,7 @@ exports.zeroCapitalProof = zeroCapitalProof;
 // an unreadable/unknown shape is UNDECIDABLE (never PASS by default).
 const config_1 = require("../config");
 const canonical_1 = require("../../executionCase/canonical");
-exports.ALLOWED_SOURCE_PREFIXES = ['http-get:', 'supra-rpc:', 'intel-file:'];
+exports.ALLOWED_SOURCE_PREFIXES = ['http-get:', 'supra-rpc:', 'intel-file:', 'evm-rpc:'];
 // GUARD KD.PROV-1
 const sourceAllowed = (s) => exports.ALLOWED_SOURCE_PREFIXES.some((p) => s.startsWith(p)) && !/0\.1\.1|@suprafx\/agent-sdk/.test(s);
 exports.sourceAllowed = sourceAllowed;
@@ -4600,12 +4762,13 @@ function fundsPreflight(r, o) {
     if (acct.address.toLowerCase() !== o.master.toLowerCase())
         checks.push({ id: 'F-MASTER', status: 'UNDECIDABLE', why: `account address ${acct.address} != master ${o.master}`, source: [srcA] });
     // F-ASSET: pinned asset ids must be present in the account (P0.7: pin == account; deriveAssetId is the SDK leg, read in P1 1.1c)
-    const supra = byAsset.get(o.assets.SUPRA.toLowerCase()), usdc = byAsset.get(o.assets.USDC.toLowerCase());
+    const pinned = Object.entries(o.assets).map(([sym, id]) => [sym, byAsset.get(id.toLowerCase())]);
+    const supra = byAsset.get((o.assets.SUPRA ?? '').toLowerCase());
     // GUARD KD.F-ASSET
-    if (!supra || !usdc)
-        checks.push({ id: 'F-ASSET', status: 'UNDECIDABLE', why: `pinned asset ids missing in account: SUPRA ${!!supra} USDC ${!!usdc}`, source: [srcA] });
+    if (pinned.some(([, b]) => !b))
+        checks.push({ id: 'F-ASSET', status: 'UNDECIDABLE', why: `pinned asset ids missing in account: ${pinned.map(([sym, b]) => `${sym} ${!!b}`).join(' ')}`, source: [srcA] });
     else
-        checks.push({ id: 'F-ASSET', status: 'PASS', why: 'SUPRA and USDC asset ids of the account equal the pins', source: [srcA] });
+        checks.push({ id: 'F-ASSET', status: 'PASS', why: `${pinned.map(([sym]) => sym).join(' and ')} asset ids of the account equal the pins`, source: [srcA] });
     // F1
     if (supra) {
         const ok = big(supra.available) >= big(o.S);
@@ -4787,12 +4950,13 @@ function checkArm(arm, nowMs, master) {
 }
 
 });
-// ---- embedded: src/killerDemo/maker/makerDecide.ts source-sha3 0xe455f2ad21b8a93992bf817139ccce058f00da375f16a7c7472b7e1259f8461c ----
+// ---- embedded: src/killerDemo/maker/makerDecide.ts source-sha3 0xeb13fcb3c1bc5eb4b97792400dd02d22d6dc9d5e39a208f5da6cc15cdb912fea ----
 __srcDefine("killerDemo/maker/makerDecide.ts", function (exports, module, require) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MAKER_DECISION_SCHEMA = void 0;
 exports.stableOf = stableOf;
+exports.stableAssetOf = stableAssetOf;
 exports.makerDecide = makerDecide;
 exports.replayMakerDecision = replayMakerDecision;
 // KILLER-DEMO-001 maker variant: one maker decision = frozen core authorize() over the maker grant world composed with the maker
@@ -4805,12 +4969,24 @@ const attest_1 = require("../../authority/permit/attest");
 const reduce_1 = require("../../authority/reducer/reduce");
 const decide_1 = require("../val/decide");
 const coreWorld_1 = require("../val/coreWorld");
+const config_1 = require("./config");
 const makerMarket_1 = require("./makerMarket");
 const makerProfile_1 = require("./makerProfile");
 const stable_1 = require("./stable");
 exports.MAKER_DECISION_SCHEMA = 'cosmo.killer-demo.maker-decision.v1';
 function stableOf(s, p) {
-    return (0, stable_1.evaluateStable)(s.reserves, s.l1, { asset: p.stable.asset, maxAgeS: p.stable.reserves_max_age_s, vaultAccount: p.stable.l1_vault_account, metadata: p.assets.iUSDC.l1_metadata ?? '', nowMs: s.now_ms, requireStatus: p.stable.require_status });
+    // the backing read is pinned to the stable's own metadata: v1 the iUSDC FA metadata on Supra L1, v2 the USDG contract on
+    // Robinhood Chain (evm.contract); the vault account is policy.stable.l1_vault_account in both
+    const st = stableAssetOf(p);
+    return (0, stable_1.evaluateStable)(s.reserves, s.l1, { asset: p.stable.asset, maxAgeS: p.stable.reserves_max_age_s, vaultAccount: p.stable.l1_vault_account, metadata: st.metadata, nowMs: s.now_ms, requireStatus: p.stable.require_status, decimals: st.decimals });
+}
+function stableAssetOf(p) {
+    const pp = (0, config_1.policyPair)(p);
+    const a = p.stable.asset === pp.base ? pp.baseAsset : p.stable.asset === pp.quote ? pp.quoteAsset : null;
+    if (!a)
+        throw new Error(`policy stable.asset ${p.stable.asset} is not the pair's base or quote`);
+    const backing = p.stable.backing ?? 'supra-l1';
+    return { metadata: backing === 'evm' ? (a.evm?.contract ?? '') : (a.l1_metadata ?? ''), decimals: a.decimals, backing };
 }
 function evaluateStage(stage, s, p, g) {
     const quote = (0, makerMarket_1.makerQuote)(s.market, s.intent.trigger.rfq, p, s.intent.quote.rate_bft);
@@ -4893,7 +5069,7 @@ function replayMakerDecision(archiveJson, cfg, authorizerPin = decide_1.SHADOW_A
 }
 
 });
-// ---- embedded: src/killerDemo/maker/makerFunds.ts source-sha3 0xa7d9bd86b14f386e6711a0a8c84e8af89435ceeb183650034a7742646cb865ef ----
+// ---- embedded: src/killerDemo/maker/makerFunds.ts source-sha3 0xc667fc44b33db9a1d60a3da0ce3710ae39b54c82ac2f3b988ac510790bbae951 ----
 __srcDefine("killerDemo/maker/makerFunds.ts", function (exports, module, require) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -4916,7 +5092,9 @@ function makerFundsOpts(a) {
         master: a.policy.master,
         // a missing lock can never pass F1: S = 2^128 (no account holds that)
         S: a.lockQuants && /^\d+$/.test(a.lockQuants) ? a.lockQuants : (2n ** 128n).toString(),
-        assets: { SUPRA: a.policy.assets.SUPRA.id, USDC: a.policy.assets.USDC.id },
+        // v1 keeps its pinned pair SUPRA + USDC (byte-identical preflights); v2 requires the quote asset the maker pays (SUPRA):
+        // the received base asset (USDG) has no account row before the first fill and is not required
+        assets: a.policy.schema === 'cosmo.killer-demo.maker-policy.v1' ? { SUPRA: a.policy.assets.SUPRA.id, USDC: a.policy.assets.USDC.id } : { [(0, config_2.policyPair)(a.policy).quote]: (0, config_2.policyPair)(a.policy).quoteAsset.id },
         symbols: (0, config_2.symbolsOf)(a.policy), exceptionList: a.exceptionList ?? (0, exports.pinnedF5Exceptions)(), expectedActiveDelegates: expected, mode: 'shadow',
     };
 }
@@ -4984,24 +5162,42 @@ function verifyMakerIntent(p, pinnedPubHex) {
 }
 
 });
-// ---- embedded: src/killerDemo/maker/makerMarket.ts source-sha3 0xbefb79fe43a22171bd13fad86bd1d685ea430b6f878bdd0e325ba8359884fb0d ----
+// ---- embedded: src/killerDemo/maker/makerMarket.ts source-sha3 0x74a38336d8e4e5603d5289440a257eb7c28659b8ea63e08cedc8ce3a0879990b ----
 __srcDefine("killerDemo/maker/makerMarket.ts", function (exports, module, require) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ceilDiv = exports.E36 = exports.E18 = void 0;
+exports.formulaRateBft = formulaRateBft;
+exports.humanRateToBft = humanRateToBft;
 exports.makerQuote = makerQuote;
-// KILLER-DEMO-001 maker variant: fair quote for a foreign iUSDC/SUPRA buy RFQ. Pure BigInt.
+// KILLER-DEMO-001 maker variant: fair quote for a foreign buy RFQ of the policy pair (v1 iUSDC/SUPRA, v2 USDG/SUPRA). Pure BigInt.
 // The anchor is the UNCHANGED taker market rule (val/market.ts: N-5 = floor(x500*x48/x89) USD per SUPRA, DORA freshness,
-// venue oracle K-9 <= 120 s / K-10 <= 25 bps). The maker inverts it: SUPRA per iUSDC, both 8 decimals, so rate_BFT = r * 1e18.
-//   fair  = floor(1e36 / ref)                                  (what a zero-margin quote would pay)
-//   quote = floor(1e36 * (10000 - m) / (ref * 10000))          (COSMO pays m bps less SUPRA than fair)
-//   lock  = ceil(fill_size * quote / 1e18)                     (SUPRA quants the chain locks; rounding unknown -> ceil)
-// D-M3: never adverse (quote <= fair), never more than m_max below fair (fairness to the buyer), margin > 0 in iUSDC units.
+// venue oracle K-9 <= 120 s / K-10 <= 25 bps). The maker inverts it: quote units per base unit, both in their smallest units,
+// so rate_BFT = r * 1e18 * 10^(quote_decimals - base_decimals) (venue convention, confirmed on the SUPRA/ETH fills 12.10.2026:
+// rate 5.8e20 = 5.8e-8 ETH/SUPRA * 10^(18+18-8)).
+//   fair  = floor(1e36 * scale / ref)                           (what a zero-margin quote would pay; scale = 1 for 8/8)
+//   quote = floor(1e36 * scale * (10000 - m) / (ref * 10000))   (COSMO pays m bps less of the quote asset than fair)
+//   lock  = ceil(fill_size * quote / 1e18)                      (quote units the chain locks; rounding unknown -> ceil)
+// D-M3: never adverse (quote <= fair), never more than m_max below fair (fairness to the buyer), margin > 0 in base units.
 const market_1 = require("../val/market");
+const config_1 = require("./config");
 exports.E18 = 10n ** 18n;
 exports.E36 = 10n ** 36n;
 const ceilDiv = (a, b) => (a + b - 1n) / b;
 exports.ceilDiv = ceilDiv;
+// the formula rate of the pinned policy on an anchor (used by the proposer and re-derived by V-5M at RESERVATION)
+function formulaRateBft(ref, marginBps, pp) {
+    const s = (0, config_1.rateScale)(pp);
+    return (exports.E36 * s.mul * (10000n - marginBps)) / (ref * s.div * 10000n);
+}
+// a human rate literal (quote per base) -> rate_bft (quote units per base unit * 1e18), lossless
+function humanRateToBft(lit, pp) {
+    const v = (0, market_1.dec1e18)(lit);
+    if (v === null)
+        return null;
+    const s = (0, config_1.rateScale)(pp);
+    return (v * s.mul) / s.div;
+}
 // rateBft: the rate to evaluate (the decider passes the proposer's rate; the proposer omits it and gets the formula rate)
 function makerQuote(reads, rfq, p, rateBft) {
     const market = (0, market_1.evaluateMarket)(reads);
@@ -5025,9 +5221,13 @@ function makerQuote(reads, rfq, p, rateBft) {
         why.push(`size_base_units not an integer: ${rfq.size_base_units}`);
         return out;
     }
+    const pp = (0, config_1.policyPair)(p);
+    const s = (0, config_1.rateScale)(pp);
     const size = BigInt(rfq.size_base_units);
-    const fair = exports.E36 / ref;
-    const formula = (exports.E36 * (10000n - m)) / (ref * 10000n);
+    // the rate scale follows the pinned decimals of the pair (v1 8/8 = 1, v2 USDG 6 / SUPRA 8 = 100)
+    // GUARD KD.M-SCALE
+    const fair = (exports.E36 * s.mul) / (ref * s.div);
+    const formula = formulaRateBft(ref, m, pp);
     if (rateBft !== undefined && (rateBft === null || !/^\d+$/.test(rateBft))) {
         why.push(`proposed rate not an integer: ${rateBft}`);
         return out;
@@ -5035,17 +5235,21 @@ function makerQuote(reads, rfq, p, rateBft) {
     const quote = rateBft ? BigInt(rateBft) : formula;
     const min = (fair * (10000n - mMax)) / 10000n;
     const lock = (0, exports.ceilDiv)(size * quote, exports.E18);
-    const lockUsd = (0, exports.ceilDiv)(lock * ref, exports.E18); // USD 1e8 units (SUPRA quants * USD/SUPRA); ceil = conservative for the margin
+    // USD value of the lock (1e8 units): quote units * USD/SUPRA; the quote asset is SUPRA (8 decimals) in both policies, the
+    // general form keeps the quote decimals explicit
+    const qd = BigInt(pp.quoteAsset.decimals), bd = BigInt(pp.baseAsset.decimals);
+    const lockUsd = qd >= 8n ? (0, exports.ceilDiv)(lock * ref, exports.E18 * 10n ** (qd - 8n)) : (0, exports.ceilDiv)(lock * ref * 10n ** (8n - qd), exports.E18); // ceil = conservative for the margin
+    const lockUsdBase = bd >= 8n ? lockUsd * 10n ** (bd - 8n) : (0, exports.ceilDiv)(lockUsd, 10n ** (8n - bd));
     out.fair_rate_bft = fair.toString();
     out.quote_rate_bft = quote.toString();
     out.formula_rate_bft = formula.toString();
     out.min_rate_bft = min.toString();
     out.lock_quants_ceil = lock.toString();
     out.lock_usd_1e8 = lockUsd.toString();
-    out.margin_base_units = (size - lockUsd).toString();
-    const floor = (0, market_1.dec1e18)(rfq.auto_accept_target_rate);
+    out.margin_base_units = (size - lockUsdBase).toString();
+    const floor = humanRateToBft(rfq.auto_accept_target_rate, pp);
     out.floor_rate_bft = floor === null ? null : floor.toString();
-    const refLit = (0, market_1.dec1e18)(rfq.reference_price);
+    const refLit = humanRateToBft(rfq.reference_price, pp);
     if (refLit !== null && fair > 0n)
         out.rfq_reference_dev_bps = (((refLit > fair ? refLit - fair : fair - refLit) * 10000n) / fair).toString();
     if (floor === null)
@@ -5055,13 +5259,14 @@ function makerQuote(reads, rfq, p, rateBft) {
 }
 
 });
-// ---- embedded: src/killerDemo/maker/makerProfile.ts source-sha3 0xa60bda6ae25f5186b800764b4696d2c722bd0449900cef5799d1d6290306c753 ----
+// ---- embedded: src/killerDemo/maker/makerProfile.ts source-sha3 0xc05bffb5fd1374ad477f0bd89b66e7ac8bfa2eb8b4632e878da16c42206cfa0b ----
 __srcDefine("killerDemo/maker/makerProfile.ts", function (exports, module, require) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VM_CORE_MAPPING = exports.VM_ORDER = exports.MAKER_PROFILE_EVALUATOR_ID = void 0;
 exports.evaluateMakerProfile = evaluateMakerProfile;
 const authorize_1 = require("../../authority/authorize/authorize");
+const config_1 = require("./config");
 const makerWorld_1 = require("./makerWorld");
 const makerMarket_1 = require("./makerMarket");
 exports.MAKER_PROFILE_EVALUATOR_ID = 'cosmo.killer-demo.profile.fx-quote-sell-base-micro.v1';
@@ -5078,13 +5283,14 @@ function evaluateMakerProfile(i, g, p) {
     const q = i.quote;
     const act = i.intent.intent.action;
     const ap = act.params;
+    const pp = (0, config_1.policyPair)(p);
     // V-1M action
     if (!has('V-1M'))
         checks.push(und('V-1M', 'gate missing in the pinned table'));
     else {
         // GUARD KD.M-V1
-        const pass = act.kind === makerWorld_1.MAKER_ACTION && ap.side === 'maker_pays_quote' && p.allowed_pairs.includes(rfq.pair) && ap.pair?.base_symbol === 'iUSDC' && ap.pair?.quote_symbol === 'SUPRA' && ap.rfq_id === rfq.id && i.intent.quote.rfq_id === rfq.id;
-        checks.push(pass ? ok('V-1M', `${act.kind} on ${rfq.pair}: COSMO pays SUPRA, receives iUSDC`) : fail('V-1M', `action ${act.kind} side ${ap.side} pair ${rfq.pair} (allowed ${p.allowed_pairs.join(',')}): not the granted maker quote`));
+        const pass = act.kind === makerWorld_1.MAKER_ACTION && ap.side === 'maker_pays_quote' && p.allowed_pairs.includes(rfq.pair) && ap.pair?.base_symbol === pp.base && ap.pair?.quote_symbol === pp.quote && ap.rfq_id === rfq.id && i.intent.quote.rfq_id === rfq.id;
+        checks.push(pass ? ok('V-1M', `${act.kind} on ${rfq.pair}: COSMO pays ${pp.quote}, receives ${pp.base}`) : fail('V-1M', `action ${act.kind} side ${ap.side} pair ${rfq.pair} (allowed ${p.allowed_pairs.join(',')}): not the granted maker quote`));
     }
     // V-2M counterparty
     if (!has('V-2M'))
@@ -5093,7 +5299,14 @@ function evaluateMakerProfile(i, g, p) {
         const own = p.own_addresses.map((a) => a.toLowerCase());
         // GUARD KD.M-V2
         const foreign = /^0x[0-9a-f]{64}$/.test(rfq.taker_address) && !own.includes(rfq.taker_address.toLowerCase());
-        checks.push(foreign ? ok('V-2M', `taker ${rfq.taker_address.slice(0, 10)} is not an own address (no self-trade)`) : fail('V-2M', `taker ${rfq.taker_address} is own or malformed: self-trade refused`));
+        // v2 (Robinhood demo): the one declared own taker (customer account K1) passes with the deviation named; it must also be
+        // listed in own_addresses, so that it never passes as 'foreign' by omission
+        const declared = p.counterparty?.declared_own_taker ? p.counterparty.declared_own_taker.toLowerCase() : null;
+        // GUARD KD.M-V2D
+        const declaredOk = declared !== null && /^0x[0-9a-f]{64}$/.test(declared) && own.includes(declared) && rfq.taker_address.toLowerCase() === declared;
+        checks.push(foreign ? ok('V-2M', `taker ${rfq.taker_address.slice(0, 10)} is not an own address (no self-trade)`)
+            : declaredOk ? ok('V-2M', `taker ${rfq.taker_address.slice(0, 10)} is the DECLARED OWN TAKER of this policy (demo customer account, deviation declared_own_taker: no foreign ${pp.source_chain} taker exists on the venue)`, 'attested_falsifiable')
+                : fail('V-2M', `taker ${rfq.taker_address} is own or malformed: self-trade refused`));
     }
     // V-3M RFQ state
     if (!has('V-3M'))
@@ -5108,7 +5321,8 @@ function evaluateMakerProfile(i, g, p) {
             bad.push(`settlement ${rfq.settlement_mode}`);
         if (p.rfq.require_no_partial_fills && rfq.allow_partial_fills)
             bad.push('partial fills allowed');
-        if (rfq.source_chain !== p.rfq.require_chains || rfq.dest_chain !== p.rfq.require_chains)
+        // GUARD KD.M-V3C
+        if (rfq.source_chain !== pp.source_chain || rfq.dest_chain !== pp.dest_chain)
             bad.push(`chains ${rfq.source_chain}/${rfq.dest_chain}`);
         if (!isInt(rfq.size_base_units) || rfq.remaining_size_base_units !== rfq.size_base_units || rfq.total_filled_base_units !== '0' || rfq.fill_count !== '0')
             bad.push(`fill state size ${rfq.size_base_units} remaining ${rfq.remaining_size_base_units} filled ${rfq.total_filled_base_units} fills ${rfq.fill_count}`);
@@ -5143,7 +5357,7 @@ function evaluateMakerProfile(i, g, p) {
         checks.push(und('V-5M', `market rule UNDECIDABLE: ${q.why.join('; ')}`));
     else {
         const r = BigInt(q.quote_rate_bft), fair = BigInt(q.fair_rate_bft), min = BigInt(q.min_rate_bft), ref = BigInt(q.ref_1e18);
-        const expect = (makerMarket_1.E36 * (10000n - BigInt(p.price.margin_bps))) / (ref * 10000n);
+        const expect = (0, makerMarket_1.formulaRateBft)(ref, BigInt(p.price.margin_bps), pp);
         const bad = [];
         // the evaluated rate must be the intent's rate; at RESERVATION it must equal the formula on these reads, at FINAL the
         // (re-read) band must still hold (E-G5-2 analogue: the market may move between the stages, the band may not be left)
@@ -5159,7 +5373,7 @@ function evaluateMakerProfile(i, g, p) {
             bad.push(`rate ${r} < fair - ${p.price.max_margin_bps} bps (${min})`);
         if (BigInt(q.margin_base_units ?? '-1') <= 0n)
             bad.push(`margin ${q.margin_base_units} <= 0`);
-        checks.push(bad.length ? fail('V-5M', bad.join('; ')) : { ...ok('V-5M', `rate ${r} = fair ${fair} - ${p.price.margin_bps} bps (band >= ${min}); margin ${q.margin_base_units} iUSDC units; venue ${q.market.venue_dev_bps} bps / ${q.market.venue_age_ms} ms`), source_independence: 'dora:supra-rpc + venue:http-get (K-10)' });
+        checks.push(bad.length ? fail('V-5M', bad.join('; ')) : { ...ok('V-5M', `rate ${r} = fair ${fair} - ${p.price.margin_bps} bps (band >= ${min}); margin ${q.margin_base_units} ${pp.base} units; venue ${q.market.venue_dev_bps} bps / ${q.market.venue_age_ms} ms`), source_independence: 'dora:supra-rpc + venue:http-get (K-10)' });
     }
     // V-6M buyer floor
     if (!has('V-6M'))
@@ -5191,7 +5405,7 @@ function evaluateMakerProfile(i, g, p) {
         else if (undec.length)
             checks.push(und('V-8M', `funds preflight UNDECIDABLE: ${undec.join(',')}`));
         else
-            checks.push(ok('V-8M', `available SUPRA >= lock ${q.lock_quants_ceil}; F-ASSET, F2..F6 PASS (operator-mediated reads)`, 'attested_falsifiable'));
+            checks.push(ok('V-8M', `available ${pp.quote} >= lock ${q.lock_quants_ceil}; F-ASSET, F2..F6 PASS (operator-mediated reads)`, 'attested_falsifiable'));
     }
     // V-9M single use
     if (!has('V-9M'))
@@ -5206,78 +5420,100 @@ function evaluateMakerProfile(i, g, p) {
 }
 
 });
-// ---- embedded: src/killerDemo/maker/makerWorld.ts source-sha3 0x4007a1ea4a7b83cb04f6f08d2d83ced29f7aeb1d9e425f6d188116fafbf73e1e ----
+// ---- embedded: src/killerDemo/maker/makerWorld.ts source-sha3 0x22b1ac1245f0a15e3e7f6142ebcb2d93157d924d16a6c5cd3e7a29ddf3680a37 ----
 __srcDefine("killerDemo/maker/makerWorld.ts", function (exports, module, require) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.makerSpecFor = exports.MAKER_RES_QUOTE = exports.MAKER_IUSDC_FA = exports.MAKER_CAPABILITY_ID = exports.MAKER_ACTION = exports.MAKER_PROFILE_ID = void 0;
+exports.makerResQuote = makerResQuote;
 // KILLER-DEMO-001 maker variant: the shadow grant spec for the frozen VAL v1.7 core (val/coreWorld.ts, unchanged core API).
 // One capability fx.quote_sell_base.v1, single_use, value bound = S_M = maker-policy size.max_lock_quants (D-M6, 20000 SUPRA
 // since E1a 27.10.2026). The number lives ONLY in the pinned policy; the spec is derived from the loaded policy. The worst case
 // is the SUPRA COSMO pays (the ceil lock). Resources: SUPRA (0xa) and the iUSDC fungible asset on Supra L1.
 const coreWorld_1 = require("../val/coreWorld");
+const config_1 = require("./config");
 exports.MAKER_PROFILE_ID = 'cosmo.killer-demo.profile.fx-quote-sell-base-micro.v1';
 exports.MAKER_ACTION = 'fx.quote_sell_base.v1';
 exports.MAKER_CAPABILITY_ID = 'fx-quote-sell-1';
 exports.MAKER_IUSDC_FA = '0x90a8e901e02ac1539af4a865bbe4a6b96edc27375488803cfbbd6875ec57b281';
 exports.MAKER_RES_QUOTE = `supra:${coreWorld_1.FX_CHAIN_ID}:${exports.MAKER_IUSDC_FA}`;
-// GUARD KD.M-SPEC-CAP: the core value bound is the policy cap, nothing else
-const makerSpecFor = (p) => ({
-    profile_id: exports.MAKER_PROFILE_ID, action: exports.MAKER_ACTION, capability_id: exports.MAKER_CAPABILITY_ID, size_cap_quants: p.size.max_lock_quants, res_quote: exports.MAKER_RES_QUOTE, quote_read_label: 'iusdc-balance',
-    proposal_params: (amount) => ({ kind: exports.MAKER_ACTION, side: 'maker_pays_quote', pair: 'iUSDC/SUPRA', asset_pay: coreWorld_1.FX_RES_BASE, asset_receive: exports.MAKER_RES_QUOTE, lock_quants: amount, chain_id: coreWorld_1.FX_CHAIN_ID, account: coreWorld_1.FX_PRINCIPAL_ACCOUNT }),
-});
+// the resource COSMO receives: v1 the iUSDC FA on Supra L1; v2 the ERC-20 on the EVM source chain (evm:<chain id>:<contract>)
+function makerResQuote(p) {
+    const pp = (0, config_1.policyPair)(p);
+    const b = pp.baseAsset;
+    if (b.evm)
+        return { res: `evm:${b.evm.chain_id}:${b.evm.contract.toLowerCase()}`, label: `${pp.base.toLowerCase()}-vault-balance`, pair: pp.symbol };
+    return { res: `supra:${coreWorld_1.FX_CHAIN_ID}:${b.l1_metadata ?? exports.MAKER_IUSDC_FA}`, label: `${pp.base.toLowerCase()}-balance`, pair: pp.symbol };
+}
+// The core value bound is the policy cap and nothing else (battery marker below, mutant = the old literal 15000 SUPRA).
+const makerSpecFor = (p) => {
+    const q = makerResQuote(p);
+    return {
+        profile_id: exports.MAKER_PROFILE_ID, action: exports.MAKER_ACTION, capability_id: exports.MAKER_CAPABILITY_ID,
+        // GUARD KD.M-SPEC-CAP
+        size_cap_quants: p.size.max_lock_quants, res_quote: q.res, quote_read_label: q.label,
+        proposal_params: (amount) => ({ kind: exports.MAKER_ACTION, side: 'maker_pays_quote', pair: q.pair, asset_pay: coreWorld_1.FX_RES_BASE, asset_receive: q.res, lock_quants: amount, chain_id: coreWorld_1.FX_CHAIN_ID, account: coreWorld_1.FX_PRINCIPAL_ACCOUNT }),
+    };
+};
 exports.makerSpecFor = makerSpecFor;
 
 });
-// ---- embedded: src/killerDemo/maker/proofs.ts source-sha3 0xfc4d5e453299399fd9306b734d3aa35ef3d2464c3a98e647090b8c8d534c22fd ----
+// ---- embedded: src/killerDemo/maker/proofs.ts source-sha3 0x72af14f4d85036c5db2dc56036d38f21d959c3efa43a93a9e663b59da261a96a ----
 __srcDefine("killerDemo/maker/proofs.ts", function (exports, module, require) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.fillLabelsOf = void 0;
 exports.fillProof = fillProof;
 exports.payoutProof = payoutProof;
 const makerMarket_1 = require("./makerMarket");
+const config_1 = require("./config");
+// v1 keeps the default labels (supra/iusdc data keys); any other policy names the keys after its pair
+const fillLabelsOf = (p) => p.schema === 'cosmo.killer-demo.maker-policy.v1' ? undefined : (() => { const pp = (0, config_1.policyPair)(p); return { quote: pp.quote.toLowerCase(), base: pp.base.toLowerCase(), quoteSym: pp.quote, baseSym: pp.base }; })();
+exports.fillLabelsOf = fillLabelsOf;
 const bal = (s, asset) => s.balances[asset.toLowerCase()] ?? s.balances[asset] ?? { available: '0', locked_in_orders: '0', locked_in_rfq: '0', locked_in_withdraw: '0' };
 const B = (x) => BigInt(x ?? '0');
 function fillProof(a) {
     const checks = [];
     const add = (id, ok, why) => checks.push({ id, ok, why });
+    const L = a.labels ?? { quote: 'supra', base: 'iusdc', quoteSym: 'SUPRA', baseSym: 'iUSDC' };
     const size = BigInt(a.sizeBase), rate = BigInt(a.rateBft);
     const lockFloor = (size * rate) / 10n ** 18n, lockCeil = (0, makerMarket_1.ceilDiv)(size * rate, 10n ** 18n);
     const r = a.rfqAfter ?? {};
     const q = (r.quotes ?? []).find((x) => String(x.id) === a.quoteId);
     // GUARD KD.M-FILL-RFQ
     add('FP1', ['matched', 'settled'].includes(String(r.status)) && String(r.fill_count) === '1' && String(r.total_filled_base_units) === a.sizeBase && String(r.remaining_size_base_units) === '0' && !!q && String(q.status) === 'accepted' && String(q.maker_address).toLowerCase() === a.master.toLowerCase(), `rfq ${String(r.status)} fills ${String(r.fill_count)} filled ${String(r.total_filled_base_units)}; our quote ${q ? String(q.status) : 'missing'}`);
-    const dS = B(bal(a.after, a.supraId).available) - B(bal(a.before, a.supraId).available);
-    const dI = B(bal(a.after, a.iusdcId).available) - B(bal(a.before, a.iusdcId).available);
+    const dS = B(bal(a.after, a.quoteAssetId).available) - B(bal(a.before, a.quoteAssetId).available);
+    const dI = B(bal(a.after, a.baseAssetId).available) - B(bal(a.before, a.baseAssetId).available);
     const rebS = (0, makerMarket_1.ceilDiv)(lockCeil, 10000n), rebI = (0, makerMarket_1.ceilDiv)(size, 10000n);
     const supraPlain = dS === -lockFloor || dS === -lockCeil, supraReb = dS > -lockCeil && dS <= -lockFloor + rebS;
     const iusdcPlain = dI === size, iusdcReb = dI > size && dI <= size + rebI;
     // GUARD KD.M-FILL-DELTA
     const deltaOk = (supraPlain && (iusdcPlain || iusdcReb)) || (supraReb && iusdcPlain);
-    add('FP2', deltaOk, `SUPRA delta ${dS} (lock ${lockFloor}..${lockCeil}), iUSDC delta ${dI} (size ${size}, rebate <= ${rebI} / ${rebS})`);
+    add('FP2', deltaOk, `${L.quoteSym} delta ${dS} (lock ${lockFloor}..${lockCeil}), ${L.baseSym} delta ${dI} (size ${size}, rebate <= ${rebI} / ${rebS})`);
     const others = new Set([...Object.keys(a.before.balances), ...Object.keys(a.after.balances)].map((k) => k.toLowerCase()));
-    others.delete(a.supraId.toLowerCase());
-    others.delete(a.iusdcId.toLowerCase());
+    others.delete(a.quoteAssetId.toLowerCase());
+    others.delete(a.baseAssetId.toLowerCase());
     const moved = [...others].filter((k) => bal(a.before, k).available !== bal(a.after, k).available);
     add('FP3', moved.length === 0, moved.length ? `other assets moved: ${moved.map((k) => k.slice(0, 10)).join(',')}` : 'no other asset moved');
     const locks = Object.entries(a.after.balances).filter(([, b]) => B(b.locked_in_orders) || B(b.locked_in_rfq) || B(b.locked_in_withdraw)).map(([k]) => k.slice(0, 10));
     // GUARD KD.M-FILL-LOCK
     add('FP4', locks.length === 0 && a.after.open_orders_counts.quotes === 0 && a.after.open_orders_counts.rfqs === 0, locks.length ? `locks left: ${locks.join(',')} (ghost lock K-7)` : 'no lock and no open order left');
-    return { verdict: checks.every((c) => c.ok) ? 'PROVEN' : 'NOT_PROVEN', checks, data: { supra_delta: dS.toString(), iusdc_delta: dI.toString(), lock_floor: lockFloor.toString(), lock_ceil: lockCeil.toString() } };
+    return { verdict: checks.every((c) => c.ok) ? 'PROVEN' : 'NOT_PROVEN', checks, data: { [`${L.quote}_delta`]: dS.toString(), [`${L.base}_delta`]: dI.toString(), lock_floor: lockFloor.toString(), lock_ceil: lockCeil.toString() } };
 }
 function payoutProof(a) {
     const checks = [];
     const add = (id, ok, why) => checks.push({ id, ok, why });
+    const sym = a.label ?? 'iUSDC';
     const amt = BigInt(a.amount);
     add('PP0', amt > 0n && a.destination.toLowerCase() === a.pinnedDestination.toLowerCase(), `amount ${amt}, destination ${a.destination.slice(0, 10)} == pinned ${a.pinnedDestination.slice(0, 10)}`);
-    const cb = bal(a.councilBefore, a.iusdcId), ca = bal(a.councilAfter, a.iusdcId);
+    const cb = bal(a.councilBefore, a.assetId), ca = bal(a.councilAfter, a.assetId);
     const dC = B(ca.available) - B(cb.available);
     // GUARD KD.M-PAY-COUNCIL
-    add('PP1', dC === -amt && B(ca.locked_in_withdraw) === 0n, `council iUSDC delta ${dC} (expected -${amt}), locked_in_withdraw ${ca.locked_in_withdraw}`);
+    add('PP1', dC === -amt && B(ca.locked_in_withdraw) === 0n, `council ${sym} delta ${dC} (expected -${amt}), locked_in_withdraw ${ca.locked_in_withdraw}`);
     const l1ok = a.l1Before !== null && a.l1After !== null && /^\d+$/.test(a.l1Before) && /^\d+$/.test(a.l1After);
     const dL = l1ok ? BigInt(a.l1After) - BigInt(a.l1Before) : null;
     // GUARD KD.M-PAY-L1
-    add('PP2', dL !== null && dL === amt, `own Supra L1 read: destination iUSDC delta ${dL} (expected +${amt})`);
+    add('PP2', dL !== null && dL === amt, `own Supra L1 read: destination ${sym} delta ${dL} (expected +${amt})`);
     return { verdict: checks.every((c) => c.ok) ? 'PROVEN' : 'NOT_PROVEN', checks, data: { council_delta: dC.toString(), l1_delta: dL === null ? 'unreadable' : dL.toString() } };
 }
 
@@ -5340,24 +5576,29 @@ const listComplete = (l) => l.status === 200 && l.success === true && l.hasMore 
 exports.listComplete = listComplete;
 
 });
-// ---- embedded: src/killerDemo/maker/stable.ts source-sha3 0x5769081a159c52660b83d690f40d0f62c010ee90ecab90b8762d5c9d91bf5f47 ----
+// ---- embedded: src/killerDemo/maker/stable.ts source-sha3 0xaf4afab6b0a7df59aa95ae5b9d98264bd14b2f873d746f6eb5369504060d5749 ----
 __srcDefine("killerDemo/maker/stable.ts", function (exports, module, require) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.toBase8 = toBase8;
+exports.toBase8 = void 0;
+exports.toBase = toBase;
 exports.evaluateStable = evaluateStable;
-// KILLER-DEMO-001 maker variant: V-7M stable assumption for iUSDC. Two independent legs:
-//  (a) operator attestation GET /api/reserves (council quorum 7/5): iUSDC fully_backed, ratio >= 1, invariant_holds, age bound
-//  (b) own Supra L1 read: primary_fungible_store::balance(vault_account, iUSDC metadata) >= internal_total (council liabilities)
-// Both parse numbers losslessly. What stays an assumption (TA-FX-3): 1 iUSDC = 1 USD.
+// KILLER-DEMO-001 maker variant: V-7M stable assumption for the policy's base stable (v1 iUSDC, v2 USDG). Two independent legs:
+//  (a) operator attestation GET /api/reserves (council quorum 7/5): asset fully_backed, ratio >= 1, invariant_holds, age bound
+//  (b) own chain read of the council vault's backing >= internal_total (council liabilities):
+//      v1 Supra L1 primary_fungible_store::balance(vault_account, iUSDC metadata); v2 Robinhood Chain USDG.balanceOf(vault)
+// Both parse numbers losslessly (internal_total in the asset's pinned decimals). What stays an assumption (TA-FX-3): 1 unit = 1 USD.
 const market_1 = require("../val/market");
-// decimal literal with 8 decimals -> integer base units (exact; more than 8 decimals is refused)
-function toBase8(lit) {
+// decimal literal with <= `decimals` decimals -> integer base units (exact; more decimals than pinned is refused)
+function toBase(lit, decimals) {
     const v = (0, market_1.dec1e18)(lit);
-    if (v === null)
+    if (v === null || decimals < 0 || decimals > 18)
         return null;
-    return v % 10n ** 10n === 0n ? v / 10n ** 10n : null;
+    const d = 10n ** BigInt(18 - decimals);
+    return v % d === 0n ? v / d : null;
 }
+const toBase8 = (lit) => toBase(lit, 8);
+exports.toBase8 = toBase8;
 function evaluateStable(res, l1, o) {
     const data = { reserves_status: null, asset_status: null, ratio: null, invariant_holds: null, as_of: null, age_s: null, internal_total: null, l1_balance: l1.balance };
     if (res.status !== 200 || !res.value || typeof res.value !== 'object')
@@ -5375,7 +5616,7 @@ function evaluateStable(res, l1, o) {
     const age = v.as_of ? Math.floor((o.nowMs - Date.parse(v.as_of)) / 1000) : NaN;
     data.age_s = Number.isFinite(age) ? String(age) : null;
     const ratio = (0, market_1.dec1e18)(String(row.ratio));
-    const internal = toBase8(String(row.internal_total));
+    const internal = toBase(String(row.internal_total), o.decimals ?? 8);
     const problems = [];
     // GUARD KD.M-V7
     if (row.status !== o.requireStatus || v.invariant_holds !== true || ratio === null || ratio < E18_ || !Number.isFinite(age) || age < 0 || age > o.maxAgeS)
@@ -5383,11 +5624,11 @@ function evaluateStable(res, l1, o) {
     if (l1.status !== 200 || l1.balance === null || l1.account.toLowerCase() !== o.vaultAccount.toLowerCase() || l1.metadata.toLowerCase() !== o.metadata.toLowerCase())
         return { status: 'UNPROVABLE', why: `own L1 read unusable (status ${l1.status}, account/metadata pinned ${l1.account === o.vaultAccount}/${l1.metadata === o.metadata})${problems.length ? '; ' + problems.join('; ') : ''}`, data };
     if (internal === null)
-        return { status: 'UNPROVABLE', why: `internal_total not an 8-decimal literal: ${String(row.internal_total)}`, data };
+        return { status: 'UNPROVABLE', why: `internal_total not a${o.decimals !== undefined && o.decimals !== 8 ? ` ${o.decimals}` : 'n 8'}-decimal literal: ${String(row.internal_total)}`, data };
     // GUARD KD.M-V7L1
     if (BigInt(l1.balance) < internal)
-        problems.push(`own L1 read: vault iUSDC ${l1.balance} < council internal_total ${internal}`);
-    return problems.length ? { status: 'FAIL', why: problems.join('; '), data } : { status: 'OK', why: `iUSDC ${row.status} ratio ${String(row.ratio)} age ${data.age_s}s; own L1 read vault ${l1.balance} >= internal ${internal}`, data };
+        problems.push(`own L1 read: vault ${o.asset} ${l1.balance} < council internal_total ${internal}`);
+    return problems.length ? { status: 'FAIL', why: problems.join('; '), data } : { status: 'OK', why: `${o.asset} ${row.status} ratio ${String(row.ratio)} age ${data.age_s}s; own L1 read vault ${l1.balance} >= internal ${internal}`, data };
 }
 const E18_ = 10n ** 18n;
 
@@ -6213,6 +6454,12 @@ export const TRUST_PROFILE = {
   maker_config_pin_sets: [
     {
       status: 'current',
+      pins: { 'maker-policy.v2.robinhood.json': '920cc20ec53ca989164e9c078d14150d9591ce53456d8ad7f0d73a530a8faf6e', 'maker-gates.v1.json': '2d97f3f4a24873038c8bed4e2fa5bb18a7e2f454b3574186df7b3bd62855263a' },
+      files: { 'maker-policy.v2.robinhood.json': 'config/killer-demo/maker/maker-policy.v2.robinhood.json', 'maker-gates.v1.json': 'config/killer-demo/maker/maker-gates.v1.json' },
+      note: 'Robinhood demo P1 (plan robinhood-demo v0.1, Rene 29.10.2026): USDG/SUPRA robinhood-mainnet -> supra-mainnet, 1.5 USDG per RFQ, at most 2 fills, declared own taker K1 (null until P2); verifier 1.0.2',
+    },
+    {
+      status: 'current',
       pins: { 'maker-policy.v1.json': 'abfaebf4eb4f6a5d8a6785b6f09f94a108b4e42820ddf50bbd54b4fb9fda4e37', 'maker-gates.v1.json': '2d97f3f4a24873038c8bed4e2fa5bb18a7e2f454b3574186df7b3bd62855263a' },
       files: { 'maker-policy.v1.json': 'config/killer-demo/maker/maker-policy.v1.json', 'maker-gates.v1.json': 'config/killer-demo/maker/maker-gates.v1.json' },
       note: 'E1a step 2 (Rene 27.10.2026, proof track): size.max_lock_quants 15000 -> 20000 SUPRA (D-M6), windows with at most 4 fills; verifier 1.0.1',
@@ -6232,6 +6479,11 @@ export const TRUST_PROFILE = {
   ],
   // taker funds-preflight table (F5 exception list read by the maker preflight), pinned like the repository (config.ts)
   taker_config_pins: { 'funds-preflight.v1.json': 'c52c84c139b4f332cf8b8e2cebae216d99f9d1a2b3c1b6c0b76c56ee5327136a' },
+  // Robinhood demo customer side (MB14): the customer policy (config/killer-demo/customer/customer-policy.v1.json, pinned like
+  // customer/customerCase.ts CUSTOMER_CONFIG_PINS) and the customer ATTESTOR key that signs the customer mandate
+  // (config/killer-demo/customer/customer-engine.pin.json, PRODUCTION_SIGNED, keygen 2026-10-30)
+  customer_config_pins: { 'customer-policy.v1.json': 'c837067c577aea44cffa5c0aa89dccf887b6162f744fe3e868024977ebbd35e8' },
+  customer_attestor_pubkeys: { '094f2c5d7081dd75e5502f1e597ee64dacf4619676ba56bdbaee2401550fa45d': { active: true, pinned_at: '2026-10-30', signature_basis: 'PRODUCTION_SIGNED' } },
   // the PROPOSER key that signs every maker intent (config/killer-demo/proposer-key.pin.json, PRODUCTION_SIGNED)
   proposer_pubkeys: { e0c877c7ba331f329b348bedc04257a495a5eb3573dd4842c2a99b9b58fb30a0: { active: true, pinned_at: '2026-10-10', signature_basis: 'PRODUCTION_SIGNED' } },
   // the shadow AUTHORIZER of the VAL core world (TEST_SIGNED: derived from a public string, val/decide.ts SHADOW_AUTHORIZER_PIN)
@@ -6253,6 +6505,8 @@ export function trustProfileHash(profile, profileId) {
     trust_profile_id: profileId,
     maker_config_pin_sets: profile.maker_config_pin_sets.map((s) => Object.entries(s.pins).sort().map(([k, v]) => `${k}:${v}`)),
     taker_config_pins: Object.entries(profile.taker_config_pins).sort().map(([k, v]) => `${k}:${v}`),
+    customer_config_pins: Object.entries(profile.customer_config_pins).sort().map(([k, v]) => `${k}:${v}`),
+    customer_attestor_pubkeys: Object.keys(profile.customer_attestor_pubkeys).filter((k) => profile.customer_attestor_pubkeys[k].active).sort(),
     proposer_pubkeys: Object.keys(profile.proposer_pubkeys).filter((k) => profile.proposer_pubkeys[k].active).sort(),
     shadow_authorizer_pubkeys: Object.keys(profile.shadow_authorizer_pubkeys).filter((k) => profile.shadow_authorizer_pubkeys[k].active).sort(),
     registers_index: Object.entries(profile.registers_index).sort().map(([k, v]) => `${k}:${v}`),
@@ -6270,6 +6524,8 @@ export function embeddedPinsCheck(overrides = {}) {
   const out = [];
   for (const set of TRUST_PROFILE.maker_config_pin_sets) for (const [name, file] of Object.entries(set.files)) out.push({ file, pin: set.pins[name], ok: sha256Hex(Buffer.from(text(file), 'utf8')) === set.pins[name] });
   for (const [name, pin] of Object.entries(TRUST_PROFILE.taker_config_pins)) { const file = `config/killer-demo/${name}`; out.push({ file, pin, ok: sha256Hex(Buffer.from(text(file), 'utf8')) === pin }); }
+  for (const [name, pin] of Object.entries(TRUST_PROFILE.customer_config_pins)) { const file = `config/killer-demo/customer/${name}`; out.push({ file, pin, ok: sha256Hex(Buffer.from(text(file), 'utf8')) === pin }); }
+  { const cp = JSON.parse(text('config/killer-demo/customer/customer-engine.pin.json')); out.push({ file: 'config/killer-demo/customer/customer-engine.pin.json', pin: cp.pubkey_hex, ok: cp.schema === 'cosmo.killer-demo.customer-engine-pin.v1' && TRUST_PROFILE.customer_attestor_pubkeys[cp.pubkey_hex]?.active === true }); }
   for (const [name, pin] of Object.entries(TRUST_PROFILE.registers_index)) { const file = `src/authority/${name}`; out.push({ file, pin, ok: sha3Hex(Buffer.from(text(file), 'utf8')) === pin }); }
   const proposer = JSON.parse(text('config/killer-demo/proposer-key.pin.json'));
   out.push({ file: 'config/killer-demo/proposer-key.pin.json', pin: proposer.pubkey_hex, ok: TRUST_PROFILE.proposer_pubkeys[proposer.pubkey_hex]?.active === true });
@@ -6285,7 +6541,7 @@ export function embeddedPinsCheck(overrides = {}) {
 const { noForeignEvents, snapshotOf, sourceAllowed, zeroCapitalProof } = __srcRequire('killerDemo/funds/preflight.ts');
 const { loadProposerPin } = __srcRequire('killerDemo/proposer/keys.ts');
 const { SHADOW_AUTHORIZER_PIN } = __srcRequire('killerDemo/val/decide.ts');
-const { loadMakerAll, selectMakerConfig } = __srcRequire('killerDemo/maker/config.ts');
+const { loadMakerAll, selectMakerConfig, policyPair } = __srcRequire('killerDemo/maker/config.ts');
 const { makerFundsPreflight } = __srcRequire('killerDemo/maker/makerFunds.ts');
 const { verifyMakerIntent } = __srcRequire('killerDemo/maker/makerIntent.ts');
 const { makerQuote } = __srcRequire('killerDemo/maker/makerMarket.ts');
@@ -6293,7 +6549,26 @@ const { replayMakerDecision } = __srcRequire('killerDemo/maker/makerDecide.ts');
 const { rfqRowHash, toMakerRfq } = __srcRequire('killerDemo/maker/rfq.ts');
 const { checkArm } = __srcRequire('killerDemo/maker/liveArm.ts');
 const { delegateAddressFromPubkey } = __srcRequire('killerDemo/maker/delegateKey.ts');
-const { fillProof } = __srcRequire('killerDemo/maker/proofs.ts');
+const { fillProof, fillLabelsOf, payoutProof } = __srcRequire('killerDemo/maker/proofs.ts');
+const { evmLegProof, EVM_LEG_SCHEMA } = __srcRequire('killerDemo/evm/evmLeg.ts');
+const { verifyCustomerCase, CUSTOMER_CASE_SCHEMA } = __srcRequire('killerDemo/customer/customerVerify.ts');
+export const SETTLEMENT_SCHEMA = 'cosmo.killer-demo.onchain-settlement.v1';
+// customer loaders (src/killerDemo/customer/customerCase.ts loadCustomerPolicy / loadCustomerEnginePin) served from the
+// embedded data under the profile's pins (fail-closed like the maker config rows)
+function loadCustomerPolicy() {
+  const name = 'customer-policy.v1.json'; const file = `config/killer-demo/customer/${name}`;
+  const bytes = Buffer.from(__dataText(file), 'utf8'); const actual = sha256Hex(bytes); const pin = TRUST_PROFILE.customer_config_pins[name];
+  // GUARD KD.C-CFG (embedded)
+  if (actual !== pin) throw new Error(`CONFIG_PIN_MISMATCH ${name}: expected ${pin} actual ${actual}`);
+  return { name, sha256: actual, value: JSON.parse(bytes.toString('utf8')) };
+}
+function loadCustomerEnginePin() {
+  const pin = JSON.parse(__dataText('config/killer-demo/customer/customer-engine.pin.json'));
+  if (pin.schema !== 'cosmo.killer-demo.customer-engine-pin.v1' || !/^[0-9a-f]{64}$/.test(pin.pubkey_hex)) throw new Error('customer engine pin invalid');
+  // GUARD KD.C-ATTESTOR-PIN (embedded): the embedded pin must name an active customer attestor of the trust profile
+  if (!TRUST_PROFILE.customer_attestor_pubkeys[pin.pubkey_hex]?.active) throw new Error('customer attestor pin is not an active key of the trust profile');
+  return pin;
+}
 
 export const VAL_CORE_FREEZE = { tag: 'val-architecture-v1.7-frozen', commit: '311f1ef' };
 // test-only handle on the embedded module registry (goldens: crypto parity, canonical vectors). Not used by the verifier.
@@ -6429,7 +6704,13 @@ export function verifyMakerBundle(dir, vo = {}) {
       add('MB5', canonicalHash(fin.stage_input.funds) === canonicalHash(s2.preflight) && canonicalHash(fin.stage_input.market) === canonicalHash(s2.market), 'decision-FINAL.json', 'FINAL decided on the stage-2 reads');
     }
     // MB6 provenance of every read
-    for (const f of ['reads/stage-1.json', 'reads/stage-2.json', 'reads/after.json', 'live/funds-after-fill.json'].filter((x) => existsSync(join(dir, x)))) {
+    for (const f of ['reads/stage-1.json', 'reads/stage-2.json', 'reads/after.json', 'live/funds-after-fill.json', 'live/settlement.json'].filter((x) => existsSync(join(dir, x)))) {
+      if (f === 'live/settlement.json') {
+        const st = j(f);
+        const srcs = [...(st.supra_leg ? [st.supra_leg.l1.before.source, st.supra_leg.l1.after.source] : []), ...(st.evm_leg ? [st.evm_leg.reads.chain_id.source, st.evm_leg.reads.tx.source, st.evm_leg.reads.receipt.source, st.evm_leg.reads.head.source] : [])];
+        add('MB6', srcs.every(sourceAllowed), f, 'provenance');
+        continue;
+      }
       const s = j(f);
       const fundsObj = s.funds ?? s.reads ?? (s.account ? s : {});
       const srcs = [...Object.values(fundsObj).map((x) => x.source), ...(s.reserves ? [s.reserves.source] : []), ...(s.l1 ? [s.l1.source] : []), ...(s.market ? [s.market.dora.source, s.market.venue.source] : [])];
@@ -6474,10 +6755,42 @@ export function verifyMakerBundle(dir, vo = {}) {
       if (existsSync(join(dir, 'live/fill-proof.json'))) {
         const stored = j('live/fill-proof.json');
         const aff = j('live/funds-after-fill.json');
-        const fp = fillProof({ before: snapshotOf(after.reads), after: snapshotOf(aff), rfqAfter: ex.rfq_after, quoteId: ex.quote_id, master: cfg.policy.value.master, rateBft: fin.decision.quote.quote_rate_bft, sizeBase: rfq.size_base_units, supraId: cfg.policy.value.assets.SUPRA.id, iusdcId: cfg.policy.value.assets.iUSDC.id });
+        const ppf = policyPair(cfg.policy.value);
+        const fp = fillProof({ before: snapshotOf(after.reads), after: snapshotOf(aff), rfqAfter: ex.rfq_after, quoteId: ex.quote_id, master: cfg.policy.value.master, rateBft: fin.decision.quote.quote_rate_bft, sizeBase: rfq.size_base_units, quoteAssetId: ppf.quoteAsset.id, baseAssetId: ppf.baseAsset.id, labels: fillLabelsOf(cfg.policy.value) });
         // GUARD KD.M-MB12-FILL
         add('MB12', canonicalHash(fp) === canonicalHash(stored) && man.live?.fill_proof === stored.verdict, 'live/fill-proof.json', `fill proof recomputed: ${fp.verdict}`);
       } else add('MB12', man.live?.fill_proof === null, 'manifest.json', 'no fill proof file, manifest says none');
+      // MB13 on-chain settlement of both legs (Robinhood demo), recomputed from the stored reads; absent = manifest says none
+      if (existsSync(join(dir, 'live/settlement.json'))) {
+        const st = j('live/settlement.json');
+        const p = cfg.policy.value; const pp = policyPair(p);
+        const os = man.live?.onchain_settlement ?? null;
+        add('MB13', st.schema === SETTLEMENT_SCHEMA && man.live?.fill_proof === 'PROVEN' && !!os && os.supra_leg === (st.supra_leg?.proof.verdict ?? null) && os.evm_leg === (st.evm_leg?.proof.verdict ?? null), 'live/settlement.json', `settlement file on a PROVEN fill; manifest legs supra ${os?.supra_leg ?? 'null'} / evm ${os?.evm_leg ?? 'null'}`);
+        if (st.supra_leg) {
+          const sl = st.supra_leg; const dest = p.counterparty?.declared_own_taker ?? p.master;
+          const pr = payoutProof({ councilBefore: sl.council.before, councilAfter: sl.council.after, l1Before: sl.l1.before.balance, l1After: sl.l1.after.balance, amount: sl.amount_base_units, assetId: sl.asset_id, destination: sl.destination, pinnedDestination: dest, label: sl.asset_symbol });
+          const bound = sl.asset_id.toLowerCase() === pp.quoteAsset.id.toLowerCase() && sl.council.before.master.toLowerCase() === sl.destination.toLowerCase() && sl.l1.before.account.toLowerCase() === sl.destination.toLowerCase() && sl.l1.after.account.toLowerCase() === sl.destination.toLowerCase() && /^\d+$/.test(sl.amount_base_units) && BigInt(sl.amount_base_units) <= BigInt(fin.decision.quote.lock_quants_ceil);
+          // GUARD KD.M-MB13-SUPRA
+          add('MB13', canonicalHash(pr) === canonicalHash(sl.proof) && bound, 'live/settlement.json', `supra_leg recomputed: ${pr.verdict} (${sl.asset_symbol} ${sl.amount_base_units} to the pinned customer ${dest.slice(0, 10)}, <= lock ${fin.decision.quote.lock_quants_ceil})`);
+        } else add('MB13', true, 'live/settlement.json', 'supra_leg null: NOT PROVEN on chain (ledger-proven only)');
+        if (st.evm_leg) {
+          const el = st.evm_leg; const ba = pp.baseAsset;
+          const pr = evmLegProof({ pins: el.pins, withdraw: el.withdraw, reads: el.reads, council: el.council });
+          const pinsOk = !!ba.evm && !!p.evm && el.schema === EVM_LEG_SCHEMA && el.pins.chain_id === p.evm.chain_id && el.pins.token_contract.toLowerCase() === ba.evm.contract.toLowerCase() && el.pins.token_decimals === ba.decimals && el.pins.vault.toLowerCase() === p.evm.vault.toLowerCase() && el.pins.vault_withdraw_topic0.toLowerCase() === p.evm.vault_withdraw_topic0.toLowerCase() && el.pins.min_confirmations === p.evm.min_confirmations;
+          const bound = el.withdraw.master.toLowerCase() === p.master.toLowerCase() && !!el.council && el.council.asset_id.toLowerCase() === ba.id.toLowerCase() && el.council.before.master.toLowerCase() === p.master.toLowerCase() && /^\d+$/.test(el.withdraw.amount_base_units) && BigInt(el.withdraw.amount_base_units) >= BigInt(rfq.size_base_units);
+          // GUARD KD.M-MB13-EVM
+          add('MB13', canonicalHash(pr) === canonicalHash(el.proof) && pinsOk && bound, 'live/settlement.json', `evm_leg recomputed: ${pr.verdict} (chain ${el.pins.chain_id}, ${el.withdraw.amount_base_units} base units >= fill size ${rfq.size_base_units}, pins == policy ${pinsOk})`);
+        } else add('MB13', true, 'live/settlement.json', 'evm_leg null: NOT PROVEN on chain (ledger-proven only)');
+      } else add('MB13', (man.live?.onchain_settlement ?? null) === null, 'manifest.json', 'no settlement file, manifest says none');
+      // MB14 customer mandate (Robinhood demo): the trigger RFQ is the customer's signed mandate (rfq_id = mandate hash prefix)
+      if (existsSync(join(dir, 'customer/case.json'))) {
+        const cf = j('customer/case.json');
+        const cp = loadCustomerPolicy();
+        const ep = vo.customerEnginePin ?? loadCustomerEnginePin().pubkey_hex;
+        const cm = cf.schema === CUSTOMER_CASE_SCHEMA ? verifyCustomerCase(cf, { enginePubkey: ep, policySha256: cp.sha256, policy: cp.value, declaredTaker: cfg.policy.value.counterparty?.declared_own_taker ?? null, trigger: rfq }) : [{ id: 'CM0', ok: false, why: `schema ${String(cf.schema)}` }];
+        // GUARD KD.M-MB14-CUSTOMER
+        for (const c of cm) add('MB14', c.ok, 'customer/case.json', `${c.id}: ${c.why}`);
+      } else add('MB14', true, 'manifest.json', 'no customer case file (no customer mandate claimed)');
     } else if (live) add('MB10', man.live?.executed === false, 'manifest.json', 'no execution recorded, manifest says none');
   } catch (e) {
     add('MB0', false, '(bundle)', `verifier error: ${e.message}`);

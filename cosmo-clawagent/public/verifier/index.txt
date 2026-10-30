@@ -35,9 +35,14 @@ SECOND VERIFIER: SUPRAFX MAKER CASE BUNDLES
 Maker windows on SupraFX (evidence folders suprafx-maker-*) use a different
 bundle layout, schema cosmo.killer-demo.maker-case-bundle.v1. They are checked
 by a separate single-file program, cosmo-verify-maker.mjs, with its own
-PROVENANCE-maker.json. Same 12 checks (MB1-MB12) as the repository verifier:
-46 checks on a bundle with a fill, 29 on a declined case. cosmo-verify.mjs
-above is unchanged by this addition.
+PROVENANCE-maker.json. Same 14 checks (MB1-MB14) as the repository verifier:
+48 checks on a bundle with a fill, 29 on a declined case, 52 on a Robinhood-demo
+fill bundle with both on-chain settlement legs (MB13; MB14 = customer mandate).
+cosmo-verify.mjs above is unchanged by this addition.
+
+  maker version     1.0.2 (30.10.2026)
+  maker distributable sha3-256 0x1838a9de2665fc2b4345e1a76fc229f74bf74ed752c0bc6db95dba8ae579de18
+  maker trust_profile sha3-256 0x9e7fda694297f0f6f43e6af7331c8dd068905afd30a1e9d555130d938cf87fc9
 
   node cosmo-verify-maker.mjs <case-dir>      verify one maker case bundle
   node cosmo-verify-maker.mjs --show-trust    embedded pins

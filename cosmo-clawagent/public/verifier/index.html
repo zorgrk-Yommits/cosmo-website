@@ -75,17 +75,17 @@ node cosmo-verify.mjs --version        # version, trust hash, source sha3</pre>
   <p>Maker windows on SupraFX (evidence folders named <code>suprafx-maker-*</code>) use a different bundle layout,
   schema <code>cosmo.killer-demo.maker-case-bundle.v1</code>. They are checked by a separate single-file program,
   <a href="cosmo-verify-maker.mjs">cosmo-verify-maker.mjs</a>, with its own <a href="PROVENANCE-maker.json">PROVENANCE-maker.json</a>.
-  It runs the same 12 checks (MB1-MB12) as the repository verifier: 46 checks on a bundle with a fill, 29 on a declined case.
+  It runs the same 14 checks (MB1-MB14) as the repository verifier: 48 checks on a bundle with a fill, 29 on a declined case, 52 on a Robinhood-demo fill bundle with both on-chain settlement legs (MB13) and more with a customer mandate (MB14).
   <code>cosmo-verify.mjs</code> above is unchanged by this addition.</p>
   <pre>node cosmo-verify-maker.mjs &lt;case-dir&gt;     # verify one maker case bundle (cases/&lt;id&gt;/ under the evidence folder)
 node cosmo-verify-maker.mjs --show-trust   # embedded pins (policy, gates, proposer, authorizer, registers)
 node cosmo-verify-maker.mjs --version      # version, trust hash, source sha3
 openssl dgst -sha3-256 cosmo-verify-maker.mjs   # must equal distributable.sha3 in PROVENANCE-maker.json</pre>
   <table>
-    <tr><td>version</td><td>1.0.1 (27.10.2026: policy pin set abfaebf4 appended, S_M 20000 SUPRA; 1.0.0 bundles stay verifiable under the historical pins)</td></tr>
-    <tr><td>distributable</td><td class="hash">sha3-256 0xcc660657ae1386388c2d7e36bc52a22b05c47d4540bd9c930cfb8bff8e2dfef9</td></tr>
+    <tr><td>version</td><td>1.0.2 (30.10.2026: second current policy pin set maker-policy.v2.robinhood.json = Robinhood Chain demo USDG/SUPRA, customer policy + attestor pins, checks MB13 on-chain settlement of both legs and MB14 customer mandate; 1.0.1: policy pin set abfaebf4 appended, S_M 20000 SUPRA; 1.0.0 bundles stay verifiable under the historical pins)</td></tr>
+    <tr><td>distributable</td><td class="hash">sha3-256 0x1838a9de2665fc2b4345e1a76fc229f74bf74ed752c0bc6db95dba8ae579de18</td></tr>
     <tr><td>trust_profile_id</td><td>cosmo-maker-trust-v1</td></tr>
-    <tr><td>trust_profile</td><td class="hash">sha3-256 0x5e1bd374df7ffea8711ec940dea3243031c46006086b42d435879d12f69041dd</td></tr>
+    <tr><td>trust_profile</td><td class="hash">sha3-256 0x9e7fda694297f0f6f43e6af7331c8dd068905afd30a1e9d555130d938cf87fc9</td></tr>
     <tr><td>bundle schema</td><td>cosmo.killer-demo.maker-case-bundle.v1</td></tr>
   </table>
 </main>
