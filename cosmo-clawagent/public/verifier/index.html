@@ -75,17 +75,17 @@ node cosmo-verify.mjs --version        # version, trust hash, source sha3</pre>
   <p>Maker windows on SupraFX (evidence folders named <code>suprafx-maker-*</code>) use a different bundle layout,
   schema <code>cosmo.killer-demo.maker-case-bundle.v1</code>. They are checked by a separate single-file program,
   <a href="cosmo-verify-maker.mjs">cosmo-verify-maker.mjs</a>, with its own <a href="PROVENANCE-maker.json">PROVENANCE-maker.json</a>.
-  It runs the same 14 checks (MB1-MB14) as the repository verifier: 48 checks on a bundle with a fill, 29 on a declined case, 52 on a Robinhood-demo fill bundle with both on-chain settlement legs (MB13) and more with a customer mandate (MB14).
+  It runs the same 14 checks (MB1-MB14) as the repository verifier: 48 checks on a bundle with a fill, 29 on a declined case, 52 on a Robinhood-demo fill bundle with both on-chain settlement legs (MB13) and 58 with a customer mandate (MB14).
   <code>cosmo-verify.mjs</code> above is unchanged by this addition.</p>
   <pre>node cosmo-verify-maker.mjs &lt;case-dir&gt;     # verify one maker case bundle (cases/&lt;id&gt;/ under the evidence folder)
 node cosmo-verify-maker.mjs --show-trust   # embedded pins (policy, gates, proposer, authorizer, registers)
 node cosmo-verify-maker.mjs --version      # version, trust hash, source sha3
 openssl dgst -sha3-256 cosmo-verify-maker.mjs   # must equal distributable.sha3 in PROVENANCE-maker.json</pre>
   <table>
-    <tr><td>version</td><td>1.0.2 (30.10.2026: second current policy pin set maker-policy.v2.robinhood.json = Robinhood Chain demo USDG/SUPRA, customer policy + attestor pins, checks MB13 on-chain settlement of both legs and MB14 customer mandate; 1.0.1: policy pin set abfaebf4 appended, S_M 20000 SUPRA; 1.0.0 bundles stay verifiable under the historical pins)</td></tr>
-    <tr><td>distributable</td><td class="hash">sha3-256 0x1838a9de2665fc2b4345e1a76fc229f74bf74ed752c0bc6db95dba8ae579de18</td></tr>
+    <tr><td>version</td><td>1.0.3 (30.10.2026: declared own taker K1 = 0xa3d79667...358f5 pinned in maker-policy.v2.robinhood.json (new current pin set 0bfe3446, 920cc20e historical) and as customer.master in customer-policy.v1.json; 1.0.2 (30.10.2026): second current policy pin set maker-policy.v2.robinhood.json = Robinhood Chain demo USDG/SUPRA, customer policy + attestor pins, checks MB13 on-chain settlement of both legs and MB14 customer mandate; 1.0.1: policy pin set abfaebf4 appended, S_M 20000 SUPRA; 1.0.0 bundles stay verifiable under the historical pins)</td></tr>
+    <tr><td>distributable</td><td class="hash">sha3-256 0x2401ae1252c27e985cb27f72c0b9bd7356d2149ce0956e8d2c46086ca4871b4b</td></tr>
     <tr><td>trust_profile_id</td><td>cosmo-maker-trust-v1</td></tr>
-    <tr><td>trust_profile</td><td class="hash">sha3-256 0x9e7fda694297f0f6f43e6af7331c8dd068905afd30a1e9d555130d938cf87fc9</td></tr>
+    <tr><td>trust_profile</td><td class="hash">sha3-256 0x19290992210bdfdc2e87bce609f0789c3a17190685c20d667cbad1375d2a6f94</td></tr>
     <tr><td>bundle schema</td><td>cosmo.killer-demo.maker-case-bundle.v1</td></tr>
   </table>
 </main>
