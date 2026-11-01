@@ -1,0 +1,33 @@
+{
+  "schema": "cosmo.killer-demo.maker-fills.v1",
+  "entries": [
+    {
+      "status": "APPLIED",
+      "at": "2026-11-01T12:56:30.648Z",
+      "rfq_id": "996a6a89-d45f-741b-9c55-0c1a1b64b776",
+      "quote_id": "521f039c-5ee1-fb69-823a-eb079b85127a",
+      "decision_id": "0x787559c27ea96c02cbe0b56c964437f0b51eb2408d825e07bba56eae50545817",
+      "arm_hash": "0xf9ed2fe91656aae581ed494bcdcf372a07f561fadaf454d6b460cf8dd118b12a",
+      "detail": {
+        "submit": {
+          "ok": true,
+          "code": null
+        }
+      }
+    },
+    {
+      "status": "APPLIED",
+      "at": "2026-11-01T12:58:02.749Z",
+      "rfq_id": "187925f9-c4ea-8f72-6eb2-fb224658ac83",
+      "quote_id": "223bd728-fe19-93c7-e959-c5b6c54cff6e",
+      "decision_id": "0xeb06dd299a0a3737081bbcf13b933dcf2f2601ef9d9ae60c9c4a831ed0089188",
+      "arm_hash": "0xf9ed2fe91656aae581ed494bcdcf372a07f561fadaf454d6b460cf8dd118b12a",
+      "detail": {
+        "submit": {
+          "ok": true,
+          "code": null
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "schema": "cosmo.killer-demo.maker-case-bundle.v1",
+  "case_id": "kdm-20261101T1256-12561012-56caf873",
+  "mode": "live",
+  "rfq": {
+    "id": "996a6a89-d45f-741b-9c55-0c1a1b64b776",
+    "display_id": "R-261101-125610-12",
+    "pair": "USDG/SUPRA",
+    "taker": "0xa3d79667db7a465de6e13005c35417c9501fdc5b68bc5516024f0ebc23c358f5",
+    "size_base_units": "1500000",
+    "floor": "9016.393442622952"
+  },
+  "would_quote": {
+    "rate_bft": "907191088322380954135255",
+    "fair_rate_bft": "911660843785192410512884",
+    "lock_quants_ceil": "1360786632484",
+    "margin_base_units": "7354",
+    "floor_rate_bft": "901639344262295200000000"
+  },
+  "outcome": {
+    "stage": "FINAL",
+    "decision": "AUTHORIZED",
+    "plan_alias": null,
+    "dominant": {
+      "core": null,
+      "profile": null
+    },
+    "core_record_id": "0x03b8257156c1af5f0e007b91cd3e2cbfe83f8aa69e0fc4b9042f907ce5ac66e1",
+    "decision_id": "0x787559c27ea96c02cbe0b56c964437f0b51eb2408d825e07bba56eae50545817"
+  },
+  "intel_context": "present",
+  "zero_capital": "PASS",
+  "live": {
+    "executed": true,
+    "lifecycle": "applied",
+    "quote_id": "521f039c-5ee1-fb69-823a-eb079b85127a",
+    "fill_proof": "PROVEN",
+    "onchain_settlement": null
+  },
+  "claims": [
+    "a foreign open RFQ was priced by the proposer and decided by the frozen VAL v1.7 core with the pinned maker profile V-1M..V-9M",
+    "no capital moved during the decision (snapshot before == after); an execution, if any, is documented under live/ with its own proof"
+  ],
+  "not_claimed": [
+    "the authorizer key is the TEST_SIGNED shadow authorizer (architecture level, D-R1..4 engine key is not in this pilot)",
+    "SupraFX reads, lifecycle and settlement are operator-mediated; only the L1 payout read is externally verifiable; 1 iUSDC = 1 USD is an assumption (TA-FX-3)",
+    "Intel did not trigger anything (D-M1)",
+    "not market making, not continuous operation, not a profit claim, not trustless"
+  ]
+}

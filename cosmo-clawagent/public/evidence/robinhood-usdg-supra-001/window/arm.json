@@ -1,0 +1,17 @@
+{
+  "schema": "cosmo.killer-demo.maker-live-arm.v1",
+  "go_text": "GO M4 01.11. Robinhood-Demo P4 Fenster 2: USDG/SUPRA 1,5 USDG je RFQ, Taker = deklarierter eigener Kunde K1 0xa3d79667, bis zu 2 Fills, mit dApp-Abweichungen (pairs via caps, venue expiry) - GO Rene 'GO 14:00 bis 15:30 heute' 12:56 MEZ im Chat",
+  "go_at": "2026-11-01T12:51:18.199Z",
+  "window_start": "2026-11-01T12:50:00Z",
+  "window_end": "2026-11-01T14:30:00Z",
+  "maker_delegate_pubkey": "1f44fe853cdd46f4e262b6d6fccbfb9514050c67ee289cbf883225fdddff2803",
+  "master": "0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb",
+  "max_fills": 2,
+  "created_by": "live.ts arm (COSMO on GO Rene)",
+  "allowed_other_delegates": [],
+  "deviations_accepted": [
+    "pairs_via_caps",
+    "venue_expiry"
+  ],
+  "bound_commit": "8ec635d0ce67ea4165c08b5d0ef97c30da33a5c0"
+}

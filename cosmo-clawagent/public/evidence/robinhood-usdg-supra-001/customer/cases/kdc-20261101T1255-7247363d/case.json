@@ -1,0 +1,139 @@
+{
+  "schema": "cosmo.killer-demo.customer-case.v1",
+  "case_id": "kdc-20261101T1255-7247363d",
+  "at": "2026-11-01T12:55:58.357Z",
+  "policy_pin": {
+    "name": "customer-policy.v1.json",
+    "sha256": "561c2b56bb014c43f972ca716082aa1fdb164ccfd17330dcbebf8bf0b1477f22"
+  },
+  "engine_pubkey": "094f2c5d7081dd75e5502f1e597ee64dacf4619676ba56bdbaee2401550fa45d",
+  "delegate": {
+    "pubkey_hex": "f03f9ed29cb18b3eb81cfb5171768bc62a60149f59a7e41b8ec6f5c997246d32",
+    "address_hex": "7d497b6393cc0ee371350290e4a1a9cd5e9bb486b35352737cf33b488eaa4b7d"
+  },
+  "customer_master": "0xa3d79667db7a465de6e13005c35417c9501fdc5b68bc5516024f0ebc23c358f5",
+  "intent": {
+    "schema": "cosmo.execution-case.intent.v2",
+    "mode": "micro_live",
+    "action": {
+      "kind": "fx.sell_base_rfq.v1",
+      "params": {
+        "pair": {
+          "base_chain": "robinhood-mainnet",
+          "base_symbol": "USDG",
+          "quote_chain": "supra-mainnet",
+          "quote_symbol": "SUPRA"
+        },
+        "side": "sell_base",
+        "size_base": "1500000",
+        "min_rate_bft": "901639344262295081967183",
+        "settlement_mode": "platform",
+        "auto_accept": true,
+        "allow_partial_fills": false
+      }
+    },
+    "ttl_ms": 1800000,
+    "principal_ref": "principal:robinhood-demo-customer-k1",
+    "agent_ref": "customer-agent:robinhood-demo-001"
+  },
+  "mandate": {
+    "schema": "cosmo.execution-case.mandate.v2",
+    "case_id": "kdc-20261101T1255-7247363d",
+    "nonce": "84ebdcbb0bc3123eba8b95042fa3b161",
+    "principal_ref": "principal:robinhood-demo-customer-k1",
+    "agent_ref": "customer-agent:robinhood-demo-001",
+    "execution_key_ref": "suprafx-delegate:7d497b6393cc0ee371350290e4a1a9cd5e9bb486b35352737cf33b488eaa4b7d",
+    "mode": "micro_live",
+    "action": {
+      "kind": "fx.sell_base_rfq.v1",
+      "params": {
+        "pair": {
+          "base_chain": "robinhood-mainnet",
+          "base_symbol": "USDG",
+          "quote_chain": "supra-mainnet",
+          "quote_symbol": "SUPRA"
+        },
+        "side": "sell_base",
+        "size_base": "1500000",
+        "min_rate_bft": "901639344262295081967183",
+        "settlement_mode": "platform",
+        "auto_accept": true,
+        "allow_partial_fills": false,
+        "pair_id_hex": "04e29a3fb88f92039c3a3a3c203896de3e64c94874c3b03927de268bca88b681",
+        "reference_rate_bft": "910746812386156648451700",
+        "oracle": {
+          "source": "http-get:/api/oracle?pair=SUPRA%2FUSDG (base supra_usdt price inverted, USDG = 1 USD)",
+          "raw_sha256": "83dfb59369da4d8b888f7477e888abcd62b6125aa79e643d3ddb5b8ae3bad6b2"
+        },
+        "expires_in_batches": 600
+      }
+    },
+    "exposure": {
+      "unit": "USDG-base-units",
+      "amount": "1500000"
+    },
+    "issued_at": 1793537758354,
+    "expires_at": 1793539558354,
+    "policy_hash": "561c2b56bb014c43f972ca716082aa1fdb164ccfd17330dcbebf8bf0b1477f22"
+  },
+  "mandate_sig": {
+    "attestor_pubkey": "094f2c5d7081dd75e5502f1e597ee64dacf4619676ba56bdbaee2401550fa45d",
+    "signature": "6b9fb567b0475ac14c75ca6e45d45049dc24d6e5f0c6ba4c3110f2e013f02e49fae40169432fc749e81bad1ece6b70698e456d9f093dcfa47ecc4bbcab0b330f"
+  },
+  "mandate_hash": "0x996a6a89d45f741b9c550c1a1b64b7765b798b127cffba7b7eb49db57ea8c5ae",
+  "rfq_id": "996a6a89d45f741b9c550c1a1b64b776",
+  "terms": {
+    "floor_rate_bft": "901639344262295081967183",
+    "reference_rate_bft": "910746812386156648451700",
+    "oracle_source": "http-get:/api/oracle?pair=SUPRA%2FUSDG (base supra_usdt price inverted, USDG = 1 USD)",
+    "oracle_raw_sha256": "83dfb59369da4d8b888f7477e888abcd62b6125aa79e643d3ddb5b8ae3bad6b2",
+    "pair_id_hex": "04e29a3fb88f92039c3a3a3c203896de3e64c94874c3b03927de268bca88b681",
+    "expires_in_batches": 600
+  },
+  "submit": {
+    "lifecycle": "posted",
+    "at": "2026-11-01T12:56:11.520Z",
+    "event": {
+      "kind": "SubmitRfqV2",
+      "payload": {
+        "user": "0x7d497b6393cc0ee371350290e4a1a9cd5e9bb486b35352737cf33b488eaa4b7d",
+        "pair": "04e29a3fb88f92039c3a3a3c203896de3e64c94874c3b03927de268bca88b681",
+        "base_asset": "0x84f2da2b1609a29182ed95020b895b23efdd898b9a3f58da9ee6f7bb59e8ce18",
+        "quote_asset": "0xb3ba52f6fce09fa5b5f14506a7f489404fbacf95bec1c789dc7d6cd86b26cbf1",
+        "size": "1500000",
+        "reference_price": "910746812386156648451700",
+        "auto_accept": "true",
+        "auto_accept_target_rate": "901639344262295081967183",
+        "allow_partial_fills": "false",
+        "min_fill_size": "0",
+        "expires_at_ms": "1793539558354",
+        "rfq_id": "996a6a89d45f741b9c550c1a1b64b776",
+        "user_sequence_number": "2",
+        "settlement_mode": "Platform",
+        "expires_at_batch": "14619648"
+      }
+    },
+    "envelope_bcs_hex": "ec01247d497b6393cc0ee371350290e4a1a9cd5e9bb486b35352737cf33b488eaa4b7d04e29a3fb88f92039c3a3a3c203896de3e64c94874c3b03927de268bca88b68184f2da2b1609a29182ed95020b895b23efdd898b9a3f58da9ee6f7bb59e8ce18b3ba52f6fce09fa5b5f14506a7f489404fbacf95bec1c789dc7d6cd86b26cbf160e3160000000000000000000000000074cea1e5ca4902afdbc0000000000000014fdea71b93b47ff7edbe0000000000000000000000000000000000000000000000d2cb4997a1010000996a6a89d45f741b9c550c1a1b64b7760200000000000000000014df0000000000f03f9ed29cb18b3eb81cfb5171768bc62a60149f59a7e41b8ec6f5c997246d3201f9367646d2b463ece1ea74c4a0320279c2eaddf099950eb03596a1631a37a3e49bbb3f28e11726df7fddec2d17f8ab6437ebda9d3fc1552ec596ba86e41b0b",
+    "submit": {
+      "ok": true,
+      "code": null
+    }
+  },
+  "rfq_row": {
+    "id": "996a6a89-d45f-741b-9c55-0c1a1b64b776",
+    "display_id": "R-261101-125610-12",
+    "pair": "USDG/SUPRA",
+    "source_chain": "robinhood-mainnet",
+    "dest_chain": "supra-mainnet",
+    "size": "1.5",
+    "remaining_size": "1.5",
+    "total_filled": "0",
+    "fill_count": "0",
+    "status": "open",
+    "allow_partial_fills": false,
+    "min_fill_size": "0",
+    "reference_price": "9107.468123861567",
+    "expires_at_batch": "14619648",
+    "council_batch_number": "14619062"
+  }
+}

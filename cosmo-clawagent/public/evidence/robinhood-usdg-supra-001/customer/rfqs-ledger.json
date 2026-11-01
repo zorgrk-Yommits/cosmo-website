@@ -1,0 +1,57 @@
+{
+  "schema": "cosmo.killer-demo.customer-rfqs.v1",
+  "entries": [
+    {
+      "status": "POSTED",
+      "at": "2026-10-31T10:17:08.058Z",
+      "case_id": "kdc-20261031T1017-225a98ed",
+      "mandate_hash": "0x28e063a2af9513a8eea2596d7bc82898697b447f09bf25b41542631f2a4cbfa1",
+      "rfq_id": "28e063a2af9513a8eea2596d7bc82898",
+      "detail": {
+        "submit": {
+          "ok": true,
+          "code": null
+        }
+      }
+    },
+    {
+      "status": "POSTED",
+      "at": "2026-10-31T11:00:50.633Z",
+      "case_id": "kdc-20261031T1100-4cb210d2",
+      "mandate_hash": "0xdaefc01f4f59294c82df10c077a4050ba65c4144230c89cfd1d77f1970a3b3e9",
+      "rfq_id": "daefc01f4f59294c82df10c077a4050b",
+      "detail": {
+        "submit": {
+          "ok": true,
+          "code": null
+        }
+      }
+    },
+    {
+      "status": "POSTED",
+      "at": "2026-11-01T12:55:58.357Z",
+      "case_id": "kdc-20261101T1255-7247363d",
+      "mandate_hash": "0x996a6a89d45f741b9c550c1a1b64b7765b798b127cffba7b7eb49db57ea8c5ae",
+      "rfq_id": "996a6a89d45f741b9c550c1a1b64b776",
+      "detail": {
+        "submit": {
+          "ok": true,
+          "code": null
+        }
+      }
+    },
+    {
+      "status": "POSTED",
+      "at": "2026-11-01T12:57:21.170Z",
+      "case_id": "kdc-20261101T1257-04e0d211",
+      "mandate_hash": "0x187925f9c4ea8f726eb2fb224658ac831cde25d557bfd17585f0244ad75517eb",
+      "rfq_id": "187925f9c4ea8f726eb2fb224658ac83",
+      "detail": {
+        "submit": {
+          "ok": true,
+          "code": null
+        }
+      }
+    }
+  ]
+}

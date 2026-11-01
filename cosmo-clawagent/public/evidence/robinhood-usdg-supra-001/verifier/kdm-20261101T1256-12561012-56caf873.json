@@ -1,0 +1,1 @@
+{"verifier":"cosmo-standalone-maker-verifier","version":"1.0.3","trust_profile_id":"cosmo-maker-trust-v1","trust_profile_hash":"0x19290992210bdfdc2e87bce609f0789c3a17190685c20d667cbad1375d2a6f94","bundle":"/root/logs/killer-demo-robinhood/p4-window-2/cases/kdm-20261101T1256-12561012-56caf873","verdict":"ACCEPT","rc":0,"checks":48,"failed":0,"failed_checks":[]}

@@ -1,0 +1,49 @@
+ROBINHOOD-USDG-SUPRA-001 -- public evidence bundle (SupraFX, Robinhood Chain 4663 -> Supra chain 8, COSMO as maker, 2026-11-01 12:50-14:30 UTC)
+
+One armed window under one written GO (limit 2 fills). Two USDG/SUPRA RFQs from the customer
+account K1 (the operator's own second account, declared in the pinned maker policy) were decided
+FINAL AUTHORIZED, quoted once each and filled by the venue ledger; each fill is proven quant-exact
+(FP1-FP4) against the venue's balance snapshot. Settlement: SupraFX ledger, platform mode (the
+venue's standard; no off-venue transfer was made, by decision). 3 ticks, 0 errors, run DONE 2/2.
+
+  fill 1  12:56:41Z  R-261101-125610-12  quote 521f039c  -13,606.50553820 SUPRA  +1.500000 USDG  rate 9,071.91 SUPRA/USDG
+  fill 2  12:58:13Z  R-261101-125732-97  quote 223bd728  -13,606.16534155 SUPRA  +1.500000 USDG  rate 9,071.68 SUPRA/USDG
+  sum     -27,212.67087975 SUPRA paid by the maker, +3.000000 USDG received
+
+Offline re-verification of both case bundles: ACCEPT 48/48 each (verifier 1.0.3 at the window,
+1.0.4 on 2026-11-01); tampered copy of case 1 (live/fill-proof.json usdg_delta x10, not re-summed):
+REJECT, 2 of 48 (MB1, MB12). Self-attestation by the COSMO runner; the verifier program is published
+at heros.cloud/verifier/ (cosmo-verify-maker.mjs 1.0.4, sha3-256
+0x47a85ae640aa85f4aff3094268bb83d4059c814bb555c50512c09bfdc486061e); run it on any cases/<id>/ here.
+Declared self-trade: both accounts belong to the operator (K1 0xa3d79667db7a465de6e13005c35417c9501fdc5b68bc5516024f0ebc23c358f5, maker M2 0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb).
+No foreign Robinhood Chain taker exists on the venue. No demand claim, no profit claim.
+The customer mandates (signed, rfq_id = first 16 bytes of the mandate hash) are published under customer/;
+MB14 is not claimed inside the bundles (the case files were not appended).
+
+Byte-identical copies of the window directory, the case bundles and the customer case files.
+Check integrity with: sha256sum <file>; per case: cd <case> && sha256sum -c SHA256SUMS
+
+b4f3eb16de2c1faea5c5f2dc7fff4ff203befba625364010a3bac0bb16f21dbc  robinhood-record.md
+65aca96f8f5ead0c40424be94894ae1d1d6554108e75a87b8251cd08d1336ecf  window/arm.json
+f569e219924c889f66281191586b3e7c5952af4092f787401af7a9a3b34ee70e  window/decided.json
+46d51851c251543045d150160cf79bce1fa30ae8b964c491fabd6a706abca49b  window/expiry-calc.json
+c01bcfec205161d8707f6363007bf420769da305ddf52bfee7aed05a7dc5577a  window/fills-ledger.json
+765883b4b861e5fe40d37892c514b18707e8d4bb8eb3526d5ef18dc6fc61856e  window/go-check.json
+071d34d4f14e363b6967dc6046de50327ed8227beacabda4157cf1c6c4c7b089  window/go-check.md
+d7abb76ac3bf664f0f043bed1a66562cf92a6ee6d625b60b457ed00153c6735f  window/live.ndjson
+d305283879c892b82d4319440d3a3454e3299df81abc36bf61a80a2ea6d3a6ac  window/policy-check.json
+e957455693ca6638e63b4ffcbc80a53dae94b0196c3d0c58e2f2ca75f1318343  window/run-state.json
+0ef7a99d4cf2d13d760a47a1800dc97dff6b4cc44e5401d3b1bfd574f95120c8  window/settlement-prep.json
+a1714e5d8f045f6cf4a6f5c0741b0f378d06b1c0b56f3300ec266c1fcd5f4221  window/tests.json
+e90b02e0b7ea839f43af24235d4e7a5aa1e2874cfb097e6f03631ef3c3e69ec8  verifier/kdm-20261101T1256-12561012-56caf873.json
+14996e0b414e0788c2ead228b56b6766a5a28b30f463dfebf7c20e8a6debbe76  verifier/kdm-20261101T1258-12573297-691b15bd.json
+c0738660e6093db2cbaaaae58a87d4e14852bc76ca702d01d6c32763ab23af80  verifier/reverify-1.0.4-kdm-20261101T1256-12561012-56caf873.json
+d3464f554ca924d8af7cbab0a09acdd20fb770dfe84f442236913b8ca9ecf2a6  verifier/reverify-1.0.4-kdm-20261101T1258-12573297-691b15bd.json
+d15c13ce8127af3dbd50a7c4600b48883a1893b2d95a2d6258430e58f288ae78  verifier/tamper-probe-1.0.4-20261101.json
+03f215a0302af0eb035a1306d1edf09a21def8e95db85fa0552e2b06c1adbdae  customer/rfqs-ledger.json
+1be4aeb2af803e56650d3a35e80ee11a13b3f21470b4ee49244f7c16881c0991  customer/cases/kdc-20261101T1255-7247363d/case.json
+0753bb09dfc3e65a5d5bc4dfef203e4c6a1a5b1cfff4f9ed550d0821539d9ea0  customer/cases/kdc-20261101T1255-7247363d/go.json
+0a157ed7ad925b26d27377a70ad06b9beb269d2fa7c4f86af29ecd668c03b13b  customer/cases/kdc-20261101T1257-04e0d211/case.json
+2da1277cee2e0c45cd16ce8931ea3b57053800a34f9dd983f44822fd6b2ff40e  customer/cases/kdc-20261101T1257-04e0d211/go.json
+00d0241ed785746129493cc0a83fbac5c6ae2fcd31ae4e2ccda98b52e1815556  cases/kdm-20261101T1256-12561012-56caf873/SHA256SUMS
+42cf3ceecf9f5b2cb9f2d64d0e42318d6b57572941ec9b2e787c69dac36ee109  cases/kdm-20261101T1258-12573297-691b15bd/SHA256SUMS

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="index,follow">
+<title>Robinhood Chain demo: USDG for SUPRA, settled in the SupraFX ledger | COSMO</title>
+<meta name="description" content="Public evidence bundle: a cross-chain request-for-quote (USDG on Robinhood Chain for SUPRA on Supra) decided, quoted and filled by COSMO as maker, filled and settled in the SupraFX ledger (platform mode) and re-verified offline; declared self-trade.">
+<style>
+  :root { color-scheme: dark; }
+  body { margin:0; background:#08090B; color:#F2F4F7; font:15px/1.6 ui-sans-serif,system-ui,sans-serif; }
+  main { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; }
+  h1,h2 { font-family: ui-monospace,Menlo,Consolas,monospace; letter-spacing:-0.01em; }
+  h1 { font-size: 1.7rem; margin: 0 0 6px; }
+  h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .22em; color:#A7B0BC; margin: 40px 0 12px; }
+  p { color:#A7B0BC; margin: 10px 0; }
+  .ink0 { color:#F2F4F7; }
+  code, .mono { font-family: ui-monospace,Menlo,Consolas,monospace; font-size: 12.5px; }
+  .chip { display:inline-block; border:1px solid rgba(70,214,160,.4); background:rgba(70,214,160,.1); color:#46D6A0; border-radius:999px; padding:3px 12px; font-family:ui-monospace,monospace; font-size:12px; margin:0 6px 6px 0; }
+  .chip.neutral { border-color:rgba(255,255,255,.14); background:rgba(255,255,255,.04); color:#A7B0BC; }
+  .chip.amber { border-color:rgba(224,164,88,.4); background:rgba(224,164,88,.08); color:#E0A458; }
+  .panel { border:1px solid rgba(255,255,255,.1); background:#0D0F13; border-radius:12px; padding:16px 18px; margin:14px 0; overflow-x:auto; }
+  table { border-collapse: collapse; width:100%; font-family:ui-monospace,monospace; font-size:12px; }
+  td, th { text-align:left; padding:5px 14px 5px 0; vertical-align:top; white-space:nowrap; }
+  th { color:#757E8C; font-weight:600; text-transform:uppercase; font-size:10.5px; letter-spacing:.08em; }
+  td.hash { color:#757E8C; }
+  td.num { text-align:right; }
+  a { color:#6E8BFF; text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  ul { color:#A7B0BC; padding-left: 1.2em; } li { margin: 6px 0; }
+  .warnbox { border:1px solid rgba(224,164,88,.35); background:rgba(224,164,88,.06); border-radius:12px; padding:14px 18px; margin:14px 0; }
+  .warnbox p { color:#A7B0BC; margin:6px 0; }
+  .breakall { word-break: break-all; white-space: normal; }
+  .big { display:flex; flex-wrap:wrap; gap:12px; margin:18px 0; }
+  .big div { flex:1 1 150px; border:1px solid rgba(255,255,255,.1); background:#0D0F13; border-radius:12px; padding:14px 16px; }
+  .big b { display:block; font-family:ui-monospace,monospace; font-size:1.5rem; color:#F2F4F7; }
+  .big span { font-size:12px; color:#757E8C; text-transform:uppercase; letter-spacing:.08em; }
+  .legs { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+  @media (max-width: 700px) { .legs { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <p class="mono" style="color:#757E8C; font-size:11px; text-transform:uppercase; letter-spacing:.2em;">COSMO · public evidence bundle</p>
+  <h1>Robinhood Chain demo: USDG for SUPRA, settled in the SupraFX ledger</h1>
+  <p>
+    <span class="chip">2 FILLS PROVEN</span>
+    <span class="chip neutral">2026-11-01 · 12:56–12:58 UTC (13:56–13:58 Berlin)</span>
+    <span class="chip neutral">Robinhood Chain 4663 → Supra chain 8 · SupraFX · USDG/SUPRA · maker side</span>
+    <span class="chip amber">declared self-trade: the customer account is COSMO's own second account</span>
+  </p>
+  <div class="warnbox">
+    <p class="ink0"><b>Read this first.</b> The customer account K1 that posted both requests-for-quote is a second account of the same operator,
+      declared as such in the pinned maker policy (<code>counterparty.declared_own_taker</code>) and shown by the verifier in check V-2M
+      ("DECLARED OWN TAKER"). There is no foreign Robinhood Chain taker on SupraFX (0 Robinhood RFQs in 12,000 at discovery on 2026-10-29).
+      This page proves that the cross-chain rail works and that COSMO decides, quotes and fills under pinned rules, with the fills settled in
+      the venue ledger. It does not prove demand, and it is not a profit claim.</p>
+  </div>
+  <div class="big">
+    <div><b>3.000000</b><span>USDG sold by the customer (2 × 1.5)</span></div>
+    <div><b>27,212.67087975</b><span>SUPRA paid by the maker (sum of the two fill proofs)</span></div>
+    <div><b>48 / 48</b><span>checks per bundle, offline re-verify (MB1–MB14)</span></div>
+    <div><b>platform</b><span>settlement mode of both RFQs (SupraFX ledger)</span></div>
+  </div>
+  <p class="ink0">
+    Flow: the customer agent (K1) issued a signed mandate "sell 1.5 USDG on Robinhood Chain for SUPRA on Supra, not below rate X" and posted it as
+    SubmitRfqV2; the venue RFQ id <i>is</i> the first 16 bytes of that mandate's hash (customer/cases/…/case.json). COSMO's maker runner saw the open RFQ in
+    the next tick, decided it against the pinned policy and gates (V-1M…V-9M, RESERVATION then FINAL), placed one quote, and the venue ledger filled it
+    (FP1–FP4 on the council balance snapshots). Both RFQs ran with <code>settlement_mode: platform</code>, the venue's standard: the customer holds the
+    SUPRA and the maker holds the USDG in their council accounts. No off-venue transfer was made, by decision; MB13 reports "no settlement file".
+  </p>
+  <p>
+    Every file below is a byte-identical copy of the window directory, the case bundles and the customer case files. The record written from them is
+    <a href="robinhood-record.md">robinhood-record.md</a> (German). Fingerprints are SHA-256; the list is also in <a href="index.txt">index.txt</a>.
+  </p>
+  <p><a href="/evidence/">All evidence folders</a> · <a href="/verifier/">The verifier program (cosmo-verify-maker.mjs 1.0.4)</a></p>
+
+  <h2>Settlement (SupraFX ledger, platform mode)</h2>
+  <div class="legs">
+    <div class="panel">
+      <p class="ink0 mono">Customer K1 (receives SUPRA)</p>
+      <table>
+        <tr><th>what</th><th>value</th></tr>
+        <tr><td>account</td><td class="hash breakall">0xa3d79667db7a465de6e13005c35417c9501fdc5b68bc5516024f0ebc23c358f5</td></tr>
+        <tr><td>sold</td><td class="num">2 × 1.500000 USDG</td></tr>
+        <tr><td>venue after the window</td><td class="num">27,201.78 SUPRA · 4.5 USDG (operator-mediated read, record)</td></tr>
+        <tr><td>mandates</td><td><a href="customer/cases/">customer/cases/</a> (signed, rfq_id = mandate hash prefix)</td></tr>
+      </table>
+    </div>
+    <div class="panel">
+      <p class="ink0 mono">Maker M2 (pays SUPRA, receives USDG)</p>
+      <table>
+        <tr><th>what</th><th>value</th></tr>
+        <tr><td>account</td><td class="hash breakall">0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb</td></tr>
+        <tr><td>paid</td><td class="num">−27,212.67087975 SUPRA (FP2, exact)</td></tr>
+        <tr><td>venue after the window</td><td class="num">9,206.77 SUPRA · 3 USDG (operator-mediated read, record)</td></tr>
+        <tr><td>USDG backing (V-7M)</td><td>council attestation + own Robinhood Chain read of vault 0xC038…2D0e</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h2>The fills (quant-exact)</h2>
+  <div class="panel"><table>
+    <tr><th>#</th><th>quote placed → proven (UTC)</th><th>RFQ</th><th>quote id</th><th class="num">rate SUPRA/USDG</th><th class="num">SUPRA</th><th class="num">USDG</th><th>proof</th><th>bundle</th></tr>
+    <tr><td>1</td><td>12:56:41 → 12:56:50</td><td>R-261101-125610-12</td><td class="hash">521f039c</td><td class="num">9,071.91</td><td class="num">−13,606.50553820</td><td class="num">+1.500000</td><td>PROVEN FP1–FP4</td><td><a href="cases/kdm-20261101T1256-12561012-56caf873/">kdm-20261101T1256…</a></td></tr><tr><td>2</td><td>12:58:13 → 12:58:21</td><td>R-261101-125732-97</td><td class="hash">223bd728</td><td class="num">9,071.68</td><td class="num">−13,606.16534155</td><td class="num">+1.500000</td><td>PROVEN FP1–FP4</td><td><a href="cases/kdm-20261101T1258-12573297-691b15bd/">kdm-20261101T1258…</a></td></tr>
+  </table></div>
+
+  <h2>What was checked, and by what</h2>
+  <ul class="mono" style="font-size:12.5px;">
+    <li><span class="ink0">V-1M … V-9M (per RFQ)</span> — the maker gates: side and pair, counterparty (declared own taker, named deviation), RFQ state incl. the chain tuple robinhood-mainnet → supra-mainnet, size vs. caps (6/8-decimal scale), fair price from the DORA anchor (USDG = 1 USD assumed), buyer floor, USDG backing (council attestation + own Robinhood Chain read of the vault), funds, single use.</li>
+    <li><span class="ink0">FP1–FP4 (per fill)</span> — RFQ matched with our quote accepted; SUPRA delta = lock minus rebate and USDG delta = size, exact in units; no other asset moved; no lock left.</li>
+    <li><span class="ink0">MB1–MB12</span> — hashes, pins (current policy pin set maker-policy.v2.robinhood.json), intent signature, quote re-derivation, preflights, provenance (incl. <code>evm-rpc:4663:</code>), decision replay through the frozen VAL core, arm, execution, ledger, fill proof.</li>
+    <li><span class="ink0">MB13 / MB14</span> — both report "none claimed": no settlement file (ledger settlement by decision), no customer case file inside the bundles. The customer mandates are published next to the bundles under <code>customer/</code>; their rfq_id equals the trigger RFQ id of the bundles.</li>
+  </ul>
+  <p class="mono" style="font-size:12px;">Verifier runs: at the window with 1.0.3 (<a href="verifier/">verifier/</a>, ACCEPT 48/48 each), re-run on 2026-11-01 with the published 1.0.4 (ACCEPT 48/48 each). Tamper probe: a copy of case 1 with <code>live/fill-proof.json</code> usdg_delta × 10, not re-summed → REJECT, 2 of 48 (MB1 sha256, MB12 fill proof recomputed): <a href="verifier/tamper-probe-1.0.4-20261101.json">verifier/tamper-probe-1.0.4-20261101.json</a>.</p>
+
+  <h2>Limits (stated, not hidden)</h2>
+  <ul>
+    <li>Self-trade by declaration: both accounts belong to the operator. No market, no demand, no profit.</li>
+    <li>Settlement is the venue ledger (platform mode, operator-mediated council reads). No payout left the venue; nothing on Robinhood Chain or Supra L1 moved for these fills.</li>
+    <li>The venue oracle USDG/SUPRA is the SUPRA/USDT feed with a 1:1 mapping; USDG = 1 USD is an assumption, documented in the policy.</li>
+    <li>Delegate expiry and pair restriction follow the dApp constraints accepted in the GO text (pairs via caps, venue expiry), as in B2.</li>
+    <li>Pilot size: 1.5 USDG per RFQ, two fills, one window.</li>
+  </ul>
+
+  <h2>Files (byte-identical copies)</h2>
+  <p class="mono" style="font-size:12px;">Check integrity with: <code>sha256sum &lt;file&gt;</code> · each case folder carries its own <code>SHA256SUMS</code> · re-verify with <code>node cosmo-verify-maker.mjs cases/&lt;id&gt;</code>.</p>
+  <div class="panel"><table>
+    <tr><th>file</th><th>sha256</th></tr>
+    <tr><td><a href="robinhood-record.md">robinhood-record.md</a></td><td class="hash breakall">b4f3eb16de2c1faea5c5f2dc7fff4ff203befba625364010a3bac0bb16f21dbc</td></tr><tr><td><a href="window/arm.json">window/arm.json</a></td><td class="hash breakall">65aca96f8f5ead0c40424be94894ae1d1d6554108e75a87b8251cd08d1336ecf</td></tr><tr><td><a href="window/decided.json">window/decided.json</a></td><td class="hash breakall">f569e219924c889f66281191586b3e7c5952af4092f787401af7a9a3b34ee70e</td></tr><tr><td><a href="window/expiry-calc.json">window/expiry-calc.json</a></td><td class="hash breakall">46d51851c251543045d150160cf79bce1fa30ae8b964c491fabd6a706abca49b</td></tr><tr><td><a href="window/fills-ledger.json">window/fills-ledger.json</a></td><td class="hash breakall">c01bcfec205161d8707f6363007bf420769da305ddf52bfee7aed05a7dc5577a</td></tr><tr><td><a href="window/go-check.json">window/go-check.json</a></td><td class="hash breakall">765883b4b861e5fe40d37892c514b18707e8d4bb8eb3526d5ef18dc6fc61856e</td></tr><tr><td><a href="window/go-check.md">window/go-check.md</a></td><td class="hash breakall">071d34d4f14e363b6967dc6046de50327ed8227beacabda4157cf1c6c4c7b089</td></tr><tr><td><a href="window/live.ndjson">window/live.ndjson</a></td><td class="hash breakall">d7abb76ac3bf664f0f043bed1a66562cf92a6ee6d625b60b457ed00153c6735f</td></tr><tr><td><a href="window/policy-check.json">window/policy-check.json</a></td><td class="hash breakall">d305283879c892b82d4319440d3a3454e3299df81abc36bf61a80a2ea6d3a6ac</td></tr><tr><td><a href="window/run-state.json">window/run-state.json</a></td><td class="hash breakall">e957455693ca6638e63b4ffcbc80a53dae94b0196c3d0c58e2f2ca75f1318343</td></tr><tr><td><a href="window/settlement-prep.json">window/settlement-prep.json</a></td><td class="hash breakall">0ef7a99d4cf2d13d760a47a1800dc97dff6b4cc44e5401d3b1bfd574f95120c8</td></tr><tr><td><a href="window/tests.json">window/tests.json</a></td><td class="hash breakall">a1714e5d8f045f6cf4a6f5c0741b0f378d06b1c0b56f3300ec266c1fcd5f4221</td></tr><tr><td><a href="verifier/kdm-20261101T1256-12561012-56caf873.json">verifier/kdm-20261101T1256-12561012-56caf873.json</a></td><td class="hash breakall">e90b02e0b7ea839f43af24235d4e7a5aa1e2874cfb097e6f03631ef3c3e69ec8</td></tr><tr><td><a href="verifier/kdm-20261101T1258-12573297-691b15bd.json">verifier/kdm-20261101T1258-12573297-691b15bd.json</a></td><td class="hash breakall">14996e0b414e0788c2ead228b56b6766a5a28b30f463dfebf7c20e8a6debbe76</td></tr><tr><td><a href="verifier/reverify-1.0.4-kdm-20261101T1256-12561012-56caf873.json">verifier/reverify-1.0.4-kdm-20261101T1256-12561012-56caf873.json</a></td><td class="hash breakall">c0738660e6093db2cbaaaae58a87d4e14852bc76ca702d01d6c32763ab23af80</td></tr><tr><td><a href="verifier/reverify-1.0.4-kdm-20261101T1258-12573297-691b15bd.json">verifier/reverify-1.0.4-kdm-20261101T1258-12573297-691b15bd.json</a></td><td class="hash breakall">d3464f554ca924d8af7cbab0a09acdd20fb770dfe84f442236913b8ca9ecf2a6</td></tr><tr><td><a href="verifier/tamper-probe-1.0.4-20261101.json">verifier/tamper-probe-1.0.4-20261101.json</a></td><td class="hash breakall">d15c13ce8127af3dbd50a7c4600b48883a1893b2d95a2d6258430e58f288ae78</td></tr><tr><td><a href="customer/rfqs-ledger.json">customer/rfqs-ledger.json</a></td><td class="hash breakall">03f215a0302af0eb035a1306d1edf09a21def8e95db85fa0552e2b06c1adbdae</td></tr><tr><td><a href="customer/cases/kdc-20261101T1255-7247363d/case.json">customer/cases/kdc-20261101T1255-7247363d/case.json</a></td><td class="hash breakall">1be4aeb2af803e56650d3a35e80ee11a13b3f21470b4ee49244f7c16881c0991</td></tr><tr><td><a href="customer/cases/kdc-20261101T1255-7247363d/go.json">customer/cases/kdc-20261101T1255-7247363d/go.json</a></td><td class="hash breakall">0753bb09dfc3e65a5d5bc4dfef203e4c6a1a5b1cfff4f9ed550d0821539d9ea0</td></tr><tr><td><a href="customer/cases/kdc-20261101T1257-04e0d211/case.json">customer/cases/kdc-20261101T1257-04e0d211/case.json</a></td><td class="hash breakall">0a157ed7ad925b26d27377a70ad06b9beb269d2fa7c4f86af29ecd668c03b13b</td></tr><tr><td><a href="customer/cases/kdc-20261101T1257-04e0d211/go.json">customer/cases/kdc-20261101T1257-04e0d211/go.json</a></td><td class="hash breakall">2da1277cee2e0c45cd16ce8931ea3b57053800a34f9dd983f44822fd6b2ff40e</td></tr><tr><td><a href="cases/kdm-20261101T1256-12561012-56caf873/SHA256SUMS">cases/kdm-20261101T1256-12561012-56caf873/SHA256SUMS</a></td><td class="hash breakall">00d0241ed785746129493cc0a83fbac5c6ae2fcd31ae4e2ccda98b52e1815556</td></tr><tr><td><a href="cases/kdm-20261101T1258-12573297-691b15bd/SHA256SUMS">cases/kdm-20261101T1258-12573297-691b15bd/SHA256SUMS</a></td><td class="hash breakall">42cf3ceecf9f5b2cb9f2d64d0e42318d6b57572941ec9b2e787c69dac36ee109</td></tr>
+  </table></div>
+</main>
+</body>
+</html>
