@@ -28,7 +28,7 @@ import { join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const VERIFIER_NAME = 'cosmo-standalone-maker-verifier';
-export const VERIFIER_VERSION = '1.0.3';
+export const VERIFIER_VERSION = '1.0.4';
 export const MAKER_BUNDLE_SCHEMA = 'cosmo.killer-demo.maker-case-bundle.v1';
 
 // ===========================================================================
@@ -98,9 +98,11 @@ const __DATA = {
   "config/killer-demo/maker/history/maker-policy.v1.09bcaec3.json": "{\n  \"schema\": \"cosmo.killer-demo.maker-policy.v1\",\n  \"policy_id\": \"cosmo.killer-demo.maker.iusdc-supra.v1\",\n  \"decided\": {\n    \"D-M1\": \"Rene 2026-10-12: trigger = foreign buyer demand only; Intel is context, never a trigger or gate\",\n    \"D-M2\": \"Rene 2026-10-14: only iUSDC/SUPRA\",\n    \"D-M3\": \"Rene 2026-10-14: target margin 50 bps, at most 100 bps below fair; never an economically adverse quote\",\n    \"D-M4\": \"Rene 2026-10-14: payout only after a successful fill and a positive payout proof (read-only is not enough)\",\n    \"D-M5\": \"Rene 2026-10-14: S5b runs unchanged in parallel, S6 stays on hold\",\n    \"D-M6\": \"Rene 2026-10-14: at most 15000 SUPRA per pilot trade (raised from 14000 on 2026-10-14 for price headroom: lock ~13650 SUPRA left ~2.5 %); USD value and available capital checked as well\"\n  },\n  \"master\": \"0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb\",\n  \"own_addresses\": [\n    \"0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb\",\n    \"0x6379678b03f4c6329c9de90fe9216ea404565510e8d0010060fb0658a449b1fe\"\n  ],\n  \"allowed_pairs\": [\"iUSDC/SUPRA\"],\n  \"assets\": {\n    \"SUPRA\": { \"id\": \"0xb3ba52f6fce09fa5b5f14506a7f489404fbacf95bec1c789dc7d6cd86b26cbf1\", \"decimals\": 8 },\n    \"iUSDC\": { \"id\": \"0x561c5f67f687947c3a669211e8617e85181ba55a3b6e31c3276f6e32e1925594\", \"decimals\": 8, \"l1_metadata\": \"0x90a8e901e02ac1539af4a865bbe4a6b96edc27375488803cfbbd6875ec57b281\" },\n    \"iUSDT\": { \"id\": \"0x0ec090a0f03020caea692cd00545639b458e077541fc93a1d09fd4e8409ca5d7\", \"decimals\": 8 },\n    \"USDC\": { \"id\": \"0x89271d558e025677e56eac70cdd09992e229302151702f66bc68625099bf1899\", \"decimals\": 6 },\n    \"ETH\": { \"id\": \"0xa940ea972e50f5c97e725f95dc7a04f97bdde0379b45753be910938cece2b31b\", \"decimals\": 18 },\n    \"provenance\": \"blake3 keyed SUPRAFX-ASSET-V1 over (supra-mainnet, token 32 B) per suprafx-agent-sdk@0.4.1 derive-ids.js; iUSDT/SUPRA/USDC/ETH equal the master account read 2026-10-14, iUSDC equals the cap map of the master delegate policy events (M0 evidence)\"\n  },\n  \"price\": {\n    \"anchor\": \"N-5 ref_1e18 = floor(x500*x48/x89), USD per SUPRA (DORA, killer-demo val/market.ts, unchanged K-9/K-10 venue checks)\",\n    \"fair_rate_bft\": \"floor(10^36 / ref_1e18)  (SUPRA per iUSDC * 10^18; both assets 8 decimals; iUSDC = 1 USD assumption TA-FX-3)\",\n    \"quote_rate_bft\": \"floor(10^36 * (10000 - margin_bps) / (ref_1e18 * 10000))\",\n    \"margin_bps\": 50,\n    \"max_margin_bps\": 100,\n    \"lock_rounding\": \"ceil(fill_size_base * rate_bft / 10^18) for every cap and funds check (chain rounding unknown)\"\n  },\n  \"size\": {\n    \"max_lock_quants\": \"1500000000000\",\n    \"max_fill_size_base\": \"300000000\",\n    \"max_notional_usd_1e8\": \"300000000\",\n    \"note\": \"D-M6: 15000 SUPRA per fill (one quote open at a time); one 2-USD RFQ per fill; USD value of the lock at the anchor <= 3 USD; lock <= available SUPRA (F1); continuous-operation step 1 (Rene 16.10.2026): up to single_use.max_fills_total fills per armed window\"\n  },\n  \"rfq\": {\n    \"require_status\": \"open\",\n    \"require_auto_accept\": true,\n    \"require_settlement_mode\": \"platform\",\n    \"require_no_partial_fills\": true,\n    \"require_chains\": \"supra-mainnet\",\n    \"min_remaining_batches\": 60,\n    \"quote_expires_in_batches\": 60\n  },\n  \"stable\": {\n    \"asset\": \"iUSDC\",\n    \"reserves_max_age_s\": 7200,\n    \"require_status\": \"fully_backed\",\n    \"require_invariant_holds\": true,\n    \"l1_vault_account\": \"0xc899f63fc2b2962faf60e32c3d156a1c65b8ce0f031fd6f4114e24ce43493d76\",\n    \"l1_vault_account_provenance\": \"resource 0x6e826b29...1c08::vault::FaStores.vault_account (Supra L1 read 2026-10-14); its iUSDC primary store == reserves on_chain_total\",\n    \"assumption\": \"TA-FX-3: 1 iUSDC = 1 USD (not provable on chain; the L1 read only proves the council backing of iUSDC)\"\n  },\n  \"delegates\": {\n    \"shadow_expected_active\": [\"542eca57e692deed2c0688c98cfa119e08202c44e7c5f096bc00fa973bca26d7\"],\n    \"shadow_expected_note\": \"Rene's dApp session 'suprafx-trading-session' (created 2026-10-12 18:21:53 MESZ, confirmed by Rene 2026-10-14). Shadow only: any other active delegate is F6 FAIL.\",\n    \"live_expected_active\": \"exactly [maker_delegate] (set in the live arm at M4 setup); Rene's dApp session must be revoked before the live window\"\n  },\n  \"single_use\": { \"max_fills_total\": 5 }\n}\n",
   "config/killer-demo/maker/maker-policy.v2.robinhood.json": "{\n  \"schema\": \"cosmo.killer-demo.maker-policy.v2\",\n  \"policy_id\": \"cosmo.killer-demo.maker.usdg-supra.robinhood.v2\",\n  \"decided\": {\n    \"D-M1\": \"Rene 2026-10-12: trigger = buyer demand only; Intel is context, never a trigger or gate\",\n    \"D-M3\": \"Rene 2026-10-14: target margin 50 bps, at most 100 bps below fair; never an economically adverse quote\",\n    \"D-M4\": \"Rene 2026-10-14: payout only after a successful fill and a positive payout proof (read-only is not enough)\",\n    \"D-M6\": \"Rene 2026-10-27: at most 20000 SUPRA per pilot trade; USD value and available capital checked as well\",\n    \"D-RH1\": \"Rene 2026-10-29 (plan robinhood-demo v0.1): Robinhood Chain demo USDG/SUPRA, source robinhood-mainnet -> dest supra-mainnet, 1.5 USDG per RFQ, at most 2 fills; the taker is a SECOND OWN StarKey master K1 (declared, no foreign Robinhood taker exists on SupraFX: 0 RFQs in 12000, vault 5.5 USDG); the demo proves the rail and COSMO's execution, not demand\",\n    \"D-RH2\": \"Rene 2026-10-29: evidence = bundle with onchain_settlement per leg (Supra L1 payout proof PP0-PP2 for the customer's SUPRA, Robinhood Chain withdraw receipt EL0-EL6 for the maker's USDG) + verifier MB13 + proof page; no video\",\n    \"D-RH4\": \"Rene 2026-10-30: K1 = 0xa3d79667db7a465de6e13005c35417c9501fdc5b68bc5516024f0ebc23c358f5, an existing own account (Phase-0 CLI deployer profile, treasury-sale buyer 2026-08-20, AFFILIATED), reused as the demo customer instead of a fresh StarKey account; it must be signable in StarKey for the venue steps (linked address, deposit, taker delegate) and is named as the operator's own account on the proof page\"\n  },\n  \"master\": \"0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb\",\n  \"own_addresses\": [\n    \"0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb\",\n    \"0x6379678b03f4c6329c9de90fe9216ea404565510e8d0010060fb0658a449b1fe\",\n    \"0xa3d79667db7a465de6e13005c35417c9501fdc5b68bc5516024f0ebc23c358f5\"\n  ],\n  \"allowed_pairs\": [\"USDG/SUPRA\"],\n  \"pair\": { \"symbol\": \"USDG/SUPRA\", \"base\": \"USDG\", \"quote\": \"SUPRA\" },\n  \"chains\": { \"source\": \"robinhood-mainnet\", \"dest\": \"supra-mainnet\" },\n  \"counterparty\": {\n    \"declared_own_taker\": \"0xa3d79667db7a465de6e13005c35417c9501fdc5b68bc5516024f0ebc23c358f5\",\n    \"note\": \"P2 step 1 (Rene 2026-10-30): the declared own taker K1 is the project's own account 0xa3d79667db7a465de6e13005c35417c9501fdc5b68bc5516024f0ebc23c358f5 (own since Phase 0 as the CLI deployer profile; treasury-sale buyer 2026-08-20, labelled AFFILIATED in the sale report; also listed in own_addresses). V-2M passes for exactly this address with the deviation 'declared_own_taker' in the check text and on the proof page; every other own address is a refused self-trade (v1 rule). The null form of this file (pin 920cc20e, verifier 1.0.2) is historical and covered no bundle\"\n  },\n  \"assets\": {\n    \"SUPRA\": { \"id\": \"0xb3ba52f6fce09fa5b5f14506a7f489404fbacf95bec1c789dc7d6cd86b26cbf1\", \"decimals\": 8 },\n    \"iUSDC\": { \"id\": \"0x561c5f67f687947c3a669211e8617e85181ba55a3b6e31c3276f6e32e1925594\", \"decimals\": 8, \"l1_metadata\": \"0x90a8e901e02ac1539af4a865bbe4a6b96edc27375488803cfbbd6875ec57b281\" },\n    \"iUSDT\": { \"id\": \"0x0ec090a0f03020caea692cd00545639b458e077541fc93a1d09fd4e8409ca5d7\", \"decimals\": 8 },\n    \"USDC\": { \"id\": \"0x89271d558e025677e56eac70cdd09992e229302151702f66bc68625099bf1899\", \"decimals\": 6 },\n    \"ETH\": { \"id\": \"0xa940ea972e50f5c97e725f95dc7a04f97bdde0379b45753be910938cece2b31b\", \"decimals\": 18 },\n    \"USDG\": { \"id\": \"0x84f2da2b1609a29182ed95020b895b23efdd898b9a3f58da9ee6f7bb59e8ce18\", \"decimals\": 6, \"evm\": { \"chain_id\": 4663, \"contract\": \"0x5fc5360d0400a0fd4f2af552add042d716f1d168\", \"vault\": \"0xc03858631a160fa1baf6054d4ad734e386952d0e\" } },\n    \"provenance\": \"blake3 keyed SUPRAFX-ASSET-V1 over (chain, token) per suprafx-agent-sdk@0.4.1 derive-ids.js; SUPRA/iUSDC/iUSDT/USDC/ETH as in maker-policy.v1.json; USDG = registeredAssetId('robinhood','USDG') == deriveAssetId, read-only preflight 2026-10-29 (docs/killer-demo/robinhood/reads-20261029/preflight-ro.out); USDG contract and decimals from GET /api/assets (assets.json), vault from GET /api/council/chain-info robinhoodVault\"\n  },\n  \"evm\": {\n    \"chain_id\": 4663,\n    \"chain_name\": \"robinhood-mainnet\",\n    \"rpc_env\": \"ROBINHOOD_RPC_URL\",\n    \"rpc_public\": \"https://rpc.mainnet.chain.robinhood.com\",\n    \"explorer\": \"https://robinhoodchain.blockscout.com\",\n    \"min_confirmations\": 100,\n    \"vault\": \"0xc03858631a160fa1baf6054d4ad734e386952d0e\",\n    \"vault_withdraw_topic0\": \"0xe8b733aae0f3125a3c7b8995ff7c39bca352415111fa2b9ce648f6d2f59fd37b\",\n    \"note\": \"Robinhood Chain = Arbitrum L2 (eth_chainId 0x1237 = 4663, read 2026-10-29). The council vault pays USDG out with an ERC-20 Transfer(vault -> linked address) plus the vault event topic0 above (observed once, tx 0x8e88a98c... 2026-09-24, 165007 gas). min_confirmations 100 blocks (~10 s, soft finality); 'posted'/'final' stages need an Ethereum L1 read and are not claimed by EL6. The public RPC is rate-limited; the proof reads use ROBINHOOD_RPC_URL (Alchemy) when set\"\n  },\n  \"price\": {\n    \"anchor\": \"N-5 ref_1e18 = floor(x500*x48/x89), USD per SUPRA (DORA, killer-demo val/market.ts, unchanged K-9/K-10 venue checks against GET /api/oracle?pair=SUPRA/USDC)\",\n    \"fair_rate_bft\": \"floor(10^(36 + 8 - 6) / ref_1e18)  (SUPRA quants per USDG micro-unit * 10^18; SUPRA 8 decimals, USDG 6 decimals; USDG = 1 USD assumption TA-FX-3)\",\n    \"quote_rate_bft\": \"floor(10^38 * (10000 - margin_bps) / (ref_1e18 * 10000))\",\n    \"margin_bps\": 50,\n    \"max_margin_bps\": 100,\n    \"lock_rounding\": \"ceil(fill_size_base * rate_bft / 10^18) for every cap and funds check (chain rounding unknown)\",\n    \"note\": \"the venue oracle USDG/SUPRA is the SUPRA/USDT feed with conversionRate 1 (no USDG feed, read 2026-10-29); the anchor therefore stays the DORA USD/SUPRA rule and USDG = 1 USD is documented as an assumption\"\n  },\n  \"size\": {\n    \"max_lock_quants\": \"2000000000000\",\n    \"max_fill_size_base\": \"1500000\",\n    \"max_notional_usd_1e8\": \"200000000\",\n    \"note\": \"D-RH1: 1.5 USDG per RFQ (max_fill_size_base 1500000 = 1.5 USDG in 6 decimals); lock about 12900 SUPRA at 8548 SUPRA/USDG <= S_M 20000 SUPRA (D-M6) and <= available venue SUPRA (F1); USD value of the lock <= 2 USD; at most single_use.max_fills_total fills\"\n  },\n  \"rfq\": {\n    \"require_status\": \"open\",\n    \"require_auto_accept\": true,\n    \"require_settlement_mode\": \"platform\",\n    \"require_no_partial_fills\": true,\n    \"require_chains\": { \"source\": \"robinhood-mainnet\", \"dest\": \"supra-mainnet\" },\n    \"min_remaining_batches\": 60,\n    \"quote_expires_in_batches\": 60\n  },\n  \"stable\": {\n    \"asset\": \"USDG\",\n    \"backing\": \"evm\",\n    \"reserves_max_age_s\": 7200,\n    \"require_status\": \"fully_backed\",\n    \"require_invariant_holds\": true,\n    \"l1_vault_account\": \"0xc03858631a160fa1baf6054d4ad734e386952d0e\",\n    \"l1_vault_account_provenance\": \"GET /api/council/chain-info robinhoodVault (read 2026-10-29) == /api/reserves USDG chains[robinhood].vault; backing leg (b) = own Robinhood Chain read eth_call USDG.balanceOf(vault) >= internal_total (6 decimals)\",\n    \"assumption\": \"TA-FX-3 analogue: 1 USDG = 1 USD (Paxos stablecoin, not provable on chain; the EVM read only proves the council backing of USDG)\"\n  },\n  \"delegate_caps\": {\n    \"SUPRA\": { \"max_base_units\": \"2000000000000\", \"required\": true, \"note\": \"the maker locks SUPRA: cap > 0 and <= S_M, with room for the expected lock\" },\n    \"iUSDC\": { \"max_base_units\": \"300000000\", \"required\": false, \"note\": \"delegate v4 carries iUSDC 3 from the E1a series; idle in this policy (no iUSDC leg), tolerated up to 3\" },\n    \"USDG\": { \"max_base_units\": \"5000000\", \"required\": false, \"note\": \"only if the venue demands a cap on the received asset (delegate v5, plan risk 2); otherwise absent or zero\" }\n  },\n  \"delegates\": {\n    \"shadow_expected_active\": [\"d4098132bfbc64c0c778dba61ed5f048d9d675195eb01b8b6255d475ece04619\"],\n    \"shadow_expected_note\": \"delegate v4 'cosmo-f2-maker-v4' (created 2026-10-28, caps SUPRA 20000 / iUSDC 3, stays active per Rene 29.10.2026). Shadow only: any other active delegate is F6 FAIL.\",\n    \"live_expected_active\": \"exactly [maker_delegate] (v4 or v5, set in the live arm) plus the delegates Rene names in the GO text\"\n  },\n  \"single_use\": { \"max_fills_total\": 2 }\n}\n",
   "config/killer-demo/maker/history/maker-policy.v2.robinhood.920cc20e.json": "{\n  \"schema\": \"cosmo.killer-demo.maker-policy.v2\",\n  \"policy_id\": \"cosmo.killer-demo.maker.usdg-supra.robinhood.v2\",\n  \"decided\": {\n    \"D-M1\": \"Rene 2026-10-12: trigger = buyer demand only; Intel is context, never a trigger or gate\",\n    \"D-M3\": \"Rene 2026-10-14: target margin 50 bps, at most 100 bps below fair; never an economically adverse quote\",\n    \"D-M4\": \"Rene 2026-10-14: payout only after a successful fill and a positive payout proof (read-only is not enough)\",\n    \"D-M6\": \"Rene 2026-10-27: at most 20000 SUPRA per pilot trade; USD value and available capital checked as well\",\n    \"D-RH1\": \"Rene 2026-10-29 (plan robinhood-demo v0.1): Robinhood Chain demo USDG/SUPRA, source robinhood-mainnet -> dest supra-mainnet, 1.5 USDG per RFQ, at most 2 fills; the taker is a SECOND OWN StarKey master K1 (declared, no foreign Robinhood taker exists on SupraFX: 0 RFQs in 12000, vault 5.5 USDG); the demo proves the rail and COSMO's execution, not demand\",\n    \"D-RH2\": \"Rene 2026-10-29: evidence = bundle with onchain_settlement per leg (Supra L1 payout proof PP0-PP2 for the customer's SUPRA, Robinhood Chain withdraw receipt EL0-EL6 for the maker's USDG) + verifier MB13 + proof page; no video\"\n  },\n  \"master\": \"0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb\",\n  \"own_addresses\": [\n    \"0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb\",\n    \"0x6379678b03f4c6329c9de90fe9216ea404565510e8d0010060fb0658a449b1fe\"\n  ],\n  \"allowed_pairs\": [\"USDG/SUPRA\"],\n  \"pair\": { \"symbol\": \"USDG/SUPRA\", \"base\": \"USDG\", \"quote\": \"SUPRA\" },\n  \"chains\": { \"source\": \"robinhood-mainnet\", \"dest\": \"supra-mainnet\" },\n  \"counterparty\": {\n    \"declared_own_taker\": null,\n    \"note\": \"P2 step 1: the second own StarKey master K1 (customer account) is pinned here once Rene names it; V-2M then passes for exactly this address with the deviation 'declared_own_taker' in the check text and on the proof page. null = no declared taker, every own address is a refused self-trade (v1 rule)\"\n  },\n  \"assets\": {\n    \"SUPRA\": { \"id\": \"0xb3ba52f6fce09fa5b5f14506a7f489404fbacf95bec1c789dc7d6cd86b26cbf1\", \"decimals\": 8 },\n    \"iUSDC\": { \"id\": \"0x561c5f67f687947c3a669211e8617e85181ba55a3b6e31c3276f6e32e1925594\", \"decimals\": 8, \"l1_metadata\": \"0x90a8e901e02ac1539af4a865bbe4a6b96edc27375488803cfbbd6875ec57b281\" },\n    \"iUSDT\": { \"id\": \"0x0ec090a0f03020caea692cd00545639b458e077541fc93a1d09fd4e8409ca5d7\", \"decimals\": 8 },\n    \"USDC\": { \"id\": \"0x89271d558e025677e56eac70cdd09992e229302151702f66bc68625099bf1899\", \"decimals\": 6 },\n    \"ETH\": { \"id\": \"0xa940ea972e50f5c97e725f95dc7a04f97bdde0379b45753be910938cece2b31b\", \"decimals\": 18 },\n    \"USDG\": { \"id\": \"0x84f2da2b1609a29182ed95020b895b23efdd898b9a3f58da9ee6f7bb59e8ce18\", \"decimals\": 6, \"evm\": { \"chain_id\": 4663, \"contract\": \"0x5fc5360d0400a0fd4f2af552add042d716f1d168\", \"vault\": \"0xc03858631a160fa1baf6054d4ad734e386952d0e\" } },\n    \"provenance\": \"blake3 keyed SUPRAFX-ASSET-V1 over (chain, token) per suprafx-agent-sdk@0.4.1 derive-ids.js; SUPRA/iUSDC/iUSDT/USDC/ETH as in maker-policy.v1.json; USDG = registeredAssetId('robinhood','USDG') == deriveAssetId, read-only preflight 2026-10-29 (docs/killer-demo/robinhood/reads-20261029/preflight-ro.out); USDG contract and decimals from GET /api/assets (assets.json), vault from GET /api/council/chain-info robinhoodVault\"\n  },\n  \"evm\": {\n    \"chain_id\": 4663,\n    \"chain_name\": \"robinhood-mainnet\",\n    \"rpc_env\": \"ROBINHOOD_RPC_URL\",\n    \"rpc_public\": \"https://rpc.mainnet.chain.robinhood.com\",\n    \"explorer\": \"https://robinhoodchain.blockscout.com\",\n    \"min_confirmations\": 100,\n    \"vault\": \"0xc03858631a160fa1baf6054d4ad734e386952d0e\",\n    \"vault_withdraw_topic0\": \"0xe8b733aae0f3125a3c7b8995ff7c39bca352415111fa2b9ce648f6d2f59fd37b\",\n    \"note\": \"Robinhood Chain = Arbitrum L2 (eth_chainId 0x1237 = 4663, read 2026-10-29). The council vault pays USDG out with an ERC-20 Transfer(vault -> linked address) plus the vault event topic0 above (observed once, tx 0x8e88a98c... 2026-09-24, 165007 gas). min_confirmations 100 blocks (~10 s, soft finality); 'posted'/'final' stages need an Ethereum L1 read and are not claimed by EL6. The public RPC is rate-limited; the proof reads use ROBINHOOD_RPC_URL (Alchemy) when set\"\n  },\n  \"price\": {\n    \"anchor\": \"N-5 ref_1e18 = floor(x500*x48/x89), USD per SUPRA (DORA, killer-demo val/market.ts, unchanged K-9/K-10 venue checks against GET /api/oracle?pair=SUPRA/USDC)\",\n    \"fair_rate_bft\": \"floor(10^(36 + 8 - 6) / ref_1e18)  (SUPRA quants per USDG micro-unit * 10^18; SUPRA 8 decimals, USDG 6 decimals; USDG = 1 USD assumption TA-FX-3)\",\n    \"quote_rate_bft\": \"floor(10^38 * (10000 - margin_bps) / (ref_1e18 * 10000))\",\n    \"margin_bps\": 50,\n    \"max_margin_bps\": 100,\n    \"lock_rounding\": \"ceil(fill_size_base * rate_bft / 10^18) for every cap and funds check (chain rounding unknown)\",\n    \"note\": \"the venue oracle USDG/SUPRA is the SUPRA/USDT feed with conversionRate 1 (no USDG feed, read 2026-10-29); the anchor therefore stays the DORA USD/SUPRA rule and USDG = 1 USD is documented as an assumption\"\n  },\n  \"size\": {\n    \"max_lock_quants\": \"2000000000000\",\n    \"max_fill_size_base\": \"1500000\",\n    \"max_notional_usd_1e8\": \"200000000\",\n    \"note\": \"D-RH1: 1.5 USDG per RFQ (max_fill_size_base 1500000 = 1.5 USDG in 6 decimals); lock about 12900 SUPRA at 8548 SUPRA/USDG <= S_M 20000 SUPRA (D-M6) and <= available venue SUPRA (F1); USD value of the lock <= 2 USD; at most single_use.max_fills_total fills\"\n  },\n  \"rfq\": {\n    \"require_status\": \"open\",\n    \"require_auto_accept\": true,\n    \"require_settlement_mode\": \"platform\",\n    \"require_no_partial_fills\": true,\n    \"require_chains\": { \"source\": \"robinhood-mainnet\", \"dest\": \"supra-mainnet\" },\n    \"min_remaining_batches\": 60,\n    \"quote_expires_in_batches\": 60\n  },\n  \"stable\": {\n    \"asset\": \"USDG\",\n    \"backing\": \"evm\",\n    \"reserves_max_age_s\": 7200,\n    \"require_status\": \"fully_backed\",\n    \"require_invariant_holds\": true,\n    \"l1_vault_account\": \"0xc03858631a160fa1baf6054d4ad734e386952d0e\",\n    \"l1_vault_account_provenance\": \"GET /api/council/chain-info robinhoodVault (read 2026-10-29) == /api/reserves USDG chains[robinhood].vault; backing leg (b) = own Robinhood Chain read eth_call USDG.balanceOf(vault) >= internal_total (6 decimals)\",\n    \"assumption\": \"TA-FX-3 analogue: 1 USDG = 1 USD (Paxos stablecoin, not provable on chain; the EVM read only proves the council backing of USDG)\"\n  },\n  \"delegate_caps\": {\n    \"SUPRA\": { \"max_base_units\": \"2000000000000\", \"required\": true, \"note\": \"the maker locks SUPRA: cap > 0 and <= S_M, with room for the expected lock\" },\n    \"iUSDC\": { \"max_base_units\": \"300000000\", \"required\": false, \"note\": \"delegate v4 carries iUSDC 3 from the E1a series; idle in this policy (no iUSDC leg), tolerated up to 3\" },\n    \"USDG\": { \"max_base_units\": \"5000000\", \"required\": false, \"note\": \"only if the venue demands a cap on the received asset (delegate v5, plan risk 2); otherwise absent or zero\" }\n  },\n  \"delegates\": {\n    \"shadow_expected_active\": [\"d4098132bfbc64c0c778dba61ed5f048d9d675195eb01b8b6255d475ece04619\"],\n    \"shadow_expected_note\": \"delegate v4 'cosmo-f2-maker-v4' (created 2026-10-28, caps SUPRA 20000 / iUSDC 3, stays active per Rene 29.10.2026). Shadow only: any other active delegate is F6 FAIL.\",\n    \"live_expected_active\": \"exactly [maker_delegate] (v4 or v5, set in the live arm) plus the delegates Rene names in the GO text\"\n  },\n  \"single_use\": { \"max_fills_total\": 2 }\n}\n",
+  "config/killer-demo/maker/maker-policy.v3.robinhood-aapl.json": "{\n  \"schema\": \"cosmo.killer-demo.maker-policy.v3\",\n  \"policy_id\": \"cosmo.killer-demo.maker.aapl-usdg.robinhood.v3\",\n  \"decided\": {\n    \"D-M1\": \"Rene 2026-10-12: trigger = buyer demand only; Intel is context, never a trigger or gate\",\n    \"D-M3\": \"Rene 2026-10-14: target margin 50 bps, at most 100 bps below fair; never an economically adverse quote\",\n    \"D-M4\": \"Rene 2026-10-14: payout only after a successful fill and a positive payout proof (read-only is not enough)\",\n    \"D-RH4\": \"Rene 2026-10-30: K1 = 0xa3d79667db7a465de6e13005c35417c9501fdc5b68bc5516024f0ebc23c358f5, an existing own account (Phase-0 CLI deployer profile, treasury-sale buyer 2026-08-20, AFFILIATED), reused as the demo customer instead of a fresh StarKey account; it must be signable in StarKey for the venue steps (linked address, deposit, taker delegate) and is named as the operator's own account on the proof page\",\n    \"D-ST1\": \"Rene 2026-11-01 14:40/15:00 MEZ (plan robinhood-stock-token v0.2): the Robinhood demo is extended by a tokenized stock. Pair AAPL/USDG, both legs robinhood-mainnet; the declared own customer K1 SELLS 0.005 AAPL (18 decimals, 5e15 base units), COSMO (maker M2) pays USDG; at most 1 fill (M2 holds 3 USDG on the venue); settlement in the SupraFX ledger (platform mode), no off-venue transfer; the maker delegate v5 carries a USDG cap (v4 has none)\",\n    \"D-ST2\": \"S0 discovery 2026-11-01 (stock-discovery-record.md): anchor = Supra DORA index 6004 AAPL_USD (Supra mainnet view get_prices); independent cross-check = Chainlink 'Robinhood AAPL / USD' proxy 0x6b22a786 on Robinhood Chain (8 decimals, heartbeat 24 h, deviation 0.5 %); the venue oracle AAPL/USDG is byte-identical to DORA 6004 (value + ms timestamp) and is a consistency check only, never the second source. A feed older than its pin or sources apart beyond the pin is a POLICY decision (UNDECIDABLE, terminal, no re-read): outside US trading hours (Mon-Fri 15:30-22:00 MEZ in US winter time) both feeds stand still\"\n  },\n  \"master\": \"0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb\",\n  \"own_addresses\": [\n    \"0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb\",\n    \"0x6379678b03f4c6329c9de90fe9216ea404565510e8d0010060fb0658a449b1fe\",\n    \"0xa3d79667db7a465de6e13005c35417c9501fdc5b68bc5516024f0ebc23c358f5\"\n  ],\n  \"allowed_pairs\": [\n    \"AAPL/USDG\"\n  ],\n  \"pair\": {\n    \"symbol\": \"AAPL/USDG\",\n    \"base\": \"AAPL\",\n    \"quote\": \"USDG\"\n  },\n  \"chains\": {\n    \"source\": \"robinhood-mainnet\",\n    \"dest\": \"robinhood-mainnet\"\n  },\n  \"counterparty\": {\n    \"declared_own_taker\": \"0xa3d79667db7a465de6e13005c35417c9501fdc5b68bc5516024f0ebc23c358f5\",\n    \"note\": \"as maker-policy.v2.robinhood.json (P2 step 1, Rene 2026-10-30): the declared own taker K1 is the project's own account 0xa3d79667 (own since Phase 0, AFFILIATED, listed in own_addresses). V-2M passes for exactly this address with the deviation 'declared_own_taker'; every other own address is a refused self-trade. There has never been a stock-token RFQ on SupraFX (0 of 12000 RFQs 07.-29.10.2026, vault 0 AAPL): the demo proves the rail and COSMO's execution, not demand\"\n  },\n  \"assets\": {\n    \"SUPRA\": {\n      \"id\": \"0xb3ba52f6fce09fa5b5f14506a7f489404fbacf95bec1c789dc7d6cd86b26cbf1\",\n      \"decimals\": 8\n    },\n    \"iUSDC\": {\n      \"id\": \"0x561c5f67f687947c3a669211e8617e85181ba55a3b6e31c3276f6e32e1925594\",\n      \"decimals\": 8,\n      \"l1_metadata\": \"0x90a8e901e02ac1539af4a865bbe4a6b96edc27375488803cfbbd6875ec57b281\"\n    },\n    \"iUSDT\": {\n      \"id\": \"0x0ec090a0f03020caea692cd00545639b458e077541fc93a1d09fd4e8409ca5d7\",\n      \"decimals\": 8\n    },\n    \"USDC\": {\n      \"id\": \"0x89271d558e025677e56eac70cdd09992e229302151702f66bc68625099bf1899\",\n      \"decimals\": 6\n    },\n    \"ETH\": {\n      \"id\": \"0xa940ea972e50f5c97e725f95dc7a04f97bdde0379b45753be910938cece2b31b\",\n      \"decimals\": 18\n    },\n    \"USDG\": {\n      \"id\": \"0x84f2da2b1609a29182ed95020b895b23efdd898b9a3f58da9ee6f7bb59e8ce18\",\n      \"decimals\": 6,\n      \"evm\": {\n        \"chain_id\": 4663,\n        \"contract\": \"0x5fc5360d0400a0fd4f2af552add042d716f1d168\",\n        \"vault\": \"0xc03858631a160fa1baf6054d4ad734e386952d0e\"\n      }\n    },\n    \"AAPL\": {\n      \"id\": \"0xeb163a6c925a3b4f117da05db1a3cde635683ed482c41060dcd7526150b228b2\",\n      \"decimals\": 18,\n      \"evm\": {\n        \"chain_id\": 4663,\n        \"contract\": \"0xaf3d76f1834a1d425780943c99ea8a608f8a93f9\",\n        \"vault\": \"0xc03858631a160fa1baf6054d4ad734e386952d0e\"\n      }\n    },\n    \"provenance\": \"blake3 keyed SUPRAFX-ASSET-V1 over (chain, token) per suprafx-agent-sdk@0.4.1 derive-ids.js; SUPRA/iUSDC/iUSDT/USDC/ETH/USDG as in maker-policy.v2.robinhood.json; AAPL = registeredAssetId('robinhood','AAPL') == deriveAssetId, S0 read 2026-11-01 (docs/killer-demo/robinhood/stock-discovery-2026-11-01/sdk041-aapl-ids.json); AAPL contract and decimals from GET /api/assets (assets-20261101T133032Z.json) and the on-chain ERC-20 reads (name 'Apple . Robinhood Token', symbol AAPL, decimals 18, beacon proxy); vault from GET /api/council/chain-info robinhoodVault\"\n  },\n  \"evm\": {\n    \"chain_id\": 4663,\n    \"chain_name\": \"robinhood-mainnet\",\n    \"rpc_env\": \"ROBINHOOD_RPC_URL\",\n    \"rpc_public\": \"https://rpc.mainnet.chain.robinhood.com\",\n    \"explorer\": \"https://robinhoodchain.blockscout.com\",\n    \"min_confirmations\": 100,\n    \"vault\": \"0xc03858631a160fa1baf6054d4ad734e386952d0e\",\n    \"vault_withdraw_topic0\": \"0xe8b733aae0f3125a3c7b8995ff7c39bca352415111fa2b9ce648f6d2f59fd37b\",\n    \"note\": \"Robinhood Chain = Arbitrum L2 (eth_chainId 0x1237 = 4663, read 2026-10-29). The council vault pays USDG out with an ERC-20 Transfer(vault -> linked address) plus the vault event topic0 above (observed once, tx 0x8e88a98c... 2026-09-24, 165007 gas). min_confirmations 100 blocks (~10 s, soft finality); 'posted'/'final' stages need an Ethereum L1 read and are not claimed by EL6. The public RPC is rate-limited; the proof reads use ROBINHOOD_RPC_URL (Alchemy) when set\"\n  },\n  \"price\": {\n    \"anchor\": \"equity base-priced: ref_1e18 = Supra DORA feed price.equity.dora.pair_index (6004 AAPL_USD, 18 decimals), USD per AAPL; independent cross-check Chainlink price.equity.chainlink (latestRoundData of the proxy, 8 decimals, age <= max_age_s, deviation <= max_dev_bps); venue oracle AAPL/USDG base price == DORA within venue.max_dev_bps (consistency only). val/equityMarket.ts\",\n    \"fair_rate_bft\": \"floor(ref_1e18 * 10^(6 - 18)) = USDG micro-units per AAPL base unit * 10^18 (AAPL 18 decimals, USDG 6 decimals; USDG = 1 USD assumption TA-FX-3); NOT inverted: the base asset is the priced one\",\n    \"quote_rate_bft\": \"floor(ref_1e18 * (10000 - margin_bps) / (10^12 * 10000))\",\n    \"margin_bps\": 50,\n    \"max_margin_bps\": 100,\n    \"lock_rounding\": \"ceil(fill_size_base * rate_bft / 10^18) USDG micro-units for every cap and funds check (chain rounding unknown)\",\n    \"equity\": {\n      \"mode\": \"base_priced\",\n      \"dora\": {\n        \"pair_index\": 6004,\n        \"pair_name\": \"AAPL_USD\",\n        \"max_age_s\": 600\n      },\n      \"chainlink\": {\n        \"chain_id\": 4663,\n        \"proxy\": \"0x6b22a786baa607d76728168703a39ea9c99f2cd0\",\n        \"aggregator\": \"0xbb11a21267cfdb63d4935d99a499133dd1744acb\",\n        \"decimals\": 8,\n        \"heartbeat_s\": 86400,\n        \"max_age_s\": 86460,\n        \"max_dev_bps\": 50,\n        \"name\": \"Robinhood AAPL / USD\",\n        \"source\": \"reference-data-directory.vercel.app/feeds-robinhood-mainnet.json (read 2026-11-01, S0 cl-robinhood-mainnet.json; feedCategory custom, productTypeCode primaryTokenizedPrice, marketHours us_equities_24/5)\"\n      },\n      \"venue\": {\n        \"pair\": \"AAPL/USDG\",\n        \"base_oracle_pair\": \"aapl_usd\",\n        \"quote_oracle_pair\": \"usdc_usdt\",\n        \"max_dev_bps\": 25,\n        \"max_age_s\": 600\n      },\n      \"trading_hours_note\": \"stock feeds update during US trading hours only (docs.robinhood.com/chain: 'Stock feeds update 24/5, following market hours'; Chainlink ticks on 0.5 % deviation or the 24 h heartbeat). Outside Mon-Fri 15:30-22:00 MEZ (US winter time from 2026-11-01) dora_fresh fails -> UNDECIDABLE (policy), terminal\",\n      \"note\": \"S0 provisional pins: dora.max_age_s 600 (the VAL K-O2 number), chainlink.max_dev_bps 50 (two Chainlink deviation thresholds), chainlink.max_age_s = heartbeat + 60 s. To be re-pinned from the 36 h three-source log (S0.2, Mon 2026-11-02 US session) before P3; a re-pin is a new policy sha (append-only history row + verifier version)\"\n    },\n    \"note\": \"S0 finding A: the venue oracle AAPL/USDG (base aapl_usd) returned the DORA 6004 value with the same ms timestamp (read 2026-11-01 14:30 MEZ); it carries no independence and only confirms the venue prices on the same feed\"\n  },\n  \"size\": {\n    \"max_lock_quants\": \"2000000\",\n    \"max_fill_size_base\": \"5000000000000000\",\n    \"max_notional_usd_1e8\": \"200000000\",\n    \"note\": \"D-ST1: 0.005 AAPL per RFQ (max_fill_size_base 5e15 = 0.005 AAPL in 18 decimals); max_lock_quants is in the QUOTE asset's base units = 2000000 USDG micro-units = 2 USDG (lock about 1.72 USDG at 344 USD/AAPL, room for a price up to 400 USD) <= available venue USDG (F1: M2 holds 3 USDG); USD value of the lock <= 2 USD; exactly single_use.max_fills_total = 1 fill\"\n  },\n  \"rfq\": {\n    \"require_status\": \"open\",\n    \"require_auto_accept\": true,\n    \"require_settlement_mode\": \"platform\",\n    \"require_no_partial_fills\": true,\n    \"require_chains\": {\n      \"source\": \"robinhood-mainnet\",\n      \"dest\": \"robinhood-mainnet\"\n    },\n    \"min_remaining_batches\": 60,\n    \"quote_expires_in_batches\": 60\n  },\n  \"stable\": {\n    \"asset\": \"USDG\",\n    \"backing\": \"evm\",\n    \"reserves_max_age_s\": 7200,\n    \"require_status\": \"fully_backed\",\n    \"require_invariant_holds\": true,\n    \"l1_vault_account\": \"0xc03858631a160fa1baf6054d4ad734e386952d0e\",\n    \"l1_vault_account_provenance\": \"GET /api/council/chain-info robinhoodVault (read 2026-10-29) == /api/reserves USDG chains[robinhood].vault; backing leg (b) = own Robinhood Chain read eth_call USDG.balanceOf(vault) >= internal_total (6 decimals)\",\n    \"assumption\": \"TA-FX-3 analogue: 1 USDG = 1 USD (Paxos stablecoin, not provable on chain; the EVM read only proves the council backing of USDG)\",\n    \"note\": \"the stable is the QUOTE asset of this policy (COSMO pays USDG); stableAssetOf resolves it to the USDG pin, the backing read is unchanged (Robinhood Chain USDG.balanceOf(vault))\"\n  },\n  \"delegate_caps\": {\n    \"USDG\": {\n      \"max_base_units\": \"3000000\",\n      \"required\": true,\n      \"note\": \"the maker locks USDG: cap > 0 and <= 3 USDG (M2's venue USDG), with room for the expected lock (about 1.72 USDG); maker delegate v5 (new: v4 has no USDG cap)\"\n    },\n    \"AAPL\": {\n      \"max_base_units\": \"10000000000000000\",\n      \"required\": false,\n      \"note\": \"the received stock token; only if the venue form demands a cap on the received asset (0.01 AAPL), otherwise absent or zero\"\n    },\n    \"ETH\": {\n      \"max_base_units\": \"1000000000000000\",\n      \"required\": false,\n      \"note\": \"D-RH5 analogue: the delegate form may force a minimum ETH cap of 0.001 (taker form 2026-10-31); tolerated up to that minimum, absent is fine\"\n    },\n    \"SUPRA\": {\n      \"max_base_units\": \"2000000000000\",\n      \"required\": false,\n      \"note\": \"not expected on v5 (no SUPRA leg); tolerated up to 20000 SUPRA if the form copies v4, absent is fine\"\n    },\n    \"iUSDC\": {\n      \"max_base_units\": \"300000000\",\n      \"required\": false,\n      \"note\": \"not expected on v5; tolerated up to 3, absent is fine\"\n    }\n  },\n  \"delegates\": {\n    \"shadow_expected_active\": [\n      \"d4098132bfbc64c0c778dba61ed5f048d9d675195eb01b8b6255d475ece04619\"\n    ],\n    \"shadow_expected_note\": \"delegate v4 'cosmo-f2-maker-v4' (created 2026-10-28, caps SUPRA 20000 / iUSDC 3, stays active per Rene 29.10.2026) is the only active maker delegate before v5 exists. Shadow only: any other active delegate is F6 FAIL.\",\n    \"live_expected_active\": \"exactly [maker_delegate v5] plus the delegates Rene names in the GO text (v4)\"\n  },\n  \"single_use\": {\n    \"max_fills_total\": 1\n  }\n}\n",
   "config/killer-demo/funds-preflight.v1.json": "{\n  \"schema\": \"cosmo.killer-demo.funds-preflight.v1\",\n  \"status\": \"DRAFT_NOT_ACTIVE\",\n  \"source\": \"plans/killer-demo-001-plan.md P0.4 (P0 FROZEN 2026-10-07)\",\n  \"runs\": [\"Preflight-1 immediately before ARM\", \"Preflight-2 immediately before Submit\"],\n  \"on_discrepancy\": \"STOP and HALT, no retry\",\n  \"data_sources_rule\": \"direct HTTP GET or suprafx-agent-sdk@0.4.1 only; never @suprafx/agent-sdk@0.1.1 (P0.7)\",\n  \"checks\": [\n    { \"id\": \"F0\", \"rule\": \"official runPreflight: ready_to_trade == true, 0 failures (K-9)\", \"source\": \"sdk:suprafx-agent-sdk@0.4.1\" },\n    { \"id\": \"F1\", \"rule\": \"available[SUPRA] (chain, integer) >= S\", \"source\": \"http-get:/api/council/account\" },\n    { \"id\": \"F2\", \"rule\": \"per asset: locked_in_rfq and locked_in_orders (chain) == sums from /api/council/my-open-orders (lockedRfqs/lockedOrders, chainChecked: true); lock without row = ghost lock -> STOP and report to SupraFX (K-7)\", \"source\": \"http-get:/api/council/account + /api/council/my-open-orders\" },\n    { \"id\": \"F3\", \"rule\": \"locked_in_orders == 0 and locked_in_withdraw == 0 for all assets\", \"source\": \"http-get:/api/council/account\" },\n    { \"id\": \"F4\", \"rule\": \"mirror balance (/api/platform/balances) == chain balance, scaled\", \"source\": \"http-get:/api/platform/balances + /api/council/account\" },\n    { \"id\": \"F5\", \"rule\": \"0 open RFQs on the master; any cancelled or expired RFQ without cancelled_at outside the pinned exception list -> STOP, EXCEPT a regularly expired V2 RFQ (status expired, SubmitRfqV2 with expires_in_batches) whose lock is provably released (F2/F3: locked_in_rfq/locked_in_orders == 0 for it, no my-open-orders row, chainChecked true); any unresolved lock -> STOP (F5 precision, Rene 2026-10-07)\", \"exception_list\": { \"append_only\": true, \"entries\": [\"R-260925-183346-6d\", \"R-260926-055506-56\"], \"reason\": \"legacy_upgrade (D-12)\" }, \"source\": \"http-get:/api/suprafx/rfqs\" },\n    { \"id\": \"F6\", \"rule\": \"active delegates (Created - Revoked from master events) == exactly {KILLER-DEMO delegate}; its policy fields == pinned caps; no earlier delegate holds open orders (K-14)\", \"source\": \"http-get:/api/council/events?user= + /api/council/my-open-orders\" },\n    { \"id\": \"F7\", \"rule\": \"no foreign master event between Preflight-1 and Preflight-2; no UI activity on the master during the window (D-11)\", \"source\": \"http-get:/api/council/events\" },\n    { \"id\": \"F8\", \"rule\": \"after fill: SUPRA delta == exactly -S; USDC delta == floor(S x rate) - fee (+-1 micro); all locked_* back to 0; matching by asset ID, never by symbol\", \"source\": \"http-get:/api/council/account\" },\n    { \"id\": \"F9\", \"rule\": \"no fill: no cancel write; RFQ expires after 300 batches (K-6); then F2/F3 again up to 2 x 300 batches after expiry; expired with lock released -> STOP 'no fill'; lock persists -> log FUNDS_LOCK_AFTER_EXPIRY, STOP, report, no new RFQ\", \"rfq_expires_in_batches\": \"300\", \"recheck_window_batches\": \"600\", \"source\": \"http-get:/api/council/account + /my-open-orders + /api/suprafx/rfqs\" },\n    { \"id\": \"F10\", \"rule\": \"sequence_in_sync: local delegate counter == get_sequence_number (chain) immediately before submit\", \"source\": \"sdk:suprafx-agent-sdk@0.4.1\" },\n    { \"id\": \"F11\", \"rule\": \"submit lifecycle: applied -> continue; rejected -> STOP (no correction, no retry); unknown -> read get_balances + my-open-orders, log, STOP + HALT; any RFQ status other than matched/settled = no fill (K-8, K-15)\", \"retry\": \"never\", \"source\": \"sdk:suprafx-agent-sdk@0.4.1 withLifecycle\" }\n  ],\n  \"not_checkable\": \"delegate earmark consumption has no endpoint; only proof of an active policy is a committed trade; covered conservatively by F6 + F11\",\n  \"asset_ids\": {\n    \"rule\": \"pin == deriveAssetId(0.4.1) == /api/council/account, else UNDECIDABLE and HALT (P0.7)\",\n    \"SUPRA\": \"0xb3ba52f6fce09fa5b5f14506a7f489404fbacf95bec1c789dc7d6cd86b26cbf1\",\n    \"USDC\": \"0x89271d558e025677e56eac70cdd09992e229302151702f66bc68625099bf1899\"\n  }\n}\n",
   "config/killer-demo/proposer-key.pin.json": "{\n  \"schema\": \"cosmo.killer-demo.proposer-key-pin.v1\",\n  \"role\": \"proposer\",\n  \"key_scheme\": \"ed25519\",\n  \"pubkey_hex\": \"e0c877c7ba331f329b348bedc04257a495a5eb3573dd4842c2a99b9b58fb30a0\",\n  \"root_pin_w2\": \"W2:a5f16a6e6e487a54b8591803bc38891075e7c56d6b4d0076c0746dd01f7de70f\",\n  \"created_at\": \"2026-10-10T12:29:46.476Z\",\n  \"seed_file\": \".keys/killer-demo-proposer.hex (VPS, 0600, gitignored)\",\n  \"signature_basis\": \"PRODUCTION_SIGNED\",\n  \"note\": \"KILLER-DEMO-001 proposer key (E-K-1, Rene 2026-10-07): signs cosmo.killer-demo.proposed-intent.v1 only; separate from the Intel writer and the execution-case engine key. Generated in P2 K1 on the VPS.\"\n}\n",
   "config/killer-demo/customer/customer-policy.v1.json": "{\n  \"schema\": \"cosmo.killer-demo.customer-policy.v1\",\n  \"policy_id\": \"cosmo.killer-demo.customer.usdg-supra.robinhood.v1\",\n  \"decided\": {\n    \"D-RH1\": \"Rene 2026-10-29 (plan robinhood-demo v0.1): the customer account is a SECOND OWN StarKey master K1; it holds USDG on Robinhood Chain and gives the mandate 'buy SUPRA on Supra against USDG, not worse than rate X'. Declared self-trade: the demo proves the rail and COSMO's execution, not demand\",\n    \"D-RH3\": \"P2 step 4: the customer delegate 'cosmo-demo-taker-v1' is taker-only with cap USDG 3 (two RFQs of 1.5), expiry 7 days; it can post and cancel RFQs and nothing else (withdrawals are master-signed)\"\n  },\n  \"customer\": {\n    \"master\": \"0xa3d79667db7a465de6e13005c35417c9501fdc5b68bc5516024f0ebc23c358f5\",\n    \"master_note\": \"K1 pinned 2026-10-30 (P2 step 1, Rene): the project's own account (Phase-0 CLI deployer, treasury-sale buyer, AFFILIATED); equals maker-policy.v2.robinhood.json counterparty.declared_own_taker. The previous pin c837067c (master null) covered no bundle\",\n    \"delegate_label\": \"cosmo-demo-taker-v1\",\n    \"delegate_role\": \"taker\",\n    \"delegate_cap\": { \"asset\": \"USDG\", \"max_base_units\": \"3000000\" }\n  },\n  \"principal_ref\": \"principal:robinhood-demo-customer-k1\",\n  \"agent_ref\": \"customer-agent:robinhood-demo-001\",\n  \"action_kind\": \"fx.sell_base_rfq.v1\",\n  \"pair\": { \"symbol\": \"USDG/SUPRA\", \"base\": \"USDG\", \"quote\": \"SUPRA\", \"base_chain\": \"robinhood-mainnet\", \"quote_chain\": \"supra-mainnet\" },\n  \"assets\": {\n    \"USDG\": { \"id\": \"0x84f2da2b1609a29182ed95020b895b23efdd898b9a3f58da9ee6f7bb59e8ce18\", \"decimals\": 6 },\n    \"SUPRA\": { \"id\": \"0xb3ba52f6fce09fa5b5f14506a7f489404fbacf95bec1c789dc7d6cd86b26cbf1\", \"decimals\": 8 }\n  },\n  \"rfq\": {\n    \"size_base_units\": \"1500000\",\n    \"max_rfqs_total\": 2,\n    \"settlement_mode\": \"platform\",\n    \"auto_accept\": true,\n    \"allow_partial_fills\": false,\n    \"floor_rule\": \"auto_accept_target_rate_bft = floor(venue oracle USDG/SUPRA rate_bft * (10000 - floor_discount_bps) / 10000); the venue oracle USDG/SUPRA is the SUPRA/USDT feed (no USDG feed), USDG = 1 USD assumed\",\n    \"floor_discount_bps\": 100,\n    \"expires_in_batches\": 600,\n    \"ttl_ms\": 1800000,\n    \"note\": \"1.5 USDG per RFQ (6 decimals), floor = oracle minus 1 percent (plan P3), expiry about 30 minutes at the observed batch rate, at most 2 RFQs in the demo (then the venue SUPRA of the maker is used up)\"\n  },\n  \"mandate\": {\n    \"execution_key_ref_prefix\": \"suprafx-delegate\",\n    \"rfq_id_rule\": \"rfq_id = first 16 bytes of the mandate hash (executionCase/mandate.ts caseCorrelationId): the RFQ on the venue IS the mandate\"\n  }\n}\n",
+  "config/killer-demo/customer/customer-policy.v2.aapl.json": "{\n  \"schema\": \"cosmo.killer-demo.customer-policy.v2\",\n  \"policy_id\": \"cosmo.killer-demo.customer.aapl-usdg.robinhood.v2\",\n  \"decided\": {\n    \"D-RH1\": \"Rene 2026-10-29 (plan robinhood-demo v0.1): the customer account is a SECOND OWN StarKey master K1; it holds USDG on Robinhood Chain and gives the mandate 'buy SUPRA on Supra against USDG, not worse than rate X'. Declared self-trade: the demo proves the rail and COSMO's execution, not demand\",\n    \"D-ST1\": \"Rene 2026-11-01 (plan robinhood-stock-token v0.2): the customer K1 holds the tokenized stock AAPL on Robinhood Chain (bought on Uniswap with the linked wallet, deposited into the council vault) and gives the mandate 'sell 0.005 AAPL for USDG, not worse than rate X'. Declared self-trade, as in v1\",\n    \"D-ST3\": \"P2: the customer delegate 'cosmo-demo-taker-v2' is taker-only with cap AAPL 0.005 (one RFQ), expiry as the form sets it; it can post and cancel RFQs and nothing else (withdrawals are master-signed). The v1 delegate cosmo-demo-taker-v1 (USDG 3) is untouched\"\n  },\n  \"customer\": {\n    \"master\": \"0xa3d79667db7a465de6e13005c35417c9501fdc5b68bc5516024f0ebc23c358f5\",\n    \"master_note\": \"K1 pinned 2026-10-30 (P2 step 1, Rene): the project's own account (Phase-0 CLI deployer, treasury-sale buyer, AFFILIATED); equals maker-policy.v2.robinhood.json counterparty.declared_own_taker. The previous pin c837067c (master null) covered no bundle\",\n    \"delegate_label\": \"cosmo-demo-taker-v2\",\n    \"delegate_role\": \"taker\",\n    \"delegate_cap\": {\n      \"asset\": \"AAPL\",\n      \"max_base_units\": \"5000000000000000\"\n    },\n    \"delegate_pin_file\": \"customer-delegate.v2.pin.json\",\n    \"delegate_seed_file\": \"/root/.kd-customer/customer-delegate-v2.hex\"\n  },\n  \"principal_ref\": \"principal:robinhood-demo-customer-k1\",\n  \"agent_ref\": \"customer-agent:robinhood-demo-002\",\n  \"action_kind\": \"fx.sell_base_rfq.v1\",\n  \"pair\": {\n    \"symbol\": \"AAPL/USDG\",\n    \"base\": \"AAPL\",\n    \"quote\": \"USDG\",\n    \"base_chain\": \"robinhood-mainnet\",\n    \"quote_chain\": \"robinhood-mainnet\"\n  },\n  \"assets\": {\n    \"AAPL\": {\n      \"id\": \"0xeb163a6c925a3b4f117da05db1a3cde635683ed482c41060dcd7526150b228b2\",\n      \"decimals\": 18\n    },\n    \"USDG\": {\n      \"id\": \"0x84f2da2b1609a29182ed95020b895b23efdd898b9a3f58da9ee6f7bb59e8ce18\",\n      \"decimals\": 6\n    }\n  },\n  \"rfq\": {\n    \"size_base_units\": \"5000000000000000\",\n    \"max_rfqs_total\": 1,\n    \"settlement_mode\": \"platform\",\n    \"auto_accept\": true,\n    \"allow_partial_fills\": false,\n    \"oracle_mode\": \"base_priced\",\n    \"dora_pair_index\": 6004,\n    \"oracle_max_age_s\": 600,\n    \"oracle_max_dev_bps\": 25,\n    \"venue_base_oracle_pair\": \"aapl_usd\",\n    \"venue_quote_oracle_pair\": \"usdc_usdt\",\n    \"floor_rule\": \"auto_accept_target_rate_bft = floor(reference_rate_bft * (10000 - floor_discount_bps) / 10000) with reference_rate_bft = venue oracle AAPL/USDG base price (aapl_usd = USD per AAPL; USDG = 1 USD assumed, the quote price is not applied) as rate_bft (USDG micro-units per AAPL base unit * 10^18); the venue base price must equal an own Supra DORA 6004 read within oracle_max_dev_bps and both must be at most oracle_max_age_s old (S0 finding A: the venue feed IS DORA 6004)\",\n    \"floor_discount_bps\": 100,\n    \"expires_in_batches\": 600,\n    \"ttl_ms\": 1800000,\n    \"note\": \"0.005 AAPL per RFQ (18 decimals, about 1.72 USD at 344 USD), floor = oracle minus 1 percent, expiry about 6-9 minutes at the observed batch rate (P3 lesson: expires_in_batches is decisive, not ttl_ms), exactly 1 RFQ in the demo (the maker holds 3 USDG on the venue); RFQs are only quotable during US trading hours (both feeds stand still otherwise)\"\n  },\n  \"mandate\": {\n    \"execution_key_ref_prefix\": \"suprafx-delegate\",\n    \"rfq_id_rule\": \"rfq_id = first 16 bytes of the mandate hash (executionCase/mandate.ts caseCorrelationId): the RFQ on the venue IS the mandate\"\n  }\n}\n",
   "config/killer-demo/customer/customer-engine.pin.json": "{\n  \"schema\": \"cosmo.killer-demo.customer-engine-pin.v1\",\n  \"role\": \"customer_attestor\",\n  \"pubkey_hex\": \"094f2c5d7081dd75e5502f1e597ee64dacf4619676ba56bdbaee2401550fa45d\",\n  \"created_at\": \"2026-10-30T06:44:19.700Z\",\n  \"seed_file\": \"/root/.kd-customer/customer-engine.hex (VPS, 0600, outside the repo)\",\n  \"note\": \"Robinhood demo customer attestor: signs the customer mandate (executionCase mandate v2 sign domain). Not a venue key; moves nothing.\"\n}\n",
 };
 // ==== END EMBEDDED DATA ====
@@ -149,7 +151,8 @@ __srcDefine('killerDemo/maker/config.ts', function (exports, module, require) {
   // USDG/SUPRA); every current set = exactly one policy file + the gates file (config.ts MAKER_CONFIG_PINS, makerBundle.ts
   // selectMakerConfig GUARD KD.M-MB2-CUR)
   const currents = TRUST_PROFILE.maker_config_pin_sets.filter((s) => s.status === 'current');
-  exports.MAKER_POLICY_NAMES = ['maker-policy.v1.json', 'maker-policy.v2.robinhood.json'];
+  // 1.0.4: three policy files are current (v1 iUSDC/SUPRA, v2 USDG/SUPRA, v3 AAPL/USDG stock-token extension)
+  exports.MAKER_POLICY_NAMES = ['maker-policy.v1.json', 'maker-policy.v2.robinhood.json', 'maker-policy.v3.robinhood-aapl.json'];
   exports.DEFAULT_MAKER_POLICY = 'maker-policy.v1.json';
   exports.isMakerPolicyName = (s) => exports.MAKER_POLICY_NAMES.includes(s);
   exports.MAKER_CONFIG_PINS = Object.assign({}, ...currents.map((s) => s.pins));
@@ -262,7 +265,7 @@ __srcDefine('authority/profiles/synthetic-cell-tending/evaluator.ts', function (
 
 
 // ==== BEGIN EMBEDDED SOURCE CLOSURE (generated by build-maker.mjs -- do not edit by hand) ====
-// 38 TypeScript modules of cosmo-contracts-v2 src/ transpiled by typescript@5.9.3 (transpileModule,
+// 39 TypeScript modules of cosmo-contracts-v2 src/ transpiled by typescript@5.9.3 (transpileModule,
 // CommonJS, ES2020, comments kept, no rewrite). Each header carries the sha3-256 of the ORIGINAL .ts bytes.
 // ---- embedded: src/authority/authorize/authorize.ts source-sha3 0x2332645cb035fc87f2c8c89448dc19acd799662a121b0ca28ade6cd2d5b82f9c ----
 __srcDefine("authority/authorize/authorize.ts", function (exports, module, require) {
@@ -4550,11 +4553,11 @@ exports.OUTCOMES = [
 ];
 
 });
-// ---- embedded: src/killerDemo/customer/customerVerify.ts source-sha3 0x83a31a7ebfdd9c01e83df4cbd66228defc169c80c094c53d0876b5ed33d8d827 ----
+// ---- embedded: src/killerDemo/customer/customerVerify.ts source-sha3 0x44d87a8d432f8efdd2ea6cdc203f5d6b28594191cb2d4f730d6c782dc12de698 ----
 __srcDefine("killerDemo/customer/customerVerify.ts", function (exports, module, require) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addressOfPubkey = exports.hexToUuid = exports.rfqIdOfHash = exports.mandateSignBytes = exports.mandateHashOf = exports.MANDATE_DOMAIN_V2 = exports.MANDATE_SCHEMA_V2 = exports.CUSTOMER_POLICY_NAME = exports.CUSTOMER_CASE_SCHEMA = void 0;
+exports.addressOfPubkey = exports.hexToUuid = exports.rfqIdOfHash = exports.mandateSignBytes = exports.mandateHashOf = exports.MANDATE_DOMAIN_V2 = exports.MANDATE_SCHEMA_V2 = exports.isCustomerPolicyName = exports.CUSTOMER_POLICY_NAMES = exports.CUSTOMER_POLICY_NAME = exports.CUSTOMER_CASE_SCHEMA = void 0;
 exports.verifyCustomerCase = verifyCustomerCase;
 // KILLER-DEMO-001 Robinhood demo: the PURE verification side of the customer case (MB14). No fs, no clock, no key material:
 // the bundle verifier and the standalone verifier embed this module. The mandate primitives are the execution-case ones
@@ -4566,6 +4569,11 @@ const ed25519_1 = require("../../authority/crypto/ed25519");
 const node_crypto_1 = require("node:crypto");
 exports.CUSTOMER_CASE_SCHEMA = 'cosmo.killer-demo.customer-case.v1';
 exports.CUSTOMER_POLICY_NAME = 'customer-policy.v1.json';
+// stock-token extension (plan robinhood-stock-token v0.2): a second customer policy for AAPL/USDG; a case names the policy it
+// was issued under (policy_pin.name) and CM1 accepts only a known name at its pinned sha
+exports.CUSTOMER_POLICY_NAMES = ['customer-policy.v1.json', 'customer-policy.v2.aapl.json'];
+const isCustomerPolicyName = (s) => typeof s === 'string' && exports.CUSTOMER_POLICY_NAMES.includes(s);
+exports.isCustomerPolicyName = isCustomerPolicyName;
 exports.MANDATE_SCHEMA_V2 = 'cosmo.execution-case.mandate.v2';
 exports.MANDATE_DOMAIN_V2 = 'COSMO-EXECUTION-CASE MANDATE v2';
 const mandateHashOf = (m) => (0, canonical_1.canonicalHash)(m);
@@ -4592,7 +4600,9 @@ function verifyCustomerCase(f, o) {
     const out = [];
     const add = (id, ok, why) => out.push({ id, ok, why });
     const p = o.policy;
-    add('CM1', f.schema === exports.CUSTOMER_CASE_SCHEMA && f.policy_pin.name === exports.CUSTOMER_POLICY_NAME && f.policy_pin.sha256 === o.policySha256 && f.mandate.policy_hash === o.policySha256, `schema + customer policy pin ${f.policy_pin.sha256.slice(0, 8)} == repo ${o.policySha256.slice(0, 8)}`);
+    const want = o.policyName ?? exports.CUSTOMER_POLICY_NAME;
+    // GUARD KD.C-POLICY-NAME
+    add('CM1', f.schema === exports.CUSTOMER_CASE_SCHEMA && (0, exports.isCustomerPolicyName)(f.policy_pin.name) && f.policy_pin.name === want && f.policy_pin.sha256 === o.policySha256 && f.mandate.policy_hash === o.policySha256, `schema + customer policy ${want} pin ${f.policy_pin.sha256.slice(0, 8)} == repo ${o.policySha256.slice(0, 8)}`);
     const h = (0, exports.mandateHashOf)(f.mandate);
     // GUARD KD.C-MB14-SIG
     const sigOk = f.mandate.schema === exports.MANDATE_SCHEMA_V2 && f.engine_pubkey === o.enginePubkey && f.mandate_sig.attestor_pubkey === o.enginePubkey && h === f.mandate_hash && verifySig(o.enginePubkey, (0, exports.mandateSignBytes)(f.mandate.case_id, h), f.mandate_sig.signature);
@@ -4683,7 +4693,7 @@ function evmLegProof(a) {
 }
 
 });
-// ---- embedded: src/killerDemo/funds/preflight.ts source-sha3 0x2d243efb8d73452ce9052ff0cb180bba1e7194fcc0bd129dc3f526fd4aa236bb ----
+// ---- embedded: src/killerDemo/funds/preflight.ts source-sha3 0x7ea8750877a7ac849bac57e73137a5aef18298eadf4e9521179feee1a2c54885 ----
 __srcDefine("killerDemo/funds/preflight.ts", function (exports, module, require) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -4764,7 +4774,9 @@ function fundsPreflight(r, o) {
         checks.push({ id: 'F-MASTER', status: 'UNDECIDABLE', why: `account address ${acct.address} != master ${o.master}`, source: [srcA] });
     // F-ASSET: pinned asset ids must be present in the account (P0.7: pin == account; deriveAssetId is the SDK leg, read in P1 1.1c)
     const pinned = Object.entries(o.assets).map(([sym, id]) => [sym, byAsset.get(id.toLowerCase())]);
-    const supra = byAsset.get((o.assets.SUPRA ?? '').toLowerCase());
+    // GUARD KD.M-F1-PAY
+    const payKey = o.payAsset ?? 'SUPRA';
+    const supra = byAsset.get((o.assets[payKey] ?? '').toLowerCase());
     // GUARD KD.F-ASSET
     if (pinned.some(([, b]) => !b))
         checks.push({ id: 'F-ASSET', status: 'UNDECIDABLE', why: `pinned asset ids missing in account: ${pinned.map(([sym, b]) => `${sym} ${!!b}`).join(' ')}`, source: [srcA] });
@@ -4774,7 +4786,7 @@ function fundsPreflight(r, o) {
     if (supra) {
         const ok = big(supra.available) >= big(o.S);
         // GUARD KD.F-1
-        checks.push({ id: 'F1', status: ok ? 'PASS' : 'FAIL', why: `available[SUPRA] ${supra.available} ${ok ? '>=' : '<'} S ${o.S}`, source: [srcA], data: { available: supra.available, S: o.S } });
+        checks.push({ id: 'F1', status: ok ? 'PASS' : 'FAIL', why: `available[${payKey}] ${supra.available} ${ok ? '>=' : '<'} S ${o.S}`, source: [srcA], data: { available: supra.available, S: o.S } });
     }
     // F2: chain locks == my-open-orders sums; a lock without a row is a ghost lock
     const oo = r.openOrders.value;
@@ -4951,7 +4963,7 @@ function checkArm(arm, nowMs, master) {
 }
 
 });
-// ---- embedded: src/killerDemo/maker/makerDecide.ts source-sha3 0xeb13fcb3c1bc5eb4b97792400dd02d22d6dc9d5e39a208f5da6cc15cdb912fea ----
+// ---- embedded: src/killerDemo/maker/makerDecide.ts source-sha3 0xc4883e836727d03e80f342915c79b140d56c4877753a8f9c77c17542e24b8707 ----
 __srcDefine("killerDemo/maker/makerDecide.ts", function (exports, module, require) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -4974,6 +4986,7 @@ const config_1 = require("./config");
 const makerMarket_1 = require("./makerMarket");
 const makerProfile_1 = require("./makerProfile");
 const stable_1 = require("./stable");
+const makerWorld_1 = require("./makerWorld");
 exports.MAKER_DECISION_SCHEMA = 'cosmo.killer-demo.maker-decision.v1';
 function stableOf(s, p) {
     // the backing read is pinned to the stable's own metadata: v1 the iUSDC FA metadata on Supra L1, v2 the USDG contract on
@@ -5045,7 +5058,8 @@ function replayMakerDecision(archiveJson, cfg, authorizerPin = decide_1.SHADOW_A
     checks.profile_checks_match = (0, canonical_1.canonicalHash)(prof.checks) === (0, canonical_1.canonicalHash)(arch.decision.profile.checks);
     checks.profile_frame_match = prof.frame.decision === arch.decision.profile.decision && (0, canonical_1.canonicalHash)(prof.frame.checks) === (0, canonical_1.canonicalHash)(arch.decision.profile.frame_checks);
     checks.funds_bound = (0, canonical_1.canonicalHash)(arch.stage_input.funds.verdict) === (0, canonical_1.canonicalHash)(arch.decision.funds_verdict);
-    checks.proposal_bound = arch.proposal.params.maker_intent_hash === arch.stage_input.intent.hash && arch.proposal.proposed_worst_case['quants:0xa'] === (quote.lock_quants_ceil ?? arch.proposal.proposed_worst_case['quants:0xa']);
+    const unit = (0, makerWorld_1.makerWorstCaseUnit)(cfg.policy.value); // v1/v2 quants:0xa; v3 the EVM stable's unit
+    checks.proposal_bound = arch.proposal.params.maker_intent_hash === arch.stage_input.intent.hash && arch.proposal.proposed_worst_case[unit] === (quote.lock_quants_ceil ?? arch.proposal.proposed_worst_case[unit]);
     const composed = (0, decide_1.compose)(result, prof.frame);
     checks.decision_match = composed.decision === arch.decision.decision;
     const { decision_id, attestation, ...body } = arch.decision;
@@ -5070,7 +5084,7 @@ function replayMakerDecision(archiveJson, cfg, authorizerPin = decide_1.SHADOW_A
 }
 
 });
-// ---- embedded: src/killerDemo/maker/makerFunds.ts source-sha3 0xc667fc44b33db9a1d60a3da0ce3710ae39b54c82ac2f3b988ac510790bbae951 ----
+// ---- embedded: src/killerDemo/maker/makerFunds.ts source-sha3 0x7998159060267fe0d0909b65125dcbfbc8964542a9454f4e8ebaf45c2eb9e398 ----
 __srcDefine("killerDemo/maker/makerFunds.ts", function (exports, module, require) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -5078,7 +5092,8 @@ exports.pinnedF5Exceptions = void 0;
 exports.makerFundsOpts = makerFundsOpts;
 exports.makerFundsPreflight = makerFundsPreflight;
 // KILLER-DEMO-001 maker variant: funds preflight = the unchanged taker preflight (funds/preflight.ts F-ASSET, F1..F6) with the
-// maker parameters: F1 compares available SUPRA with the CEIL lock of the quote (the maker pays SUPRA), F5 = no own open RFQs,
+// maker parameters: F1 compares the available PAY asset (v1/v2 SUPRA, v3 the policy quote asset USDG) with the CEIL lock of the
+// quote, F5 = no own open RFQs,
 // F6 = active delegates equal the pinned set (shadow: Rene's confirmed dApp session; live: exactly the maker delegate) and no
 // open orders/quotes, F4 covers every asset of the master (iUSDT/iUSDC included).
 const preflight_1 = require("../funds/preflight");
@@ -5097,6 +5112,8 @@ function makerFundsOpts(a) {
         // the received base asset (USDG) has no account row before the first fill and is not required
         assets: a.policy.schema === 'cosmo.killer-demo.maker-policy.v1' ? { SUPRA: a.policy.assets.SUPRA.id, USDC: a.policy.assets.USDC.id } : { [(0, config_2.policyPair)(a.policy).quote]: (0, config_2.policyPair)(a.policy).quoteAsset.id },
         symbols: (0, config_2.symbolsOf)(a.policy), exceptionList: a.exceptionList ?? (0, exports.pinnedF5Exceptions)(), expectedActiveDelegates: expected, mode: 'shadow',
+        // F1 pay asset: the quote asset of the policy pair (SUPRA for v1/v2 = the default, byte-identical preflights; USDG for v3)
+        ...(a.policy.schema === 'cosmo.killer-demo.maker-policy.v1' ? {} : { payAsset: (0, config_2.policyPair)(a.policy).quote }),
     };
 }
 function makerFundsPreflight(reads, a) {
@@ -5163,12 +5180,13 @@ function verifyMakerIntent(p, pinnedPubHex) {
 }
 
 });
-// ---- embedded: src/killerDemo/maker/makerMarket.ts source-sha3 0x74a38336d8e4e5603d5289440a257eb7c28659b8ea63e08cedc8ce3a0879990b ----
+// ---- embedded: src/killerDemo/maker/makerMarket.ts source-sha3 0x1fa1b9ee645815c75bcaa85c446b82a81cd311b0f1a169f5cf8b85264d150451 ----
 __srcDefine("killerDemo/maker/makerMarket.ts", function (exports, module, require) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ceilDiv = exports.E36 = exports.E18 = void 0;
+exports.expectedFormulaRateBft = exports.ceilDiv = exports.E36 = exports.E18 = void 0;
 exports.formulaRateBft = formulaRateBft;
+exports.equityFormulaRateBft = equityFormulaRateBft;
 exports.humanRateToBft = humanRateToBft;
 exports.makerQuote = makerQuote;
 // KILLER-DEMO-001 maker variant: fair quote for a foreign buy RFQ of the policy pair (v1 iUSDC/SUPRA, v2 USDG/SUPRA). Pure BigInt.
@@ -5180,7 +5198,12 @@ exports.makerQuote = makerQuote;
 //   quote = floor(1e36 * scale * (10000 - m) / (ref * 10000))   (COSMO pays m bps less of the quote asset than fair)
 //   lock  = ceil(fill_size * quote / 1e18)                      (quote units the chain locks; rounding unknown -> ceil)
 // D-M3: never adverse (quote <= fair), never more than m_max below fair (fairness to the buyer), margin > 0 in base units.
+// v3 (stock-token extension, policy price.equity): the pair is BASE-PRICED (AAPL/USDG: the anchor is USD per AAPL and the
+// quote asset USDG is the stable). Nothing is inverted: fair = ref * 10^(quote_dec - base_dec) (quote units per base unit *
+// 1e18), quote = fair * (10000 - m) / 10000 (COSMO pays m bps less USDG than fair), lock in USDG micro-units, the margin in
+// QUOTE units (fair lock - lock). The anchor rule is val/equityMarket.ts (DORA 6004 + Chainlink + venue consistency).
 const market_1 = require("../val/market");
+const equityMarket_1 = require("../val/equityMarket");
 const config_1 = require("./config");
 exports.E18 = 10n ** 18n;
 exports.E36 = 10n ** 36n;
@@ -5191,6 +5214,14 @@ function formulaRateBft(ref, marginBps, pp) {
     const s = (0, config_1.rateScale)(pp);
     return (exports.E36 * s.mul * (10000n - marginBps)) / (ref * s.div * 10000n);
 }
+// v3 equity: the formula rate of a base-priced pair on an anchor (USD per base unit * 1e18), not inverted
+function equityFormulaRateBft(ref, marginBps, pp) {
+    const s = (0, config_1.rateScale)(pp);
+    return (ref * s.mul * (10000n - marginBps)) / (s.div * 10000n);
+}
+// the formula rate V-5M expects at RESERVATION under a policy: equity policies use the base-priced form
+const expectedFormulaRateBft = (ref, marginBps, pp, p) => (p.price.equity ? equityFormulaRateBft(ref, marginBps, pp) : formulaRateBft(ref, marginBps, pp));
+exports.expectedFormulaRateBft = expectedFormulaRateBft;
 // a human rate literal (quote per base) -> rate_bft (quote units per base unit * 1e18), lossless
 function humanRateToBft(lit, pp) {
     const v = (0, market_1.dec1e18)(lit);
@@ -5201,6 +5232,13 @@ function humanRateToBft(lit, pp) {
 }
 // rateBft: the rate to evaluate (the decider passes the proposer's rate; the proposer omits it and gets the formula rate)
 function makerQuote(reads, rfq, p, rateBft) {
+    if (p.price.equity)
+        return equityQuote(reads, rfq, p, rateBft);
+    if ((0, equityMarket_1.isEquityReads)(reads)) {
+        // equity reads under a SUPRA-anchored policy: the reads do not fit the policy (never priced)
+        const m = { status: 'UNDECIDABLE', why: ['market reads are equity reads but the policy has no price.equity'], ref_1e18: null, anchor_rate_bft: null, target_rate_bft: null, venue_price_1e18: null, venue_dev_bps: null, venue_age_ms: null, dora_ages_s: [], proceeds_at_target_micro_usdc: null, fee_at_target_micro_usdc_floor: null, checks: {}, sources: [reads.dora.source, reads.venue.source] };
+        return { status: 'UNDECIDABLE', why: [`anchor market rule UNDECIDABLE: ${m.why[0]}`], market: m, ref_1e18: null, fair_rate_bft: null, quote_rate_bft: null, formula_rate_bft: null, min_rate_bft: null, floor_rate_bft: null, fill_size_base: rfq.size_base_units, lock_quants_ceil: null, lock_usd_1e8: null, margin_base_units: null, rfq_reference_dev_bps: null, margin_bps: p.price.margin_bps, max_margin_bps: p.price.max_margin_bps };
+    }
     const market = (0, market_1.evaluateMarket)(reads);
     const why = [];
     const m = BigInt(p.price.margin_bps), mMax = BigInt(p.price.max_margin_bps);
@@ -5258,9 +5296,80 @@ function makerQuote(reads, rfq, p, rateBft) {
     out.status = floor === null ? 'UNDECIDABLE' : 'OK';
     return out;
 }
+// v3: the base-priced equity quote (plan robinhood-stock-token v0.2 P1.2). Same D-M3 band and ceil lock as the SUPRA form.
+function equityQuote(reads, rfq, p, rateBft) {
+    const e = p.price.equity;
+    const why = [];
+    const market = (0, equityMarket_1.isEquityReads)(reads) ? (0, equityMarket_1.evaluateEquityMarket)(reads, e)
+        : { status: 'UNDECIDABLE', why: ['market reads are not equity reads (policy price.equity needs val/equityReads.ts)'], undecidable_kind: 'read_form', anchor: 'equity_base_priced', ref_1e18: null, dora_pair: e.dora.pair_index, dora_ages_s: [], dora_round: null, chainlink_price_1e18: null, chainlink_age_s: null, chainlink_dev_bps: null, chainlink_round_id: null, venue_price_1e18: null, venue_dev_bps: null, venue_age_ms: null, venue_timestamp_equals_dora: null, checks: {}, sources: [reads.dora.source, reads.venue.source] };
+    const m = BigInt(p.price.margin_bps), mMax = BigInt(p.price.max_margin_bps);
+    const out = { status: 'UNDECIDABLE', why, market, ref_1e18: market.ref_1e18, fair_rate_bft: null, quote_rate_bft: null, formula_rate_bft: null, min_rate_bft: null, floor_rate_bft: null, fill_size_base: rfq.size_base_units, lock_quants_ceil: null, lock_usd_1e8: null, margin_base_units: null, rfq_reference_dev_bps: null, margin_bps: p.price.margin_bps, max_margin_bps: p.price.max_margin_bps, anchor_mode: 'equity_base_priced', undecidable_kind: market.undecidable_kind ?? 'read_form' };
+    if (market.status !== 'OK' || !market.ref_1e18) {
+        why.push(`anchor equity rule UNDECIDABLE (${market.undecidable_kind}): ${market.why.join('; ')}`);
+        return out;
+    }
+    if (m < 0n || mMax < m || mMax >= 10000n) {
+        why.push(`margin pins invalid (m ${m}, m_max ${mMax})`);
+        out.undecidable_kind = 'read_form';
+        return out;
+    }
+    const ref = BigInt(market.ref_1e18);
+    if (ref <= 0n) {
+        why.push('anchor ref <= 0');
+        out.undecidable_kind = 'read_form';
+        return out;
+    }
+    if (!/^\d+$/.test(rfq.size_base_units)) {
+        why.push(`size_base_units not an integer: ${rfq.size_base_units}`);
+        out.undecidable_kind = 'read_form';
+        return out;
+    }
+    const pp = (0, config_1.policyPair)(p);
+    const s = (0, config_1.rateScale)(pp);
+    const size = BigInt(rfq.size_base_units);
+    // quote units per base unit * 1e18 = USD per base unit * 1e18 * 10^(quote_dec - base_dec); the quote asset is the stable
+    // (1 USD, TA-FX-3). NOT inverted: the base asset is the priced one
+    // GUARD KD.M-EQ-FAIR
+    const fair = (ref * s.mul) / s.div;
+    const formula = equityFormulaRateBft(ref, m, pp);
+    if (rateBft !== undefined && (rateBft === null || !/^\d+$/.test(rateBft))) {
+        why.push(`proposed rate not an integer: ${rateBft}`);
+        out.undecidable_kind = 'read_form';
+        return out;
+    }
+    const quote = rateBft ? BigInt(rateBft) : formula;
+    const min = (fair * (10000n - mMax)) / 10000n;
+    const lock = (0, exports.ceilDiv)(size * quote, exports.E18);
+    // USD value of the lock (1e8 units): the quote asset IS the stable, so the lock converts by its decimals alone
+    const qd = BigInt(pp.quoteAsset.decimals);
+    // GUARD KD.M-EQ-LOCKUSD
+    const lockUsd = qd >= 8n ? (0, exports.ceilDiv)(lock, 10n ** (qd - 8n)) : lock * 10n ** (8n - qd);
+    // margin in QUOTE units: what a zero-margin quote would lock minus the lock
+    const fairLock = (0, exports.ceilDiv)(size * fair, exports.E18);
+    out.fair_rate_bft = fair.toString();
+    out.quote_rate_bft = quote.toString();
+    out.formula_rate_bft = formula.toString();
+    out.min_rate_bft = min.toString();
+    out.lock_quants_ceil = lock.toString();
+    out.lock_usd_1e8 = lockUsd.toString();
+    out.margin_base_units = (fairLock - lock).toString();
+    const floor = humanRateToBft(rfq.auto_accept_target_rate, pp);
+    out.floor_rate_bft = floor === null ? null : floor.toString();
+    const refLit = humanRateToBft(rfq.reference_price, pp);
+    if (refLit !== null && fair > 0n)
+        out.rfq_reference_dev_bps = (((refLit > fair ? refLit - fair : fair - refLit) * 10000n) / fair).toString();
+    if (floor === null) {
+        why.push(`buyer floor not a decimal: ${rfq.auto_accept_target_rate}`);
+        out.undecidable_kind = 'read_form';
+    }
+    out.status = floor === null ? 'UNDECIDABLE' : 'OK';
+    if (out.status === 'OK')
+        out.undecidable_kind = null;
+    return out;
+}
 
 });
-// ---- embedded: src/killerDemo/maker/makerProfile.ts source-sha3 0xc05bffb5fd1374ad477f0bd89b66e7ac8bfa2eb8b4632e878da16c42206cfa0b ----
+// ---- embedded: src/killerDemo/maker/makerProfile.ts source-sha3 0xbfeb9e8f35c001fc5ab44645453e25bb9e9ffb1208c6fe065078cf5e6999c196 ----
 __srcDefine("killerDemo/maker/makerProfile.ts", function (exports, module, require) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -5358,7 +5467,7 @@ function evaluateMakerProfile(i, g, p) {
         checks.push(und('V-5M', `market rule UNDECIDABLE: ${q.why.join('; ')}`));
     else {
         const r = BigInt(q.quote_rate_bft), fair = BigInt(q.fair_rate_bft), min = BigInt(q.min_rate_bft), ref = BigInt(q.ref_1e18);
-        const expect = (0, makerMarket_1.formulaRateBft)(ref, BigInt(p.price.margin_bps), pp);
+        const expect = (0, makerMarket_1.expectedFormulaRateBft)(ref, BigInt(p.price.margin_bps), pp, p); // v3 equity: the base-priced form
         const bad = [];
         // the evaluated rate must be the intent's rate; at RESERVATION it must equal the formula on these reads, at FINAL the
         // (re-read) band must still hold (E-G5-2 analogue: the market may move between the stages, the band may not be left)
@@ -5374,7 +5483,11 @@ function evaluateMakerProfile(i, g, p) {
             bad.push(`rate ${r} < fair - ${p.price.max_margin_bps} bps (${min})`);
         if (BigInt(q.margin_base_units ?? '-1') <= 0n)
             bad.push(`margin ${q.margin_base_units} <= 0`);
-        checks.push(bad.length ? fail('V-5M', bad.join('; ')) : { ...ok('V-5M', `rate ${r} = fair ${fair} - ${p.price.margin_bps} bps (band >= ${min}); margin ${q.margin_base_units} ${pp.base} units; venue ${q.market.venue_dev_bps} bps / ${q.market.venue_age_ms} ms`), source_independence: 'dora:supra-rpc + venue:http-get (K-10)' });
+        // v3 equity: the margin is in QUOTE units (the stable COSMO pays) and the independent second source is Chainlink (S0 finding A)
+        const eq = 'anchor' in q.market && q.market.anchor === 'equity_base_priced' ? q.market : null;
+        checks.push(bad.length ? fail('V-5M', bad.join('; ')) : eq
+            ? { ...ok('V-5M', `rate ${r} = fair ${fair} - ${p.price.margin_bps} bps (band >= ${min}); margin ${q.margin_base_units} ${pp.quote} units; chainlink ${eq.chainlink_dev_bps} bps / ${eq.chainlink_age_s} s; venue ${eq.venue_dev_bps} bps / ${eq.venue_age_ms} ms; DORA ${eq.dora_pair} age ${eq.dora_ages_s.join('/')} s`), source_independence: 'dora:supra-rpc + chainlink:evm-rpc (independent) + venue:http-get (consistency only, S0 finding A: venue == DORA)' }
+            : { ...ok('V-5M', `rate ${r} = fair ${fair} - ${p.price.margin_bps} bps (band >= ${min}); margin ${q.margin_base_units} ${pp.base} units; venue ${q.market.venue_dev_bps} bps / ${q.market.venue_age_ms} ms`), source_independence: 'dora:supra-rpc + venue:http-get (K-10)' });
     }
     // V-6M buyer floor
     if (!has('V-6M'))
@@ -5421,16 +5534,19 @@ function evaluateMakerProfile(i, g, p) {
 }
 
 });
-// ---- embedded: src/killerDemo/maker/makerWorld.ts source-sha3 0x22b1ac1245f0a15e3e7f6142ebcb2d93157d924d16a6c5cd3e7a29ddf3680a37 ----
+// ---- embedded: src/killerDemo/maker/makerWorld.ts source-sha3 0x29d681f0ee9ebacc55a4ff5eed608635da1631a0fdefdfe01dc1f45787743e2f ----
 __srcDefine("killerDemo/maker/makerWorld.ts", function (exports, module, require) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.makerSpecFor = exports.MAKER_RES_QUOTE = exports.MAKER_IUSDC_FA = exports.MAKER_CAPABILITY_ID = exports.MAKER_ACTION = exports.MAKER_PROFILE_ID = void 0;
+exports.makerWorstCaseUnit = exports.makerSpecFor = exports.unitPrefixForDecimals = exports.MAKER_RES_QUOTE = exports.MAKER_IUSDC_FA = exports.MAKER_CAPABILITY_ID = exports.MAKER_ACTION = exports.MAKER_PROFILE_ID = void 0;
 exports.makerResQuote = makerResQuote;
+exports.makerResPay = makerResPay;
 // KILLER-DEMO-001 maker variant: the shadow grant spec for the frozen VAL v1.7 core (val/coreWorld.ts, unchanged core API).
 // One capability fx.quote_sell_base.v1, single_use, value bound = S_M = maker-policy size.max_lock_quants (D-M6, 20000 SUPRA
 // since E1a 27.10.2026). The number lives ONLY in the pinned policy; the spec is derived from the loaded policy. The worst case
 // is the SUPRA COSMO pays (the ceil lock). Resources: SUPRA (0xa) and the iUSDC fungible asset on Supra L1.
+// v3 (stock-token extension): COSMO pays an EVM stable (USDG on Robinhood Chain); the value bound then counts that resource
+// in its own base units (makerResPay) and the received resource is the stock token (evm:<chain>:<contract>).
 const coreWorld_1 = require("../val/coreWorld");
 const config_1 = require("./config");
 exports.MAKER_PROFILE_ID = 'cosmo.killer-demo.profile.fx-quote-sell-base-micro.v1';
@@ -5446,17 +5562,39 @@ function makerResQuote(p) {
         return { res: `evm:${b.evm.chain_id}:${b.evm.contract.toLowerCase()}`, label: `${pp.base.toLowerCase()}-vault-balance`, pair: pp.symbol };
     return { res: `supra:${coreWorld_1.FX_CHAIN_ID}:${b.l1_metadata ?? exports.MAKER_IUSDC_FA}`, label: `${pp.base.toLowerCase()}-balance`, pair: pp.symbol };
 }
+// the resource COSMO PAYS (the lock): v1/v2 SUPRA quants on Supra (defaults of the core world); v3 the EVM stable the policy
+// quote asset pins (resource evm:<chain id>:<contract>). The value-bound UNIT must carry a prefix of the frozen VAL register
+// envelope_dimensions.unit_prefixes (wei | quants | micro | count, schema 6.1.1.unit_register_only): the prefix names the
+// asset's base unit by its decimals (6 micro, 8 quants, 18 wei), the rest is the resource (micro:evm:4663:0x5fc5... for USDG).
+const unitPrefixForDecimals = (d) => { if (d === 6)
+    return 'micro'; if (d === 8)
+    return 'quants'; if (d === 18)
+    return 'wei'; throw new Error(`no registered unit prefix for ${d} decimals`); };
+exports.unitPrefixForDecimals = unitPrefixForDecimals;
+function makerResPay(p) {
+    const pp = (0, config_1.policyPair)(p);
+    const q = pp.quoteAsset;
+    if (!q.evm)
+        return null;
+    const res = `evm:${q.evm.chain_id}:${q.evm.contract.toLowerCase()}`;
+    return { res, unit: `${(0, exports.unitPrefixForDecimals)(q.decimals)}:${res}`, label: `${pp.quote.toLowerCase()}-vault-balance` };
+}
 // The core value bound is the policy cap and nothing else (battery marker below, mutant = the old literal 15000 SUPRA).
 const makerSpecFor = (p) => {
     const q = makerResQuote(p);
+    const pay = makerResPay(p);
     return {
         profile_id: exports.MAKER_PROFILE_ID, action: exports.MAKER_ACTION, capability_id: exports.MAKER_CAPABILITY_ID,
         // GUARD KD.M-SPEC-CAP
         size_cap_quants: p.size.max_lock_quants, res_quote: q.res, quote_read_label: q.label,
-        proposal_params: (amount) => ({ kind: exports.MAKER_ACTION, side: 'maker_pays_quote', pair: q.pair, asset_pay: coreWorld_1.FX_RES_BASE, asset_receive: q.res, lock_quants: amount, chain_id: coreWorld_1.FX_CHAIN_ID, account: coreWorld_1.FX_PRINCIPAL_ACCOUNT }),
+        proposal_params: (amount) => ({ kind: exports.MAKER_ACTION, side: 'maker_pays_quote', pair: q.pair, asset_pay: pay?.res ?? coreWorld_1.FX_RES_BASE, asset_receive: q.res, lock_quants: amount, chain_id: coreWorld_1.FX_CHAIN_ID, account: coreWorld_1.FX_PRINCIPAL_ACCOUNT }),
+        ...(pay ? { res_base: pay.res, base_unit: pay.unit, base_read_label: pay.label } : {}),
     };
 };
 exports.makerSpecFor = makerSpecFor;
+// the unit key of the proposal's worst case under a policy (makerDecide replay binds the proposal to the recomputed lock)
+const makerWorstCaseUnit = (p) => makerResPay(p)?.unit ?? 'quants:0xa';
+exports.makerWorstCaseUnit = makerWorstCaseUnit;
 
 });
 // ---- embedded: src/killerDemo/maker/proofs.ts source-sha3 0x72af14f4d85036c5db2dc56036d38f21d959c3efa43a93a9e663b59da261a96a ----
@@ -5742,7 +5880,7 @@ function consumeEpisode(l, key, tick) {
 }
 
 });
-// ---- embedded: src/killerDemo/val/coreWorld.ts source-sha3 0xe71135b6c48f842a0c2434628fdf7c74451ddc8821805b0fc203da3e46e2f443 ----
+// ---- embedded: src/killerDemo/val/coreWorld.ts source-sha3 0x16e5dd2243410444f5ab99b751ebe3368ed487fa41974de46d0ac2ada125203b ----
 __srcDefine("killerDemo/val/coreWorld.ts", function (exports, module, require) {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -5876,20 +6014,20 @@ function fxIntentEvidence(evidence_id, content, block, attestor = exports.FX_ACT
 function fxGrantBody(o, profile, spec = exports.TAKER_SPEC) {
     profile = profile ?? fxProfile(spec);
     const cap = o.sizeCapQuants ?? spec.size_cap_quants;
-    const ACT = spec.action, RES_Q = spec.res_quote;
+    const ACT = spec.action, RES_Q = spec.res_quote, RES_B = spec.res_base ?? exports.FX_RES_BASE, UNIT = spec.base_unit ?? exports.FX_BASE_UNIT;
     const rail = { kind: 'supra_account_sequence', chain_id: exports.FX_CHAIN_ID, account: exports.FX_PRINCIPAL_ACCOUNT };
     const validity = { effective_from: (0, exports.fxBlock)(o.validFrom), valid_until: (0, exports.fxBlock)(o.validUntil), time_authority: 'supra_block' };
     const envelope = {
         schema: 'cosmo.val.envelope.v1',
         issuer: { principal_id: exports.FX_ISSUER_ID },
         executor: { principal_id: exports.FX_EXECUTOR_ID, signer_id: exports.FX_SIGNER_ID },
-        domain: { completeness_rail: rail, resources: [exports.FX_RES_BASE, RES_Q] },
+        domain: { completeness_rail: rail, resources: [RES_B, RES_Q] },
         actions: [ACT],
         validity,
         authority_freshness: { max_head_lag: { kind: 'supra_blocks', value: o.maxHeadLag ?? exports.FX_MAX_HEAD_LAG }, on_stale: 'UNDECIDABLE' },
         value_bounds: [
-            { dimension: 'max_value_per_action', unit: exports.FX_BASE_UNIT, amount: cap, applies_to: [ACT] },
-            { dimension: 'max_cumulative_value', unit: exports.FX_BASE_UNIT, amount: cap, applies_to: [ACT] },
+            { dimension: 'max_value_per_action', unit: UNIT, amount: cap, applies_to: [ACT] },
+            { dimension: 'max_cumulative_value', unit: UNIT, amount: cap, applies_to: [ACT] },
         ],
         delegation: { allowed: false, max_depth: 0 },
         revocation: {
@@ -5913,12 +6051,12 @@ function fxGrantBody(o, profile, spec = exports.TAKER_SPEC) {
         root_authority_basis: {
             schema: 'cosmo.val.root-basis.v1', basis_kind: 'resource_owner_onchain', trust_domain: 'cosmo.killer-demo.shadow.v1',
             resource_relations: [
-                { resource: exports.FX_RES_BASE, relation: 'owner', principal_id: exports.FX_ISSUER_ID, evidence_ref: `ev:read:supra-balance@${o.validFrom}`, evidence_class: 'externally_verifiable', as_of: (0, exports.fxBlock)(o.validFrom), attestation: null },
+                { resource: RES_B, relation: 'owner', principal_id: exports.FX_ISSUER_ID, evidence_ref: `ev:read:${spec.base_read_label ?? 'supra-balance'}@${o.validFrom}`, evidence_class: 'externally_verifiable', as_of: (0, exports.fxBlock)(o.validFrom), attestation: null },
                 { resource: RES_Q, relation: 'owner', principal_id: exports.FX_ISSUER_ID, evidence_ref: `ev:read:${spec.quote_read_label}@${o.validFrom}`, evidence_class: 'externally_verifiable', as_of: (0, exports.fxBlock)(o.validFrom), attestation: null },
             ],
             not_claimed: ['legal title', 'beneficial ownership beyond on-chain control', 'resources outside resource_relations', 'shadow: the issuer key is a TEST key, not the principal account key'],
         },
-        completeness_rail: rail, authority_envelope: envelope, resources: [exports.FX_RES_BASE, RES_Q],
+        completeness_rail: rail, authority_envelope: envelope, resources: [RES_B, RES_Q],
         capabilities: [{
                 capability_id: spec.capability_id, action: ACT,
                 bounds: { envelope_refs: [`max_value_per_action#${ACT}`, `max_cumulative_value#${ACT}`] },
@@ -6007,7 +6145,7 @@ function fxProposalBody(a) {
     const amount = a.amountQuants ?? spec.size_cap_quants;
     return {
         capability_id: a.capability_id ?? spec.capability_id, action: a.action ?? spec.action,
-        proposed_worst_case: { [exports.FX_BASE_UNIT]: amount },
+        proposed_worst_case: { [spec.base_unit ?? exports.FX_BASE_UNIT]: amount },
         params: { ...spec.proposal_params(amount), ...(a.params ?? {}) },
         evidence_refs: a.evidence_refs.map((r) => ({ evidence_id: r.evidence_id, hash: r.hash })),
     };
@@ -6191,6 +6329,108 @@ function replayFxDecision(archiveJson, cfg, authorizerPin = exports.SHADOW_AUTHO
         if (!v)
             detail.push(`${k} failed`);
     return { ok: Object.values(checks).every(Boolean), checks, detail };
+}
+
+});
+// ---- embedded: src/killerDemo/val/equityMarket.ts source-sha3 0x00ad4c2527ab2843bf1e9c7bae85b548c7910865818f12499e49a434a65ad7a5 ----
+__srcDefine("killerDemo/val/equityMarket.ts", function (exports, module, require) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CHECK_ORDER = exports.isEquityReads = void 0;
+exports.evaluateEquityMarket = evaluateEquityMarket;
+// KILLER-DEMO-001 stock-token extension (plan robinhood-stock-token v0.2, S0 2026-11-01): the EQUITY anchor rule for a
+// base-priced pair (AAPL/USDG). Pure BigInt over raw reads, no float in the decision path, no network, no clock.
+//   anchor  ref_1e18 = Supra DORA feed <pair_index> (6004 = AAPL_USD), USD per base unit, scaled to 1e18 (as val/market.ts)
+//   cross   Chainlink "Robinhood AAPL / USD" on Robinhood Chain (latestRoundData of the pinned proxy, 8 decimals): an
+//           INDEPENDENT second source (S0 finding A: the venue oracle is byte-identical to DORA 6004 and is only a
+//           consistency check here, never the second source)
+//   venue   GET /api/oracle?pair=AAPL/USDG base price == DORA within venue.max_dev_bps, base timestamp fresh
+// Two kinds of UNDECIDABLE (S0 finding B, makerTick KD.M-EQ-RETRY): 'read_form' = a read had the wrong form (missing feed,
+// RPC error, decimals != pin, venue shape) -> the runner may re-read in a later tick; 'policy' = every read is well-formed
+// but a feed is older than its pinned maximum or the sources disagree beyond the pinned deviation (outside US trading hours
+// both feeds stand still) -> terminal for this RFQ, never retried. The numbers are POLICY pins (maker-policy price.equity).
+const market_1 = require("./market");
+const isEquityReads = (r) => !!r && typeof r === 'object' && r.kind === 'equity';
+exports.isEquityReads = isEquityReads;
+const isInt = (s) => typeof s === 'string' && /^\d+$/.test(s);
+const devBps = (a, ref) => ((a > ref ? a - ref : ref - a) * 10000n) / ref;
+exports.CHECK_ORDER = ['dora_form', 'chainlink_form', 'venue_form', 'dora_fresh', 'chainlink_fresh', 'chainlink_dev', 'venue_dev', 'venue_fresh'];
+function evaluateEquityMarket(r, e) {
+    const why = [];
+    const checks = {};
+    const out = {
+        status: 'UNDECIDABLE', why, undecidable_kind: null, anchor: 'equity_base_priced', ref_1e18: null,
+        dora_pair: e.dora.pair_index, dora_ages_s: [], dora_round: null,
+        chainlink_price_1e18: null, chainlink_age_s: null, chainlink_dev_bps: null, chainlink_round_id: null,
+        venue_price_1e18: null, venue_dev_bps: null, venue_age_ms: null, venue_timestamp_equals_dora: null,
+        checks, sources: [r.dora.source, r.chainlink.source, r.chainlink.decimals_source, r.venue.source],
+    };
+    const now = BigInt(r.now_ms);
+    // ---- form of the three reads (read_form when any fails) ----
+    const f = r.dora.feed;
+    const doraForm = r.dora.status === 200 && !!f && Number(f.pair) === e.dora.pair_index && r.dora.pair_index === e.dora.pair_index && isInt(String(f.value)) && BigInt(f.value) > 0n && f.decimal >= 0 && f.decimal <= 18 && isInt(String(f.timestamp));
+    checks.dora_form = doraForm;
+    if (!doraForm)
+        why.push(`DORA feed ${e.dora.pair_index} (${e.dora.pair_name}) missing or malformed (status ${r.dora.status})`);
+    const c = r.chainlink;
+    // GUARD KD.M-EQ-FORM
+    const clForm = c.status === 200 && c.error === null && c.proxy.toLowerCase() === e.chainlink.proxy.toLowerCase() && c.decimals_read === e.chainlink.decimals && isInt(c.answer) && BigInt(c.answer) > 0n && isInt(c.round_id) && isInt(c.updated_at_s) && BigInt(c.updated_at_s) > 0n && isInt(c.answered_in_round) && BigInt(c.answered_in_round) >= BigInt(c.round_id);
+    checks.chainlink_form = clForm;
+    if (!clForm)
+        why.push(`Chainlink ${e.chainlink.name} read malformed (status ${c.status}, error ${c.error ?? 'none'}, decimals ${c.decimals_read} vs pin ${e.chainlink.decimals}, round ${c.round_id}/${c.answered_in_round})`);
+    const v = r.venue;
+    const venue18 = v.price_literal ? (0, market_1.dec1e18)(v.price_literal) : null;
+    const venueForm = v.status === 200 && v.pair === e.venue.pair && v.base_oracle_pair === e.venue.base_oracle_pair && v.quote_oracle_pair === e.venue.quote_oracle_pair && venue18 !== null && venue18 > 0n && v.base_timestamp_ms !== null && Number.isFinite(v.base_timestamp_ms);
+    checks.venue_form = venueForm;
+    if (!venueForm)
+        why.push(`venue oracle ${e.venue.pair} form changed (status ${v.status}, pair ${v.pair}, base ${v.base_oracle_pair}, quote ${v.quote_oracle_pair}, price ${v.price_literal})`);
+    if (!doraForm || !clForm || !venueForm) {
+        out.undecidable_kind = 'read_form';
+        return out;
+    }
+    // ---- values ----
+    const ref = BigInt(f.value) * 10n ** BigInt(18 - f.decimal);
+    out.ref_1e18 = ref.toString();
+    out.dora_round = f.round === undefined ? null : String(f.round);
+    const doraAge = (now - BigInt(f.timestamp)) / 1000n;
+    out.dora_ages_s = [doraAge.toString()];
+    const cl18 = BigInt(c.answer) * 10n ** BigInt(18 - e.chainlink.decimals);
+    const clAge = now / 1000n - BigInt(c.updated_at_s);
+    const clDev = devBps(cl18, ref);
+    out.chainlink_price_1e18 = cl18.toString();
+    out.chainlink_age_s = clAge.toString();
+    out.chainlink_dev_bps = clDev.toString();
+    out.chainlink_round_id = c.round_id;
+    const vDev = devBps(venue18, ref);
+    const vAge = now - BigInt(v.base_timestamp_ms);
+    out.venue_price_1e18 = venue18.toString();
+    out.venue_dev_bps = vDev.toString();
+    out.venue_age_ms = vAge.toString();
+    out.venue_timestamp_equals_dora = String(v.base_timestamp_ms) === String(f.timestamp);
+    // ---- policy checks (policy when any fails) ----
+    // GUARD KD.M-EQ-DORA
+    checks.dora_fresh = doraAge >= 0n && doraAge <= BigInt(e.dora.max_age_s);
+    if (!checks.dora_fresh)
+        why.push(`DORA ${e.dora.pair_name} age ${doraAge} s outside 0..${e.dora.max_age_s} s (feed stands still outside US trading hours)`);
+    // GUARD KD.M-EQ-CL-FRESH
+    checks.chainlink_fresh = clAge >= 0n && clAge <= BigInt(e.chainlink.max_age_s);
+    if (!checks.chainlink_fresh)
+        why.push(`Chainlink age ${clAge} s outside 0..${e.chainlink.max_age_s} s`);
+    // GUARD KD.M-EQ-CL-DEV
+    checks.chainlink_dev = clDev <= BigInt(e.chainlink.max_dev_bps);
+    if (!checks.chainlink_dev)
+        why.push(`Chainlink deviates ${clDev} bps from DORA (> ${e.chainlink.max_dev_bps})`);
+    // GUARD KD.M-EQ-VENUE
+    checks.venue_dev = vDev <= BigInt(e.venue.max_dev_bps);
+    if (!checks.venue_dev)
+        why.push(`venue deviates ${vDev} bps from DORA (> ${e.venue.max_dev_bps})`);
+    checks.venue_fresh = vAge >= 0n && vAge <= BigInt(e.venue.max_age_s) * 1000n;
+    if (!checks.venue_fresh)
+        why.push(`venue oracle base age ${vAge} ms (> ${e.venue.max_age_s} s)`);
+    const all = exports.CHECK_ORDER.every((k) => checks[k] === true) && Object.keys(checks).length === exports.CHECK_ORDER.length;
+    out.status = all ? 'OK' : 'UNDECIDABLE';
+    out.undecidable_kind = all ? null : 'policy';
+    return out;
 }
 
 });
@@ -6455,6 +6695,12 @@ export const TRUST_PROFILE = {
   maker_config_pin_sets: [
     {
       status: 'current',
+      pins: { 'maker-policy.v3.robinhood-aapl.json': 'a1759fb13d571beaf8421d8878f714a280c07a3a81b2493974cd05dfbc0724e5', 'maker-gates.v1.json': '2d97f3f4a24873038c8bed4e2fa5bb18a7e2f454b3574186df7b3bd62855263a' },
+      files: { 'maker-policy.v3.robinhood-aapl.json': 'config/killer-demo/maker/maker-policy.v3.robinhood-aapl.json', 'maker-gates.v1.json': 'config/killer-demo/maker/maker-gates.v1.json' },
+      note: 'Stock-token extension P1 (plan robinhood-stock-token v0.2, Rene 01.11.2026): AAPL/USDG both legs robinhood-mainnet, K1 sells 0.005 AAPL, COSMO pays USDG (equity anchor DORA 6004 + Chainlink Robinhood AAPL/USD, S0 provisional staleness pins), at most 1 fill; verifier 1.0.4',
+    },
+    {
+      status: 'current',
       pins: { 'maker-policy.v2.robinhood.json': '0bfe34466c85c50928a4b6493c50ae56ab64b55a02b297b17b4c00f8b0e976f6', 'maker-gates.v1.json': '2d97f3f4a24873038c8bed4e2fa5bb18a7e2f454b3574186df7b3bd62855263a' },
       files: { 'maker-policy.v2.robinhood.json': 'config/killer-demo/maker/maker-policy.v2.robinhood.json', 'maker-gates.v1.json': 'config/killer-demo/maker/maker-gates.v1.json' },
       note: 'Robinhood demo P2 step 1 (Rene 30.10.2026): declared own taker K1 = 0xa3d79667 pinned (counterparty.declared_own_taker + own_addresses; an existing own account, AFFILIATED); USDG/SUPRA robinhood-mainnet -> supra-mainnet, 1.5 USDG per RFQ, at most 2 fills; verifier 1.0.3',
@@ -6490,7 +6736,8 @@ export const TRUST_PROFILE = {
   // customer/customerCase.ts CUSTOMER_CONFIG_PINS) and the customer ATTESTOR key that signs the customer mandate
   // (config/killer-demo/customer/customer-engine.pin.json, PRODUCTION_SIGNED, keygen 2026-10-30)
   // 1.0.3: customer.master = K1 pinned (P2 step 1); the 1.0.2 pin c837067c (master null) covered no bundle and is superseded, not historical
-  customer_config_pins: { 'customer-policy.v1.json': '561c2b56bb014c43f972ca716082aa1fdb164ccfd17330dcbebf8bf0b1477f22' },
+  // 1.0.4: customer-policy.v2.aapl.json (AAPL/USDG, base-priced oracle, taker delegate cosmo-demo-taker-v2) next to v1; a case names its policy
+  customer_config_pins: { 'customer-policy.v1.json': '561c2b56bb014c43f972ca716082aa1fdb164ccfd17330dcbebf8bf0b1477f22', 'customer-policy.v2.aapl.json': '1dca39ec1c66ebe5caaaac3247e40594ae0a3fa7dde190070811f4fbe61c48c2' },
   customer_attestor_pubkeys: { '094f2c5d7081dd75e5502f1e597ee64dacf4619676ba56bdbaee2401550fa45d': { active: true, pinned_at: '2026-10-30', signature_basis: 'PRODUCTION_SIGNED' } },
   // the PROPOSER key that signs every maker intent (config/killer-demo/proposer-key.pin.json, PRODUCTION_SIGNED)
   proposer_pubkeys: { e0c877c7ba331f329b348bedc04257a495a5eb3573dd4842c2a99b9b58fb30a0: { active: true, pinned_at: '2026-10-10', signature_basis: 'PRODUCTION_SIGNED' } },
@@ -6563,8 +6810,10 @@ const { verifyCustomerCase, CUSTOMER_CASE_SCHEMA } = __srcRequire('killerDemo/cu
 export const SETTLEMENT_SCHEMA = 'cosmo.killer-demo.onchain-settlement.v1';
 // customer loaders (src/killerDemo/customer/customerCase.ts loadCustomerPolicy / loadCustomerEnginePin) served from the
 // embedded data under the profile's pins (fail-closed like the maker config rows)
-function loadCustomerPolicy() {
-  const name = 'customer-policy.v1.json'; const file = `config/killer-demo/customer/${name}`;
+function loadCustomerPolicy(name = 'customer-policy.v1.json') {
+  // 1.0.4: only a name of the profile's customer_config_pins is served (v1 USDG/SUPRA, v2 AAPL/USDG)
+  if (!Object.prototype.hasOwnProperty.call(TRUST_PROFILE.customer_config_pins, name)) throw new Error(`CONFIG_PIN_MISMATCH ${name}: expected (known customer policy name) actual unknown`);
+  const file = `config/killer-demo/customer/${name}`;
   const bytes = Buffer.from(__dataText(file), 'utf8'); const actual = sha256Hex(bytes); const pin = TRUST_PROFILE.customer_config_pins[name];
   // GUARD KD.C-CFG (embedded)
   if (actual !== pin) throw new Error(`CONFIG_PIN_MISMATCH ${name}: expected ${pin} actual ${actual}`);
@@ -6721,7 +6970,8 @@ export function verifyMakerBundle(dir, vo = {}) {
       }
       const s = j(f);
       const fundsObj = s.funds ?? s.reads ?? (s.account ? s : {});
-      const srcs = [...Object.values(fundsObj).map((x) => x.source), ...(s.reserves ? [s.reserves.source] : []), ...(s.l1 ? [s.l1.source] : []), ...(s.market ? [s.market.dora.source, s.market.venue.source] : [])];
+      // 1.0.4: v3 equity reads carry the Chainlink read (and its decimals read) as a third source (makerBundle.ts MB6)
+      const srcs = [...Object.values(fundsObj).map((x) => x.source), ...(s.reserves ? [s.reserves.source] : []), ...(s.l1 ? [s.l1.source] : []), ...(s.market ? [s.market.dora.source, s.market.venue.source, ...(s.market.chainlink ? [s.market.chainlink.source, s.market.chainlink.decimals_source] : [])] : [])];
       // GUARD KD.M-MB6-PROV
       add('MB6', srcs.length > 0 && srcs.every(sourceAllowed), f, 'provenance');
     }
@@ -6793,9 +7043,11 @@ export function verifyMakerBundle(dir, vo = {}) {
       // MB14 customer mandate (Robinhood demo): the trigger RFQ is the customer's signed mandate (rfq_id = mandate hash prefix)
       if (existsSync(join(dir, 'customer/case.json'))) {
         const cf = j('customer/case.json');
-        const cp = loadCustomerPolicy();
+        // the case names its customer policy (v1 USDG/SUPRA or v2 AAPL/USDG); an unknown name loads v1 and fails CM1 (fail-closed)
+        const cpName = Object.prototype.hasOwnProperty.call(TRUST_PROFILE.customer_config_pins, cf.policy_pin?.name) ? cf.policy_pin.name : 'customer-policy.v1.json';
+        const cp = loadCustomerPolicy(cpName);
         const ep = vo.customerEnginePin ?? loadCustomerEnginePin().pubkey_hex;
-        const cm = cf.schema === CUSTOMER_CASE_SCHEMA ? verifyCustomerCase(cf, { enginePubkey: ep, policySha256: cp.sha256, policy: cp.value, declaredTaker: cfg.policy.value.counterparty?.declared_own_taker ?? null, trigger: rfq }) : [{ id: 'CM0', ok: false, why: `schema ${String(cf.schema)}` }];
+        const cm = cf.schema === CUSTOMER_CASE_SCHEMA ? verifyCustomerCase(cf, { enginePubkey: ep, policySha256: cp.sha256, policy: cp.value, policyName: cpName, declaredTaker: cfg.policy.value.counterparty?.declared_own_taker ?? null, trigger: rfq }) : [{ id: 'CM0', ok: false, why: `schema ${String(cf.schema)}` }];
         // GUARD KD.M-MB14-CUSTOMER
         for (const c of cm) add('MB14', c.ok, 'customer/case.json', `${c.id}: ${c.why}`);
       } else add('MB14', true, 'manifest.json', 'no customer case file (no customer mandate claimed)');

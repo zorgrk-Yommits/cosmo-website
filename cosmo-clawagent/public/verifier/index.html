@@ -82,10 +82,10 @@ node cosmo-verify-maker.mjs --show-trust   # embedded pins (policy, gates, propo
 node cosmo-verify-maker.mjs --version      # version, trust hash, source sha3
 openssl dgst -sha3-256 cosmo-verify-maker.mjs   # must equal distributable.sha3 in PROVENANCE-maker.json</pre>
   <table>
-    <tr><td>version</td><td>1.0.3 (30.10.2026: declared own taker K1 = 0xa3d79667...358f5 pinned in maker-policy.v2.robinhood.json (new current pin set 0bfe3446, 920cc20e historical) and as customer.master in customer-policy.v1.json; 1.0.2 (30.10.2026): second current policy pin set maker-policy.v2.robinhood.json = Robinhood Chain demo USDG/SUPRA, customer policy + attestor pins, checks MB13 on-chain settlement of both legs and MB14 customer mandate; 1.0.1: policy pin set abfaebf4 appended, S_M 20000 SUPRA; 1.0.0 bundles stay verifiable under the historical pins)</td></tr>
-    <tr><td>distributable</td><td class="hash">sha3-256 0x2401ae1252c27e985cb27f72c0b9bd7356d2149ce0956e8d2c46086ca4871b4b</td></tr>
+    <tr><td>version</td><td>1.0.4 (01.11.2026: stock-token extension: third current policy pin set maker-policy.v3.robinhood-aapl.json = AAPL/USDG on Robinhood Chain (equity anchor DORA 6004 + Chainlink Robinhood AAPL/USD), customer-policy.v2.aapl.json pinned next to v1, MB14 verifies the customer policy a case names); 1.0.3 (30.10.2026: declared own taker K1 = 0xa3d79667...358f5 pinned in maker-policy.v2.robinhood.json (new current pin set 0bfe3446, 920cc20e historical) and as customer.master in customer-policy.v1.json; 1.0.2 (30.10.2026): second current policy pin set maker-policy.v2.robinhood.json = Robinhood Chain demo USDG/SUPRA, customer policy + attestor pins, checks MB13 on-chain settlement of both legs and MB14 customer mandate; 1.0.1: policy pin set abfaebf4 appended, S_M 20000 SUPRA; 1.0.0 bundles stay verifiable under the historical pins)</td></tr>
+    <tr><td>distributable</td><td class="hash">sha3-256 0x47a85ae640aa85f4aff3094268bb83d4059c814bb555c50512c09bfdc486061e</td></tr>
     <tr><td>trust_profile_id</td><td>cosmo-maker-trust-v1</td></tr>
-    <tr><td>trust_profile</td><td class="hash">sha3-256 0x19290992210bdfdc2e87bce609f0789c3a17190685c20d667cbad1375d2a6f94</td></tr>
+    <tr><td>trust_profile</td><td class="hash">sha3-256 0x8efbd5ae79237d4a9fe888219042a8f0e71b45d141b40e4c6ac1f25794386a98</td></tr>
     <tr><td>bundle schema</td><td>cosmo.killer-demo.maker-case-bundle.v1</td></tr>
   </table>
 </main>

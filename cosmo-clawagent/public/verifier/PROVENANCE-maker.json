@@ -1,22 +1,22 @@
 {
   "schema": "cosmo.standalone-verifier.provenance.v1",
   "verifier_name": "cosmo-standalone-maker-verifier",
-  "verifier_version": "1.0.3",
+  "verifier_version": "1.0.4",
   "bundle_schema": "cosmo.killer-demo.maker-case-bundle.v1",
   "node_engine_min": ">=18",
   "trust_profile_id": "cosmo-maker-trust-v1",
-  "trust_profile_hash": "0x19290992210bdfdc2e87bce609f0789c3a17190685c20d667cbad1375d2a6f94",
+  "trust_profile_hash": "0x8efbd5ae79237d4a9fe888219042a8f0e71b45d141b40e4c6ac1f25794386a98",
   "val_core_freeze": {
     "tag": "val-architecture-v1.7-frozen",
     "commit": "311f1ef"
   },
   "distributable": {
     "file": "cosmo-verify-maker.mjs",
-    "sha3": "0x2401ae1252c27e985cb27f72c0b9bd7356d2149ce0956e8d2c46086ca4871b4b"
+    "sha3": "0x47a85ae640aa85f4aff3094268bb83d4059c814bb555c50512c09bfdc486061e"
   },
   "build_inputs": {
-    "core-maker.src.mjs": "0x0dbd8e1381f9b7ef759d6cd3095cc03ab1a92cc261fcc190504528672fdaa2ea",
-    "build-maker.mjs": "0x054819f50c57d968a3ff472516d43f98636cd57f6b2393dfeb299004dd50ad81",
+    "core-maker.src.mjs": "0x63a7d17ec35bf4398826b8b8c82b3183a9ddcbd5794501a763b70162cbc2bc40",
+    "build-maker.mjs": "0x799173b70b56963f5271447a5389fc32162f04cedd4e6e67191ec1192c54c9d9",
     "typescript": "5.9.3"
   },
   "embedded_sources": {
@@ -40,22 +40,23 @@
     "src/authority/schema/validator.ts": "0x22b8298051858a7d4d476460887b2d79129ef57779bd46dfb6add1b133a0a01c",
     "src/executionCase/canonical.ts": "0x14eb80e961842c787caec9adb8c793def7315b638078f2fc0552308c25f9f129",
     "src/executionCase/types.ts": "0x049a50fd085450ac8923bae79b4d9e946f214ae3eb6bad6ca803319845a370e9",
-    "src/killerDemo/customer/customerVerify.ts": "0x83a31a7ebfdd9c01e83df4cbd66228defc169c80c094c53d0876b5ed33d8d827",
+    "src/killerDemo/customer/customerVerify.ts": "0x44d87a8d432f8efdd2ea6cdc203f5d6b28594191cb2d4f730d6c782dc12de698",
     "src/killerDemo/evm/evmLeg.ts": "0x9aa0da864ef2e393a112cf45b4ecf9ef3989b2f1bd7c8ca29129bc1c9b74c2f9",
-    "src/killerDemo/funds/preflight.ts": "0x2d243efb8d73452ce9052ff0cb180bba1e7194fcc0bd129dc3f526fd4aa236bb",
+    "src/killerDemo/funds/preflight.ts": "0x7ea8750877a7ac849bac57e73137a5aef18298eadf4e9521179feee1a2c54885",
     "src/killerDemo/maker/liveArm.ts": "0x2eda49e7de9631a5c28f4b55fbb3cce3ba7e8624afd32588a9190c547b29941d",
-    "src/killerDemo/maker/makerDecide.ts": "0xeb13fcb3c1bc5eb4b97792400dd02d22d6dc9d5e39a208f5da6cc15cdb912fea",
-    "src/killerDemo/maker/makerFunds.ts": "0xc667fc44b33db9a1d60a3da0ce3710ae39b54c82ac2f3b988ac510790bbae951",
+    "src/killerDemo/maker/makerDecide.ts": "0xc4883e836727d03e80f342915c79b140d56c4877753a8f9c77c17542e24b8707",
+    "src/killerDemo/maker/makerFunds.ts": "0x7998159060267fe0d0909b65125dcbfbc8964542a9454f4e8ebaf45c2eb9e398",
     "src/killerDemo/maker/makerIntent.ts": "0x38bcef9413bbe000985f3372d21a5905998999313f77380cb15d7ac36d22329f",
-    "src/killerDemo/maker/makerMarket.ts": "0x74a38336d8e4e5603d5289440a257eb7c28659b8ea63e08cedc8ce3a0879990b",
-    "src/killerDemo/maker/makerProfile.ts": "0xc05bffb5fd1374ad477f0bd89b66e7ac8bfa2eb8b4632e878da16c42206cfa0b",
-    "src/killerDemo/maker/makerWorld.ts": "0x22b1ac1245f0a15e3e7f6142ebcb2d93157d924d16a6c5cd3e7a29ddf3680a37",
+    "src/killerDemo/maker/makerMarket.ts": "0x1fa1b9ee645815c75bcaa85c446b82a81cd311b0f1a169f5cf8b85264d150451",
+    "src/killerDemo/maker/makerProfile.ts": "0xbfeb9e8f35c001fc5ab44645453e25bb9e9ffb1208c6fe065078cf5e6999c196",
+    "src/killerDemo/maker/makerWorld.ts": "0x29d681f0ee9ebacc55a4ff5eed608635da1631a0fdefdfe01dc1f45787743e2f",
     "src/killerDemo/maker/proofs.ts": "0x72af14f4d85036c5db2dc56036d38f21d959c3efa43a93a9e663b59da261a96a",
     "src/killerDemo/maker/rfq.ts": "0x8747825e9df30713fd064e66575333dd0127885a1f35d026722cb6c9f5a67fc9",
     "src/killerDemo/maker/stable.ts": "0xaf4afab6b0a7df59aa95ae5b9d98264bd14b2f873d746f6eb5369504060d5749",
     "src/killerDemo/proposer/intent.ts": "0x37abfa235c25a3f45937cf4d57fa2d2a880a6602a39247b206cde03346329bd1",
-    "src/killerDemo/val/coreWorld.ts": "0xe71135b6c48f842a0c2434628fdf7c74451ddc8821805b0fc203da3e46e2f443",
+    "src/killerDemo/val/coreWorld.ts": "0x16e5dd2243410444f5ab99b751ebe3368ed487fa41974de46d0ac2ada125203b",
     "src/killerDemo/val/decide.ts": "0x04bc642b6498d493cd11373bc83427c58f4ba39670f3308d45135e2b7a5aa0a9",
+    "src/killerDemo/val/equityMarket.ts": "0x00ad4c2527ab2843bf1e9c7bae85b548c7910865818f12499e49a434a65ad7a5",
     "src/killerDemo/val/fxProfile.ts": "0x7b54d04d297246b30d165b8712b95d33a93f4f887ed4aed5b3c67ef259548d1c",
     "src/killerDemo/val/market.ts": "0xb01addb0d38cb8cf924fc30ababdbae1f4ef48a0a9f73bf6ecda3659d75925d3"
   },
@@ -107,14 +108,16 @@
     "config/killer-demo/maker/history/maker-policy.v1.09bcaec3.json": "0xab6ff06fd0302c1373461a7df6dad8b088b1c85598fd84cf96492da2f3a53d8f",
     "config/killer-demo/maker/maker-policy.v2.robinhood.json": "0xcdb0c2cb631cffc0684df5f95a8d15f08c980890ef90537de5aae82066a84ecd",
     "config/killer-demo/maker/history/maker-policy.v2.robinhood.920cc20e.json": "0x5ca5f115e348fd4a7c799bc352bdfe499a072196d7bcc9a6d5e08acfdc5762c2",
+    "config/killer-demo/maker/maker-policy.v3.robinhood-aapl.json": "0x1310dfec021308e01b14d34b04d9e13942f4848d19978393303212595302be20",
     "config/killer-demo/funds-preflight.v1.json": "0xcf33f750d78353716f6cdc4e7a00dc8e0dbf219b3d43ab64da48a4ac8dcda22e",
     "config/killer-demo/proposer-key.pin.json": "0xa514ee01906f7b23f5d7f4ebc99e5c85704ea1100bdb0ac186f5d942684754b0",
     "config/killer-demo/customer/customer-policy.v1.json": "0x2d63c9cbc39aaf4549d6ae9ce943fcba428c966ab4b6ea09f6323dc0fa35e484",
+    "config/killer-demo/customer/customer-policy.v2.aapl.json": "0x20026fd5ad670f688f1ab5570890a3e3e950d30209d6f9fd3e9061345202c320",
     "config/killer-demo/customer/customer-engine.pin.json": "0x401c96461d6efcfc05f9ae6b8e15fc95faf5a2121d6cf2a9bb7803b2e88d04ba"
   },
   "how_to_verify": [
     "Recompute sha3-256 of cosmo-verify-maker.mjs and match distributable.sha3 (equals `node cosmo-verify-maker.mjs --version`.source_sha3).",
     "To reproduce from source: confirm build_inputs and embedded_sources/embedded_data hashes against the tree, run `node standalone-verifier/build-maker.mjs` with the pinned TypeScript version, and check the rebuilt file sha3 matches.",
-    "ACCEPT from this verifier means: the maker case bundle passes MB1..MB12 under trust profile cosmo-maker-trust-v1 (0x19290992210bdfdc2e87bce609f0789c3a17190685c20d667cbad1375d2a6f94); pins are append-only."
+    "ACCEPT from this verifier means: the maker case bundle passes MB1..MB12 under trust profile cosmo-maker-trust-v1 (0x8efbd5ae79237d4a9fe888219042a8f0e71b45d141b40e4c6ac1f25794386a98); pins are append-only."
   ]
 }
