@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="index,follow">
+<title>Tokenized stock on Robinhood Chain: AAPL for USDG, settled in the SupraFX ledger | COSMO</title>
+<meta name="description" content="Public evidence bundle: a cross-chain request-for-quote (USDG on Robinhood Chain for SUPRA on Supra) decided, quoted and filled by COSMO as maker, the first tokenized-stock fill (AAPL/USDG) under pinned rules, settled in the SupraFX ledger and re-verified offline; declared self-trade.">
+<style>
+  :root { color-scheme: dark; }
+  body { margin:0; background:#08090B; color:#F2F4F7; font:15px/1.6 ui-sans-serif,system-ui,sans-serif; }
+  main { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; }
+  h1,h2 { font-family: ui-monospace,Menlo,Consolas,monospace; letter-spacing:-0.01em; }
+  h1 { font-size: 1.7rem; margin: 0 0 6px; }
+  h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .22em; color:#A7B0BC; margin: 40px 0 12px; }
+  p { color:#A7B0BC; margin: 10px 0; }
+  .ink0 { color:#F2F4F7; }
+  code, .mono { font-family: ui-monospace,Menlo,Consolas,monospace; font-size: 12.5px; }
+  .chip { display:inline-block; border:1px solid rgba(70,214,160,.4); background:rgba(70,214,160,.1); color:#46D6A0; border-radius:999px; padding:3px 12px; font-family:ui-monospace,monospace; font-size:12px; margin:0 6px 6px 0; }
+  .chip.neutral { border-color:rgba(255,255,255,.14); background:rgba(255,255,255,.04); color:#A7B0BC; }
+  .chip.amber { border-color:rgba(224,164,88,.4); background:rgba(224,164,88,.08); color:#E0A458; }
+  .panel { border:1px solid rgba(255,255,255,.1); background:#0D0F13; border-radius:12px; padding:16px 18px; margin:14px 0; overflow-x:auto; }
+  table { border-collapse: collapse; width:100%; font-family:ui-monospace,monospace; font-size:12px; }
+  td, th { text-align:left; padding:5px 14px 5px 0; vertical-align:top; white-space:nowrap; }
+  th { color:#757E8C; font-weight:600; text-transform:uppercase; font-size:10.5px; letter-spacing:.08em; }
+  td.hash { color:#757E8C; }
+  td.num { text-align:right; }
+  a { color:#6E8BFF; text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  ul { color:#A7B0BC; padding-left: 1.2em; } li { margin: 6px 0; }
+  .warnbox { border:1px solid rgba(224,164,88,.35); background:rgba(224,164,88,.06); border-radius:12px; padding:14px 18px; margin:14px 0; }
+  .warnbox p { color:#A7B0BC; margin:6px 0; }
+  .breakall { word-break: break-all; white-space: normal; }
+  .big { display:flex; flex-wrap:wrap; gap:12px; margin:18px 0; }
+  .big div { flex:1 1 150px; border:1px solid rgba(255,255,255,.1); background:#0D0F13; border-radius:12px; padding:14px 16px; }
+  .big b { display:block; font-family:ui-monospace,monospace; font-size:1.5rem; color:#F2F4F7; }
+  .big span { font-size:12px; color:#757E8C; text-transform:uppercase; letter-spacing:.08em; }
+  .legs { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+  @media (max-width: 700px) { .legs { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <p class="mono" style="color:#757E8C; font-size:11px; text-transform:uppercase; letter-spacing:.2em;">COSMO · public evidence bundle</p>
+  <h1>Tokenized stock on Robinhood Chain: AAPL for USDG, settled in the SupraFX ledger</h1>
+  <p>
+    <span class="chip">1 FILL PROVEN</span>
+    <span class="chip neutral">2026-11-02 · 18:04:07–18:04:15 UTC (19:04 Berlin)</span>
+    <span class="chip neutral">Robinhood Chain 4663 · SupraFX · AAPL/USDG · maker side</span>
+    <span class="chip amber">declared self-trade: the customer account is COSMO's own second account</span>
+  </p>
+  <div class="warnbox">
+    <p class="ink0"><b>Read this first.</b> The customer account K1 that posted the request-for-quote is a second account of the same operator,
+      declared as such in the pinned maker policy (<code>counterparty.declared_own_taker</code>) and shown by the verifier in check V-2M
+      ("DECLARED OWN TAKER"). Before this window no stock-token RFQ had ever been posted on SupraFX (vault 0 AAPL at discovery on 2026-11-01).
+      This page proves that COSMO can price a tokenized stock from two independent feeds, decide under pinned rules, quote and fill, with the fill
+      settled in the venue ledger. It does not prove demand, and it is not a profit claim.</p>
+  </div>
+  <div class="big">
+    <div><b>0.005</b><span>AAPL bought by the maker (Robinhood tokenized Apple stock, 18 decimals)</span></div>
+    <div><b>1.680209</b><span>USDG paid by the maker (FP2, exact; lock 1.680378 minus 1 bp maker rebate)</span></div>
+    <div><b>48 / 48</b><span>checks on the live bundle, offline re-verify with verifier 1.0.5 (MB1–MB14)</span></div>
+    <div><b>platform</b><span>settlement mode of the RFQ (SupraFX ledger)</span></div>
+  </div>
+  <p class="ink0">
+    Flow: the customer agent (K1) issued a signed mandate "sell 0.005 AAPL on Robinhood Chain for USDG, not below 334.819980 USDG per AAPL" and posted it as
+    SubmitRfqV2; the venue RFQ id <i>is</i> the first 16 bytes of that mandate's hash (customer/cases/…/case.json). COSMO's maker runner saw the open RFQ in
+    the next tick, priced it base-priced from the Supra DORA feed AAPL_USD (index 6004) with an independent Chainlink "Robinhood AAPL / USD" cross-check read
+    on Robinhood Chain and the venue oracle as a consistency check, decided it against the pinned policy and gates (V-1M…V-9M, RESERVATION then FINAL),
+    placed one quote at 336.075478 USDG/AAPL (fair 337.774470 − 50 bps), and the venue ledger filled it (FP1–FP4 on the council balance snapshots).
+    <code>settlement_mode: platform</code> is the venue's standard: the customer holds the USDG and the maker holds the AAPL in their council accounts.
+    No off-venue transfer was made, by decision; MB13 reports "no settlement file".
+  </p>
+  <p>
+    Every file below is a byte-identical copy of the window directory, the case bundles and the customer case files. The records written from them are
+    <a href="stock-live-record.md">stock-live-record.md</a>, <a href="stock-shadow-record.md">stock-shadow-record.md</a> and
+    <a href="stock-discovery-record.md">stock-discovery-record.md</a> (German). Fingerprints are SHA-256; the list is also in <a href="index.txt">index.txt</a>.
+  </p>
+  <p><a href="/evidence/">All evidence folders</a> · <a href="/verifier/">The verifier program (cosmo-verify-maker.mjs 1.0.5)</a> · <a href="/evidence/robinhood-usdg-supra-001/">Previous step: USDG for SUPRA cross-chain</a></p>
+
+  <h2>Settlement (SupraFX ledger, platform mode)</h2>
+  <div class="legs">
+    <div class="panel">
+      <p class="ink0 mono">Customer K1 (sells AAPL, receives USDG)</p>
+      <table>
+        <tr><th>what</th><th>value</th></tr>
+        <tr><td>account</td><td class="hash breakall">0xa3d79667db7a465de6e13005c35417c9501fdc5b68bc5516024f0ebc23c358f5</td></tr>
+        <tr><td>sold</td><td class="num">0.005 AAPL</td></tr>
+        <tr><td>venue after the window</td><td class="num">0.000917552704837324 AAPL · 6.179537 USDG (was 0.005917552704837324 AAPL · 4.5 USDG; operator-mediated read, record)</td></tr>
+        <tr><td>mandate</td><td><a href="customer/cases/">customer/cases/</a> (signed, rfq_id = mandate hash prefix)</td></tr>
+      </table>
+    </div>
+    <div class="panel">
+      <p class="ink0 mono">Maker M2 (pays USDG, receives AAPL)</p>
+      <table>
+        <tr><th>what</th><th>value</th></tr>
+        <tr><td>account</td><td class="hash breakall">0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb</td></tr>
+        <tr><td>paid</td><td class="num">−1.680209 USDG (FP2, exact)</td></tr>
+        <tr><td>venue after the window</td><td class="num">0.005 AAPL · 1.319791 USDG (was 0 AAPL · 3.000000 USDG; live/funds-after-fill.json)</td></tr>
+        <tr><td>USDG backing (V-7M)</td><td>council attestation + own Robinhood Chain read of vault 0xC038…2D0e</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <h2>The fill (unit-exact)</h2>
+  <div class="panel"><table>
+    <tr><th>#</th><th>quote placed → proven (UTC)</th><th>RFQ</th><th>quote id</th><th class="num">rate USDG/AAPL</th><th class="num">USDG</th><th class="num">AAPL</th><th>proof</th><th>bundle</th></tr>
+    <tr><td>1</td><td>18:04:07 → 18:04:15</td><td>R-261102-180329-1c</td><td class="hash">1a9cb8ac</td><td class="num">336.075478</td><td class="num">−1.680209</td><td class="num">+0.005</td><td>PROVEN FP1–FP4</td><td><a href="cases/kdm-20261102T1803-1803291c-9f900f7d/">kdm-20261102T1803-1803…</a></td></tr>
+  </table></div>
+
+  <h2>Price anchor at the decision (V-5M)</h2>
+  <p class="mono" style="font-size:12.5px;">rate 336075478 = fair 337774470 - 50 bps (band >= 334396725); margin 8495 USDG units; chainlink 12 bps / 2610 s; venue 0 bps / 5723 ms; DORA 6004 age 6 s</p>
+  <p class="mono" style="font-size:12px; color:#757E8C;">Sources: Supra DORA AAPL_USD index 6004 (Supra mainnet view, 18 decimals) and Chainlink "Robinhood AAPL / USD" on Robinhood Chain (independent; proxy 0x6b22…2cd0, read via EVM RPC, provenance MB6); venue oracle AAPL/USDG only as a consistency check (it is the same DORA value). USDG = 1 USD is an assumption, documented in the policy. The staleness and deviation limits were calibrated on a 36-hour log of all three sources (stock-discovery-record.md, S0.2).</p>
+
+  <h2>Shadow windows the same day (0 capital, published)</h2>
+  <ul class="mono" style="font-size:12.5px;">
+    <li><span class="ink0">Window 1, 17:11 Berlin</span> — <a href="shadow/window-1-kdm-20261102T1611-16094897-4af3bc99/">bundle</a>: NOT_AUTHORIZED, fail-closed. The policy pin named only delegate v4 while v7 was active (F6). ACCEPT 27/27 under the historical pin a1759fb1 (verifier/shadow-window-1-…json). Price path, floor and funds were green.</li>
+    <li><span class="ink0">Window 2, 18:23 Berlin</span> — <a href="shadow/window-2-kdm-20261102T1723-17222310-41368746/">bundle</a>: FINAL AUTHORIZED after the repin (D-ST3: v7 in the shadow set, Chainlink tolerance 75 bps), would-quote above the floor, no quote placed. ACCEPT 35/35 under the current pin 8a987c19.</li>
+  </ul>
+
+  <h2>What was checked, and by what</h2>
+  <ul class="mono" style="font-size:12.5px;">
+    <li><span class="ink0">V-1M … V-9M (per RFQ)</span> — the maker gates: side and pair (COSMO pays USDG, receives AAPL), counterparty (declared own taker, named deviation), RFQ state incl. the chain tuple robinhood-mainnet → robinhood-mainnet, size vs. caps (18/6-decimal scale), fair price base-priced from DORA 6004 with the Chainlink cross-check and venue consistency, buyer floor, USDG backing, funds F1–F6 (F6: active delegates == pinned set), no earlier decision on the same RFQ.</li>
+    <li><span class="ink0">FP1–FP4 (per fill)</span> — RFQ matched with our quote accepted; USDG delta = lock minus rebate and AAPL delta = size, exact in units; no other asset moved; no lock left.</li>
+    <li><span class="ink0">MB1–MB12</span> — hashes, pins (current policy pin set maker-policy.v3.robinhood-aapl.json 8a987c19), intent signature, quote re-derivation, preflights, provenance (incl. the Chainlink <code>evm-rpc:4663:</code> reads, MB6), decision replay through the frozen VAL core, arm, execution, ledger, fill proof.</li>
+    <li><span class="ink0">MB13 / MB14</span> — both report "none claimed": no settlement file (ledger settlement by decision), no customer case file inside the bundle. The customer mandate is published next to the bundle under <code>customer/</code>; its rfq_id equals the trigger RFQ id of the bundle.</li>
+  </ul>
+  <p class="mono" style="font-size:12px;">Verifier runs (<a href="verifier/">verifier/</a>): published 1.0.5 on the live bundle ACCEPT 48/48, on the shadow bundles ACCEPT 27/27 and 35/35. Tamper probe: a copy of the live case with <code>live/fill-proof.json</code> usdg_delta × 10, not re-summed → REJECT, 2 of 48 (MB1 hash, MB12 fill proof).</p>
+
+  <h2>Limits (stated, not hidden)</h2>
+  <ul>
+    <li>Self-trade by declaration: both accounts belong to the operator. No market, no demand, no profit.</li>
+    <li>Settlement is the venue ledger (platform mode, operator-mediated council reads). No payout left the venue; nothing on Robinhood Chain moved for this fill. The AAPL token itself is a Robinhood-issued tokenized stock (ERC-20 0xaf3d…93f9, pausable, issuer-controlled); COSMO does not hold Apple shares.</li>
+    <li>Both legs are on Robinhood Chain; this is a stock-for-stablecoin trade on one chain, not a cross-chain trade (see the previous step for cross-chain).</li>
+    <li>USDG = 1 USD is an assumption; the price anchors are the DORA feed and Chainlink, which agreed within the pinned tolerance at the decision (V-5M above).</li>
+    <li>Delegate expiry and pair restriction follow the dApp constraints accepted in the GO text (pairs via caps, venue expiry), as before.</li>
+    <li>Pilot size: 0.005 AAPL (about 1.68 USD), one fill, one window. The runner's Telegram fill notice failed after the fill (a v1/v2 label in the message text); all evidence files were already written (stock-live-record.md, finding 1).</li>
+  </ul>
+
+  <h2>Files (byte-identical copies)</h2>
+  <p class="mono" style="font-size:12px;">Check integrity with: <code>sha256sum &lt;file&gt;</code> · each case folder carries its own <code>SHA256SUMS</code> · re-verify with <code>node cosmo-verify-maker.mjs cases/&lt;id&gt;</code>.</p>
+  <div class="panel"><table>
+    <tr><th>file</th><th>sha256</th></tr>
+    <tr><td><a href="stock-live-record.md">stock-live-record.md</a></td><td class="hash breakall">a8220401a7665e1c0c4db474645c181ca284fdcd3dd635ba034c0033458ade06</td></tr><tr><td><a href="stock-shadow-record.md">stock-shadow-record.md</a></td><td class="hash breakall">60594c538ec583ec3c061ff3cd5d03f95a0d64978d921c13ffd9e574f33392b4</td></tr><tr><td><a href="stock-discovery-record.md">stock-discovery-record.md</a></td><td class="hash breakall">a7c44fdb535bdf68f3cd29dd8f17f409bbf79da5bbffb77862d8f878705f97c9</td></tr><tr><td><a href="window/arm.json">window/arm.json</a></td><td class="hash breakall">7c64d6850281bc91c1bb3f77212f5afef7629459ae3fa7607233f5c84251d2b1</td></tr><tr><td><a href="window/decided.json">window/decided.json</a></td><td class="hash breakall">454a406fd4e85a74cde55dc5ddb9c223b8b9504ea3df40a1a0c772c6b0636502</td></tr><tr><td><a href="window/expiry-calc.json">window/expiry-calc.json</a></td><td class="hash breakall">534c9ea172fb1281f62e33216752ca8d8a8538088a51f8e6508e1bcab84b62d8</td></tr><tr><td><a href="window/fills-ledger.json">window/fills-ledger.json</a></td><td class="hash breakall">d7be06c20c4e8e51ed9c51ffec52f13af57ebee3f63eeeb03c660be82c9cf1f9</td></tr><tr><td><a href="window/go-check.json">window/go-check.json</a></td><td class="hash breakall">115f09dafe408f83f9d4ed704a5332583c93f5c0796708894e8e40d084b479de</td></tr><tr><td><a href="window/go-check.md">window/go-check.md</a></td><td class="hash breakall">6cc5b922011b878a4cb8e16b7bd8cc71cd5001e7903980cf5ad3b65ea7b7c784</td></tr><tr><td><a href="window/live.ndjson">window/live.ndjson</a></td><td class="hash breakall">74c9502804b3345f626b56353cf38cd952b4f56656cc8619e3f46c2cace06f4d</td></tr><tr><td><a href="window/policy-check.json">window/policy-check.json</a></td><td class="hash breakall">36addad30e2177b1610f070c1e73bd3eebf2305b82b9a8893200ced3a75376ea</td></tr><tr><td><a href="window/run-state.json">window/run-state.json</a></td><td class="hash breakall">e31c7d043a54a97d0b54fd03c75ebf9e596d0de6f5a1d93346d0a6ec0b6bae23</td></tr><tr><td><a href="window/tests.json">window/tests.json</a></td><td class="hash breakall">be73be393304108fb27df0bbe32eaef11a7781ef02034e3d3a76ed11cb0c6d58</td></tr><tr><td><a href="verifier/kdm-20261102T1803-1803291c-9f900f7d.json">verifier/kdm-20261102T1803-1803291c-9f900f7d.json</a></td><td class="hash breakall">8b987b32ad22096bb14060f6c57da02d4782adfa5fbc435e714bb5eb7e5590b6</td></tr><tr><td><a href="verifier/shadow-window-1-kdm-20261102T1611-16094897-4af3bc99.json">verifier/shadow-window-1-kdm-20261102T1611-16094897-4af3bc99.json</a></td><td class="hash breakall">c135f8da940e5c7979fd94293d1cfdebc2a52e46ac55e8fe084bba80aab63760</td></tr><tr><td><a href="verifier/shadow-window-2-kdm-20261102T1723-17222310-41368746.json">verifier/shadow-window-2-kdm-20261102T1723-17222310-41368746.json</a></td><td class="hash breakall">49c2bc5011c442f0e68951b65ff50dd7565eb810941f56ff2c8fae501658baa1</td></tr><tr><td><a href="verifier/tamper-probe-1.0.5-20261102.json">verifier/tamper-probe-1.0.5-20261102.json</a></td><td class="hash breakall">9474fd9cec8c3ac5be648411cc7293c488b8916dc7c40bb4aae2c103ad2d964d</td></tr><tr><td><a href="customer/rfqs-ledger.json">customer/rfqs-ledger.json</a></td><td class="hash breakall">92b70fe11d6fb77facdfc796e3a2481898356b99270dcd6af0a3cd4128c69008</td></tr><tr><td><a href="customer/customer.ndjson">customer/customer.ndjson</a></td><td class="hash breakall">f408995791ef57f474df8015422041d60cb73a849c17e8bb06853a908ebf80ee</td></tr><tr><td><a href="customer/cases/kdc-20261102T1803-5170c183/case.json">customer/cases/kdc-20261102T1803-5170c183/case.json</a></td><td class="hash breakall">ed34f7bbdc7cf55b9cee39a04ad9d6af1fa7818459c113f07c74082f12485b4a</td></tr><tr><td><a href="customer/cases/kdc-20261102T1803-5170c183/go.json">customer/cases/kdc-20261102T1803-5170c183/go.json</a></td><td class="hash breakall">6ef4d88c98f9bfb4dad0f74e13b196b895aa3a90f08b995daad43e0f0fb7e84b</td></tr><tr><td><a href="cases/kdm-20261102T1803-1803291c-9f900f7d/SHA256SUMS">cases/kdm-20261102T1803-1803291c-9f900f7d/SHA256SUMS</a></td><td class="hash breakall">594640ca8e83551cab68e4f0fc78a3ea055f57c5244944c19abee58bd3b82a37</td></tr><tr><td><a href="shadow/window-1-kdm-20261102T1611-16094897-4af3bc99/SHA256SUMS">shadow/window-1-kdm-20261102T1611-16094897-4af3bc99/SHA256SUMS</a></td><td class="hash breakall">58b211dbad766dbef4a4ecc4dbccc759bfb39a41c44334be38e3f6d76d56163e</td></tr><tr><td><a href="shadow/window-2-kdm-20261102T1723-17222310-41368746/SHA256SUMS">shadow/window-2-kdm-20261102T1723-17222310-41368746/SHA256SUMS</a></td><td class="hash breakall">c6206200130c751fe7a8169f94af03adcbb85d067b70deb38522b904c14e5ef8</td></tr>
+  </table></div>
+</main>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "schema": "cosmo.killer-demo.maker-m4-run.v1",
+  "status": "DONE",
+  "started_at": "2026-11-02T18:00:39.412Z",
+  "ticks": 4,
+  "errors": 1,
+  "consec_errors": 1,
+  "cases": [
+    {
+      "case_id": "kdm-20261102T1803-1803291c-9f900f7d",
+      "rfq": "R-261102-180329-1c",
+      "decision": "AUTHORIZED",
+      "stage": "FINAL",
+      "verify": "ACCEPT"
+    }
+  ],
+  "stop_reason": "1/1 fills",
+  "attempt": null
+}

@@ -1,0 +1,19 @@
+{
+  "schema": "cosmo.killer-demo.maker-live-arm.v1",
+  "go_text": "GO M4 02.11. Stock-Token P4 Live: AAPL/USDG beide Legs robinhood-mainnet, K1 0xa3d79667 verkauft 0,005 AAPL (deklarierter eigener Taker), M2 zahlt USDG, max 1 Fill, Settlement SupraFX-Ledger platform mode, mit dApp-Abweichungen (pairs via caps, venue expiry; Revoke nach dem Fenster) - GO Rene 02.11. 18:53 MEZ 'Zeitfenster jetzt' + Runner-Start per !-Zeile 18:56 MEZ im Chat",
+  "go_at": "2026-11-02T18:00:13.196Z",
+  "window_start": "2026-11-02T18:00:00Z",
+  "window_end": "2026-11-02T19:00:00Z",
+  "maker_delegate_pubkey": "1c6cd3588e8e740a149f348ee52c088784c173718b658157bdcec587e610315d",
+  "master": "0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb",
+  "max_fills": 1,
+  "created_by": "live.ts arm (COSMO on GO Rene)",
+  "allowed_other_delegates": [
+    "d4098132bfbc64c0c778dba61ed5f048d9d675195eb01b8b6255d475ece04619"
+  ],
+  "deviations_accepted": [
+    "pairs_via_caps",
+    "venue_expiry"
+  ],
+  "bound_commit": "832a3e6b472168c88d21895465f9926dee610ba0"
+}

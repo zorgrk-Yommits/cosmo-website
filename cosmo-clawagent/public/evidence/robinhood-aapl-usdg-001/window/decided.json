@@ -1,0 +1,8 @@
+{
+  "schema": "cosmo.killer-demo.maker-decided.v2",
+  "rfq_ids": [
+    "1e7f5637-b4fb-02cb-e41f-bbe5a68a6c8a"
+  ],
+  "executed_fills": 1,
+  "read_failures": {}
+}

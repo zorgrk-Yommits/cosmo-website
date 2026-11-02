@@ -1,0 +1,44 @@
+{
+  "schema": "cosmo.killer-demo.customer-rfqs.v1",
+  "entries": [
+    {
+      "status": "POSTED",
+      "at": "2026-11-02T16:09:37.449Z",
+      "case_id": "kdc-20261102T1609-29c16f53",
+      "mandate_hash": "0x1f765e995896a18efde859d97f69365922291b66afe29608c16689ab09a1a104",
+      "rfq_id": "1f765e995896a18efde859d97f693659",
+      "detail": {
+        "submit": {
+          "ok": true,
+          "code": null
+        }
+      }
+    },
+    {
+      "status": "POSTED",
+      "at": "2026-11-02T17:22:12.585Z",
+      "case_id": "kdc-20261102T1722-c127360e",
+      "mandate_hash": "0xcab0f29f4634b64966b805e56ec8e08cf5e7dbc9a345983b47d27fad65f7bdbd",
+      "rfq_id": "cab0f29f4634b64966b805e56ec8e08c",
+      "detail": {
+        "submit": {
+          "ok": true,
+          "code": null
+        }
+      }
+    },
+    {
+      "status": "POSTED",
+      "at": "2026-11-02T18:03:18.118Z",
+      "case_id": "kdc-20261102T1803-5170c183",
+      "mandate_hash": "0x1e7f5637b4fb02cbe41fbbe5a68a6c8aab1aab554a800a758212de9850787651",
+      "rfq_id": "1e7f5637b4fb02cbe41fbbe5a68a6c8a",
+      "detail": {
+        "submit": {
+          "ok": true,
+          "code": null
+        }
+      }
+    }
+  ]
+}

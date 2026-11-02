@@ -1,0 +1,83 @@
+{
+  "schema": "cosmo.killer-demo.maker-proposed-intent.v1",
+  "trigger": {
+    "kind": "foreign_open_rfq",
+    "rfq": {
+      "id": "cab0f29f-4634-b649-66b8-05e56ec8e08c",
+      "display_id": "R-261102-172223-10",
+      "taker_address": "0xa3d79667db7a465de6e13005c35417c9501fdc5b68bc5516024f0ebc23c358f5",
+      "pair": "AAPL/USDG",
+      "status": "open",
+      "source_chain": "robinhood-mainnet",
+      "dest_chain": "robinhood-mainnet",
+      "settlement_mode": "platform",
+      "auto_accept": true,
+      "allow_partial_fills": false,
+      "auto_accept_target_rate": "334.7289",
+      "size_base_units": "5000000000000000",
+      "remaining_size_base_units": "5000000000000000",
+      "total_filled_base_units": "0",
+      "fill_count": "0",
+      "expires_at_batch": "14782334",
+      "council_batch_number": "14781748",
+      "reference_price": "338.11",
+      "created_at": "2026-11-02T17:22:23.320068+00:00",
+      "quote_count": "0"
+    },
+    "rfq_row_hash": "0x2743f596f8ded8a99d556f05b10580e048fe991f5c9825e7b93c0dbd288809dc",
+    "list_source": "http-get:/api/suprafx/rfqs?scope=platform&status=open&limit=200",
+    "list_raw_sha256": "88ccf737cc6def497b496880a4fd37d5dbdc96883c10c4de8bdf774a99c6e8d1",
+    "seen_ms": 1793640201762
+  },
+  "quote": {
+    "rfq_id": "cab0f29f-4634-b649-66b8-05e56ec8e08c",
+    "pair": "AAPL/USDG",
+    "fill_size_base": "5000000000000000",
+    "rate_bft": "336329900",
+    "lock_quants_ceil": "1681650",
+    "expires_in_batches": 60,
+    "fair_rate_bft": "338020000",
+    "ref_1e18": "338020000000000000000",
+    "margin_bps": 50,
+    "quote_eval_hash": "0x2938fbcae8f4d35173957461fa599ccd75ce0c7b1294bfbc0848c8e135009be1"
+  },
+  "intel_context": {
+    "status": "present",
+    "run_sha256": "66eb4b9a1f1a2a2876c96f0162e27c1c1608016c9365f96f792a856b6dbed2a6",
+    "as_of_hourly_bucket": "2026-11-02T16:00:00Z",
+    "ledger_sha256": "5f182b392009903897bc8198f7bdcca6ce1f3b3e5064a2f100202e21d1f671e7",
+    "note": "information only, never a gate or trigger (D-M1)"
+  },
+  "intent": {
+    "schema": "cosmo.execution-case.intent.v2",
+    "mode": "shadow",
+    "action": {
+      "kind": "fx.quote_sell_base.v1",
+      "params": {
+        "pair": {
+          "base_chain": "robinhood-mainnet",
+          "base_symbol": "AAPL",
+          "quote_chain": "robinhood-mainnet",
+          "quote_symbol": "USDG"
+        },
+        "side": "maker_pays_quote",
+        "rfq_id": "cab0f29f-4634-b649-66b8-05e56ec8e08c",
+        "fill_size_base": "5000000000000000",
+        "rate_bft": "336329900",
+        "lock_quants_ceil": "1681650"
+      }
+    },
+    "ttl_ms": 60000,
+    "principal_ref": "principal:killer-demo-001",
+    "agent_ref": "proposer:killer-demo-001"
+  },
+  "config_pins": {
+    "maker_policy_sha256": "8a987c198b88e507de52973fa95ba113e30e0aaefcbae27e2308569c9e7e81a3",
+    "maker_gates_sha256": "2d97f3f4a24873038c8bed4e2fa5bb18a7e2f454b3574186df7b3bd62855263a"
+  },
+  "proposer": {
+    "key": "e0c877c7ba331f329b348bedc04257a495a5eb3573dd4842c2a99b9b58fb30a0",
+    "signature": "918512c0aed95b78f09a631a192a794c54540d79b07348d1c68046bd7ea1ccf515ec6f16ff4a621f76595716433d0aaa5fc09781ca54ae2e17dd5b8b8407af0f"
+  },
+  "hash": "0x413687465e05816cce9e8dce1d6a58aeda08eb03e609252c185e6e5d7f5c6e06"
+}

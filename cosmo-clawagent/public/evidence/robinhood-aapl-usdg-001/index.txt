@@ -1,0 +1,50 @@
+ROBINHOOD-AAPL-USDG-001 -- public evidence bundle (SupraFX, tokenized stock AAPL for USDG on Robinhood Chain 4663, COSMO as maker, 2026-11-02 18:00-19:00 UTC)
+
+One armed window under one written GO (limit 1 fill). The customer account K1 (the operator's own
+second account, declared in the pinned maker policy) sold 0.005 AAPL (Robinhood tokenized Apple stock)
+for USDG. COSMO's maker decided the RFQ FINAL AUTHORIZED against a pinned policy whose price anchor is
+the Supra DORA feed AAPL_USD (index 6004) with an independent Chainlink cross-check on Robinhood Chain,
+quoted once, and the venue ledger filled it; the fill is proven unit-exact (FP1-FP4). Settlement:
+SupraFX ledger, platform mode (the venue's standard; no off-venue transfer, by decision). 4 ticks, run DONE 1/1.
+
+  fill 1  18:04:07Z -> 18:04:15Z  R-261102-180329-1c  quote 1a9cb8ac  -1.680209 USDG  +0.005 AAPL  rate 336.075478 USDG/AAPL (fair 337.774470 - 50 bps, floor 334.819980)
+  V-5M at the decision: rate 336075478 = fair 337774470 - 50 bps (band >= 334396725); margin 8495 USDG units; chainlink 12 bps / 2610 s; venue 0 bps / 5723 ms; DORA 6004 age 6 s
+
+Two shadow windows (0 capital) the same day, both published here under shadow/:
+  window 1 17:11 Berlin: NOT_AUTHORIZED (fail-closed: policy pin named only delegate v4, v7 was active) - ACCEPT 27/27 under the historical pin a1759fb1
+  window 2 18:23 Berlin: FINAL AUTHORIZED, would-quote above the floor, no quote placed - ACCEPT 35/35 under the current pin 8a987c19
+
+Offline re-verification with the published verifier 1.0.5 (heros.cloud/verifier/, cosmo-verify-maker.mjs
+sha3-256 0xd8445beae5c565de93a41412dd1530f875149fa7d78d233321b4a05fdc28e41b): live bundle ACCEPT 48/48;
+tampered copy (live/fill-proof.json usdg_delta x10, not re-summed): REJECT, 2 of 48 (MB1, MB12).
+Self-attestation by the COSMO runner. Declared self-trade: both accounts belong to the operator
+(K1 0xa3d79667db7a465de6e13005c35417c9501fdc5b68bc5516024f0ebc23c358f5, maker M2 0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb). No foreign taker, no demand claim, no profit claim.
+AAPL on Robinhood Chain is a tokenized stock issued by Robinhood; COSMO holds 0.005 of it in its venue account after the fill.
+
+Byte-identical copies of the window directory, the case bundles and the customer case files.
+Check integrity with: sha256sum <file>; per case: cd <case> && sha256sum -c SHA256SUMS
+
+a8220401a7665e1c0c4db474645c181ca284fdcd3dd635ba034c0033458ade06  stock-live-record.md
+60594c538ec583ec3c061ff3cd5d03f95a0d64978d921c13ffd9e574f33392b4  stock-shadow-record.md
+a7c44fdb535bdf68f3cd29dd8f17f409bbf79da5bbffb77862d8f878705f97c9  stock-discovery-record.md
+7c64d6850281bc91c1bb3f77212f5afef7629459ae3fa7607233f5c84251d2b1  window/arm.json
+454a406fd4e85a74cde55dc5ddb9c223b8b9504ea3df40a1a0c772c6b0636502  window/decided.json
+534c9ea172fb1281f62e33216752ca8d8a8538088a51f8e6508e1bcab84b62d8  window/expiry-calc.json
+d7be06c20c4e8e51ed9c51ffec52f13af57ebee3f63eeeb03c660be82c9cf1f9  window/fills-ledger.json
+115f09dafe408f83f9d4ed704a5332583c93f5c0796708894e8e40d084b479de  window/go-check.json
+6cc5b922011b878a4cb8e16b7bd8cc71cd5001e7903980cf5ad3b65ea7b7c784  window/go-check.md
+74c9502804b3345f626b56353cf38cd952b4f56656cc8619e3f46c2cace06f4d  window/live.ndjson
+36addad30e2177b1610f070c1e73bd3eebf2305b82b9a8893200ced3a75376ea  window/policy-check.json
+e31c7d043a54a97d0b54fd03c75ebf9e596d0de6f5a1d93346d0a6ec0b6bae23  window/run-state.json
+be73be393304108fb27df0bbe32eaef11a7781ef02034e3d3a76ed11cb0c6d58  window/tests.json
+8b987b32ad22096bb14060f6c57da02d4782adfa5fbc435e714bb5eb7e5590b6  verifier/kdm-20261102T1803-1803291c-9f900f7d.json
+c135f8da940e5c7979fd94293d1cfdebc2a52e46ac55e8fe084bba80aab63760  verifier/shadow-window-1-kdm-20261102T1611-16094897-4af3bc99.json
+49c2bc5011c442f0e68951b65ff50dd7565eb810941f56ff2c8fae501658baa1  verifier/shadow-window-2-kdm-20261102T1723-17222310-41368746.json
+9474fd9cec8c3ac5be648411cc7293c488b8916dc7c40bb4aae2c103ad2d964d  verifier/tamper-probe-1.0.5-20261102.json
+92b70fe11d6fb77facdfc796e3a2481898356b99270dcd6af0a3cd4128c69008  customer/rfqs-ledger.json
+f408995791ef57f474df8015422041d60cb73a849c17e8bb06853a908ebf80ee  customer/customer.ndjson
+ed34f7bbdc7cf55b9cee39a04ad9d6af1fa7818459c113f07c74082f12485b4a  customer/cases/kdc-20261102T1803-5170c183/case.json
+6ef4d88c98f9bfb4dad0f74e13b196b895aa3a90f08b995daad43e0f0fb7e84b  customer/cases/kdc-20261102T1803-5170c183/go.json
+594640ca8e83551cab68e4f0fc78a3ea055f57c5244944c19abee58bd3b82a37  cases/kdm-20261102T1803-1803291c-9f900f7d/SHA256SUMS
+58b211dbad766dbef4a4ecc4dbccc759bfb39a41c44334be38e3f6d76d56163e  shadow/window-1-kdm-20261102T1611-16094897-4af3bc99/SHA256SUMS
+c6206200130c751fe7a8169f94af03adcbb85d067b70deb38522b904c14e5ef8  shadow/window-2-kdm-20261102T1723-17222310-41368746/SHA256SUMS

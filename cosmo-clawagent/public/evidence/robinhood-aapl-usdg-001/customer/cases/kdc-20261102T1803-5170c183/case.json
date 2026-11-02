@@ -1,0 +1,139 @@
+{
+  "schema": "cosmo.killer-demo.customer-case.v1",
+  "case_id": "kdc-20261102T1803-5170c183",
+  "at": "2026-11-02T18:03:18.117Z",
+  "policy_pin": {
+    "name": "customer-policy.v2.aapl.json",
+    "sha256": "1dca39ec1c66ebe5caaaac3247e40594ae0a3fa7dde190070811f4fbe61c48c2"
+  },
+  "engine_pubkey": "094f2c5d7081dd75e5502f1e597ee64dacf4619676ba56bdbaee2401550fa45d",
+  "delegate": {
+    "pubkey_hex": "2b6bdb2bc34cf19f87d6589a043e8a632c98b46db8b9a843efba7b7bc164b5ea",
+    "address_hex": "ababfabebf6125e2b2a11202d80ff7b99b5f9212e9a5a5f06e855ee3f87c0ff1"
+  },
+  "customer_master": "0xa3d79667db7a465de6e13005c35417c9501fdc5b68bc5516024f0ebc23c358f5",
+  "intent": {
+    "schema": "cosmo.execution-case.intent.v2",
+    "mode": "micro_live",
+    "action": {
+      "kind": "fx.sell_base_rfq.v1",
+      "params": {
+        "pair": {
+          "base_chain": "robinhood-mainnet",
+          "base_symbol": "AAPL",
+          "quote_chain": "robinhood-mainnet",
+          "quote_symbol": "USDG"
+        },
+        "side": "sell_base",
+        "size_base": "5000000000000000",
+        "min_rate_bft": "334819980",
+        "settlement_mode": "platform",
+        "auto_accept": true,
+        "allow_partial_fills": false
+      }
+    },
+    "ttl_ms": 1800000,
+    "principal_ref": "principal:robinhood-demo-customer-k1",
+    "agent_ref": "customer-agent:robinhood-demo-002"
+  },
+  "mandate": {
+    "schema": "cosmo.execution-case.mandate.v2",
+    "case_id": "kdc-20261102T1803-5170c183",
+    "nonce": "8b8df475c34e2ce2cce4881182a2ec4e",
+    "principal_ref": "principal:robinhood-demo-customer-k1",
+    "agent_ref": "customer-agent:robinhood-demo-002",
+    "execution_key_ref": "suprafx-delegate:ababfabebf6125e2b2a11202d80ff7b99b5f9212e9a5a5f06e855ee3f87c0ff1",
+    "mode": "micro_live",
+    "action": {
+      "kind": "fx.sell_base_rfq.v1",
+      "params": {
+        "pair": {
+          "base_chain": "robinhood-mainnet",
+          "base_symbol": "AAPL",
+          "quote_chain": "robinhood-mainnet",
+          "quote_symbol": "USDG"
+        },
+        "side": "sell_base",
+        "size_base": "5000000000000000",
+        "min_rate_bft": "334819980",
+        "settlement_mode": "platform",
+        "auto_accept": true,
+        "allow_partial_fills": false,
+        "pair_id_hex": "12c92144903b7dae62aadbf400663f2d4631310676b79a029ea630ceef2cb4b9",
+        "reference_rate_bft": "338202000",
+        "oracle": {
+          "source": "http-get:/api/oracle?pair=AAPL%2FUSDG (base aapl_usd = USD per AAPL, USDG = 1 USD; == supra-rpc:view:0xe3948c9e3a24c51c4006ef2acc44606055117d021158f320062df099c4a94150::supra_oracle_storage::get_prices([6004]) within 0 bps, DORA sha256 3c29882389a65e92)",
+          "raw_sha256": "051358206a56ec014eb9743f9ffaebc924cdf82e600f93d0c2d07bc79a030776"
+        },
+        "expires_in_batches": 600
+      }
+    },
+    "exposure": {
+      "unit": "AAPL-base-units",
+      "amount": "5000000000000000"
+    },
+    "issued_at": 1793642598115,
+    "expires_at": 1793644398115,
+    "policy_hash": "1dca39ec1c66ebe5caaaac3247e40594ae0a3fa7dde190070811f4fbe61c48c2"
+  },
+  "mandate_sig": {
+    "attestor_pubkey": "094f2c5d7081dd75e5502f1e597ee64dacf4619676ba56bdbaee2401550fa45d",
+    "signature": "bb5d1d3a9b69a03d4d3dd5ed2368ff30681da1f1fccb3b11eb4fecc34bbe5bd3936a99c0dc74f079389fc5bb984115d06695085a9d2a4fde95fecbd311bf840d"
+  },
+  "mandate_hash": "0x1e7f5637b4fb02cbe41fbbe5a68a6c8aab1aab554a800a758212de9850787651",
+  "rfq_id": "1e7f5637b4fb02cbe41fbbe5a68a6c8a",
+  "terms": {
+    "floor_rate_bft": "334819980",
+    "reference_rate_bft": "338202000",
+    "oracle_source": "http-get:/api/oracle?pair=AAPL%2FUSDG (base aapl_usd = USD per AAPL, USDG = 1 USD; == supra-rpc:view:0xe3948c9e3a24c51c4006ef2acc44606055117d021158f320062df099c4a94150::supra_oracle_storage::get_prices([6004]) within 0 bps, DORA sha256 3c29882389a65e92)",
+    "oracle_raw_sha256": "051358206a56ec014eb9743f9ffaebc924cdf82e600f93d0c2d07bc79a030776",
+    "pair_id_hex": "12c92144903b7dae62aadbf400663f2d4631310676b79a029ea630ceef2cb4b9",
+    "expires_in_batches": 600
+  },
+  "submit": {
+    "lifecycle": "posted",
+    "at": "2026-11-02T18:03:30.819Z",
+    "event": {
+      "kind": "SubmitRfqV2",
+      "payload": {
+        "user": "0xababfabebf6125e2b2a11202d80ff7b99b5f9212e9a5a5f06e855ee3f87c0ff1",
+        "pair": "12c92144903b7dae62aadbf400663f2d4631310676b79a029ea630ceef2cb4b9",
+        "base_asset": "0xeb163a6c925a3b4f117da05db1a3cde635683ed482c41060dcd7526150b228b2",
+        "quote_asset": "0x84f2da2b1609a29182ed95020b895b23efdd898b9a3f58da9ee6f7bb59e8ce18",
+        "size": "5000000000000000",
+        "reference_price": "338202000",
+        "auto_accept": "true",
+        "auto_accept_target_rate": "334819980",
+        "allow_partial_fills": "false",
+        "min_fill_size": "0",
+        "expires_at_ms": "1793644398115",
+        "rfq_id": "1e7f5637b4fb02cbe41fbbe5a68a6c8a",
+        "user_sequence_number": "2",
+        "settlement_mode": "Platform",
+        "expires_at_batch": "14786248"
+      }
+    },
+    "envelope_bcs_hex": "ec0124ababfabebf6125e2b2a11202d80ff7b99b5f9212e9a5a5f06e855ee3f87c0ff112c92144903b7dae62aadbf400663f2d4631310676b79a029ea630ceef2cb4b9eb163a6c925a3b4f117da05db1a3cde635683ed482c41060dcd7526150b228b284f2da2b1609a29182ed95020b895b23efdd898b9a3f58da9ee6f7bb59e8ce180080e03779c311000000000000000000908d2814000000000000000000000000018cf2f41300000000000000000000000000000000000000000000000000000000002386899da10100001e7f5637b4fb02cbe41fbbe5a68a6c8a020000000000000000c89ee100000000002b6bdb2bc34cf19f87d6589a043e8a632c98b46db8b9a843efba7b7bc164b5ea7ebeb7f543e8b833926c0d481e4ffb4d6a4080d822eb15fee2aeb72b2b006bf0e09e469271538a0ba07e170727c23801f6d5ebdb3159806040dfd8cae187f907",
+    "submit": {
+      "ok": true,
+      "code": null
+    }
+  },
+  "rfq_row": {
+    "id": "1e7f5637-b4fb-02cb-e41f-bbe5a68a6c8a",
+    "display_id": "R-261102-180329-1c",
+    "pair": "AAPL/USDG",
+    "source_chain": "robinhood-mainnet",
+    "dest_chain": "robinhood-mainnet",
+    "size": "0.005",
+    "remaining_size": "0.005",
+    "total_filled": "0",
+    "fill_count": "0",
+    "status": "open",
+    "allow_partial_fills": false,
+    "min_fill_size": "0",
+    "reference_price": "338.202",
+    "expires_at_batch": "14786248",
+    "council_batch_number": "14785663"
+  }
+}

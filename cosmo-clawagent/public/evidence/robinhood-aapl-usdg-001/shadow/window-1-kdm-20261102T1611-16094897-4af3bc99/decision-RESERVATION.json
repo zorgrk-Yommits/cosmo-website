@@ -1,0 +1,2127 @@
+{
+  "schema": "cosmo.killer-demo.maker-decision-archive.v1",
+  "stage": "RESERVATION",
+  "authorize_input": {
+    "bundle": {
+      "grant": {
+        "schema": "cosmo.authority.grant.v1",
+        "generation": 1,
+        "profile": "cosmo.killer-demo.profile.fx-quote-sell-base-micro.v1",
+        "issuer": {
+          "principal_id": "principal:killer-demo-principal"
+        },
+        "executor": {
+          "principal_id": "principal:killer-demo-executor",
+          "signer_id": "supra:8:0x6379678b03f4c6329c9de90fe9216ea404565510e8d0010060fb0658a449b1fe"
+        },
+        "generation_authority": {
+          "principal_id": "principal:killer-demo-principal"
+        },
+        "history_authority": {
+          "principal_id": "principal:killer-demo-authorizer"
+        },
+        "revocation_authority": {
+          "principal_id": "principal:killer-demo-revocation"
+        },
+        "reconciliation_authority": {
+          "principal_id": "principal:killer-demo-executor"
+        },
+        "proof_builder": {
+          "principal_id": "principal:killer-demo-executor"
+        },
+        "watch_authority": {
+          "mode": "permissionless_with_external_evidence",
+          "expected_publication_interval": {
+            "kind": "seconds",
+            "value": "21600"
+          }
+        },
+        "supersedes": null,
+        "parent_grant": null,
+        "authority_origin": "ROOT",
+        "root_authority_basis": {
+          "schema": "cosmo.val.root-basis.v1",
+          "basis_kind": "resource_owner_onchain",
+          "trust_domain": "cosmo.killer-demo.shadow.v1",
+          "resource_relations": [
+            {
+              "resource": "evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+              "relation": "owner",
+              "principal_id": "principal:killer-demo-principal",
+              "evidence_ref": "ev:read:usdg-vault-balance@57762747",
+              "evidence_class": "externally_verifiable",
+              "as_of": {
+                "kind": "supra_block",
+                "number": "57762747",
+                "hash": "0xba4b0f0962536a24181c6fbfac7ebf758aee4a5cc7d267e6f4289733bdbd826f"
+              },
+              "attestation": null
+            },
+            {
+              "resource": "evm:4663:0xaf3d76f1834a1d425780943c99ea8a608f8a93f9",
+              "relation": "owner",
+              "principal_id": "principal:killer-demo-principal",
+              "evidence_ref": "ev:read:aapl-vault-balance@57762747",
+              "evidence_class": "externally_verifiable",
+              "as_of": {
+                "kind": "supra_block",
+                "number": "57762747",
+                "hash": "0xba4b0f0962536a24181c6fbfac7ebf758aee4a5cc7d267e6f4289733bdbd826f"
+              },
+              "attestation": null
+            }
+          ],
+          "not_claimed": [
+            "legal title",
+            "beneficial ownership beyond on-chain control",
+            "resources outside resource_relations",
+            "shadow: the issuer key is a TEST key, not the principal account key"
+          ]
+        },
+        "completeness_rail": {
+          "kind": "supra_account_sequence",
+          "chain_id": "8",
+          "account": "0x6379678b03f4c6329c9de90fe9216ea404565510e8d0010060fb0658a449b1fe"
+        },
+        "authority_envelope": {
+          "schema": "cosmo.val.envelope.v1",
+          "issuer": {
+            "principal_id": "principal:killer-demo-principal"
+          },
+          "executor": {
+            "principal_id": "principal:killer-demo-executor",
+            "signer_id": "supra:8:0x6379678b03f4c6329c9de90fe9216ea404565510e8d0010060fb0658a449b1fe"
+          },
+          "domain": {
+            "completeness_rail": {
+              "kind": "supra_account_sequence",
+              "chain_id": "8",
+              "account": "0x6379678b03f4c6329c9de90fe9216ea404565510e8d0010060fb0658a449b1fe"
+            },
+            "resources": [
+              "evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+              "evm:4663:0xaf3d76f1834a1d425780943c99ea8a608f8a93f9"
+            ]
+          },
+          "actions": [
+            "fx.quote_sell_base.v1"
+          ],
+          "validity": {
+            "effective_from": {
+              "kind": "supra_block",
+              "number": "57762747",
+              "hash": "0xba4b0f0962536a24181c6fbfac7ebf758aee4a5cc7d267e6f4289733bdbd826f"
+            },
+            "valid_until": {
+              "kind": "supra_block",
+              "number": "58552797",
+              "hash": "0x0980d56f4a3ef0f1fdfd6c93502264cec4ae01050e7dbc6393ed4ace5e921095"
+            },
+            "time_authority": "supra_block"
+          },
+          "authority_freshness": {
+            "max_head_lag": {
+              "kind": "supra_blocks",
+              "value": "120"
+            },
+            "on_stale": "UNDECIDABLE"
+          },
+          "value_bounds": [
+            {
+              "dimension": "max_value_per_action",
+              "unit": "micro:evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+              "amount": "2000000",
+              "applies_to": [
+                "fx.quote_sell_base.v1"
+              ]
+            },
+            {
+              "dimension": "max_cumulative_value",
+              "unit": "micro:evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+              "amount": "2000000",
+              "applies_to": [
+                "fx.quote_sell_base.v1"
+              ]
+            }
+          ],
+          "delegation": {
+            "allowed": false,
+            "max_depth": 0
+          },
+          "revocation": {
+            "revocation_authority": {
+              "principal_id": "principal:killer-demo-revocation"
+            },
+            "suspension_authority": {
+              "principal_id": "principal:killer-demo-revocation"
+            },
+            "surface": "ONCHAIN_REGISTRY",
+            "canonicality": {
+              "kind": "supra_account_resource",
+              "chain_id": "8",
+              "committer": "principal:killer-demo-revocation"
+            }
+          },
+          "profile_constraints": [],
+          "not_bounded": []
+        },
+        "resources": [
+          "evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+          "evm:4663:0xaf3d76f1834a1d425780943c99ea8a608f8a93f9"
+        ],
+        "capabilities": [
+          {
+            "capability_id": "fx-quote-sell-1",
+            "action": "fx.quote_sell_base.v1",
+            "bounds": {
+              "envelope_refs": [
+                "max_value_per_action#fx.quote_sell_base.v1",
+                "max_cumulative_value#fx.quote_sell_base.v1"
+              ]
+            },
+            "consumption_spec": {
+              "mode": "single_use",
+              "boundary": "irreversible_commit",
+              "on_reconciled_absent": "CONSUME",
+              "contaminates": [
+                "effect_resolved",
+                "resource_control_resolved"
+              ]
+            },
+            "delivery_semantics": "at_most_once",
+            "external_contingency": null,
+            "window": null
+          }
+        ],
+        "validity": {
+          "effective_from": {
+            "kind": "supra_block",
+            "number": "57762747",
+            "hash": "0xba4b0f0962536a24181c6fbfac7ebf758aee4a5cc7d267e6f4289733bdbd826f"
+          },
+          "valid_until": {
+            "kind": "supra_block",
+            "number": "58552797",
+            "hash": "0x0980d56f4a3ef0f1fdfd6c93502264cec4ae01050e7dbc6393ed4ace5e921095"
+          },
+          "time_authority": "supra_block"
+        },
+        "termination_spec": {
+          "terminal_triggers": [
+            "EXECUTED",
+            "EXPIRED",
+            "REVOKED"
+          ],
+          "required_predicates": [
+            "effect_resolved",
+            "asset_authority_resolved",
+            "grant_authority_ended",
+            "resource_control_resolved",
+            "retrospective_completeness",
+            "signer_capability_classified"
+          ],
+          "breach_predicates": [
+            "effect_within_envelope"
+          ],
+          "exempt_capabilities": [],
+          "profile_triggers": []
+        },
+        "recovery_spec": {
+          "uncertain_effect": {
+            "readback_deadline": {
+              "kind": "blocks",
+              "value": "50"
+            },
+            "reconciliation_deadline": {
+              "kind": "blocks",
+              "value": "500"
+            },
+            "abandon_path": "RECONCILIATION_ABANDONED"
+          }
+        },
+        "evidence_spec": {
+          "external_read_sources_min": 2,
+          "source_independence_min": "operator",
+          "terminal_verdict_requires_head_binding": "EXTERNALLY_ANCHORED",
+          "retirement_watch": {
+            "source": "supra_account_sequence",
+            "expected_publication_interval": {
+              "kind": "seconds",
+              "value": "21600"
+            },
+            "signer_classification_claim": "RETIRED_ATTESTED_FALSIFIABLE"
+          },
+          "declared_attestations": [
+            {
+              "id": "retirement",
+              "role": "disclosure",
+              "claim_type": "no_undisclosed_account_use",
+              "asserts": "no_undisclosed_account_use",
+              "watch": {
+                "source": "supra_account_sequence",
+                "falsify_if": "observed_sequence > terminal_sequence"
+              },
+              "not_falsified_by": [
+                "existence of key material after the attested retirement",
+                "pre-signed transactions that were never submitted",
+                "use of the same seed to derive keys on other chains or paths"
+              ]
+            }
+          ]
+        },
+        "enforcement": {
+          "authorizer": {
+            "principal_id": "principal:killer-demo-authorizer"
+          },
+          "actor": {
+            "principal_id": "principal:killer-demo-actor"
+          },
+          "policy_digest": "0x99da29f23b1779fd7bb011c222373690c5a617dd15751060c28500158b754ded"
+        },
+        "grant_id": "val:killer-demo:fffd4996c4887e76af64fb138564dcfc832f8b0d26747a56dfdceec4e31f2045",
+        "signatures": {
+          "issuer": {
+            "key": "39e07ab794dd78ece52f8429e5b61cbadbe151c703f2fd27d056db11af3af56d",
+            "over": "canonical(grant without grant_id and signatures)",
+            "sig": "ad678ca2736053598b5de9f5dacb3dc72020a1890c51c9951149f3ca84c70dcd594c92593f2958ce0d7c47994bf6671bd01751926fc253288239803478b7a501"
+          }
+        }
+      },
+      "profile": {
+        "schema": "cosmo.val.profile.v1",
+        "profile_id": "cosmo.killer-demo.profile.fx-quote-sell-base-micro.v1",
+        "actions": {
+          "fx.quote_sell_base.v1": "effectful"
+        },
+        "constraint_register": [],
+        "deny_list_constraints": [],
+        "rail": "supra_account_sequence",
+        "time_authority": "supra_block",
+        "delegation_allowed": false,
+        "terminal_verdict_requires_head_binding": "EXTERNALLY_ANCHORED",
+        "role_defaults": {
+          "history_authority": null
+        },
+        "event_authorization": {},
+        "extension_states": [],
+        "consumption_gate": "reservation_required",
+        "authorization_basis": "grant_chain"
+      },
+      "principal_keys": {
+        "principal:killer-demo-principal": "39e07ab794dd78ece52f8429e5b61cbadbe151c703f2fd27d056db11af3af56d",
+        "principal:killer-demo-executor": "335d97a93318b73144d14e6b918154f828b651c3ee6f139d73a2d9f944a33169",
+        "principal:killer-demo-authorizer": "b00f216bb36e534722313c1c362c086a7ddce207234a0ceaa7a2414d6108d059",
+        "principal:killer-demo-actor": "e2f8f123f8fe90711d6122b67a732377bcc3c27c750b5b52cf55819dc7ed3ba8",
+        "principal:killer-demo-revocation": "46a57f79c498009a748615c9a6ef419ac11bf176572bc9ca6213cd8452235ac3"
+      },
+      "history": [
+        {
+          "schema": "cosmo.authority.event.v1",
+          "grant_id": "val:killer-demo:fffd4996c4887e76af64fb138564dcfc832f8b0d26747a56dfdceec4e31f2045",
+          "generation": 1,
+          "sequence": 0,
+          "prev_event_hash": null,
+          "event_type": "GRANT_ISSUED",
+          "event_class": "AUTHORITY",
+          "occurred_at": "1876644120",
+          "authority_time": {
+            "kind": "supra_block",
+            "number": "57762747",
+            "hash": "0xba4b0f0962536a24181c6fbfac7ebf758aee4a5cc7d267e6f4289733bdbd826f",
+            "timestamp": "1876644120"
+          },
+          "actor": {
+            "principal_id": "principal:killer-demo-principal"
+          },
+          "payload": {
+            "grant_hash": "0xfffd4996c4887e76af64fb138564dcfc832f8b0d26747a56dfdceec4e31f2045"
+          },
+          "payload_hash": "0xd2c4c4c45a59a06cd5f2ae621834ae970525a450b0768f135977829a2dd17e64",
+          "evidence_refs": [],
+          "event_id": "0x0333e64e45489bba5ddf5c0bad9192e7cb20124875fb1e29bfda75d335a1bc1a",
+          "signature": {
+            "key": "39e07ab794dd78ece52f8429e5b61cbadbe151c703f2fd27d056db11af3af56d",
+            "sig": "124fe4482aa707f3862361e778e7cdfcec140041d89f86c6e2a80b702318c7243bfb36939751618ff559d4ad7540eb0e9dbf0b9a2bc334c968ae5e003d8aaf02"
+          }
+        },
+        {
+          "schema": "cosmo.authority.event.v1",
+          "grant_id": "val:killer-demo:fffd4996c4887e76af64fb138564dcfc832f8b0d26747a56dfdceec4e31f2045",
+          "generation": 1,
+          "sequence": 1,
+          "prev_event_hash": "0x0333e64e45489bba5ddf5c0bad9192e7cb20124875fb1e29bfda75d335a1bc1a",
+          "event_type": "GRANT_ACTIVATED",
+          "event_class": "AUTHORITY",
+          "occurred_at": "1876644122",
+          "authority_time": {
+            "kind": "supra_block",
+            "number": "57762748",
+            "hash": "0x6ce3245ac0340c3a2c60c67815a38e5826f18d208be32b4bbde745d9b370c5e1",
+            "timestamp": "1876644122"
+          },
+          "actor": {
+            "principal_id": "principal:killer-demo-principal"
+          },
+          "payload": {
+            "pre_activation_scope": "FRESH_SIGNER_PROVEN"
+          },
+          "payload_hash": "0x7acd65d9d444040a1cf3c24bfc7016809d43f420a937b2d863e2d65eaf6df43c",
+          "evidence_refs": [
+            {
+              "evidence_id": "ev:start:57762748",
+              "hash": "0x410094017124a831e76cccbb377104ee688669f2c2952bf76224e38b6d810acb"
+            }
+          ],
+          "event_id": "0x03a88e21c8513bea0caaaa6d3caedaabc1f7a5ef6d8dd2f7b8980bb7a6ca713a",
+          "signature": {
+            "key": "39e07ab794dd78ece52f8429e5b61cbadbe151c703f2fd27d056db11af3af56d",
+            "sig": "b78babd8129863a74b98841e9102e1251b2577f59325265f0cef690209696b3fa95ecbfe12b78042ce2ea6efd968817ddb8815490240f0e810d9a6742f8b5a0c"
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "schema": "cosmo.val.evidence.v1",
+          "evidence_id": "ev:start:57762748",
+          "form": "leaf",
+          "kind": "state_read",
+          "evidence_class": "externally_verifiable",
+          "sources": [
+            "rpc:killer-demo-op-a",
+            "rpc:killer-demo-op-b"
+          ],
+          "source_independence": "operator",
+          "as_of": {
+            "kind": "supra_block",
+            "number": "57762748",
+            "hash": "0x6ce3245ac0340c3a2c60c67815a38e5826f18d208be32b4bbde745d9b370c5e1"
+          },
+          "content": {
+            "account": "0x6379678b03f4c6329c9de90fe9216ea404565510e8d0010060fb0658a449b1fe",
+            "sequence": "0",
+            "code": false,
+            "pre_activation_scope": "FRESH_SIGNER_PROVEN"
+          },
+          "content_hash": "0x410094017124a831e76cccbb377104ee688669f2c2952bf76224e38b6d810acb",
+          "function": null,
+          "inputs": [],
+          "advisory_inputs": [],
+          "effective_strength": "externally_verifiable",
+          "attestor": null,
+          "attestation": null
+        },
+        {
+          "schema": "cosmo.val.evidence.v1",
+          "evidence_id": "ev:maker-intent:reservation:4af3bc992f40da77",
+          "form": "leaf",
+          "kind": "engine_attestation",
+          "evidence_class": "engine_attestation",
+          "sources": [
+            "sim:killer-demo-proposer"
+          ],
+          "source_independence": "single",
+          "as_of": {
+            "kind": "supra_block",
+            "number": "57762797",
+            "hash": "0x65af9d2bfff3bbf8e091e3ec8fd6538163bba97454bba5df9245aaa24dac2ddd"
+          },
+          "content": {
+            "maker_intent_hash": "0x4af3bc992f40da77bec4b589123c7e51047a71d5d45179c9cac44481a9186e17",
+            "rfq_id": "1f765e99-5896-a18e-fde8-59d97f693659",
+            "rfq_row_hash": "0x8452ada607ca0c7bc99a2ecf90f03f624fbc6564b6069b88f0b0ec16001e22f4",
+            "rate_bft": "339129871"
+          },
+          "content_hash": "0xc02b817a00d19ad3e57e7a44718971465730949e65c83f1093c336e0faf17923",
+          "function": null,
+          "inputs": [],
+          "advisory_inputs": [],
+          "effective_strength": "engine_attestation",
+          "attestor": {
+            "principal_id": "principal:killer-demo-actor"
+          },
+          "attestation": null
+        }
+      ],
+      "records": [],
+      "revocations": [],
+      "t_eval": {
+        "schema": "cosmo.val.evidence.v1",
+        "evidence_id": "ev:time:57762797",
+        "form": "leaf",
+        "kind": "time_read",
+        "evidence_class": "externally_verifiable",
+        "sources": [
+          "rpc:killer-demo-op-a",
+          "rpc:killer-demo-op-b"
+        ],
+        "source_independence": "operator",
+        "as_of": {
+          "kind": "supra_block",
+          "number": "57762797",
+          "hash": "0x65af9d2bfff3bbf8e091e3ec8fd6538163bba97454bba5df9245aaa24dac2ddd"
+        },
+        "content": {
+          "kind": "supra_block",
+          "number": "57762797",
+          "hash": "0x65af9d2bfff3bbf8e091e3ec8fd6538163bba97454bba5df9245aaa24dac2ddd",
+          "timestamp": "1876644195"
+        },
+        "content_hash": "0x46c212964b1b6dbce5744fe2e2447a6c7c59faf295f6ef7b4e5f6ed062fb493b",
+        "function": null,
+        "inputs": [],
+        "advisory_inputs": [],
+        "effective_strength": "externally_verifiable",
+        "attestor": null,
+        "attestation": null
+      }
+    },
+    "revocation_heads": [
+      {
+        "schema": "cosmo.val.revocation-head.v1",
+        "grant_id": "val:killer-demo:fffd4996c4887e76af64fb138564dcfc832f8b0d26747a56dfdceec4e31f2045",
+        "generation": 1,
+        "epoch": 1,
+        "revoked": false,
+        "authority_time": {
+          "kind": "supra_block",
+          "number": "57762787",
+          "hash": "0x96dc676d870a07298b78ad584664348f69f581efb17a19daa70520dad74f4aca",
+          "timestamp": "1876644180"
+        },
+        "canonicality": null,
+        "sources": [
+          "rpc:killer-demo-op-a",
+          "rpc:killer-demo-op-b"
+        ],
+        "source_independence": "operator",
+        "signature": {
+          "key": "46a57f79c498009a748615c9a6ef419ac11bf176572bc9ca6213cd8452235ac3",
+          "sig": "6a64ca9e1732a1734235213cb9471e0ca26a7e26dd8e82563cb8cdde1391c437a4f0d0c1f5e2a82b79d5b58027b1c2681277d2fe887e4a21d629cc303e374205"
+        }
+      }
+    ],
+    "proposal": {
+      "capability_id": "fx-quote-sell-1",
+      "action": "fx.quote_sell_base.v1",
+      "proposed_worst_case": {
+        "micro:evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168": "1695650"
+      },
+      "params": {
+        "kind": "fx.quote_sell_base.v1",
+        "side": "maker_pays_quote",
+        "pair": "AAPL/USDG",
+        "asset_pay": "evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+        "asset_receive": "evm:4663:0xaf3d76f1834a1d425780943c99ea8a608f8a93f9",
+        "lock_quants": "1695650",
+        "chain_id": "8",
+        "account": "0x6379678b03f4c6329c9de90fe9216ea404565510e8d0010060fb0658a449b1fe",
+        "maker_intent_hash": "0x4af3bc992f40da77bec4b589123c7e51047a71d5d45179c9cac44481a9186e17",
+        "rfq_id": "1f765e99-5896-a18e-fde8-59d97f693659"
+      },
+      "evidence_refs": [
+        {
+          "evidence_id": "ev:maker-intent:reservation:4af3bc992f40da77",
+          "hash": "0xc02b817a00d19ad3e57e7a44718971465730949e65c83f1093c336e0faf17923"
+        }
+      ]
+    },
+    "stage": "RESERVATION",
+    "supersedes": null,
+    "record": null
+  },
+  "authorize_result": {
+    "decision": "AUTHORIZED",
+    "dominant_reason": null,
+    "checks": [
+      {
+        "id": "C1",
+        "rule_id": "C1.grant_valid_and_bound",
+        "status": "OK",
+        "why": "grant hash 0xfffd4996 validly issued (compiler ACCEPT, issuer signature valid)",
+        "evidence_ref": null,
+        "evidence_class": "externally_verifiable",
+        "basis": [
+          "C1.grant_valid_and_bound"
+        ]
+      },
+      {
+        "id": "C2",
+        "rule_id": "C2.grant_active_under_fresh_head",
+        "status": "OK",
+        "why": "ACTIVE under t_eval 57762797; head 1 is 49 behind (<= max_head_lag 120)",
+        "evidence_ref": "0x03a88e21c8513bea0caaaa6d3caedaabc1f7a5ef6d8dd2f7b8980bb7a6ca713a",
+        "evidence_class": "engine_attestation",
+        "basis": [
+          "C2.grant_active_under_fresh_head",
+          "V1.1-E2a.evaluation_time_admissible_under_signed_minimum"
+        ]
+      },
+      {
+        "id": "C3",
+        "rule_id": "C3.no_revocation_with_fresh_canonical_head",
+        "status": "OK",
+        "why": "fresh canonical head epoch 1, 10 behind t_eval <= max_head_lag 120",
+        "evidence_ref": "0x5761d56f9370b083e5ef10805f4064b947f15dbd1a3c5fc5996b5fa2fe2da290",
+        "evidence_class": "externally_verifiable",
+        "basis": [
+          "C3.no_revocation_with_fresh_canonical_head",
+          "6.11.revocation_object_is_not_event",
+          "6.11.revocation_head_equivocation",
+          "6.11.revocation_epoch_monotonic",
+          "6.11.revoked_true_final",
+          "6.11.revocation_head_fresh_and_canonical",
+          "V1.0-E1.source_independence_bounds_class"
+        ]
+      },
+      {
+        "id": "C4",
+        "rule_id": "C4.within_validity_at_external_time",
+        "status": "OK",
+        "why": "t_eval 57762797 within validity [57762747, 58552797]",
+        "evidence_ref": "ev:time:57762797",
+        "evidence_class": "externally_verifiable",
+        "basis": [
+          "C4.within_validity_at_external_time",
+          "V1.1-E2a.evaluation_time_admissible_under_signed_minimum"
+        ]
+      },
+      {
+        "id": "C5",
+        "rule_id": "C5.within_envelope_committed_projection",
+        "status": "OK",
+        "why": "micro:evm:46: 1695650 <= per-action 2000000; micro:evm:46: committed 0 + 1695650 <= cumulative 2000000",
+        "evidence_ref": "0x03a88e21c8513bea0caaaa6d3caedaabc1f7a5ef6d8dd2f7b8980bb7a6ca713a",
+        "evidence_class": "engine_attestation",
+        "basis": [
+          "C5.within_envelope_committed_projection",
+          "VAL-I31.committed_projection_serializable"
+        ]
+      },
+      {
+        "id": "C6",
+        "rule_id": "C6.profile_constraints_evaluated",
+        "status": "OK",
+        "why": "the grant binds no class-B constraint (envelope profile_constraints empty)",
+        "evidence_ref": null,
+        "evidence_class": null,
+        "basis": [
+          "C6.profile_constraints_evaluated",
+          "6.1.1.not_bounded_unconditional"
+        ]
+      },
+      {
+        "id": "C7",
+        "rule_id": "C7.evidence_source_available",
+        "status": "OK",
+        "why": "1 referenced evidence node(s) presented and VALID",
+        "evidence_ref": "ev:maker-intent:reservation:4af3bc992f40da77",
+        "evidence_class": "engine_attestation",
+        "basis": [
+          "C7.evidence_source_available",
+          "5.2.input_hash_bound",
+          "VAL-I17.derived_never_stronger"
+        ]
+      },
+      {
+        "id": "C8",
+        "rule_id": "C8.no_proven_breach",
+        "status": "OK",
+        "why": "no breach evidence presented for this generation",
+        "evidence_ref": null,
+        "evidence_class": null,
+        "basis": [
+          "C8.no_proven_breach",
+          "13.1.breach_only_from_external_evidence"
+        ]
+      }
+    ],
+    "weakest_evidence_class": "engine_attestation",
+    "effectful": true,
+    "record": {
+      "schema": "cosmo.val.authority-decision.v1",
+      "stage": "RESERVATION",
+      "supersedes": null,
+      "proposal_hash": "0x9a982c6ae648f07c687a7bd9d535625527b62cd229132cd453c10c272f4d7622",
+      "capability_id": "fx-quote-sell-1",
+      "action": "fx.quote_sell_base.v1",
+      "grant_id": "val:killer-demo:fffd4996c4887e76af64fb138564dcfc832f8b0d26747a56dfdceec4e31f2045",
+      "generation": 1,
+      "grant_hash": "0xfffd4996c4887e76af64fb138564dcfc832f8b0d26747a56dfdceec4e31f2045",
+      "parent_chain": [],
+      "policy_hash": null,
+      "decision": "AUTHORIZED",
+      "dominant_reason": null,
+      "checks": [
+        {
+          "id": "C1",
+          "status": "OK",
+          "why": "grant hash 0xfffd4996 validly issued (compiler ACCEPT, issuer signature valid)",
+          "evidence_ref": null,
+          "evidence_class": "externally_verifiable"
+        },
+        {
+          "id": "C2",
+          "status": "OK",
+          "why": "ACTIVE under t_eval 57762797; head 1 is 49 behind (<= max_head_lag 120)",
+          "evidence_ref": "0x03a88e21c8513bea0caaaa6d3caedaabc1f7a5ef6d8dd2f7b8980bb7a6ca713a",
+          "evidence_class": "engine_attestation"
+        },
+        {
+          "id": "C3",
+          "status": "OK",
+          "why": "fresh canonical head epoch 1, 10 behind t_eval <= max_head_lag 120",
+          "evidence_ref": "0x5761d56f9370b083e5ef10805f4064b947f15dbd1a3c5fc5996b5fa2fe2da290",
+          "evidence_class": "externally_verifiable"
+        },
+        {
+          "id": "C4",
+          "status": "OK",
+          "why": "t_eval 57762797 within validity [57762747, 58552797]",
+          "evidence_ref": "ev:time:57762797",
+          "evidence_class": "externally_verifiable"
+        },
+        {
+          "id": "C5",
+          "status": "OK",
+          "why": "micro:evm:46: 1695650 <= per-action 2000000; micro:evm:46: committed 0 + 1695650 <= cumulative 2000000",
+          "evidence_ref": "0x03a88e21c8513bea0caaaa6d3caedaabc1f7a5ef6d8dd2f7b8980bb7a6ca713a",
+          "evidence_class": "engine_attestation"
+        },
+        {
+          "id": "C6",
+          "status": "OK",
+          "why": "the grant binds no class-B constraint (envelope profile_constraints empty)",
+          "evidence_ref": null,
+          "evidence_class": null
+        },
+        {
+          "id": "C7",
+          "status": "OK",
+          "why": "1 referenced evidence node(s) presented and VALID",
+          "evidence_ref": "ev:maker-intent:reservation:4af3bc992f40da77",
+          "evidence_class": "engine_attestation"
+        },
+        {
+          "id": "C8",
+          "status": "OK",
+          "why": "no breach evidence presented for this generation",
+          "evidence_ref": null,
+          "evidence_class": null
+        }
+      ],
+      "profile_checks": {
+        "evaluator": null,
+        "checks": [],
+        "dominant_reason": null,
+        "accepted_assumptions_applied": []
+      },
+      "weakest_evidence_class": "engine_attestation",
+      "history_head": {
+        "sequence": 1,
+        "event_hash": "0x03a88e21c8513bea0caaaa6d3caedaabc1f7a5ef6d8dd2f7b8980bb7a6ca713a",
+        "head_binding": "UNPINNED"
+      },
+      "revocation_head_ref": "0x5761d56f9370b083e5ef10805f4064b947f15dbd1a3c5fc5996b5fa2fe2da290",
+      "authority_time_eval": {
+        "kind": "supra_block",
+        "number": "57762797",
+        "hash": "0x65af9d2bfff3bbf8e091e3ec8fd6538163bba97454bba5df9245aaa24dac2ddd",
+        "timestamp": "1876644195"
+      },
+      "authority_time_eval_ref": "ev:time:57762797",
+      "committed_snapshot": {
+        "micro:evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168": "0"
+      },
+      "proposed_worst_case": {
+        "micro:evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168": "1695650"
+      },
+      "reserved_worst_case": {
+        "micro:evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168": "1695650"
+      },
+      "evaluator": "cosmo.val.authorize.v1",
+      "signature": null,
+      "record_id": "0x98b0cb446b564e6177e13d9e67804866bc2022d0846abeda4dc75650e20e6cb7"
+    },
+    "profile_checks": {
+      "evaluator": null,
+      "checks": [],
+      "dominant_reason": null,
+      "accepted_assumptions_applied": []
+    },
+    "rejects": [],
+    "stages": {
+      "compile_accepted": true,
+      "history_valid": true,
+      "reject_at_sequence": null,
+      "effective_grant_state": {
+        "state": "ACTIVE",
+        "reason": null,
+        "terminal_at": null,
+        "cause": "history",
+        "undecidable_reason": null
+      },
+      "head": {
+        "sequence": 1,
+        "event_hash": "0x03a88e21c8513bea0caaaa6d3caedaabc1f7a5ef6d8dd2f7b8980bb7a6ca713a",
+        "head_binding": "UNPINNED"
+      },
+      "head_time": "57762748",
+      "committed": {
+        "total": {
+          "micro:evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168": "0"
+        },
+        "settled": {
+          "micro:evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168": "0"
+        },
+        "inflight": {
+          "micro:evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168": "0"
+        },
+        "reserved_open": {
+          "micro:evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168": "0"
+        },
+        "allocated_to_children": {
+          "micro:evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168": "0"
+        },
+        "unknown_bound": {
+          "micro:evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168": "0"
+        }
+      },
+      "t_eval": {
+        "evidence_id": "ev:time:57762797",
+        "effective_strength": "externally_verifiable",
+        "externally_verifiable": true,
+        "admissible": true,
+        "class": "externally_verifiable",
+        "admissibility_reason": null,
+        "reason": "57762797"
+      },
+      "revocation": {
+        "status": "ABSENT_FRESH",
+        "reason": "fresh canonical head epoch 1, 10 behind t_eval <= max_head_lag 120",
+        "head_ref": "0x5761d56f9370b083e5ef10805f4064b947f15dbd1a3c5fc5996b5fa2fe2da290",
+        "epoch": 1,
+        "evidence_class": "externally_verifiable",
+        "invalid_heads": [],
+        "invalid_objects": [],
+        "rules_applied": [
+          "6.11.revocation_object_is_not_event",
+          "6.11.revocation_head_equivocation",
+          "6.11.revocation_epoch_monotonic",
+          "6.11.revoked_true_final",
+          "6.11.revocation_head_fresh_and_canonical",
+          "V1.0-E1.source_independence_bounds_class"
+        ]
+      },
+      "evidence_rejects": 0
+    },
+    "rederivation": null,
+    "provenance": {
+      "rules_applied": [
+        "13.1.breach_only_from_external_evidence",
+        "5.2.input_hash_bound",
+        "6.1.1.not_bounded_unconditional",
+        "6.10.no_skipped_check_for_effectful",
+        "6.11.revocation_epoch_monotonic",
+        "6.11.revocation_head_equivocation",
+        "6.11.revocation_head_fresh_and_canonical",
+        "6.11.revocation_object_is_not_event",
+        "6.11.revoked_true_final",
+        "C1.grant_valid_and_bound",
+        "C2.grant_active_under_fresh_head",
+        "C3.no_revocation_with_fresh_canonical_head",
+        "C4.within_validity_at_external_time",
+        "C5.within_envelope_committed_projection",
+        "C6.profile_constraints_evaluated",
+        "C7.evidence_source_available",
+        "C8.no_proven_breach",
+        "V1.0-E1.source_independence_bounds_class",
+        "V1.1-E2a.evaluation_time_admissible_under_signed_minimum",
+        "VAL-I17.derived_never_stronger",
+        "VAL-I28.precedence_fail_undecidable_authorized",
+        "VAL-I31.committed_projection_serializable"
+      ],
+      "register_pins": {
+        "registers/claims.v1.json": "0xde6cfdf2aac45b81b9693f3281ae2587c911ff076ea243b07873f0f85e5d4925",
+        "registers/evidence_classes.v1.json": "0x7e843701e1eb8811e57d7a4c5c39a8934e6a3be7dc5820805a1a4a32429b1ff5",
+        "registers/profiles.v1.json": "0x1f29d509a5035c309eeff5d49cf851f8a2dc29cdd809347a5b1ce9649a63de81",
+        "registers/reject_reasons.v1.json": "0xb3c1a202226aa62efbb1138416a72b9865766c7448b128fa9f56a9d56d277cb6",
+        "registers/rules.v1.json": "0x7272a2a55bcf5ccb93642c1e013f959e22d62de56bf03ba3d6ced7eba4c1c7d1"
+      },
+      "evaluator": "cosmo.val.authorize.v1"
+    }
+  },
+  "proposal": {
+    "capability_id": "fx-quote-sell-1",
+    "action": "fx.quote_sell_base.v1",
+    "proposed_worst_case": {
+      "micro:evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168": "1695650"
+    },
+    "params": {
+      "kind": "fx.quote_sell_base.v1",
+      "side": "maker_pays_quote",
+      "pair": "AAPL/USDG",
+      "asset_pay": "evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+      "asset_receive": "evm:4663:0xaf3d76f1834a1d425780943c99ea8a608f8a93f9",
+      "lock_quants": "1695650",
+      "chain_id": "8",
+      "account": "0x6379678b03f4c6329c9de90fe9216ea404565510e8d0010060fb0658a449b1fe",
+      "maker_intent_hash": "0x4af3bc992f40da77bec4b589123c7e51047a71d5d45179c9cac44481a9186e17",
+      "rfq_id": "1f765e99-5896-a18e-fde8-59d97f693659"
+    },
+    "evidence_refs": [
+      {
+        "evidence_id": "ev:maker-intent:reservation:4af3bc992f40da77",
+        "hash": "0xc02b817a00d19ad3e57e7a44718971465730949e65c83f1093c336e0faf17923"
+      }
+    ]
+  },
+  "proposal_signature": {
+    "nonce": "1",
+    "head": {
+      "sequence": 1,
+      "event_hash": "0x03a88e21c8513bea0caaaa6d3caedaabc1f7a5ef6d8dd2f7b8980bb7a6ca713a"
+    },
+    "key": "e2f8f123f8fe90711d6122b67a732377bcc3c27c750b5b52cf55819dc7ed3ba8",
+    "sig": "ea31c8a3c15d7e96c417bd087277a15f342b2c1dc330ece21fdd990d21a9140a92c244cb1d2c51668a819a59d9c12cac5737cdbb8bf4ed1abccb53e599ef580f"
+  },
+  "stage_input": {
+    "intent": {
+      "schema": "cosmo.killer-demo.maker-proposed-intent.v1",
+      "trigger": {
+        "kind": "foreign_open_rfq",
+        "rfq": {
+          "id": "1f765e99-5896-a18e-fde8-59d97f693659",
+          "display_id": "R-261102-160948-97",
+          "taker_address": "0xa3d79667db7a465de6e13005c35417c9501fdc5b68bc5516024f0ebc23c358f5",
+          "pair": "AAPL/USDG",
+          "status": "open",
+          "source_chain": "robinhood-mainnet",
+          "dest_chain": "robinhood-mainnet",
+          "settlement_mode": "platform",
+          "auto_accept": true,
+          "allow_partial_fills": false,
+          "auto_accept_target_rate": "337.458998",
+          "size_base_units": "5000000000000000",
+          "remaining_size_base_units": "5000000000000000",
+          "total_filled_base_units": "0",
+          "fill_count": "0",
+          "expires_at_batch": "14775400",
+          "council_batch_number": "14774815",
+          "reference_price": "340.867675",
+          "created_at": "2026-11-02T16:09:48.279016+00:00",
+          "quote_count": "0"
+        },
+        "rfq_row_hash": "0x8452ada607ca0c7bc99a2ecf90f03f624fbc6564b6069b88f0b0ec16001e22f4",
+        "list_source": "http-get:/api/suprafx/rfqs?scope=platform&status=open&limit=200",
+        "list_raw_sha256": "de0c8946db0b11db4956983f442abf51d52361b3b8b2bbe136cad031eac7fd0d",
+        "seen_ms": 1793635866679
+      },
+      "quote": {
+        "rfq_id": "1f765e99-5896-a18e-fde8-59d97f693659",
+        "pair": "AAPL/USDG",
+        "fill_size_base": "5000000000000000",
+        "rate_bft": "339129871",
+        "lock_quants_ceil": "1695650",
+        "expires_in_batches": 60,
+        "fair_rate_bft": "340834041",
+        "ref_1e18": "340834041810000030000",
+        "margin_bps": 50,
+        "quote_eval_hash": "0x26c0fcd4830e9b08ed08e1d1872bd23eb8e5a36df5e2753c30797105ffe53f2d"
+      },
+      "intel_context": {
+        "status": "present",
+        "run_sha256": "0c6ec0392b3b7bfe1e4dd4ced96b269e554939729f62d2ac4edc554e1d09f14b",
+        "as_of_hourly_bucket": "2026-11-02T15:00:00Z",
+        "ledger_sha256": "5795c0b31d1c955b78002bebaa133941dabb0add6d654b39a973b8882736cd48",
+        "note": "information only, never a gate or trigger (D-M1)"
+      },
+      "intent": {
+        "schema": "cosmo.execution-case.intent.v2",
+        "mode": "shadow",
+        "action": {
+          "kind": "fx.quote_sell_base.v1",
+          "params": {
+            "pair": {
+              "base_chain": "robinhood-mainnet",
+              "base_symbol": "AAPL",
+              "quote_chain": "robinhood-mainnet",
+              "quote_symbol": "USDG"
+            },
+            "side": "maker_pays_quote",
+            "rfq_id": "1f765e99-5896-a18e-fde8-59d97f693659",
+            "fill_size_base": "5000000000000000",
+            "rate_bft": "339129871",
+            "lock_quants_ceil": "1695650"
+          }
+        },
+        "ttl_ms": 60000,
+        "principal_ref": "principal:killer-demo-001",
+        "agent_ref": "proposer:killer-demo-001"
+      },
+      "config_pins": {
+        "maker_policy_sha256": "a1759fb13d571beaf8421d8878f714a280c07a3a81b2493974cd05dfbc0724e5",
+        "maker_gates_sha256": "2d97f3f4a24873038c8bed4e2fa5bb18a7e2f454b3574186df7b3bd62855263a"
+      },
+      "proposer": {
+        "key": "e0c877c7ba331f329b348bedc04257a495a5eb3573dd4842c2a99b9b58fb30a0",
+        "signature": "5f139c45186a25d6d9f6f5dcabf362e5a65198a244fc508850216796e2121d254cf02df922889a9112c42e2174b9fe144f545942ea9e569e41e07cc9658d9b05"
+      },
+      "hash": "0x4af3bc992f40da77bec4b589123c7e51047a71d5d45179c9cac44481a9186e17"
+    },
+    "market": {
+      "kind": "equity",
+      "dora": {
+        "source": "supra-rpc:view:0xe3948c9e3a24c51c4006ef2acc44606055117d021158f320062df099c4a94150::supra_oracle_storage::get_prices([6004])",
+        "raw_sha256": "3a76ac6de8c87ddef39772e2473bd13622e617bf436a11f7c33562f3697b7ad0",
+        "recv_ms": 1793635867418,
+        "status": 200,
+        "pair_index": 6004,
+        "feed": {
+          "pair": 6004,
+          "value": "340834041810000030000",
+          "decimal": 18,
+          "timestamp": "1793635860147",
+          "round": "1793635860000"
+        }
+      },
+      "chainlink": {
+        "source": "evm-rpc:4663:eth_call({\"to\":\"0x6b22a786baa607d76728168703a39ea9c99f2cd0\",\"data\":\"0xfeaf968c\"},latest)",
+        "raw_sha256": "ec95473b3ab33fa878f12faf523bf1ab8cf2e093ccdd28950efbbdde2c0873a1",
+        "recv_ms": 1793635867161,
+        "status": 200,
+        "proxy": "0x6b22a786baa607d76728168703a39ea9c99f2cd0",
+        "error": null,
+        "round_id": "18446744073709552466",
+        "answer": "34167330501",
+        "updated_at_s": "1793630325",
+        "answered_in_round": "18446744073709552466",
+        "decimals_source": "evm-rpc:4663:eth_call({\"to\":\"0x6b22a786baa607d76728168703a39ea9c99f2cd0\",\"data\":\"0x313ce567\"},latest)",
+        "decimals_raw_sha256": "65cb329b4f0bc7a3b37afbf0230f07a33d6da332c232a49bf8a9c2be9a2929f8",
+        "decimals_read": 8
+      },
+      "venue": {
+        "source": "http-get:/api/oracle?pair=AAPL%2FUSDG",
+        "raw_sha256": "4886f8189cdc4f9d9665a89d3341013985f2b343e8469e2de67c32588b4b19e9",
+        "recv_ms": 1793635868131,
+        "status": 200,
+        "pair": "AAPL/USDG",
+        "base_token": "AAPL",
+        "base_oracle_pair": "aapl_usd",
+        "price_literal": "340.83404181000003",
+        "base_timestamp_ms": 1793635866137,
+        "quote_oracle_pair": "usdc_usdt",
+        "quote_price_literal": "1.001",
+        "conversion_rate_literal": "340.49354826173834"
+      },
+      "now_ms": 1793635868131
+    },
+    "reserves": {
+      "source": "http-get:/api/reserves",
+      "status": 200,
+      "raw_sha256": "2d5af717f732d411905afdb35e393038242d16fb180c7b3e58002386339006c7",
+      "recv_ms": 1793635867583,
+      "value": {
+        "assets": [
+          {
+            "asset": "USDT0",
+            "internal_total": "0",
+            "accumulated_fees": "0",
+            "on_chain_total": "0",
+            "ratio": "1",
+            "status": "fully_backed",
+            "surplus": "0",
+            "chains": [
+              {
+                "chain": "tempo",
+                "verified_at": "2026-11-02T16:00:11.697842+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0xFf2a6994dC561BD4e77dC98ad09CcF6Af3433312",
+                "balance": "0"
+              }
+            ]
+          },
+          {
+            "asset": "USDC.e",
+            "internal_total": "0",
+            "accumulated_fees": "0",
+            "on_chain_total": "0",
+            "ratio": "1",
+            "status": "fully_backed",
+            "surplus": "0",
+            "chains": [
+              {
+                "chain": "tempo",
+                "verified_at": "2026-11-02T16:00:11.447001+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0xFf2a6994dC561BD4e77dC98ad09CcF6Af3433312",
+                "balance": "0"
+              }
+            ]
+          },
+          {
+            "asset": "pathUSD",
+            "internal_total": "5",
+            "accumulated_fees": "0",
+            "on_chain_total": "5",
+            "ratio": "1",
+            "status": "fully_backed",
+            "surplus": "0",
+            "chains": [
+              {
+                "chain": "tempo",
+                "verified_at": "2026-11-02T16:00:11.336274+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0xFf2a6994dC561BD4e77dC98ad09CcF6Af3433312",
+                "balance": "5"
+              }
+            ]
+          },
+          {
+            "asset": "EURC",
+            "internal_total": "0",
+            "accumulated_fees": "0",
+            "on_chain_total": "0",
+            "ratio": "1",
+            "status": "fully_backed",
+            "surplus": "0",
+            "chains": [
+              {
+                "chain": "arc",
+                "verified_at": "2026-11-02T16:00:11.057131+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0xC03858631a160FA1baF6054d4Ad734e386952D0e",
+                "balance": "0"
+              }
+            ]
+          },
+          {
+            "asset": "USDC.arc",
+            "internal_total": "4",
+            "accumulated_fees": "0",
+            "on_chain_total": "4",
+            "ratio": "1",
+            "status": "fully_backed",
+            "surplus": "0",
+            "chains": [
+              {
+                "chain": "arc",
+                "verified_at": "2026-11-02T16:00:10.9442+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0xC03858631a160FA1baF6054d4Ad734e386952D0e",
+                "balance": "4"
+              }
+            ]
+          },
+          {
+            "asset": "QCOM",
+            "internal_total": "0",
+            "accumulated_fees": "0",
+            "on_chain_total": "0",
+            "ratio": "1",
+            "status": "fully_backed",
+            "surplus": "0",
+            "chains": [
+              {
+                "chain": "robinhood",
+                "verified_at": "2026-11-02T16:00:10.83787+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0xC03858631a160FA1baF6054d4Ad734e386952D0e",
+                "balance": "0"
+              }
+            ]
+          },
+          {
+            "asset": "SPY",
+            "internal_total": "0",
+            "accumulated_fees": "0",
+            "on_chain_total": "0",
+            "ratio": "1",
+            "status": "fully_backed",
+            "surplus": "0",
+            "chains": [
+              {
+                "chain": "robinhood",
+                "verified_at": "2026-11-02T16:00:10.737442+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0xC03858631a160FA1baF6054d4Ad734e386952D0e",
+                "balance": "0"
+              }
+            ]
+          },
+          {
+            "asset": "META",
+            "internal_total": "0",
+            "accumulated_fees": "0",
+            "on_chain_total": "0",
+            "ratio": "1",
+            "status": "fully_backed",
+            "surplus": "0",
+            "chains": [
+              {
+                "chain": "robinhood",
+                "verified_at": "2026-11-02T16:00:10.61464+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0xC03858631a160FA1baF6054d4Ad734e386952D0e",
+                "balance": "0"
+              }
+            ]
+          },
+          {
+            "asset": "MSFT",
+            "internal_total": "0",
+            "accumulated_fees": "0",
+            "on_chain_total": "0",
+            "ratio": "1",
+            "status": "fully_backed",
+            "surplus": "0",
+            "chains": [
+              {
+                "chain": "robinhood",
+                "verified_at": "2026-11-02T16:00:10.514215+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0xC03858631a160FA1baF6054d4Ad734e386952D0e",
+                "balance": "0"
+              }
+            ]
+          },
+          {
+            "asset": "AMZN",
+            "internal_total": "0",
+            "accumulated_fees": "0",
+            "on_chain_total": "0",
+            "ratio": "1",
+            "status": "fully_backed",
+            "surplus": "0",
+            "chains": [
+              {
+                "chain": "robinhood",
+                "verified_at": "2026-11-02T16:00:10.388607+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0xC03858631a160FA1baF6054d4Ad734e386952D0e",
+                "balance": "0"
+              }
+            ]
+          },
+          {
+            "asset": "TSLA",
+            "internal_total": "0",
+            "accumulated_fees": "0",
+            "on_chain_total": "0",
+            "ratio": "1",
+            "status": "fully_backed",
+            "surplus": "0",
+            "chains": [
+              {
+                "chain": "robinhood",
+                "verified_at": "2026-11-02T16:00:10.239257+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0xC03858631a160FA1baF6054d4Ad734e386952D0e",
+                "balance": "0"
+              }
+            ]
+          },
+          {
+            "asset": "NVDA",
+            "internal_total": "0",
+            "accumulated_fees": "0",
+            "on_chain_total": "0",
+            "ratio": "1",
+            "status": "fully_backed",
+            "surplus": "0",
+            "chains": [
+              {
+                "chain": "robinhood",
+                "verified_at": "2026-11-02T16:00:10.125328+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0xC03858631a160FA1baF6054d4Ad734e386952D0e",
+                "balance": "0"
+              }
+            ]
+          },
+          {
+            "asset": "AAPL",
+            "internal_total": "0.00591755",
+            "accumulated_fees": "0",
+            "on_chain_total": "0.00591755",
+            "ratio": "1",
+            "status": "fully_backed",
+            "surplus": "0",
+            "chains": [
+              {
+                "chain": "robinhood",
+                "verified_at": "2026-11-02T16:00:10.009252+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0xC03858631a160FA1baF6054d4Ad734e386952D0e",
+                "balance": "0.00591755"
+              }
+            ]
+          },
+          {
+            "asset": "USDG",
+            "internal_total": "12.5",
+            "accumulated_fees": "0",
+            "on_chain_total": "13",
+            "ratio": "1.04",
+            "status": "fully_backed",
+            "surplus": "0.5",
+            "chains": [
+              {
+                "chain": "robinhood",
+                "verified_at": "2026-11-02T16:00:09.8771+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0xC03858631a160FA1baF6054d4Ad734e386952D0e",
+                "balance": "13"
+              }
+            ]
+          },
+          {
+            "asset": "USDT",
+            "internal_total": "130.138108",
+            "accumulated_fees": "13.861892",
+            "on_chain_total": "150.93397",
+            "ratio": "1.048153",
+            "status": "fully_backed",
+            "surplus": "6.93397",
+            "chains": [
+              {
+                "chain": "ethereum",
+                "verified_at": "2026-11-02T16:00:09.777632+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0xc03858631a160fa1baf6054d4ad734e386952d0e",
+                "balance": "150.93397"
+              },
+              {
+                "chain": "ethereum",
+                "verified_at": "2026-11-02T16:00:09.777632+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0x5c584c9d98e2b5a835e78d47f5875b6988b83d85",
+                "balance": "0"
+              }
+            ]
+          },
+          {
+            "asset": "USDC",
+            "internal_total": "138.257054",
+            "accumulated_fees": "10.613867",
+            "on_chain_total": "261.870921",
+            "ratio": "1.759047",
+            "status": "fully_backed",
+            "surplus": "113",
+            "chains": [
+              {
+                "chain": "ethereum",
+                "verified_at": "2026-11-02T16:00:09.634837+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0xc03858631a160fa1baf6054d4ad734e386952d0e",
+                "balance": "254.370921"
+              },
+              {
+                "chain": "ethereum",
+                "verified_at": "2026-11-02T16:00:09.634837+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0x5c584c9d98e2b5a835e78d47f5875b6988b83d85",
+                "balance": "7.5"
+              }
+            ]
+          },
+          {
+            "asset": "ETH",
+            "internal_total": "0.07209139",
+            "accumulated_fees": "0.00382169",
+            "on_chain_total": "0.07841308",
+            "ratio": "1.032932",
+            "status": "fully_backed",
+            "surplus": "0.0025",
+            "chains": [
+              {
+                "chain": "ethereum",
+                "verified_at": "2026-11-02T16:00:09.529207+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0xc03858631a160fa1baf6054d4ad734e386952d0e",
+                "balance": "0.04091307531494116"
+              },
+              {
+                "chain": "ethereum",
+                "verified_at": "2026-11-02T16:00:09.529207+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0x5c584c9d98e2b5a835e78d47f5875b6988b83d85",
+                "balance": "0.0375"
+              }
+            ]
+          },
+          {
+            "asset": "iUSDT",
+            "internal_total": "39.44909679",
+            "accumulated_fees": "0",
+            "on_chain_total": "39.44909679",
+            "ratio": "1",
+            "status": "fully_backed",
+            "surplus": "0",
+            "chains": [
+              {
+                "chain": "supra",
+                "verified_at": "2026-11-02T16:00:09.426814+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0x6e826b2993e4b775d35779dd896aadca0278682f6470e1da0d04bf81eaff1c08",
+                "balance": "39.44909679"
+              }
+            ]
+          },
+          {
+            "asset": "iUSDC",
+            "internal_total": "280.73029257",
+            "accumulated_fees": "0.02232",
+            "on_chain_total": "280.75261257",
+            "ratio": "1",
+            "status": "fully_backed",
+            "surplus": "0",
+            "chains": [
+              {
+                "chain": "supra",
+                "verified_at": "2026-11-02T16:00:09.320081+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0x6e826b2993e4b775d35779dd896aadca0278682f6470e1da0d04bf81eaff1c08",
+                "balance": "280.75261257"
+              }
+            ]
+          },
+          {
+            "asset": "SUPRA",
+            "internal_total": "4355244.66732894",
+            "accumulated_fees": "31404.44131807",
+            "on_chain_total": "4386649.10864701",
+            "ratio": "1",
+            "status": "fully_backed",
+            "surplus": "0",
+            "chains": [
+              {
+                "chain": "supra",
+                "verified_at": "2026-11-02T16:00:09.048189+00:00",
+                "batch_number": "14773862",
+                "state_root": "",
+                "quorum": "7/5",
+                "vault": "0x6e826b2993e4b775d35779dd896aadca0278682f6470e1da0d04bf81eaff1c08",
+                "balance": "4386649.10864701"
+              }
+            ]
+          }
+        ],
+        "timestamp": "2026-11-02T16:00:11.697842+00:00",
+        "as_of": "2026-11-02T16:00:11.697842+00:00",
+        "status": "fully_backed",
+        "invariant_holds": true
+      }
+    },
+    "l1": {
+      "source": "evm-rpc:4663:eth_call({\"to\":\"0x5fc5360d0400a0fd4f2af552add042d716f1d168\",\"data\":\"0x70a08231000000000000000000000000c03858631a160fa1baf6054d4ad734e386952d0e\"},latest)",
+      "status": 200,
+      "raw_sha256": "3090fd0c43eef987711861320d45761996a197ca308d9875cdb1ec6383e92fe8",
+      "recv_ms": 1793635867132,
+      "account": "0xc03858631a160fa1baf6054d4ad734e386952d0e",
+      "metadata": "0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+      "balance": "13000000"
+    },
+    "funds": {
+      "schema": "cosmo.killer-demo.funds-preflight.v1",
+      "verdict": "FAIL",
+      "checks": [
+        {
+          "id": "F-ASSET",
+          "status": "PASS",
+          "why": "USDG asset ids of the account equal the pins",
+          "source": [
+            "http-get:/api/council/account?address=0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb"
+          ]
+        },
+        {
+          "id": "F1",
+          "status": "PASS",
+          "why": "available[USDG] 3000000 >= S 1695650",
+          "source": [
+            "http-get:/api/council/account?address=0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb"
+          ],
+          "data": {
+            "available": "3000000",
+            "S": "1695650"
+          }
+        },
+        {
+          "id": "F2",
+          "status": "PASS",
+          "why": "all chain locks equal the my-open-orders sums (chainChecked true)",
+          "source": [
+            "http-get:/api/council/account?address=0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb",
+            "http-get:/api/council/my-open-orders?address=0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb"
+          ]
+        },
+        {
+          "id": "F3",
+          "status": "PASS",
+          "why": "locked_in_orders == 0 and locked_in_withdraw == 0 for all assets",
+          "source": [
+            "http-get:/api/council/account?address=0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb"
+          ]
+        },
+        {
+          "id": "F4",
+          "status": "PASS",
+          "why": "mirror balances equal chain balances (scaled)",
+          "source": [
+            "http-get:/api/council/account?address=0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb",
+            "http-get:/api/platform/balances?address=0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb"
+          ]
+        },
+        {
+          "id": "F5",
+          "status": "PASS",
+          "why": "0 open RFQs (43 rows: 14 regularly expired V2 with locks released, exceptions 2)",
+          "source": [
+            "http-get:/api/suprafx/rfqs?taker=0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb&limit=200",
+            "http-get:/api/council/account?address=0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb",
+            "http-get:/api/council/my-open-orders?address=0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb"
+          ],
+          "data": {
+            "rfq_count": 43,
+            "exception_list": [
+              "R-260925-183346-6d",
+              "R-260926-055506-56"
+            ]
+          }
+        },
+        {
+          "id": "F6",
+          "status": "FAIL",
+          "why": "active delegates [\"228d291d8bb1535afd0e5520143e1c6ccd59fdd453a12e59f7a03ecee80c63b0\",\"d4098132bfbc64c0c778dba61ed5f048d9d675195eb01b8b6255d475ece04619\"] != expected [\"d4098132bfbc64c0c778dba61ed5f048d9d675195eb01b8b6255d475ece04619\"]; no open orders (created 20, revoked 18)",
+          "source": [
+            "http-get:/api/council/events?user=0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb&limit=500",
+            "http-get:/api/council/my-open-orders?address=0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb"
+          ],
+          "data": {
+            "active": [
+              "228d291d8bb1535afd0e5520143e1c6ccd59fdd453a12e59f7a03ecee80c63b0",
+              "d4098132bfbc64c0c778dba61ed5f048d9d675195eb01b8b6255d475ece04619"
+            ],
+            "created": 20,
+            "revoked": 18,
+            "foreignUser": 0
+          }
+        },
+        {
+          "id": "F0",
+          "status": "NOT_APPLICABLE_SHADOW",
+          "why": "no SDK, no submit, no fill in the shadow (D-P2-5)",
+          "source": []
+        },
+        {
+          "id": "F8",
+          "status": "NOT_APPLICABLE_SHADOW",
+          "why": "no SDK, no submit, no fill in the shadow (D-P2-5)",
+          "source": []
+        },
+        {
+          "id": "F9",
+          "status": "NOT_APPLICABLE_SHADOW",
+          "why": "no SDK, no submit, no fill in the shadow (D-P2-5)",
+          "source": []
+        },
+        {
+          "id": "F10",
+          "status": "NOT_APPLICABLE_SHADOW",
+          "why": "no SDK, no submit, no fill in the shadow (D-P2-5)",
+          "source": []
+        },
+        {
+          "id": "F11",
+          "status": "NOT_APPLICABLE_SHADOW",
+          "why": "no SDK, no submit, no fill in the shadow (D-P2-5)",
+          "source": []
+        }
+      ],
+      "snapshot": {
+        "schema": "cosmo.killer-demo.funds-snapshot.v1",
+        "master": "0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb",
+        "batch_height": 14774944,
+        "sequence_number": 48,
+        "balances": {
+          "0x0ec090a0f03020caea692cd00545639b458e077541fc93a1d09fd4e8409ca5d7": {
+            "available": "0",
+            "locked_in_orders": "0",
+            "locked_in_rfq": "0",
+            "locked_in_withdraw": "0"
+          },
+          "0x561c5f67f687947c3a669211e8617e85181ba55a3b6e31c3276f6e32e1925594": {
+            "available": "0",
+            "locked_in_orders": "0",
+            "locked_in_rfq": "0",
+            "locked_in_withdraw": "0"
+          },
+          "0x84f2da2b1609a29182ed95020b895b23efdd898b9a3f58da9ee6f7bb59e8ce18": {
+            "available": "3000000",
+            "locked_in_orders": "0",
+            "locked_in_rfq": "0",
+            "locked_in_withdraw": "0"
+          },
+          "0x89271d558e025677e56eac70cdd09992e229302151702f66bc68625099bf1899": {
+            "available": "4497850",
+            "locked_in_orders": "0",
+            "locked_in_rfq": "0",
+            "locked_in_withdraw": "0"
+          },
+          "0xa940ea972e50f5c97e725f95dc7a04f97bdde0379b45753be910938cece2b31b": {
+            "available": "3000000000000000",
+            "locked_in_orders": "0",
+            "locked_in_rfq": "0",
+            "locked_in_withdraw": "0"
+          },
+          "0xb3ba52f6fce09fa5b5f14506a7f489404fbacf95bec1c789dc7d6cd86b26cbf1": {
+            "available": "920676561930",
+            "locked_in_orders": "0",
+            "locked_in_rfq": "0",
+            "locked_in_withdraw": "0"
+          }
+        },
+        "open_orders_counts": {
+          "rfqs": 0,
+          "quotes": 0,
+          "lockedOrderAssets": 0
+        },
+        "event_hashes": [
+          "0x0039d0d923edaa64f3322f6fb636dccbeb654e98814e6265c05287b273163e4a",
+          "0x053349a48e7a4237ce7e3bc4898e53028d3ea0bd4490537916b96c44161570dd",
+          "0x09dcf01ed65a9f1c1c9050e03a660a6c73cbc02b5e48aee651cf58838f1dc9fb",
+          "0x0b0f518c4fd7426c7cf16d259d4985f94c90d453a9318f93c6f2ce8aac0234f7",
+          "0x115a47e8d12390fa1a8388a3cfee71ad8baa1bf830518cc7428757abf5cecfcc",
+          "0x11d9b08e860445295f47915f44c211158f43653aa929d798d69ef0e06827e4ac",
+          "0x13a9d8c1831427b9585b33657c853621c0e630c7bd1522956b32ba0ca9cb2149",
+          "0x17541fb7c4b9218e9c77cb5c02b9ad9c266c31b874202d44e7b8ea0fedd9307b",
+          "0x1a2d3b5b0e0373ca3340eb28d4ea15784c65f8c0ffd70b00caa7fc72ea4e91bd",
+          "0x1da78bb61cfede16730c621e8f244541eb2a2ad00063172a10f321d2b91fb525",
+          "0x21b7b8f26a6e96e3eb4836eb1e4aa688d991c6298a49e91c6f9e0aa63a72b3b8",
+          "0x25d1aa4d564900e6924f0d84b7cc37b2ea6881780aadffbcc99f632aec525b49",
+          "0x27ed5906bdee3607ecb8bab39ac66e411cecca515ad6c0132ed479527a1745be",
+          "0x28d32cf05da51c3c369ccf78e3f72c0f71b5e0a38855ae9902b58fd2d5d623cf",
+          "0x2ac9c472c48c942cdd8a747f1fa7831aab5fa88d9761183f0ec8ad30707c6f6c",
+          "0x2b891d7a2ba06aa8f1bb4b76474dc24f455281f88e7479e61b8a65d00619b0cd",
+          "0x2b9a3c047d0a65242b3ccfe4e477ddd062cb28923ff8a3f91fb6c6ee28873909",
+          "0x2e9916e797828cdddc3aa6245da2c0695379e154d3823c78ad9b21f0a469e15e",
+          "0x2f738c1825785117a9413a8cce50df88badea7c3ad02e3512fc5daa2f7925861",
+          "0x30c1c4bccc3f33b5402115f8b31ecc36cfe8ae80a85e58bc03dd254e3b3da1b3",
+          "0x3747d1074558b514d28acfafab4556214f568f10a0007d49bd3cf2499a47a538",
+          "0x39a865e3a0460b9f744a36076ff6ac54f1d948306c773a0cf0efaac1a9075621",
+          "0x3c7db962cd6e33c367d90b2871207693e1943c664e308a9e3fc19037d2c725b5",
+          "0x3f9e133b0fb96a761ec787be0cfa69232d5b665fb13eb12831714c4940f899fa",
+          "0x43f619d71b7c817e5d5090ece4fe6ecca61007389fd3357e0a6488c3cefd030e",
+          "0x4500c05ddd0f80bf8bd22fc8e57e5fd48490775f9700fc729609d0b8d0c3bce7",
+          "0x4a55c87118b57ca06d9a04dc1c4152c6152824536c4d17b46c972b66d9f3dae1",
+          "0x4c3a9b0e2eb2a4890ea1717d7445be2f2c9b476a432567ddd0e5cb1b0d57612f",
+          "0x51ba93d89bb872810022c2215b09f5e0d2b1577aa080db9ff05c2b81bd0589dd",
+          "0x527f0152503bcd7244b6c3c4dfb7730c18d202f1eba984bbae5213a1391e4a43",
+          "0x5b4b1936cd39eadc5ed3f1272b6ccd822ceae44b39956732f974eef6ff6ffb05",
+          "0x5c457460aafff0615b78dfe2b3980d802c944498f7175c83fcda9c385ec70fd2",
+          "0x6047dc13abb1321564a5a314fbcbbc25386bb1174dbe300f1e1392fbd743ceab",
+          "0x6486c073e8e942a262408ee287e69de59037013b3ba83676cd8ea9cfad45b4b0",
+          "0x662c5a486cb9a0530d80077c5e135ac86fa839270467e718e68914ca396a0f99",
+          "0x72089d747058c604ad64f0e3b5e1e85c7010dc207a1a7d9b1c6dd7598dbe2384",
+          "0x7223059377eb8279e7dfeb2369065151ff93966df93481a1569823ae744da3fd",
+          "0x774a4f17510d0b7ba79870faf636332bd02258745f2b939bb12ff1a45e25359b",
+          "0x7c638d2e7b75ce98bf9fb1611068b44c17592bddb080ac2275857677a67e29d3",
+          "0x8374528cd69b7af0cbb275fff0b5806304ab06ac778ca28b487285b21de8b732",
+          "0x84aa6bab30391d832a20993349e826af402c6ff1531c1d37540375f7ea7b7d02",
+          "0x89feaca1aae2c4e0ead61d16bf81289d1b7efdc776d9d98ba730f732a979e5a3",
+          "0x8e64eff05ca197861296c629461181f41ab6896b7b61f4347147524f6fc255d2",
+          "0x91c168c36ec0d24f8d4b6a5a14c3e338d33d0061ae4b4350d7a250d81784f4ad",
+          "0x9ac0d7c119508c6fc1e5190e28ad65478cb4e1860ab588e618bc5ca2e7f8f77a",
+          "0xa30c4a39452a3da76c980d825b35cd10438a8c38b09c7bf4a52ee02887b719ca",
+          "0xa43482f68145c7735974491c5c99d22be11cc69ca3bd15489c857890bded46ad",
+          "0xa523337eb8ce41ed4e0e325d46a6e6544a39abb9cb23479616929a995b651a5b",
+          "0xa6e2ae9d00f22b0eb1a7cfad34694abd52a0072d96590ac88f7bad89cf4e5646",
+          "0xa7eae89baf2f52c721dc2b95c633748a74f1883a21b0cf86e183118bcdde7350",
+          "0xaac1f30f7c7562b5e6f226d87ed49b8af71b88cf3ddeb3a0c63c16d3ba941d04",
+          "0xab19e96273240c70588b692c245fe2600b806a953387206ce1d18d9cf979ff75",
+          "0xab1d89c4cda1bc28aa8a8cd0935ed64ae022c7aa0e0bb329f8759af4226c8d9e",
+          "0xabe3166cf8fb55fe4f7fd0cb1e79838303d4790427ea7bfda637ab5a96265f90",
+          "0xac4cdf574d9dcbf3871741c14dd34284ce22f66dbf9a679108eebb70e5f0e404",
+          "0xaf55e7faa850f9814f3b810e1a475e1196619a841f562ee249b79041e644a977",
+          "0xb0fc748029f29a37329037e3a4e61f5219396673d25d2e00dee21b42b229c2f9",
+          "0xbbfb227d36ea490d11f6dcca98ecb212102d4ee57d233601cdda0ea2075f1165",
+          "0xbc330a79d8c051c8be4f48dcab2131e31694a5eb1aeaf7001226cbbe1f267824",
+          "0xc10d6e958f0a1d86013260449040958630fc08e9e1d13d7882546ec07f245f32",
+          "0xc29fdbe6229ba0532e86627f0d1277dd77f61f34e706bdddd4999b2fde257d30",
+          "0xcbcef45b3b83ad39e3a2a159c0cc71732fe2f93dac6c8752903d16e71feb72ca",
+          "0xcbfc45fa7368973de065b1eb6e97e16a031f559950f4d8e29cc46f3180e5e793",
+          "0xce7398f726e028a2abe8a9a74788d8a695c44158a2cef778b72c1d87c69f61de",
+          "0xd3ba87e310fa362a3805dcce9bea7e0a391c0ad93fb076d85c169a7e8c786312",
+          "0xdb9df9a9aee87a171d14c0e64e1de6c829a94ebf930b2a8678bbbf6c37648346",
+          "0xdea02ee508a4771ba34bddbca9f85f06bb73ed8acc1a45f4b80ca6e9f2b8738b",
+          "0xdf9ec6d690c96d1261429aad3acfec96bf76b713a3e5f9684a416b1e36e68ec3",
+          "0xe0adcc054be4edefc54baa9cf496cf4eeff6a480a950d45b18c3124d6ee1680b",
+          "0xe1167a057902b4076b4d32b51594e6974b702f999dfa7ab4c065fd089c3fa452",
+          "0xe33a42ddd4cf5547094e3a748396b70d9d7ac8637fe2b662419204fae4ffe847",
+          "0xe46bfecb55f4473dde8b1775b8a099bbe303abc2c073605542dea71354df4d46",
+          "0xe97610da90e4e26863f8f98300cbe848fd1cbab2530c88b9b4ae6c10c9dd9166",
+          "0xeddf1029aa862f4f202e56da7f12a29dde378772f3cadfe4e95bb958f1e0693f",
+          "0xf2a4a329072673335a61778b94efa108d6d3265a1505d29cac234f9c0480c5e5",
+          "0xf2f317a3c2a76f565fd22489165ccb345c7f8b867fc207702d5cca0d108710ca",
+          "0xf4b17f042301c43dc514633708a2173bd80449361738ada3685fe55061dbc0f7",
+          "0xfccbb316272302642828da308107741883ca10877441613a74427ef465f7b539",
+          "0xff328fd2b7eaebd8ebafe018b388de311446fc0ec0c8468c78de84510415d496"
+        ],
+        "reads_sha256": {
+          "account": "4bd61f6effcd64f069d3d6f869b7e7ef1bc9603bc039d765142ac66d881ac540",
+          "openOrders": "f8cebff495bf6fe4a25ca84cea0576e829bddb89919116113cc81e36d789459f",
+          "platform": "e446fe23f719777c78158879237a75d28cb7c6a913e5ee0813d3211e3c17e7a0",
+          "rfqs": "858cb6b6ff8b47e6a455ef08b700c0c5dfd0342a3c2ffab89ce89107eb088e91",
+          "events": "2590229e75e3e7261309ee2cb6f3e861358275041a0945afe7cd5ce6b26a2543"
+        }
+      },
+      "capital_hash": "5575314f3ee2ef742dca9e6ecc6d86d2a51c90124f8032b57407b5a83d04e0d8"
+    },
+    "current_batch": "14774944",
+    "decided_rfq_ids": [],
+    "executed_fills": 0,
+    "now_ms": 1793635870735
+  },
+  "config_pins": {
+    "maker_policy_sha256": "a1759fb13d571beaf8421d8878f714a280c07a3a81b2493974cd05dfbc0724e5",
+    "maker_gates_sha256": "2d97f3f4a24873038c8bed4e2fa5bb18a7e2f454b3574186df7b3bd62855263a"
+  },
+  "decision": {
+    "schema": "cosmo.killer-demo.maker-decision.v1",
+    "stage": "RESERVATION",
+    "decision": "NOT_AUTHORIZED",
+    "denied_alias": "DENIED",
+    "dominant": {
+      "core": null,
+      "profile": "V-8M"
+    },
+    "supersedes": null,
+    "maker_intent_hash": "0x4af3bc992f40da77bec4b589123c7e51047a71d5d45179c9cac44481a9186e17",
+    "core": {
+      "decision": "AUTHORIZED",
+      "dominant_reason": null,
+      "record_id": "0x98b0cb446b564e6177e13d9e67804866bc2022d0846abeda4dc75650e20e6cb7",
+      "record": {
+        "schema": "cosmo.val.authority-decision.v1",
+        "stage": "RESERVATION",
+        "supersedes": null,
+        "proposal_hash": "0x9a982c6ae648f07c687a7bd9d535625527b62cd229132cd453c10c272f4d7622",
+        "capability_id": "fx-quote-sell-1",
+        "action": "fx.quote_sell_base.v1",
+        "grant_id": "val:killer-demo:fffd4996c4887e76af64fb138564dcfc832f8b0d26747a56dfdceec4e31f2045",
+        "generation": 1,
+        "grant_hash": "0xfffd4996c4887e76af64fb138564dcfc832f8b0d26747a56dfdceec4e31f2045",
+        "parent_chain": [],
+        "policy_hash": null,
+        "decision": "AUTHORIZED",
+        "dominant_reason": null,
+        "checks": [
+          {
+            "id": "C1",
+            "status": "OK",
+            "why": "grant hash 0xfffd4996 validly issued (compiler ACCEPT, issuer signature valid)",
+            "evidence_ref": null,
+            "evidence_class": "externally_verifiable"
+          },
+          {
+            "id": "C2",
+            "status": "OK",
+            "why": "ACTIVE under t_eval 57762797; head 1 is 49 behind (<= max_head_lag 120)",
+            "evidence_ref": "0x03a88e21c8513bea0caaaa6d3caedaabc1f7a5ef6d8dd2f7b8980bb7a6ca713a",
+            "evidence_class": "engine_attestation"
+          },
+          {
+            "id": "C3",
+            "status": "OK",
+            "why": "fresh canonical head epoch 1, 10 behind t_eval <= max_head_lag 120",
+            "evidence_ref": "0x5761d56f9370b083e5ef10805f4064b947f15dbd1a3c5fc5996b5fa2fe2da290",
+            "evidence_class": "externally_verifiable"
+          },
+          {
+            "id": "C4",
+            "status": "OK",
+            "why": "t_eval 57762797 within validity [57762747, 58552797]",
+            "evidence_ref": "ev:time:57762797",
+            "evidence_class": "externally_verifiable"
+          },
+          {
+            "id": "C5",
+            "status": "OK",
+            "why": "micro:evm:46: 1695650 <= per-action 2000000; micro:evm:46: committed 0 + 1695650 <= cumulative 2000000",
+            "evidence_ref": "0x03a88e21c8513bea0caaaa6d3caedaabc1f7a5ef6d8dd2f7b8980bb7a6ca713a",
+            "evidence_class": "engine_attestation"
+          },
+          {
+            "id": "C6",
+            "status": "OK",
+            "why": "the grant binds no class-B constraint (envelope profile_constraints empty)",
+            "evidence_ref": null,
+            "evidence_class": null
+          },
+          {
+            "id": "C7",
+            "status": "OK",
+            "why": "1 referenced evidence node(s) presented and VALID",
+            "evidence_ref": "ev:maker-intent:reservation:4af3bc992f40da77",
+            "evidence_class": "engine_attestation"
+          },
+          {
+            "id": "C8",
+            "status": "OK",
+            "why": "no breach evidence presented for this generation",
+            "evidence_ref": null,
+            "evidence_class": null
+          }
+        ],
+        "profile_checks": {
+          "evaluator": null,
+          "checks": [],
+          "dominant_reason": null,
+          "accepted_assumptions_applied": []
+        },
+        "weakest_evidence_class": "engine_attestation",
+        "history_head": {
+          "sequence": 1,
+          "event_hash": "0x03a88e21c8513bea0caaaa6d3caedaabc1f7a5ef6d8dd2f7b8980bb7a6ca713a",
+          "head_binding": "UNPINNED"
+        },
+        "revocation_head_ref": "0x5761d56f9370b083e5ef10805f4064b947f15dbd1a3c5fc5996b5fa2fe2da290",
+        "authority_time_eval": {
+          "kind": "supra_block",
+          "number": "57762797",
+          "hash": "0x65af9d2bfff3bbf8e091e3ec8fd6538163bba97454bba5df9245aaa24dac2ddd",
+          "timestamp": "1876644195"
+        },
+        "authority_time_eval_ref": "ev:time:57762797",
+        "committed_snapshot": {
+          "micro:evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168": "0"
+        },
+        "proposed_worst_case": {
+          "micro:evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168": "1695650"
+        },
+        "reserved_worst_case": {
+          "micro:evm:4663:0x5fc5360d0400a0fd4f2af552add042d716f1d168": "1695650"
+        },
+        "evaluator": "cosmo.val.authorize.v1",
+        "signature": null,
+        "record_id": "0x98b0cb446b564e6177e13d9e67804866bc2022d0846abeda4dc75650e20e6cb7"
+      },
+      "input_digest": "0xeead59b2834081ff92deef7d2d4f7a5b7335a96c6cca008c74f66603e31a29f6",
+      "proposal_hash": "0x9a982c6ae648f07c687a7bd9d535625527b62cd229132cd453c10c272f4d7622",
+      "weakest_evidence_class": "engine_attestation"
+    },
+    "profile": {
+      "decision": "NOT_AUTHORIZED",
+      "dominant_reason": "C5",
+      "profile_dominant_reason": "V-8M",
+      "checks": [
+        {
+          "id": "V-1M",
+          "status": "OK",
+          "why": "fx.quote_sell_base.v1 on AAPL/USDG: COSMO pays USDG, receives AAPL",
+          "evidence_class": "externally_verifiable"
+        },
+        {
+          "id": "V-2M",
+          "status": "OK",
+          "why": "taker 0xa3d79667 is the DECLARED OWN TAKER of this policy (demo customer account, deviation declared_own_taker: no foreign robinhood-mainnet taker exists on the venue)",
+          "evidence_class": "attested_falsifiable"
+        },
+        {
+          "id": "V-3M",
+          "status": "OK",
+          "why": "open auto-accept RFQ, nothing filled, 456 batches left",
+          "evidence_class": "externally_verifiable"
+        },
+        {
+          "id": "V-4M",
+          "status": "OK",
+          "why": "fill 5000000000000000, lock 1695650 <= 2000000 quants, value 169565000 <= 200000000",
+          "evidence_class": "externally_verifiable"
+        },
+        {
+          "id": "V-5M",
+          "status": "OK",
+          "why": "rate 339129871 = fair 340834041 - 50 bps (band >= 337425700); margin 8521 USDG units; chainlink 24 bps / 5543 s; venue 0 bps / 1994 ms; DORA 6004 age 7 s",
+          "evidence_class": "externally_verifiable",
+          "source_independence": "dora:supra-rpc + chainlink:evm-rpc (independent) + venue:http-get (consistency only, S0 finding A: venue == DORA)"
+        },
+        {
+          "id": "V-6M",
+          "status": "OK",
+          "why": "rate 339129871 >= buyer floor 337458998 (auto-accept)",
+          "evidence_class": "externally_verifiable"
+        },
+        {
+          "id": "V-7M",
+          "status": "OK",
+          "why": "USDG fully_backed ratio 1.04 age 659s; own L1 read vault 13000000 >= internal 12500000; TA-FX-3 analogue: 1 USDG = 1 USD (Paxos stablecoin, not provable on chain; the EVM read only proves the council backing of USDG)",
+          "evidence_class": "attested_falsifiable"
+        },
+        {
+          "id": "V-8M",
+          "status": "FAIL",
+          "why": "funds preflight FAIL: F6",
+          "evidence_class": "externally_verifiable"
+        },
+        {
+          "id": "V-9M",
+          "status": "OK",
+          "why": "RFQ R-261102-160948-97 first decision; fills 0 < 1",
+          "evidence_class": "engine_attestation"
+        }
+      ],
+      "frame_checks": [
+        {
+          "id": "C1",
+          "rule_id": "C1.grant_valid_and_bound",
+          "status": "OK",
+          "why": "no profile fact maps here; nothing presented against this check",
+          "evidence_ref": null,
+          "evidence_class": null,
+          "basis": [
+            "C1.grant_valid_and_bound",
+            "profile:cosmo.killer-demo.profile.fx-quote-sell-base-micro.v1"
+          ]
+        },
+        {
+          "id": "C2",
+          "rule_id": "C2.grant_active_under_fresh_head",
+          "status": "OK",
+          "why": "no profile fact maps here; nothing presented against this check",
+          "evidence_ref": null,
+          "evidence_class": null,
+          "basis": [
+            "C2.grant_active_under_fresh_head",
+            "profile:cosmo.killer-demo.profile.fx-quote-sell-base-micro.v1"
+          ]
+        },
+        {
+          "id": "C3",
+          "rule_id": "C3.no_revocation_with_fresh_canonical_head",
+          "status": "OK",
+          "why": "no profile fact maps here; nothing presented against this check",
+          "evidence_ref": null,
+          "evidence_class": null,
+          "basis": [
+            "C3.no_revocation_with_fresh_canonical_head",
+            "profile:cosmo.killer-demo.profile.fx-quote-sell-base-micro.v1"
+          ]
+        },
+        {
+          "id": "C4",
+          "rule_id": "C4.within_validity_at_external_time",
+          "status": "OK",
+          "why": "no profile fact maps here; nothing presented against this check",
+          "evidence_ref": null,
+          "evidence_class": null,
+          "basis": [
+            "C4.within_validity_at_external_time",
+            "profile:cosmo.killer-demo.profile.fx-quote-sell-base-micro.v1"
+          ]
+        },
+        {
+          "id": "C5",
+          "rule_id": "C5.within_envelope_committed_projection",
+          "status": "FAIL",
+          "why": "V-8M: funds preflight FAIL: F6",
+          "evidence_ref": null,
+          "evidence_class": "engine_attestation",
+          "basis": [
+            "C5.within_envelope_committed_projection",
+            "profile:cosmo.killer-demo.profile.fx-quote-sell-base-micro.v1",
+            "profile-check:V-1M",
+            "profile-check:V-4M",
+            "profile-check:V-8M",
+            "profile-check:V-9M"
+          ]
+        },
+        {
+          "id": "C6",
+          "rule_id": "C6.profile_constraints_evaluated",
+          "status": "OK",
+          "why": "V-2M, V-3M, V-5M, V-6M, V-7M OK",
+          "evidence_ref": null,
+          "evidence_class": "attested_falsifiable",
+          "basis": [
+            "C6.profile_constraints_evaluated",
+            "profile:cosmo.killer-demo.profile.fx-quote-sell-base-micro.v1",
+            "profile-check:V-2M",
+            "profile-check:V-3M",
+            "profile-check:V-5M",
+            "profile-check:V-6M",
+            "profile-check:V-7M"
+          ]
+        },
+        {
+          "id": "C7",
+          "rule_id": "C7.evidence_source_available",
+          "status": "OK",
+          "why": "every profile check carries an evidence class and a declared core mapping",
+          "evidence_ref": null,
+          "evidence_class": null,
+          "basis": [
+            "C7.evidence_source_available",
+            "profile:cosmo.killer-demo.profile.fx-quote-sell-base-micro.v1"
+          ]
+        },
+        {
+          "id": "C8",
+          "rule_id": "C8.no_proven_breach",
+          "status": "OK",
+          "why": "no profile fact maps here; nothing presented against this check",
+          "evidence_ref": null,
+          "evidence_class": null,
+          "basis": [
+            "C8.no_proven_breach",
+            "profile:cosmo.killer-demo.profile.fx-quote-sell-base-micro.v1"
+          ]
+        }
+      ]
+    },
+    "quote": {
+      "status": "OK",
+      "why": [],
+      "market": {
+        "status": "OK",
+        "why": [],
+        "undecidable_kind": null,
+        "anchor": "equity_base_priced",
+        "ref_1e18": "340834041810000030000",
+        "dora_pair": 6004,
+        "dora_ages_s": [
+          "7"
+        ],
+        "dora_round": "1793635860000",
+        "chainlink_price_1e18": "341673305010000000000",
+        "chainlink_age_s": "5543",
+        "chainlink_dev_bps": "24",
+        "chainlink_round_id": "18446744073709552466",
+        "venue_price_1e18": "340834041810000030000",
+        "venue_dev_bps": "0",
+        "venue_age_ms": "1994",
+        "venue_timestamp_equals_dora": false,
+        "checks": {
+          "dora_form": true,
+          "chainlink_form": true,
+          "venue_form": true,
+          "dora_fresh": true,
+          "chainlink_fresh": true,
+          "chainlink_dev": true,
+          "venue_dev": true,
+          "venue_fresh": true
+        },
+        "sources": [
+          "supra-rpc:view:0xe3948c9e3a24c51c4006ef2acc44606055117d021158f320062df099c4a94150::supra_oracle_storage::get_prices([6004])",
+          "evm-rpc:4663:eth_call({\"to\":\"0x6b22a786baa607d76728168703a39ea9c99f2cd0\",\"data\":\"0xfeaf968c\"},latest)",
+          "evm-rpc:4663:eth_call({\"to\":\"0x6b22a786baa607d76728168703a39ea9c99f2cd0\",\"data\":\"0x313ce567\"},latest)",
+          "http-get:/api/oracle?pair=AAPL%2FUSDG"
+        ]
+      },
+      "ref_1e18": "340834041810000030000",
+      "fair_rate_bft": "340834041",
+      "quote_rate_bft": "339129871",
+      "formula_rate_bft": "339129871",
+      "min_rate_bft": "337425700",
+      "floor_rate_bft": "337458998",
+      "fill_size_base": "5000000000000000",
+      "lock_quants_ceil": "1695650",
+      "lock_usd_1e8": "169565000",
+      "margin_base_units": "8521",
+      "rfq_reference_dev_bps": "0",
+      "margin_bps": 50,
+      "max_margin_bps": 100,
+      "anchor_mode": "equity_base_priced",
+      "undecidable_kind": null
+    },
+    "stable": {
+      "status": "OK",
+      "why": "USDG fully_backed ratio 1.04 age 659s; own L1 read vault 13000000 >= internal 12500000",
+      "data": {
+        "reserves_status": "fully_backed",
+        "asset_status": "fully_backed",
+        "ratio": "1.04",
+        "invariant_holds": "true",
+        "as_of": "2026-11-02T16:00:11.697842+00:00",
+        "age_s": "659",
+        "internal_total": "12.5",
+        "l1_balance": "13000000"
+      }
+    },
+    "funds_verdict": "FAIL",
+    "attestation_scope": "core_record_only",
+    "attestation": {
+      "schema": "cosmo.val.decision-attestation.v1",
+      "record_id": "0x98b0cb446b564e6177e13d9e67804866bc2022d0846abeda4dc75650e20e6cb7",
+      "stage": "RESERVATION",
+      "decision": "AUTHORIZED",
+      "grant_hash": "0xfffd4996c4887e76af64fb138564dcfc832f8b0d26747a56dfdceec4e31f2045",
+      "proposal_hash": "0x9a982c6ae648f07c687a7bd9d535625527b62cd229132cd453c10c272f4d7622",
+      "actor_id": "principal:killer-demo-actor",
+      "action_digest": "0x704be4abc6dd9a617eed494c82bd235564ab3b2b6baa0e7549d2e3cd92d3b1e7",
+      "policy_digest": "0x99da29f23b1779fd7bb011c222373690c5a617dd15751060c28500158b754ded",
+      "register_index_hash": "0xef5aae0da5cd858a6a7fc67a6a4610284268ac4a2f490fa9d1a1e017456706de",
+      "input_digest": "0xeead59b2834081ff92deef7d2d4f7a5b7335a96c6cca008c74f66603e31a29f6",
+      "authorizer_id": "principal:killer-demo-authorizer",
+      "proposal_signature": {
+        "nonce": "1",
+        "head": {
+          "sequence": 1,
+          "event_hash": "0x03a88e21c8513bea0caaaa6d3caedaabc1f7a5ef6d8dd2f7b8980bb7a6ca713a"
+        },
+        "key": "e2f8f123f8fe90711d6122b67a732377bcc3c27c750b5b52cf55819dc7ed3ba8",
+        "sig": "ea31c8a3c15d7e96c417bd087277a15f342b2c1dc330ece21fdd990d21a9140a92c244cb1d2c51668a819a59d9c12cac5737cdbb8bf4ed1abccb53e599ef580f"
+      },
+      "signature": {
+        "key": "b00f216bb36e534722313c1c362c086a7ddce207234a0ceaa7a2414d6108d059",
+        "sig": "2b6ead9674579549df8b7cbea429fb8574efbbe8167a7429c2e76f1c1480017a1a5e6779b8123cedd13ea5f316f03254ecdf7030adb01851215cf8ba9f12850b"
+      }
+    },
+    "attestation_error": null,
+    "world_mode": "per-rfq-synthetic-history",
+    "decision_id": "0xf9b90486532b2f58dfc8a37e7c0cc19d0bef2565bb2b1ef2030ad80d0fc1825e"
+  }
+}

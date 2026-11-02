@@ -1,0 +1,241 @@
+{
+  "schema": "cosmo.killer-demo.maker-m4-policy-check.v1",
+  "at": "2026-11-02T17:54:00.347Z",
+  "berlin": "2.11.2026, 18:54:00",
+  "verdict": "PASS",
+  "delegate_address": "228d291d8bb1535afd0e5520143e1c6ccd59fdd453a12e59f7a03ecee80c63b0",
+  "allowed_other_delegates": [
+    "d4098132bfbc64c0c778dba61ed5f048d9d675195eb01b8b6255d475ece04619"
+  ],
+  "deviations_accepted": [
+    "pairs_via_caps",
+    "venue_expiry"
+  ],
+  "expiry_target_batch": "14792243",
+  "expiry_tolerance_batches": 0,
+  "current_batch": 14784743,
+  "min_supra_cap_quants": "0",
+  "pair_id_hex": "12c92144903b7dae62aadbf400663f2d4631310676b79a029ea630ceef2cb4b9",
+  "policy": {
+    "verdict": "PASS",
+    "checks": [
+      {
+        "id": "P-ACTIVE",
+        "ok": true,
+        "why": "active true"
+      },
+      {
+        "id": "P-MASTER",
+        "ok": true,
+        "why": "master_address 0a0571a915 vs 0a0571a915"
+      },
+      {
+        "id": "P-DELEGATE",
+        "ok": true,
+        "why": "delegate_address 228d291d8b vs 228d291d8b"
+      },
+      {
+        "id": "P-ROLES",
+        "ok": true,
+        "why": "allowed_roles [\"maker\"] (need exactly [\"maker\"])"
+      },
+      {
+        "id": "P-PAIRS",
+        "ok": true,
+        "why": "allowed_pairs [] ACCEPTED BY RENE (dApp has no pair field); the pair restriction is carried by the asset caps (only USDG and AAPL and ETH and SUPRA and iUSDC capped)"
+      },
+      {
+        "id": "P-CAP-USDG",
+        "ok": true,
+        "why": "USDG maxTradeSize 3000000 / maxEarmarkTotal 3000000 (need 0 < cap <= 3000000)"
+      },
+      {
+        "id": "P-CAP-USDG-ROOM",
+        "ok": true,
+        "why": "USDG caps >= expected lock 0: true"
+      },
+      {
+        "id": "P-CAP-AAPL",
+        "ok": true,
+        "why": "AAPL cap absent (ok)"
+      },
+      {
+        "id": "P-CAP-ETH",
+        "ok": true,
+        "why": "ETH maxTradeSize 1000000000000000 / maxEarmarkTotal 1000000000000000 (need cap <= 1000000000000000, absent ok)"
+      },
+      {
+        "id": "P-CAP-SUPRA",
+        "ok": true,
+        "why": "SUPRA cap absent (ok)"
+      },
+      {
+        "id": "P-CAP-IUSDC",
+        "ok": true,
+        "why": "iUSDC cap absent (ok)"
+      },
+      {
+        "id": "P-CAP-OTHER",
+        "ok": true,
+        "why": "0 other asset cap(s), all zero"
+      },
+      {
+        "id": "P-EXPIRY",
+        "ok": true,
+        "why": "expires_at_batch 26639394 (> window target 14792243) ACCEPTED BY RENE (dApp sets creation + 12,000,000 batches); compensating control: revoke + destroy-key after the window"
+      }
+    ],
+    "summary": {
+      "label": "cosmo-aapl-maker-v7",
+      "roles": [
+        "maker"
+      ],
+      "pairs": [],
+      "caps": {
+        "USDG": {
+          "trade": "3000000",
+          "earmark": "3000000"
+        },
+        "AAPL": null,
+        "ETH": {
+          "trade": "1000000000000000",
+          "earmark": "1000000000000000"
+        },
+        "SUPRA": null,
+        "iUSDC": null
+      },
+      "supra_cap": null,
+      "iusdc_cap": null,
+      "other_caps": 0,
+      "expires_at_batch": "26639394",
+      "created_at": "2026-11-01T16:29:33.586635+00:00",
+      "deviations_accepted": [
+        "pairs_via_caps",
+        "venue_expiry"
+      ]
+    }
+  },
+  "policy_read": {
+    "status": 200,
+    "raw_sha256": "ed48c429af1da20c00dc7d3640a56bb0a8bb58dbc2be17b1274d2c3b5139c2b2",
+    "value": {
+      "policy": {
+        "master_address": "0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb",
+        "delegate_address": "0x228d291d8bb1535afd0e5520143e1c6ccd59fdd453a12e59f7a03ecee80c63b0",
+        "delegate_label": "cosmo-aapl-maker-v7",
+        "allowed_roles": [
+          "maker"
+        ],
+        "allowed_pairs": [],
+        "max_trade_size": "0",
+        "max_earmark_total": "0",
+        "active": true,
+        "created_at": "2026-11-01T16:29:33.586635+00:00",
+        "updated_at": "2026-11-01T16:29:31.669+00:00",
+        "chain_addresses": [],
+        "agent_permissions": {
+          "asset_caps": [
+            {
+              "asset": "84f2da2b1609a29182ed95020b895b23efdd898b9a3f58da9ee6f7bb59e8ce18",
+              "maxTradeSize": "3000000",
+              "maxEarmarkTotal": "3000000"
+            },
+            {
+              "asset": "a940ea972e50f5c97e725f95dc7a04f97bdde0379b45753be910938cece2b31b",
+              "maxTradeSize": "1000000000000000",
+              "maxEarmarkTotal": "1000000000000000"
+            }
+          ],
+          "expires_at_batch": "26639394"
+        },
+        "auto_adjust_bounds": null,
+        "delegate_public_key": null
+      }
+    }
+  },
+  "funds_verdict": "PASS",
+  "f6": {
+    "id": "F6",
+    "status": "PASS",
+    "why": "active delegates == expected; no open orders (created 20, revoked 18)",
+    "source": [
+      "http-get:/api/council/events?user=0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb&limit=500",
+      "http-get:/api/council/my-open-orders?address=0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb"
+    ],
+    "data": {
+      "active": [
+        "228d291d8bb1535afd0e5520143e1c6ccd59fdd453a12e59f7a03ecee80c63b0",
+        "d4098132bfbc64c0c778dba61ed5f048d9d675195eb01b8b6255d475ece04619"
+      ],
+      "created": 20,
+      "revoked": 18,
+      "foreignUser": 0
+    }
+  },
+  "active_delegates": {
+    "active": [
+      "228d291d8bb1535afd0e5520143e1c6ccd59fdd453a12e59f7a03ecee80c63b0",
+      "d4098132bfbc64c0c778dba61ed5f048d9d675195eb01b8b6255d475ece04619"
+    ],
+    "created": 20,
+    "revoked": 18,
+    "foreignUser": 0
+  },
+  "funds_fail": [],
+  "sdk_preflight": {
+    "ready": true,
+    "not_ok": [],
+    "checks": [
+      {
+        "name": "venue_reachable",
+        "status": "ok",
+        "detail": "chain suprafx-mainnet-1, threshold 5 of 7"
+      },
+      {
+        "name": "venue_advancing",
+        "status": "ok",
+        "detail": "batch 14784749 → 14784755 in 3s"
+      },
+      {
+        "name": "on_chain_expiry",
+        "status": "ok",
+        "detail": "live since batch 10915000; orders use batch expiry; signing requires at least 12 batches (2 chain lead + 10 commit buffer)"
+      },
+      {
+        "name": "assets_resolvable",
+        "status": "ok",
+        "detail": "20/20 venue assets derive to registered ids"
+      },
+      {
+        "name": "oracle_fresh",
+        "status": "skipped",
+        "detail": "no pair given — pass `pair` to check fair-value freshness"
+      },
+      {
+        "name": "custody",
+        "status": "ok",
+        "detail": "signing as delegate 0x228d291d8bb1535afd0e5520143e1c6ccd59fdd453a12e59f7a03ecee80c63b0. This key CANNOT withdraw funds — withdrawals are master-signed."
+      },
+      {
+        "name": "master_address_known",
+        "status": "ok",
+        "detail": "0x0a0571a915579baecd79a26d04ade62a5b35114bd1dad6db31798ea70504e1bb"
+      },
+      {
+        "name": "sequence_in_sync",
+        "status": "ok",
+        "detail": "local and chain both expect seq 0"
+      },
+      {
+        "name": "funded",
+        "status": "ok",
+        "detail": "ETH: 0.003 available / 0.003 total; SUPRA: 50131.17068516 available / 50131.17068516 total; USDC: 4.49785 available / 4.49785 total; USDG: 3 available / 3 total"
+      },
+      {
+        "name": "open_order_locks",
+        "status": "ok",
+        "detail": "no open RFQs or quotes are holding collateral"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1 @@
+{"verifier":"cosmo-standalone-maker-verifier","version":"1.0.5","trust_profile_id":"cosmo-maker-trust-v1","trust_profile_hash":"0x346a128b25678359a7f103195c9b1421186e9b066bf36b5bc322465251301dc2","bundle":"docs/killer-demo/robinhood/stock-p3-shadow-2026-11-02/maker/cases/kdm-20261102T1611-16094897-4af3bc99","verdict":"ACCEPT","rc":0,"checks":27,"failed":0,"failed_checks":[]}

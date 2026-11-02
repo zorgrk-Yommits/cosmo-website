@@ -1,0 +1,31 @@
+{
+  "verdict": "PROVEN",
+  "checks": [
+    {
+      "id": "FP1",
+      "ok": true,
+      "why": "rfq matched fills 1 filled 5000000000000000; our quote accepted"
+    },
+    {
+      "id": "FP2",
+      "ok": true,
+      "why": "USDG delta -1680209 (lock 1680377..1680378), AAPL delta 5000000000000000 (size 5000000000000000, rebate <= 500000000000 / 169)"
+    },
+    {
+      "id": "FP3",
+      "ok": true,
+      "why": "no other asset moved"
+    },
+    {
+      "id": "FP4",
+      "ok": true,
+      "why": "no lock and no open order left"
+    }
+  ],
+  "data": {
+    "usdg_delta": "-1680209",
+    "aapl_delta": "5000000000000000",
+    "lock_floor": "1680377",
+    "lock_ceil": "1680378"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "schema": "cosmo.killer-demo.maker-case-bundle.v1",
+  "case_id": "kdm-20261102T1723-17222310-41368746",
+  "mode": "shadow",
+  "rfq": {
+    "id": "cab0f29f-4634-b649-66b8-05e56ec8e08c",
+    "display_id": "R-261102-172223-10",
+    "pair": "AAPL/USDG",
+    "taker": "0xa3d79667db7a465de6e13005c35417c9501fdc5b68bc5516024f0ebc23c358f5",
+    "size_base_units": "5000000000000000",
+    "floor": "334.7289"
+  },
+  "would_quote": {
+    "rate_bft": "336329900",
+    "fair_rate_bft": "337933484",
+    "lock_quants_ceil": "1681650",
+    "margin_base_units": "8018",
+    "floor_rate_bft": "334728900"
+  },
+  "outcome": {
+    "stage": "FINAL",
+    "decision": "AUTHORIZED",
+    "plan_alias": null,
+    "dominant": {
+      "core": null,
+      "profile": null
+    },
+    "core_record_id": "0x7685041cbc3ed48da2741269379eb9ac2544aab25ae2b313563ab43d3c6e4d09",
+    "decision_id": "0xfe111ad331eb08b35ed1f5949f7fedd4f0779dda7154e225b6943c01423833a3"
+  },
+  "intel_context": "present",
+  "zero_capital": "PASS",
+  "live": null,
+  "claims": [
+    "a foreign open RFQ was priced by the proposer and decided by the frozen VAL v1.7 core with the pinned maker profile V-1M..V-9M",
+    "no capital moved (snapshot before == after)"
+  ],
+  "not_claimed": [
+    "no quote was placed, nothing was signed for SupraFX, nothing settled (shadow)",
+    "shadow keys (issuer/authorizer/actor) are TEST_SIGNED and publicly derivable",
+    "SupraFX reads and the reserve attestation are operator-mediated; 1 iUSDC = 1 USD is an assumption (TA-FX-3)",
+    "Intel did not trigger anything (D-M1)",
+    "not market making, not a profit claim"
+  ]
+}
