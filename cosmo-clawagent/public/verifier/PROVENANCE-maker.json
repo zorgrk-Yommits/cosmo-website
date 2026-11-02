@@ -1,22 +1,22 @@
 {
   "schema": "cosmo.standalone-verifier.provenance.v1",
   "verifier_name": "cosmo-standalone-maker-verifier",
-  "verifier_version": "1.0.4",
+  "verifier_version": "1.0.5",
   "bundle_schema": "cosmo.killer-demo.maker-case-bundle.v1",
   "node_engine_min": ">=18",
   "trust_profile_id": "cosmo-maker-trust-v1",
-  "trust_profile_hash": "0x8efbd5ae79237d4a9fe888219042a8f0e71b45d141b40e4c6ac1f25794386a98",
+  "trust_profile_hash": "0x346a128b25678359a7f103195c9b1421186e9b066bf36b5bc322465251301dc2",
   "val_core_freeze": {
     "tag": "val-architecture-v1.7-frozen",
     "commit": "311f1ef"
   },
   "distributable": {
     "file": "cosmo-verify-maker.mjs",
-    "sha3": "0x47a85ae640aa85f4aff3094268bb83d4059c814bb555c50512c09bfdc486061e"
+    "sha3": "0xd8445beae5c565de93a41412dd1530f875149fa7d78d233321b4a05fdc28e41b"
   },
   "build_inputs": {
-    "core-maker.src.mjs": "0x63a7d17ec35bf4398826b8b8c82b3183a9ddcbd5794501a763b70162cbc2bc40",
-    "build-maker.mjs": "0x799173b70b56963f5271447a5389fc32162f04cedd4e6e67191ec1192c54c9d9",
+    "core-maker.src.mjs": "0x97f8c8df2f04d14932330673af41b7bd25f8d60a8d2d1163e2981fff985c7f02",
+    "build-maker.mjs": "0x71024c8a5e968f9756adfc26e0d607081013b3b58e385d8d2a2f64d399422a39",
     "typescript": "5.9.3"
   },
   "embedded_sources": {
@@ -108,7 +108,8 @@
     "config/killer-demo/maker/history/maker-policy.v1.09bcaec3.json": "0xab6ff06fd0302c1373461a7df6dad8b088b1c85598fd84cf96492da2f3a53d8f",
     "config/killer-demo/maker/maker-policy.v2.robinhood.json": "0xcdb0c2cb631cffc0684df5f95a8d15f08c980890ef90537de5aae82066a84ecd",
     "config/killer-demo/maker/history/maker-policy.v2.robinhood.920cc20e.json": "0x5ca5f115e348fd4a7c799bc352bdfe499a072196d7bcc9a6d5e08acfdc5762c2",
-    "config/killer-demo/maker/maker-policy.v3.robinhood-aapl.json": "0x1310dfec021308e01b14d34b04d9e13942f4848d19978393303212595302be20",
+    "config/killer-demo/maker/maker-policy.v3.robinhood-aapl.json": "0xbd817965f3e4f7f77b730835e4b58814d176b54223ae29c44fb5aa0ffd183cf1",
+    "config/killer-demo/maker/history/maker-policy.v3.robinhood-aapl.a1759fb1.json": "0x1310dfec021308e01b14d34b04d9e13942f4848d19978393303212595302be20",
     "config/killer-demo/funds-preflight.v1.json": "0xcf33f750d78353716f6cdc4e7a00dc8e0dbf219b3d43ab64da48a4ac8dcda22e",
     "config/killer-demo/proposer-key.pin.json": "0xa514ee01906f7b23f5d7f4ebc99e5c85704ea1100bdb0ac186f5d942684754b0",
     "config/killer-demo/customer/customer-policy.v1.json": "0x2d63c9cbc39aaf4549d6ae9ce943fcba428c966ab4b6ea09f6323dc0fa35e484",
@@ -118,6 +119,6 @@
   "how_to_verify": [
     "Recompute sha3-256 of cosmo-verify-maker.mjs and match distributable.sha3 (equals `node cosmo-verify-maker.mjs --version`.source_sha3).",
     "To reproduce from source: confirm build_inputs and embedded_sources/embedded_data hashes against the tree, run `node standalone-verifier/build-maker.mjs` with the pinned TypeScript version, and check the rebuilt file sha3 matches.",
-    "ACCEPT from this verifier means: the maker case bundle passes MB1..MB12 under trust profile cosmo-maker-trust-v1 (0x8efbd5ae79237d4a9fe888219042a8f0e71b45d141b40e4c6ac1f25794386a98); pins are append-only."
+    "ACCEPT from this verifier means: the maker case bundle passes MB1..MB12 under trust profile cosmo-maker-trust-v1 (0x346a128b25678359a7f103195c9b1421186e9b066bf36b5bc322465251301dc2); pins are append-only."
   ]
 }
