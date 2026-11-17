@@ -99,6 +99,7 @@ export async function fetchChainTime(): Promise<ChainTime> {
 
 // ---- Wallet + bonds --------------------------------------------------------------
 export type WalletSnapshot = {
+  supra: bigint | null; // null = could not be read (shown as unavailable, never as 0)
   cosmo: bigint;
   wcosmo: bigint;
   maker: BondInput | null; // null = no entry (get_operator_bond aborts)
@@ -109,15 +110,32 @@ export type WalletSnapshot = {
   errors: string[];
 };
 
+// SUPRA is the native coin, not a fungible asset like COSMO: its balance comes
+// from the coin module. The answer must be a whole number of base units
+// (8 decimals). Anything else, including an empty answer, is "not readable".
+export function parseCoinBalance(v: unknown): bigint | null {
+  if (typeof v === 'string' && /^\d+$/.test(v)) return BigInt(v);
+  if (typeof v === 'number' && Number.isSafeInteger(v) && v >= 0) return BigInt(v);
+  return null;
+}
+
+export async function coinBalance(addr: string): Promise<bigint> {
+  const v = parseCoinBalance(await rpcView('0x1::coin::balance', ['0x1::supra_coin::SupraCoin'], [addr]));
+  if (v === null) throw new Error('SUPRA balance: unexpected answer');
+  return v;
+}
+
 export async function fetchWalletSnapshot(addr: string): Promise<WalletSnapshot> {
   const errors: string[] = [];
-  const [cosmo, wcosmo, makerT, provT, councilT] = await Promise.all([
+  const [supra, cosmo, wcosmo, makerT, provT, councilT] = await Promise.all([
+    guarded<bigint | null>(coinBalance(addr), null),
     guarded(faBalance(addr, COSMO_META), null),
     guarded(faBalance(addr, WCOSMO_META), null),
     guarded<unknown[] | null>(rpcViewAll(`${MV}::get_operator_bond`, [], [addr]), null),
     guarded<unknown[] | null>(rpcViewAll(`${PV}::get_provider_bond`, [], [addr]), null),
     guarded<unknown[] | null>(rpcViewAll(`${MV}::get_council_bond`, [], [addr]), null),
   ]);
+  if (supra === null) errors.push('SUPRA balance unavailable');
   if (cosmo === null) errors.push('COSMO balance unavailable');
   if (wcosmo === null) errors.push('wCOSMO balance unavailable');
   const maker: BondInput | null =
@@ -129,6 +147,7 @@ export async function fetchWalletSnapshot(addr: string): Promise<WalletSnapshot>
       ? { amount: big(provT[0]), lockedUntilSecs: big(provT[1]), activeJobs: big(provT[4]), slashCount: big(provT[2]) }
       : null;
   return {
+    supra,
     cosmo: cosmo ?? ZERO,
     wcosmo: wcosmo ?? ZERO,
     maker,

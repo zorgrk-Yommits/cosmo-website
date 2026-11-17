@@ -15,10 +15,16 @@
 //
 // Six rows: wallet | bonded | in escrow | claimable | gone, with reason |
 // not readable per address yet (honesty box).
+//
+// Wallet v0.1 (plans/cosmo-wallet-v01-plan.md): the connect state comes from the
+// shared session in @/lib/walletSession (one dialog, listeners registered once,
+// network changes noticed). Added, all read-only: wallet status, SUPRA balance,
+// jobs, latest transactions, the way into TRACE, a placeholder for the agent.
+// The return-path buttons and their rules are unchanged.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { Loader2, Plug, RefreshCw, Lock, Eye, ShieldCheck, PenLine } from 'lucide-react';
+import { Loader2, RefreshCw, Lock, Eye, ShieldCheck, PenLine } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   CHAIN_ID,
@@ -65,6 +71,14 @@ import {
   verifyFresh,
   type ClaimCall,
 } from './lib/portfolioTx';
+import { useWalletSession } from '@/lib/walletSession';
+import { Empty, KV, Row } from './components/parts';
+import WalletStatus from './components/WalletStatus';
+import Balances from './components/Balances';
+import Orders from './components/Orders';
+import Activity from './components/Activity';
+import TracePanel from './components/TracePanel';
+import IntelPlaceholder from './components/IntelPlaceholder';
 
 type Snapshot = {
   addr: string;
@@ -118,15 +132,20 @@ const ADDR_RE = /^0x[0-9a-fA-F]{1,64}$/;
 const MAX_SKEW_SECS = 60;
 
 export default function PortfolioView() {
-  const providerRef = useRef<SupraProvider | null>(null);
+  const wallet = useWalletSession();
   const [addrInput, setAddrInput] = useState('');
   const [addr, setAddr] = useState<string | null>(null);
-  const [connecting, setConnecting] = useState(false);
-  const [noWallet, setNoWallet] = useState(false);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [snap, setSnap] = useState<Snapshot | null>(null);
-  const [signer, setSigner] = useState<Signer | null>(null);
+  // Who may sign: the address the shared session holds, and only that one.
+  const signer: Signer | null = useMemo(
+    () =>
+      wallet.status === 'connected' && wallet.address
+        ? { addr: wallet.address, chainOk: wallet.onMainnet, chainId: wallet.chainId }
+        : null,
+    [wallet.status, wallet.address, wallet.onMainnet, wallet.chainId],
+  );
   const [minBonds, setMinBonds] = useState<MinBonds>({ operator: null, provider: null });
   const [abortsAfterGreen, setAbortsAfterGreen] = useState(0);
   const windowRef = useRef<ScanWindow>(DEFAULT_WINDOW);
@@ -165,55 +184,37 @@ export default function PortfolioView() {
     if (addr) void load(addr);
   }, [addr, load]);
 
+  // Follow the wallet. A newly seen wallet address is shown when nothing else is
+  // on screen or when the page was showing the previous wallet address. When the
+  // wallet goes away or changes account, a view of its old address is dropped at
+  // once, as before. An address somebody typed in is never replaced.
+  const walletAddrRef = useRef<string | null>(null);
+  useEffect(() => {
+    const prev = walletAddrRef.current;
+    const cur = wallet.address;
+    if (cur === prev) return;
+    walletAddrRef.current = cur;
+    if (cur) {
+      if (addr === null || (prev !== null && sameAddr(addr, prev))) {
+        setAddrInput(cur);
+        setAddr(cur);
+      }
+    } else if (prev !== null && addr !== null && sameAddr(addr, prev)) {
+      setAddr(null);
+      setSnap(null);
+    }
+  }, [wallet.address, addr]);
+
+  // An explicit click on Connect always shows the connected address.
+  const walletConnect = wallet.connect;
   const connect = useCallback(async () => {
-    const p = getSupra();
-    if (!p) {
-      setNoWallet(true);
-      return;
+    const s = await walletConnect();
+    if (s.status === 'connected' && s.address) {
+      setErr(null);
+      setAddrInput(s.address);
+      setAddr(s.address);
     }
-    providerRef.current = p;
-    setNoWallet(false);
-    setConnecting(true);
-    try {
-      const accounts = await p.connect();
-      const a = Array.isArray(accounts) ? String(accounts[0]) : String(accounts);
-      // Reads are mainnet regardless of the wallet network. Signing (stage 2b)
-      // needs chain 8: ask StarKey to switch, then hard-check.
-      const readChain = async (): Promise<string | null> => {
-        try {
-          const c = (await p.getChainId?.()) as { chainId?: unknown } | string | number | null;
-          return String((c as { chainId?: unknown })?.chainId ?? c);
-        } catch {
-          return null;
-        }
-      };
-      let cid = await readChain();
-      if (cid !== CHAIN_ID) {
-        try {
-          await p.changeNetwork?.({ chainId: CHAIN_ID });
-          cid = await readChain();
-        } catch {
-          /* fall through to the hard check */
-        }
-      }
-      const chainOk = cid === CHAIN_ID;
-      if (!chainOk) {
-        setErr(`StarKey is on chain ${cid ?? '?'}. Reading works for ${shortAddr(a)}; claim and withdraw buttons need Supra Mainnet (8).`);
-      }
-      setSigner({ addr: a, chainOk, chainId: cid });
-      setAddrInput(a);
-      setAddr(a);
-      p.on?.('accountChanged', () => {
-        setSigner(null);
-        setAddr(null);
-        setSnap(null);
-      });
-    } catch (e) {
-      if ((e as { code?: number })?.code !== 4001) setErr(`Connect error: ${(e as Error).message ?? e}`);
-    } finally {
-      setConnecting(false);
-    }
-  }, []);
+  }, [walletConnect]);
 
   const lookup = useCallback(() => {
     const a = addrInput.trim();
@@ -246,6 +247,8 @@ export default function PortfolioView() {
     return null;
   }, [snap, signer, abortsAfterGreen]);
 
+  const heldSums = useMemo(() => sumByToken([...rows.bonded, ...rows.escrow]), [rows]);
+
   const canSign = signBlock === null;
   const hasActionable = (snap?.positions ?? []).some((p) => p.actionable);
 
@@ -272,8 +275,10 @@ export default function PortfolioView() {
             </p>
           </header>
 
+          <WalletStatus wallet={wallet} onConnect={() => void connect()} busy={loading} />
+
           {/* address input */}
-          <section className="mt-8 rounded-xl border border-line-base bg-surface-1 p-5">
+          <section className="mt-4 rounded-xl border border-line-base bg-surface-1 p-5">
             <label htmlFor="portfolio-addr" className="font-mono text-xs uppercase tracking-wider text-ink-2">
               Address
             </label>
@@ -296,21 +301,7 @@ export default function PortfolioView() {
                 <Eye className="h-3.5 w-3.5" />
                 Show
               </button>
-              <button
-                type="button"
-                onClick={() => void connect()}
-                disabled={connecting || loading}
-                className="inline-flex items-center gap-2 rounded-lg border border-line-base px-4 py-2 font-mono text-xs text-ink-1 transition-all hover:border-line-strong hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                {connecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plug className="h-3.5 w-3.5" />}
-                Connect wallet
-              </button>
             </div>
-            {noWallet && (
-              <p className="mt-3 font-sans text-xs text-phase-warn">
-                The StarKey wallet was not found. You can still type any address above: looking needs no wallet.
-              </p>
-            )}
             {err && <p className="mt-3 font-mono text-xs text-phase-warn">{err}</p>}
           </section>
 
@@ -367,13 +358,18 @@ export default function PortfolioView() {
               </p>
 
               {/* 1 wallet */}
-              <Row n="1" title="In your wallet" tone="active">
-                <KV k="COSMO" v={snap.wallet.errors.includes('COSMO balance unavailable') ? 'unavailable' : `${fmtAmt(snap.wallet.cosmo)} COSMO`} />
-                <KV k="wCOSMO" v={snap.wallet.errors.includes('wCOSMO balance unavailable') ? 'unavailable' : `${fmtAmt(snap.wallet.wcosmo)} wCOSMO`} />
-                <p className="mt-2 font-sans text-xs text-ink-2">
-                  Free to use. Everything below is also yours, but not in the wallet.
-                </p>
-              </Row>
+              <Balances wallet={snap.wallet} chain={snap.chain} />
+
+              {/* held or locked: rows 2 and 3 under one heading with one sum per token */}
+              <div className="mt-8 flex flex-wrap items-baseline justify-between gap-2 border-t border-line-subtle pt-5">
+                <h2 className="font-mono text-xs uppercase tracking-wider text-ink-1">Held or locked: yours, but not in the wallet</h2>
+                <span className="font-mono text-sm text-ink-0">
+                  {heldSums.length > 0 ? heldSums.map((x) => fmtTokenAmt(x.amount, x.token)).join(' + ') : 'nothing'}
+                </span>
+              </div>
+              <p className="mt-1 font-sans text-xs text-ink-2">
+                Sum of rows 2 and 3, from the records that were checked.
+              </p>
 
               {/* 2 bonded */}
               <Row n="2" title="Safety deposits (held by a contract)" tone="proof" total={rows.bonded}>
@@ -386,7 +382,7 @@ export default function PortfolioView() {
                         <ClaimPanel
                           p={p}
                           signer={signer!.addr}
-                          provider={providerRef.current}
+                          provider={getSupra()}
                           minBond={p.source === 'maker_vault' ? minBonds.operator : p.source === 'provider_vault' ? minBonds.provider : null}
                           onConfirmed={onConfirmed}
                           onAbortAfterGreen={onAbortAfterGreen}
@@ -421,7 +417,7 @@ export default function PortfolioView() {
                         <ClaimPanel
                           p={p}
                           signer={signer!.addr}
-                          provider={providerRef.current}
+                          provider={getSupra()}
                           minBond={null}
                           onConfirmed={onConfirmed}
                           onAbortAfterGreen={onAbortAfterGreen}
@@ -453,7 +449,14 @@ export default function PortfolioView() {
                 </p>
               </Row>
 
-              {/* 6 honesty */}
+              {/* 6 jobs · 7 transactions · 8 trace · 9 agent (wallet v0.1, read-only) */}
+              {/* keyed by address and snapshot: a new address never shows the previous one's list while loading */}
+              <Orders key={`o:${snap.addr}:${snap.takenAtMs}`} addr={snap.addr} positions={snap.positions} />
+              <Activity key={`a:${snap.addr}:${snap.takenAtMs}`} addr={snap.addr} />
+              <TracePanel key={`t:${snap.addr}`} addr={snap.addr} />
+              <IntelPlaceholder />
+
+              {/* honesty */}
               <section className="mt-6 rounded-xl border border-phase-warn/20 bg-phase-warn/[0.04] p-5">
                 <div className="mb-2 flex items-center gap-2">
                   <Lock className="h-4 w-4 text-phase-warn" />
@@ -714,57 +717,6 @@ function fmtPlain(amount: bigint, decimals: number): string {
   const whole = amount / scale;
   const frac = (amount % scale).toString().padStart(decimals, '0').replace(/0+$/, '');
   return frac ? `${whole.toString()}.${frac}` : whole.toString();
-}
-
-function Row({
-  n,
-  title,
-  tone,
-  total,
-  children,
-}: {
-  n: string;
-  title: string;
-  tone: 'active' | 'proof' | 'warn' | 'settled' | 'fault';
-  total?: Position[];
-  children: React.ReactNode;
-}) {
-  const sums = total ? sumByToken(total) : [];
-  return (
-    <section
-      className={cn(
-        'mt-6 rounded-xl border p-5',
-        tone === 'active' && 'border-phase-active/25 bg-phase-active/[0.04]',
-        tone === 'proof' && 'border-phase-proof/25 bg-phase-proof/[0.04]',
-        tone === 'warn' && 'border-phase-warn/25 bg-phase-warn/[0.04]',
-        tone === 'settled' && 'border-phase-settled/25 bg-phase-settled/[0.04]',
-        tone === 'fault' && 'border-phase-fault/25 bg-phase-fault/[0.04]',
-      )}
-    >
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="font-mono text-xs uppercase tracking-wider text-ink-1">
-          <span className="text-ink-2">{n} ·</span> {title}
-        </h2>
-        {sums.length > 0 && (
-          <span className="font-mono text-sm text-ink-0">{sums.map((s) => fmtTokenAmt(s.amount, s.token)).join(' + ')}</span>
-        )}
-      </div>
-      <div className="mt-3 space-y-2">{children}</div>
-    </section>
-  );
-}
-
-function KV({ k, v }: { k: string; v: string }) {
-  return (
-    <div className="flex items-baseline justify-between gap-4 font-mono text-sm">
-      <dt className="text-[12px] text-ink-2">{k}</dt>
-      <dd className="text-ink-0">{v}</dd>
-    </div>
-  );
-}
-
-function Empty({ children }: { children: React.ReactNode }) {
-  return <p className="font-sans text-sm text-ink-2">{children}</p>;
 }
 
 function PositionLine({ p, children }: { p: Position; children?: React.ReactNode }) {
