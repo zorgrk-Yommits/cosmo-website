@@ -1,0 +1,20 @@
+{
+  "schema": "cosmo.vault.deployment.v1",
+  "network": "Supra testnet",
+  "chain_id": 6,
+  "rpc": "https://rpc-testnet.supra.com",
+  "package": "0xe9cf4c26432ff63186e9cbff844c980ff3f83b7fcc70f7db82c6c86b3a11b4bd",
+  "publish_tx": "0x5b2b234e402e7afe3739044141883182e001c9ec954d7aaa0009f471a62d6308",
+  "oracle": "0x5615001f63d3223f194498787647bb6f8d37b8d1e6773c00dcdd894079e56190",
+  "module_sha256": {
+    "mandate_vault": "7f81e3eec1d1b9b4e42aa028ba53c8edd435fe843580bafdfa243bb67415330c",
+    "oracle_venue": "84119bad490abd3841c86473d8f77279e43ae8fcd48fc03c1be2de65b091d369",
+    "price": "94ca3343ff6959cdc19f6a07c6acb6a222fd253bc3b4bd34437f2327bb72a906",
+    "test_assets": "b8fc3c93ebc1a68bde2c5d76be77514b03b59d44a3d44e18ab292397822a29a1"
+  },
+  "source": "move/cosmo_vault_v3",
+  "test_takers": {
+    "random": "0x264c15f0edd55287520c66c0b0602325035be9955a0a6481819a59ea3a1291f3",
+    "follows": "0x9ad004ccba77d2f97a3ca0da5c939049943ffc2e1c81083e9db5ae29af64f071"
+  }
+}

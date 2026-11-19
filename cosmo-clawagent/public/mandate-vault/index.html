@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>COSMO Mandate Vault</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500&display=swap" rel="stylesheet">
+<style>
+/* layout: one reading column like an audit report; verdict first, evidence below, tables scroll on their own */
+:root {
+  --paper: #f6f7f9; --panel: #ffffff; --ink: #14181f; --ink-2: #4c5564; --line: #d9dee6;
+  --accent: #2a3f9d; --ok: #12704a; --ok-bg: #e2f3ea; --bad: #a3231c; --bad-bg: #fbe6e3; --warn: #8a5a00; --warn-bg: #fbefd2;
+  --display: "IBM Plex Serif", Georgia, serif; --body: "IBM Plex Sans", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0f1217; --panel: #171b22; --ink: #e8ebf0; --ink-2: #9aa4b4; --line: #2a303b;
+  --accent: #9fb0ff; --ok: #5fd19c; --ok-bg: #12301f; --bad: #ff8f86; --bad-bg: #3a1614; --warn: #f0c060; --warn-bg: #33270c; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --paper: #0f1217; --panel: #171b22; --ink: #e8ebf0; --ink-2: #9aa4b4; --line: #2a303b;
+  --accent: #9fb0ff; --ok: #5fd19c; --ok-bg: #12301f; --bad: #ff8f86; --bad-bg: #3a1614; --warn: #f0c060; --warn-bg: #33270c; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.55 var(--body); }
+main { max-width: 980px; margin: 0 auto; padding: 32px 20px 64px; display: flex; flex-direction: column; gap: 28px; }
+h1 { font: 500 34px/1.15 var(--display); margin: 0; text-wrap: balance; }
+h2 { font: 600 18px/1.3 var(--body); margin: 0 0 12px; text-wrap: balance; }
+p { margin: 0 0 10px; max-width: 68ch; }
+ul { margin: 0 0 10px; padding-left: 20px; max-width: 68ch; }
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.eyebrow { font: 500 13px var(--mono); color: var(--ink-2); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+.lede { font-size: 18px; color: var(--ink-2); margin-top: 12px; }
+section { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 20px; }
+.mono { font-family: var(--mono); font-size: 13px; word-break: break-all; }
+.dim { color: var(--ink-2); }
+.cap { font-size: 14px; color: var(--ink-2); margin: 10px 0 0; }
+.chip { display: inline-block; font: 500 12px var(--mono); padding: 2px 8px; border-radius: 3px; white-space: nowrap; }
+.chip.ok { color: var(--ok); background: var(--ok-bg); } .chip.bad { color: var(--bad); background: var(--bad-bg); } .chip.warn { color: var(--warn); background: var(--warn-bg); }
+.verdict { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; border-left: 6px solid var(--line); }
+.verdict.ok { border-left-color: var(--ok); } .verdict.bad { border-left-color: var(--bad); }
+.v-word { font: 500 30px var(--mono); letter-spacing: 0.04em; } .verdict.ok .v-word { color: var(--ok); } .verdict.bad .v-word { color: var(--bad); }
+.v-text { flex: 1 1 320px; max-width: 68ch; }
+.roles { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.roles > div { border-top: 3px solid var(--accent); padding-top: 10px; }
+.roles h3 { font: 600 15px var(--body); margin: 0 0 6px; } .roles p { font-size: 14px; margin: 0 0 6px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
+.tile, .quote > div { border: 1px solid var(--line); border-radius: 4px; padding: 12px; }
+.t-l { font-size: 13px; color: var(--ink-2); } .t-v { font: 500 24px/1.25 var(--body); font-variant-numeric: tabular-nums; margin-top: 2px; } .t-v.small { font-size: 16px; } .t-s { font-size: 13px; color: var(--ink-2); margin-top: 4px; }
+.quote { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; } .q-v { font: 500 18px var(--mono); margin-top: 2px; }
+.band { position: relative; height: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 3px; margin: 22px 0 22px; }
+.band-allowed { position: absolute; top: 0; bottom: 0; background: var(--ok-bg); border-left: 1px solid var(--ok); border-right: 1px solid var(--ok); }
+.band-mark { position: absolute; top: -6px; bottom: -6px; width: 3px; margin-left: -1px; background: var(--accent); }
+.band-labels span { position: absolute; top: 18px; transform: translateX(-50%); font: 12px var(--mono); color: var(--ink-2); }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 7px 10px 7px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 500; color: var(--ink-2); font-size: 13px; white-space: nowrap; }
+.r { text-align: right; white-space: nowrap; } .wrap { word-break: break-all; min-width: 160px; }
+table.num { margin-bottom: 18px; } table.num td:last-child { text-align: right; white-space: nowrap; font-family: var(--mono); } tr.sum td { font-weight: 600; border-bottom: 2px solid var(--ink-2); }
+.pos { color: var(--ok); } .neg { color: var(--bad); }
+pre { font: 13px/1.5 var(--mono); background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 12px; overflow-x: auto; margin: 0 0 10px; }
+footer { font-size: 13px; color: var(--ink-2); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="eyebrow"><span class="chip warn">Supra testnet</span><span class="chip warn">test tokens without value</span><span id="updated">Loading …</span></div>
+    <h1>An agent manages this vault. The contract decides what it may do.</h1>
+    <p class="lede">The owner deposits capital and sets a mandate. The agent provides liquidity with it, and a backer stands behind the agent with a bond that pays the owner first if the agent loses money. Every limit of the mandate is checked by the vault contract on each trade, and this page recomputes all of it from the public chain while you read.</p>
+  </header>
+
+  <section id="verdict" class="verdict"><div class="v-word">…</div><div class="v-text">Reading the chain …</div></section>
+
+  <section>
+    <h2>Who can do what</h2>
+    <div class="roles">
+      <div><h3>Capital owner</h3><p>Deposits and withdraws, to the owner address only. Sets, replaces and revokes the mandate. Pauses the vault.</p></div>
+      <div><h3>Agent</h3><p>Posts and cancels the quote the vault trades at. Rebalances through one venue. Records decisions on-chain.</p><p><b>Cannot</b> withdraw, name a recipient, change the mandate, or lift a pause.</p></div>
+      <div><h3>Backer</h3><p>Posts the bond and thereby accepts exactly one mandate. Receives a share of a gain and, at the settlement, what is left of the bond.</p><p><b>Cannot</b> take the bond back while the mandate runs. The agent key cannot move it either.</p></div>
+      <div><h3>Anyone</h3><p>Trades against the standing quote at the oracle price plus the edge. Freezes the agent once the vault value is below the floor. Triggers the settlement once the mandate has ended. Verifies everything.</p></div>
+    </div>
+  </section>
+
+  <section><h2>The vault now</h2><div id="state"></div></section>
+  <section><h2>Who answers for the agent, and who earns</h2><div id="bond"></div></section>
+  <section><h2>The quote the agent has posted</h2><div id="quote"></div></section>
+  <section><h2>What the capital has done</h2><div id="result"></div></section>
+  <section><h2>The mandate</h2><div id="rules"></div></section>
+  <section><h2>Recent activity</h2><div id="activity"></div></section>
+
+  <section>
+    <h2>Every check, recomputed here</h2>
+    <p>The checks below ran in your browser against the public chain API. They use the mandate file and no data from the operator of the vault. The same file runs on the command line:</p>
+    <pre>node verify/verify.mjs --mandate mandates/mandate-003.json --deployment mandates/deployment-003.json</pre>
+    <div id="checks"></div>
+    <p class="cap">What this proves: the published code is the code that runs, the on-chain mandate is the one in the file, and every quote, fill, swap, deposit, withdrawal, bond and settlement reproduces from its own event and respects every limit. What it does not prove: that the oracle price equals a market price, or that the strategy earns money.</p>
+  </section>
+
+  <section><h2>Attack drill on the live vault</h2><div id="drill"></div></section>
+  <section><h2>Loss drill: the bond pays the owner</h2><div id="lossdrill"></div></section>
+  <section><h2>What a stolen agent key can do</h2><div id="bound"></div></section>
+
+  <section>
+    <h2>Limits of this demonstration</h2>
+    <ul>
+      <li>The bond asset cvCOSMO is a test token that stands in for wCOSMO. It is not wCOSMO. On a real market a bond is worth what the market of the bonded token is worth.</li>
+      <li>The owner may revoke while the result is negative and is then paid from the bond at the price of that moment. The backer accepts this when posting the bond.</li>
+      <li>Testnet. The two assets are test tokens without value. The price is the real Supra oracle feed for SUPRA/USDT.</li>
+      <li>Most takers are two test bots run by the vault operator. Figures show that the mechanism works, not what a vault would earn.</li>
+      <li>The vault trusts the oracle price. A taker who sees a price move before the oracle does can trade against the old price; the mandate bounds this through the accepted oracle age, the trade size and the daily volume.</li>
+      <li>The package can still be upgraded by its publisher key. The check C9 fails as soon as that happens. A mainnet version needs the upgrade right removed or placed under a multisig.</li>
+      <li>One owner, one pair, one strategy. No audit.</li>
+    </ul>
+    <p class="mono dim" id="ids"></p>
+  </section>
+  <footer>COSMO · Verifiable Liquidity Mandates · this page makes no promise of profit or capital safety.</footer>
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>

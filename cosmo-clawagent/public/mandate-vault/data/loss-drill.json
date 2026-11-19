@@ -1,0 +1,83 @@
+{
+  "schema": "cosmo.vault.loss-drill.v1",
+  "at": "2026-11-19T16:25:57.978Z",
+  "vault": "0xb658d0e400ccd5e583d0ce21dc493ba409d619193e0519f22816bde16fb5b79a",
+  "mandate_sha256": "de2d34f635521906f5c4c27538e60f9ee362dc14b54174b633ae39d5f3f63e41",
+  "verdict": "PASS",
+  "steps": [
+    {
+      "step": "bad swap 1: sell base through the venue",
+      "ok": true,
+      "tx": "0xcf441fe66f3002b532897daff44dd46a3f5dcadfef740cd7d93ffbf1caa4d261",
+      "vm_status": "Executed successfully"
+    },
+    {
+      "step": "bad swap 2: buy base through the venue",
+      "ok": true,
+      "tx": "0x432106f6d3715dbbbf4c30248094e8a34d0629f5147c5b37c2f21aca38b0da7a",
+      "vm_status": "Executed successfully"
+    },
+    {
+      "step": "bad swap 3: sell base through the venue",
+      "ok": true,
+      "tx": "0xff6a1b823bcc06f788237b8348108ba33b40abc15c74446e201b7f0d7d89c760",
+      "vm_status": "Executed successfully"
+    },
+    {
+      "step": "bad swap 4: buy base through the venue",
+      "ok": true,
+      "tx": "0x80f15a10efc12fec37bd5729089dab628b67fb8f4ed6cb860ae80fbd0f203d7b",
+      "vm_status": "Executed successfully"
+    },
+    {
+      "step": "owner revokes the mandate",
+      "ok": true,
+      "tx": "0x993c57608f0f015109da91583999d125880c1ff4da0b10f051f612358ac0c6fe",
+      "vm_status": "Executed successfully"
+    },
+    {
+      "step": "a stranger triggers the settlement",
+      "ok": true,
+      "tx": "0xf64651d354cf268a20453f1be18c82725d21b47439ce141d4229ef55eb6cd7b4",
+      "vm_status": "Executed successfully"
+    }
+  ],
+  "bond": {
+    "backer": "0x877c51bae2b30c54308f1da189536106442341e05ed3e33b170a1717de05ea41",
+    "amount": "1000000000",
+    "posted_s": 1795105536,
+    "tx": "0xad064b3f332ecc540d583795e0ff9a577577cfa55c1a5391609471d0190cae8d",
+    "ref_base_in": "50000000000000",
+    "ref_quote_in": "67100000",
+    "ref_base_out": "0",
+    "ref_quote_out": "0",
+    "settled": true
+  },
+  "settlement": {
+    "time_s": 1795105554,
+    "revoked": true,
+    "oracle_price": "133750000000000",
+    "oracle_decimals": 18,
+    "value_now": "133899031",
+    "value_ref": "133975000",
+    "result": "-75969",
+    "fee_quote": "0",
+    "fee_base": "0",
+    "fee_value": "0",
+    "bond_to_owner": "567038626",
+    "bond_to_backer": "432961374",
+    "tx": "0xf64651d354cf268a20453f1be18c82725d21b47439ce141d4229ef55eb6cd7b4"
+  },
+  "limits": {
+    "bond_required": 1000000000,
+    "cover_bps": 10,
+    "fee_share_bps": 2000
+  },
+  "bond_received_by_owner": "567038626",
+  "bond_returned_to_backer": "432961374",
+  "verifier": {
+    "verdict": "ACCEPT",
+    "failed": [],
+    "checks": 23
+  }
+}

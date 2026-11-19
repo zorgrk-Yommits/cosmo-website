@@ -1,0 +1,112 @@
+{
+  "schema": "cosmo.vault.mandate.v3",
+  "mandate_id": "cosmo-vault-003/m1",
+  "network": {
+    "chain_id": 6,
+    "package": "0xe9cf4c26432ff63186e9cbff844c980ff3f83b7fcc70f7db82c6c86b3a11b4bd",
+    "vault": "0xb509465790a7970084d352c2dac525e365032e6e714e7e44239b23d319334d5"
+  },
+  "issuer": {
+    "role": "capital owner",
+    "address": "0xe30668794adab7a7e84a11b4b2b381a196ae64d54d55d88d4f9574b86c712325"
+  },
+  "executor": {
+    "role": "agent",
+    "address": "0x17b07bd12a0535feeaaccf3b0669d13a974587974b6ecda1d5ec8c7511a37878",
+    "rights": [
+      "agent_post_quote",
+      "agent_cancel_quote",
+      "agent_swap",
+      "agent_attest"
+    ],
+    "cannot": [
+      "withdraw",
+      "set_mandate",
+      "set_paused",
+      "clear_halt",
+      "name a recipient"
+    ]
+  },
+  "backer": {
+    "role": "backer",
+    "address": "0x877c51bae2b30c54308f1da189536106442341e05ed3e33b170a1717de05ea41",
+    "accepts_by": "mandate_vault::post_bond(epoch, mandate hash)",
+    "receives": [
+      "fee share of a gain, from the vault",
+      "the bond or what is left of it, at settlement"
+    ],
+    "note": "own address and key; the agent key cannot move the bond"
+  },
+  "bond": {
+    "symbol": "cvCOSMO",
+    "metadata": "0xfe54f0a576e8f72fd7068dc99b0213e55bb24ac15e4e4b0044df5551f797407c",
+    "decimals": 6,
+    "note": "test token that stands in for wCOSMO on testnet; it is not wCOSMO and has no value"
+  },
+  "settlement": {
+    "when": "once per mandate: after valid_until (anyone may trigger it) or after the owner revokes",
+    "result": "vault value now, with withdrawals counted as still there, against deposits left untouched, both at the oracle price of the settlement",
+    "gain": "fee_share_bps of the gain goes from the vault to the backer, in the quote asset (in the base asset if the quote asset does not suffice)",
+    "loss": "bond * min(loss / (cover_bps of the untouched value), 1) goes to the capital owner, in the bond asset"
+  },
+  "assets": {
+    "base": {
+      "symbol": "cvSUPRA",
+      "metadata": "0x49093b3cbbd41088934cb43e781d2f01b26dcd22c59100e2f1b207aba8d60170",
+      "decimals": 8
+    },
+    "quote": {
+      "symbol": "cvUSD",
+      "metadata": "0xa74b6588b5294fd10b56a3a2e08059387e4658699e991a20606e5b0c04311905",
+      "decimals": 6
+    }
+  },
+  "price_source": {
+    "oracle": "Supra DORA push oracle (testnet)",
+    "pair_index": 500,
+    "pair": "SUPRA_USDT"
+  },
+  "liquidity": {
+    "how": "standing quote inside the vault; anyone can trade against it with mandate_vault::take",
+    "price": "oracle price of the fill transaction, moved by the quoted edge in favour of the vault"
+  },
+  "venue": {
+    "module": "0xe9cf4c26432ff63186e9cbff844c980ff3f83b7fcc70f7db82c6c86b3a11b4bd::oracle_venue",
+    "note": "test counterparty for agent_swap, fills at oracle price minus fee"
+  },
+  "limits": {
+    "valid_from_s": 1795105295,
+    "valid_until_s": 1795364555,
+    "max_notional_per_action": 50000000,
+    "max_daily_turnover": 4000000000,
+    "max_slippage_bps": 30,
+    "max_oracle_age_s": 120,
+    "min_base_weight_bps": 3000,
+    "max_base_weight_bps": 7000,
+    "nav_floor": 805800000,
+    "min_action_interval_s": 120,
+    "min_edge_bps": 5,
+    "max_quote_ttl_s": 900,
+    "bond_required": 10000000000,
+    "cover_bps": 100,
+    "fee_share_bps": 2000
+  },
+  "reference": {
+    "nav_at_issue": 1343000000,
+    "oracle_price_at_issue": "134300000000000",
+    "oracle_decimals": 18,
+    "oracle_ts_ms": 1795105351162,
+    "deposit_base": "500000000000000",
+    "deposit_quote": "671500000"
+  },
+  "strategy_sha256": "476d094c8df64173620e293ca8b164404025617959420aa61c333788e7828e3a",
+  "baselines": [
+    "B-HOLD: value of the deposited assets, untouched, at the same oracle price",
+    "B-FAIR: every fill valued at the oracle price of its own transaction"
+  ],
+  "test_flow": [
+    "Takers on testnet are two bots run by the vault operator and anyone who uses the faucet. They prove the mechanism, not an income."
+  ],
+  "termination": "expiry, owner revoke, owner pause, or NAV floor halt; no automatic renewal; one settlement",
+  "mandate_sha256": "cd58159177e0ba945e9f0ba23eef0d6db44509d828bd6e1f5fd0fcf8528c165f"
+}

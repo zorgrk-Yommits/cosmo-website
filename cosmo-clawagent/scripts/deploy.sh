@@ -13,7 +13,7 @@ REPO="$(cd "$(dirname "$0")/.." && pwd)"
 BASE="${COSMO_RELEASES:-/root/workspace/meine-website/cosmo-releases}"
 KEEP=5
 PROBE_PORT=4398
-ROUTES=(/ /demo/ /market/ /market/work/ /cosmo/ /portfolio/ /media/cosmo-promo-15s-v1.mp4)
+ROUTES=(/ /demo/ /market/ /market/work/ /cosmo/ /portfolio/ /mandate-vault/ /mandate-vault/core.mjs /media/cosmo-promo-15s-v1.mp4)
 LIVE_URL="${COSMO_LIVE_URL:-https://heros.cloud}"
 
 die() { echo "deploy: $*" >&2; exit 1; }
