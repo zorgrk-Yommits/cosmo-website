@@ -25,6 +25,23 @@ export const LIMIT_KEYS = ['valid_from_s', 'valid_until_s', 'max_notional_per_ac
 const AGENT_FNS = ['agent_post_quote', 'agent_cancel_quote', 'agent_swap', 'agent_attest', 'trip_halt'];
 const EVENT_KINDS = ['VaultCreated', 'Deposited', 'Withdrawn', 'MandateSet', 'MandateRevoked', 'PausedSet', 'HaltSet', 'QuotePosted', 'QuoteCancelled', 'FillExecuted', 'ActionExecuted', 'DecisionAttested', 'BondPosted', 'Settled'];
 
+// Every transaction an account ever sent, oldest first. `get(path)` answers like fetch.
+export async function pageTxs(get, addr) {
+  // `start` is the first sequence number of the page and the page runs upwards from it (without
+  // `start` the node returns only the latest 100). So: from 0 upwards, until a page is not full.
+  const seen = new Map();
+  let start = 0;
+  for (let page = 0; page < 2000; page++) {
+    const j = await (await get(`/rpc/v1/accounts/${addr}/transactions?count=100&start=${start}`)).json();
+    const rec = j.record || [];
+    let fresh = 0;
+    for (const t of rec) if (!seen.has(t.hash)) { seen.set(t.hash, t); fresh++; }
+    if (rec.length < 100 || fresh === 0) break;
+    start = Math.max(...rec.map((t) => t.header.sequence_number)) + 1;
+  }
+  return [...seen.values()].sort((a, b) => a.header.sequence_number - b.header.sequence_number);
+}
+
 export async function verifyVault({ rpc, mandate, deployment, ledgerText = null, fetchImpl = globalThis.fetch.bind(globalThis), onProgress = () => {} }) {
   const checks = [];
   const check = (id, text, ok, detail = '') => { checks.push({ id, text, ok: !!ok, detail: String(detail) }); };
@@ -46,19 +63,7 @@ export async function verifyVault({ rpc, mandate, deployment, ledgerText = null,
   const dist = (w, lo, hi) => (w < lo ? lo - w : w > hi ? w - hi : 0n);
   const T = (name) => `${PKG}::mandate_vault::${name}`;
 
-  async function allTxs(addr) {
-    const seen = new Map();
-    let start = null;
-    for (let page = 0; page < 2000; page++) {
-      const j = await (await get(`/rpc/v1/accounts/${addr}/transactions?count=100${start !== null ? `&start=${start}` : ''}`)).json();
-      const rec = j.record || [];
-      let fresh = 0;
-      for (const t of rec) if (!seen.has(t.hash)) { seen.set(t.hash, t); fresh++; }
-      if (rec.length < 100 || fresh === 0) break;
-      start = Math.min(...rec.map((t) => t.header.sequence_number));
-    }
-    return [...seen.values()].sort((a, b) => a.header.sequence_number - b.header.sequence_number);
-  }
+  const allTxs = (addr) => pageTxs(get, addr);
   async function eventsOf(kind) {
     const out = [];
     let cursor = null;
