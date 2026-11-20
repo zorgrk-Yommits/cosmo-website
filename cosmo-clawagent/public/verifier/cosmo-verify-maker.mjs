@@ -28,7 +28,7 @@ import { join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const VERIFIER_NAME = 'cosmo-standalone-maker-verifier';
-export const VERIFIER_VERSION = '1.0.6';
+export const VERIFIER_VERSION = '1.0.7';
 export const MAKER_BUNDLE_SCHEMA = 'cosmo.killer-demo.maker-case-bundle.v1';
 
 // ===========================================================================
@@ -6924,6 +6924,8 @@ export function verifyMakerBundle(dir, vo = {}) {
     add('MB2', pins.shadow_authorizer_pubkey === SHADOW_AUTHORIZER_PIN, 'pins.json', 'shadow authorizer pin');
     // mode and (live) arm: the F6 expectation of every recomputed preflight follows the bundle's mode
     const man = j('manifest.json');
+    // GUARD KD.M-MB9-SCHEMA (1.0.7): the manifest must name this bundle schema; reported only when it does not
+    if (man.schema !== MAKER_BUNDLE_SCHEMA) add('MB9', false, 'manifest.json', `manifest schema ${String(man.schema)}`);
     const live = man.mode === 'live';
     let fundsArgs = (lock) => ({ policy: cfg.policy.value, lockQuants: lock, mode: 'shadow' });
     let armFile = null;

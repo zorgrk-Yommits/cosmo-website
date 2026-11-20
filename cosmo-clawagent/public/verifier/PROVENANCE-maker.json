@@ -1,7 +1,7 @@
 {
   "schema": "cosmo.standalone-verifier.provenance.v1",
   "verifier_name": "cosmo-standalone-maker-verifier",
-  "verifier_version": "1.0.6",
+  "verifier_version": "1.0.7",
   "bundle_schema": "cosmo.killer-demo.maker-case-bundle.v1",
   "node_engine_min": ">=18",
   "trust_profile_id": "cosmo-maker-trust-v1",
@@ -12,10 +12,10 @@
   },
   "distributable": {
     "file": "cosmo-verify-maker.mjs",
-    "sha3": "0xcb9478e1af46a32caf187654dbf631fb96a1b5ffc59f83ce0c2c20b0efeae696"
+    "sha3": "0x4cd186b5500ca3e069cf043933343c43484e211a64a889cf892439cea555b915"
   },
   "build_inputs": {
-    "core-maker.src.mjs": "0x9675e2f4a2b59d66971083f3e079b517eed1712d683944eadd8bddd0a07e2d2d",
+    "core-maker.src.mjs": "0x7e51d3dcd43282e499ee1d9a99fbf6602525bf47d5284418d783a9b4d97d374c",
     "build-maker.mjs": "0x16c0a56ed32b5daa7f4cf8fea75076ca12dfba1c156c5c347b769ce0f8b8639e",
     "typescript": "5.9.3"
   },

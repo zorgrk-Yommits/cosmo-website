@@ -40,8 +40,8 @@ PROVENANCE-maker.json. Same 14 checks (MB1-MB14) as the repository verifier:
 fill bundle with both on-chain settlement legs (MB13; MB14 = customer mandate).
 cosmo-verify.mjs above is unchanged by this addition.
 
-  maker version     1.0.6 (11.11.2026)
-  maker distributable sha3-256 0xcb9478e1af46a32caf187654dbf631fb96a1b5ffc59f83ce0c2c20b0efeae696
+  maker version     1.0.7 (20.11.2026)
+  maker distributable sha3-256 0x4cd186b5500ca3e069cf043933343c43484e211a64a889cf892439cea555b915
   maker trust_profile sha3-256 0x1efc4cd9c4ce18e100452a77ad5a08c77b4e2bd848458c26202b2fd0bdfd8c5c
 
   node cosmo-verify-maker.mjs <case-dir>      verify one maker case bundle
@@ -50,7 +50,11 @@ cosmo-verify.mjs above is unchanged by this addition.
   openssl dgst -sha3-256 cosmo-verify-maker.mjs
      must equal distributable.sha3 in PROVENANCE-maker.json
 
-  version           1.0.6 (11.11.2026: maker-policy.v1.json repinned 32224573 = assets USDG and
+  version           1.0.7 (20.11.2026: MB9 also refuses a manifest that names another bundle
+                    schema; until 1.0.6 this field was not checked, so a case with a changed
+                    schema and recomputed SHA256SUMS was accepted; no pin and no rule changed,
+                    every published case verifies as before);
+                    1.0.6 (11.11.2026: maker-policy.v1.json repinned 32224573 = assets USDG and
                     AAPL listed with symbol and decimals only, no cap, no pair, no rule change;
                     1.0.1 pin abfaebf4 historical;
                     1.0.5 (02.11.2026): stock-token policy v3 repinned 8a987c19 = shadow delegate
@@ -60,7 +64,7 @@ cosmo-verify.mjs above is unchanged by this addition.
                     policy v2 pinned next to v1; 1.0.3/1.0.2: Robinhood demo USDG/SUPRA, K1 declared,
                     MB13/MB14; 1.0.1: pin set abfaebf4, S_M 20000 SUPRA; every earlier bundle stays
                     verifiable under the historical pins)
-  distributable     sha3-256 0xcb9478e1af46a32caf187654dbf631fb96a1b5ffc59f83ce0c2c20b0efeae696
+  distributable     sha3-256 0x4cd186b5500ca3e069cf043933343c43484e211a64a889cf892439cea555b915
   trust_profile_id  cosmo-maker-trust-v1
   trust_profile     sha3-256 0x1efc4cd9c4ce18e100452a77ad5a08c77b4e2bd848458c26202b2fd0bdfd8c5c
   bundle schema     cosmo.killer-demo.maker-case-bundle.v1
